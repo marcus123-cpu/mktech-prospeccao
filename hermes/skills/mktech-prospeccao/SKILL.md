@@ -111,8 +111,12 @@ mais recente ou oficial e escreva a divergência em `pending_items`.
 Diretório com categoria errada (ex.: "Restaurant") vale só como apoio.
 
 **B. Está ativa?** Data do último post ou avaliação, número de avaliações e
-nota no Google, número de seguidores. Sem sinal de atividade nos últimos
-6 meses: descarte.
+nota no Google, número de seguidores. Descarte só quando houver **prova**
+de inatividade (último sinal com mais de 6 meses, perfil apagado, "fechado
+permanentemente"). Se não deu para ver datas (Instagram exige login, página
+não abre), **não descarte por isso**: cadastre com `site_status:
+"verificacao_pendente"`, `confidence: "baixa"`, `priority: "baixa"` e diga
+em `pending_items` o que falta confirmar. O Marcos confere no painel.
 
 **C. O que vende.** Procedimentos principais (harmonização, botox, limpeza
 de pele, depilação a laser, drenagem...), se há procedimentos de ticket
