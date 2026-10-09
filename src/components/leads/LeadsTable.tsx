@@ -5,6 +5,7 @@ import { useState } from "react";
 import { bulkUpdate } from "@/app/(painel)/leads/actions";
 import { ActionForm } from "@/components/ActionForm";
 import { ContactBadge, PriorityBadge, SiteBadge, StageBadge } from "@/components/ui";
+import { OFFER_LABEL } from "@/lib/labels";
 import { PRIORITIES, PRIORITY_LABEL, STAGE_LABEL, STAGES, type Priority, type SiteStatus, type Stage } from "@/lib/labels";
 import { safeExternal, whatsappLink } from "@/lib/leads-query";
 import { fmtDate, fmtDateTime } from "@/lib/time";
@@ -31,6 +32,8 @@ export type LeadRow = {
   last_contact_at: string | null;
   next_follow_up_at: string | null;
   created_at: string;
+  fit_score: number | null;
+  recommended_offer: string | null;
 };
 
 const BULK_STAGES = STAGES.filter((s) => !["fechado", "sem_interesse", "desqualificado"].includes(s));
@@ -99,6 +102,7 @@ export function LeadsTable({ rows }: { rows: LeadRow[] }) {
               <th className="table-head">Etapa</th>
               <th className="table-head">Site</th>
               <th className="table-head">Prioridade</th>
+              <th className="table-head">Potencial</th>
               <th className="table-head">Retorno</th>
               <th className="table-head">Cadastro</th>
             </tr>
@@ -155,6 +159,16 @@ export function LeadsTable({ rows }: { rows: LeadRow[] }) {
                   <td className="table-cell"><StageBadge stage={r.stage} /></td>
                   <td className="table-cell"><SiteBadge status={r.site_status} /></td>
                   <td className="table-cell"><PriorityBadge priority={r.priority} /></td>
+                  <td className="table-cell text-xs">
+                    {r.fit_score === null ? (
+                      <span className="text-muted">—</span>
+                    ) : (
+                      <>
+                        <div className="font-semibold">{r.fit_score}/100</div>
+                        {r.recommended_offer && <div className="text-muted">{OFFER_LABEL[r.recommended_offer] ?? r.recommended_offer}</div>}
+                      </>
+                    )}
+                  </td>
                   <td className="table-cell text-xs">
                     {r.next_follow_up_at ? (
                       <span className={new Date(r.next_follow_up_at) < new Date() ? "text-rose-300" : ""}>

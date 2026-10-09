@@ -1,6 +1,6 @@
 import { type NextRequest } from "next/server";
 import { toCsv } from "@/lib/import";
-import { ORIGIN_LABEL, PRIORITY_LABEL, SITE_LABEL, STAGE_LABEL, type Origin, type Priority, type SiteStatus, type Stage } from "@/lib/labels";
+import { ORIGIN_LABEL, PRIORITY_LABEL, SITE_LABEL, STAGE_LABEL, type Origin, type Priority, type SiteStatus, type Stage, OFFER_LABEL } from "@/lib/labels";
 import { applyLeadFilters, type LeadFilters } from "@/lib/leads-query";
 import { createClient } from "@/lib/supabase/server";
 import { fmtDateTime } from "@/lib/time";
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     "Nome comercial", "Responsável", "Cidade", "UF", "Bairro", "Unidade", "Telefone original", "Telefone normalizado",
     "Instagram", "Link WhatsApp", "Site", "Verificação de site", "Prioridade", "Origem", "Etapa", "Contatado",
     "Primeiro contato", "Último contato", "Próximo retorno", "Valor proposta", "Valor fechado", "Data fechamento",
-    "Motivo descarte/perda", "Motivo da seleção", "Pendências", "Cadastro",
+    "Motivo descarte/perda", "Motivo da seleção", "Pendências", "Potencial (0-100)", "Oferta sugerida", "Cadastro",
   ];
   const rows = all.map((l) => [
     l.business_name, l.responsible_name, l.city, l.state, l.neighborhood, l.unit_label, l.phone_raw, l.phone_e164,
@@ -33,7 +33,8 @@ export async function GET(request: NextRequest) {
     l.contacted ? (l.contact_date_unknown ? "Sim (sem data)" : "Sim") : "Não",
     l.first_contact_at ? fmtDateTime(l.first_contact_at) : "", l.last_contact_at ? fmtDateTime(l.last_contact_at) : "",
     l.next_follow_up_at ? fmtDateTime(l.next_follow_up_at) : "", l.proposal_value, l.closed_value,
-    l.closed_at ? fmtDateTime(l.closed_at) : "", l.loss_reason, l.selection_reason, l.pending_items, fmtDateTime(l.created_at),
+    l.closed_at ? fmtDateTime(l.closed_at) : "", l.loss_reason, l.selection_reason, l.pending_items, l.fit_score,
+    l.recommended_offer ? OFFER_LABEL[l.recommended_offer] ?? l.recommended_offer : "", fmtDateTime(l.created_at),
   ]);
   const stamp = new Date().toISOString().slice(0, 10);
   return new Response(toCsv(headers, rows), {

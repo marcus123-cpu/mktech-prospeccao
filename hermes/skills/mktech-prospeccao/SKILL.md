@@ -1,7 +1,7 @@
 ---
 name: mktech-prospeccao
 description: Pesquisa diária de clínicas e profissionais de estética sem site próprio no interior de SP e cadastro no CRM da MKTech (sem contatar ninguém).
-version: 1.0.0
+version: 1.1.0
 platforms: [windows, linux, macos]
 metadata:
   hermes:
@@ -61,26 +61,21 @@ andamento (pare), `4` limite atingido (pare de cadastrar e encerre),
    pare sem pesquisar.
 4. **Baixe o que já existe:** `identifiers`. Use a lista para não perder
    tempo com quem já está no CRM.
-5. **Pesquise** com a ferramenta de busca web, cidade por cidade, nos
-   nichos configurados. Exemplos de consulta: `clínica de estética
-   Votuporanga`, `esteticista Bauru instagram`, `harmonização facial
-   Marília`. Conte cada consulta; não passe de `max_searches`.
-6. **Para cada candidato,** confirme que:
-   - atua em estética na cidade (perfil ativo, posts ou avaliações
-     recentes);
-   - **não tem site próprio**. Linktree, página do Instagram, Google Meu
-     Negócio, `sites.google.com` e páginas de marketplace não contam como
-     site próprio. Se achar um domínio próprio funcionando, descarte.
-   - Se não deu para confirmar o site, use `site_status:
-     "verificacao_pendente"` e diga isso em `pending_items`.
-7. **Monte o JSON** do candidato (modelo em
+5. **Encontre candidatos** com a busca web, cidade por cidade, nos nichos
+   configurados. Exemplos: `clínica de estética Votuporanga`, `esteticista
+   Bauru instagram`, `harmonização facial Marília`, `limpeza de pele São José
+   do Rio Preto`. Conte cada busca e não passe de `max_searches`.
+6. **Pesquise cada candidato a fundo** (seção "Pesquisa do lead" abaixo) e
+   monte o diagnóstico. Qualidade vale mais que quantidade: é melhor
+   cadastrar 5 leads bem pesquisados do que 20 rasos.
+7. **Monte o JSON** do candidato (modelo completo em
    `references/candidato-exemplo.json`). Obrigatórios: `business_name`,
-   `city`, `selection_reason` e pelo menos uma evidência com `kind` e
-   `summary` (e `url` quando houver). Registre limitações em `limitation`.
-   Não envie etapa, contato, valores nem observações comerciais: o CRM
-   recusa esses campos.
+   `city`, `selection_reason`, pelo menos uma evidência com `kind` e
+   `summary` (e `url` quando houver), e o `diagnosis`. Registre limitações
+   em `limitation`. Não envie etapa, contato, valores nem observações
+   comerciais: o CRM recusa esses campos.
 8. **Consulte duplicados:** `check --file candidato.json`.
-   - `existente`: não cadastre; conte como descartado.
+   - `existente`: não cadastre de novo; conte como descartado.
    - `revisao`: pode cadastrar; o CRM manda para a fila de revisão.
    - `novo`: siga.
 9. **Cadastre:** `register --run <run_id> --file candidato.json`.
@@ -99,8 +94,78 @@ andamento (pare), `4` limite atingido (pare de cadastrar e encerre),
     `parcial` quando parou antes por limite de tempo ou erros, e `falhou`
     quando não foi possível pesquisar.
 
+## Pesquisa do lead
+
+Para cada candidato, use de 3 a 6 buscas e aberturas de página. Anote cada
+fonte como evidência (`instagram`, `google`, `diretorio`, `whatsapp`,
+`site`, `busca`).
+
+**A. Identidade.** Nome comercial, profissional responsável (se público),
+bairro, telefone, Instagram. Confirme em **pelo menos duas fontes**. Se
+endereço ou telefone divergirem entre fontes, use o que aparece na fonte
+mais recente ou oficial e escreva a divergência em `pending_items`.
+Diretório com categoria errada (ex.: "Restaurant") vale só como apoio.
+
+**B. Está ativa?** Data do último post ou avaliação, número de avaliações e
+nota no Google, número de seguidores. Sem sinal de atividade nos últimos
+6 meses: descarte.
+
+**C. O que vende.** Procedimentos principais (harmonização, botox, limpeza
+de pele, depilação a laser, drenagem...), se há procedimentos de ticket
+alto e se divulga preço ou promoções.
+
+**D. Como o cliente chega e agenda.** Bio do Instagram, Linktree, link de
+WhatsApp, app de agenda. Busque `<procedimento principal> <cidade>` e veja
+quem aparece primeiro. Se concorrentes têm página própria e ela não, isso
+é evidência.
+
+**E. Tem site próprio?** Busque `<nome> <cidade> site`. Linktree, Instagram,
+Google Meu Negócio, `sites.google.com` e marketplaces não contam. Se achar
+um domínio próprio funcionando, descarte (não é o público da MKTech). O
+`site_status` tem que bater com as evidências: só use
+`apenas_redes_sociais` se você viu a rede social; se não achou nada,
+`site_nao_localizado`.
+
+**F. Diagnóstico.** Preencha `diagnosis` assim:
+- `summary`: 2 ou 3 frases sobre quem é o negócio e o momento dele.
+- `audience`: para quem ela vende, se der para inferir.
+- `digital_presence`: os números e canais que você viu.
+- `pains`: de 1 a 5 dores, **cada uma com a evidência que a sustenta**.
+  Sem evidência, não é dor; não invente. Exemplos de sinal e dor:
+  - agenda só por DM ou WhatsApp: perde cliente fora do horário e gasta
+    tempo respondendo;
+  - concorrente aparece no Google e ela não: perde quem pesquisa pelo
+    procedimento;
+  - avaliações boas espalhadas em diretórios: credibilidade que não é
+    aproveitada;
+  - promoções só no Instagram: alcance limitado a quem já segue;
+  - perfil novo ou com poucas avaliações: precisa passar confiança.
+- `opportunities`: como a MKTech resolve cada dor, de forma concreta.
+- `offer` (uma só) e `offer_reason`:
+  - `site_com_agendamento`: muitos procedimentos e agenda manual pesada;
+  - `landing_por_procedimento`: 1 ou 2 procedimentos carro-chefe com
+    divulgação ativa (ex.: harmonização, botox);
+  - `landing_page`: profissional começando ou que precisa de uma página
+    simples de credibilidade e contato;
+  - `site_institucional`: clínica com equipe, estrutura e vários serviços;
+  - `nao_recomendado`: não é o perfil; nesse caso, normalmente descarte.
+- `approach`: o **ângulo** para o Marcos abrir a conversa (o que elogiar,
+  qual dor tocar, qual exemplo mostrar). Não é uma mensagem pronta e você
+  **não envia nada**.
+- `objections`: objeções prováveis ("já tenho Instagram", "preço", "não
+  tenho tempo").
+- `fit_score` (0 a 100), somando:
+  - atividade recente: até 25;
+  - demanda (avaliações, seguidores, frequência de posts): até 25;
+  - lacuna digital que a MKTech resolve: até 30;
+  - potencial de ticket dos procedimentos: até 20.
+- `confidence`: `alta` com 3 ou mais fontes que batem, `media` com 2,
+  `baixa` com 1 ou com divergências.
+- `priority` do candidato: `alta` se a nota for 70 ou mais, `media` de 40
+  a 69, `baixa` abaixo de 40.
+
 ## Resumo final
 
-Responda com: quantas buscas, quantos cadastrados, quantos descartados e
-por quê, erros, e o `run_id`. Nada de dados pessoais além do nome comercial
-e da cidade.
+Responda com: quantas buscas, quantos cadastrados (com nota e oferta de
+cada um), quantos descartados e por quê, erros, e o `run_id`. Nada de dados
+pessoais além do nome comercial e da cidade.

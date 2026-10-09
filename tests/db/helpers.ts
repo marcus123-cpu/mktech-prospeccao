@@ -16,7 +16,7 @@ export const OUTSIDER_ID = "00000000-0000-4000-8000-000000000002";
 export async function resetData() {
   await pool.query(`
     truncate public.leads, public.lead_evidences, public.contact_events, public.stage_events, public.lead_notes,
-      public.proposals, public.duplicate_reviews, public.dedupe_events, public.hermes_runs,
+      public.proposals, public.lead_diagnoses, public.duplicate_reviews, public.dedupe_events, public.hermes_runs,
       public.idempotency_keys, public.integration_tokens, public.app_admins, auth.users cascade;
     update public.prospecting_settings set daily_target = 20, max_run_minutes = 45, routine_enabled = false;
   `);

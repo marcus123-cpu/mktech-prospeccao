@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DiagnosisCard, type Diagnosis } from "@/components/leads/DiagnosisCard";
 import { notFound } from "next/navigation";
 import { ActionForm } from "@/components/ActionForm";
 import { LeadFields } from "@/components/leads/LeadForm";
@@ -35,13 +36,14 @@ export default async function LeadDetail({
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
   const { supabase } = await requireAdmin();
 
-  const [lead, contacts, stages, notes, proposals, evidences] = await Promise.all([
+  const [lead, contacts, stages, notes, proposals, evidences, diagnoses] = await Promise.all([
     supabase.from("leads").select("*").eq("id", id).maybeSingle(),
     supabase.from("contact_events").select("*").eq("lead_id", id).order("created_at", { ascending: false }),
     supabase.from("stage_events").select("*").eq("lead_id", id).order("changed_at", { ascending: false }),
     supabase.from("lead_notes").select("*").eq("lead_id", id).order("created_at", { ascending: false }),
     supabase.from("proposals").select("*").eq("lead_id", id).order("sent_at", { ascending: false }),
     supabase.from("lead_evidences").select("*").eq("lead_id", id).order("observed_at", { ascending: false }),
+    supabase.from("lead_diagnoses").select("*").eq("lead_id", id).order("created_at", { ascending: false }).limit(20),
   ]);
   if (!lead.data) notFound();
   const l = lead.data;
@@ -169,6 +171,7 @@ export default async function LeadDetail({
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_400px]">
         <section className="space-y-6">
+          <DiagnosisCard d={(diagnoses.data?.[0] as Diagnosis | undefined) ?? null} olderCount={Math.max((diagnoses.data?.length ?? 0) - 1, 0)} />
           <div className="card grid gap-4 p-4 text-sm sm:grid-cols-2">
             <Info label="Telefone original" value={l.phone_raw} />
             <Info label="Telefone normalizado" value={l.phone_e164 ?? (l.phone_raw ? "não reconhecido" : null)} />

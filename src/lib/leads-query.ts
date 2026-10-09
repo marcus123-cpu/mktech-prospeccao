@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { ORIGINS, PRIORITIES, SITE_STATUSES, STAGES } from "@/lib/labels";
+import { OFFERS, ORIGINS, PRIORITIES, SITE_STATUSES, STAGES } from "@/lib/labels";
 
 export type LeadFilters = {
   q?: string;
@@ -9,6 +9,7 @@ export type LeadFilters = {
   origem?: string;
   site?: string;
   nao_contatados?: string;
+  oferta?: string;
   de?: string;
   ate?: string;
   ordem?: string;
@@ -36,18 +37,20 @@ export function applyLeadFilters<Q extends { [k: string]: any }>(query: Q, f: Le
   if (f.origem && (ORIGINS as readonly string[]).includes(f.origem)) q = q.eq("origin", f.origem);
   if (f.site && (SITE_STATUSES as readonly string[]).includes(f.site)) q = q.eq("site_status", f.site);
   if (f.nao_contatados === "1") q = q.eq("contacted", false);
+  if (f.oferta && OFFERS.includes(f.oferta)) q = q.eq("recommended_offer", f.oferta);
   // Datas de cadastro interpretadas no fuso de São Paulo (UTC-3).
   if (isDate(f.de)) q = q.gte("created_at", `${f.de}T00:00:00-03:00`);
   if (isDate(f.ate)) q = q.lte("created_at", `${f.ate}T23:59:59.999-03:00`);
 
   if (f.ordem === "prioridade") q = q.order("priority", { ascending: true }).order("created_at", { ascending: false });
+  else if (f.ordem === "potencial") q = q.order("fit_score", { ascending: false, nullsFirst: false }).order("created_at", { ascending: false });
   else if (f.ordem === "retorno") q = q.order("next_follow_up_at", { ascending: true, nullsFirst: false });
   else q = q.order("created_at", { ascending: false });
   return q as Q;
 }
 
 export const LEAD_LIST_COLUMNS =
-  "id, business_name, responsible_name, city, state, neighborhood, unit_label, phone_raw, phone_e164, instagram_handle, whatsapp_url, website_url, site_status, priority, origin, stage, contacted, contact_date_unknown, last_contact_at, next_follow_up_at, created_at";
+  "id, business_name, responsible_name, city, state, neighborhood, unit_label, phone_raw, phone_e164, instagram_handle, whatsapp_url, website_url, site_status, priority, origin, stage, contacted, contact_date_unknown, last_contact_at, next_follow_up_at, created_at, fit_score, recommended_offer";
 
 export async function listCities(supabase: SupabaseClient): Promise<string[]> {
   const { data } = await supabase.from("leads").select("city").limit(5000);

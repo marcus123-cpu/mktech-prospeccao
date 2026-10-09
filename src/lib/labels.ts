@@ -90,3 +90,18 @@ export const EVIDENCE_LABEL: Record<string, string> = {
   busca: "Busca",
   outro: "Outro",
 };
+
+export const OFFER_LABEL: Record<string, string> = {
+  landing_page: "Landing page",
+  landing_por_procedimento: "Landing por procedimento",
+  site_institucional: "Site institucional",
+  site_com_agendamento: "Site com agendamento",
+  nao_recomendado: "Não recomendado",
+};
+export const OFFERS = Object.keys(OFFER_LABEL);
+
+export const CONFIDENCE_LABEL: Record<string, string> = {
+  baixa: "Confiança baixa",
+  media: "Confiança média",
+  alta: "Confiança alta",
+};

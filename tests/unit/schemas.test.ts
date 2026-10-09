@@ -35,3 +35,22 @@ describe("contrato da API do Hermes", () => {
     expect(finishRunSchema.safeParse({ ...base, end_reason: "sem provedor de busca" }).success).toBe(true);
   });
 });
+
+describe("diagnóstico no contrato", () => {
+  it("o exemplo da skill traz um diagnóstico válido", () => {
+    expect(example.diagnosis).toBeDefined();
+    expect(candidateSchema.safeParse(example).success).toBe(true);
+  });
+
+  it("recusa oferta desconhecida, nota fora de 0-100 e dor sem evidência", () => {
+    const d = example.diagnosis;
+    expect(candidateSchema.safeParse({ ...example, diagnosis: { ...d, offer: "trafego_pago" } }).success).toBe(false);
+    expect(candidateSchema.safeParse({ ...example, diagnosis: { ...d, fit_score: 120 } }).success).toBe(false);
+    expect(candidateSchema.safeParse({ ...example, diagnosis: { ...d, pains: [{ pain: "x" }] } }).success).toBe(false);
+  });
+
+  it("diagnóstico não aceita campos de mensagem ou contato", () => {
+    const d = example.diagnosis;
+    expect(candidateSchema.safeParse({ ...example, diagnosis: { ...d, message_to_send: "Oi!" } }).success).toBe(false);
+  });
+});

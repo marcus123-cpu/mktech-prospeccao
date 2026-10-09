@@ -2,7 +2,7 @@ import Link from "next/link";
 import { LeadsTable, type LeadRow } from "@/components/leads/LeadsTable";
 import { Empty, ErrorBox, PageHeader } from "@/components/ui";
 import { dbErrorMessage, requireAdmin } from "@/lib/auth";
-import { ORIGIN_LABEL, ORIGINS, PRIORITIES, PRIORITY_LABEL, SITE_LABEL, SITE_STATUSES, STAGE_LABEL, STAGES } from "@/lib/labels";
+import { OFFER_LABEL, OFFERS, ORIGIN_LABEL, ORIGINS, PRIORITIES, PRIORITY_LABEL, SITE_LABEL, SITE_STATUSES, STAGE_LABEL, STAGES } from "@/lib/labels";
 import { LEAD_LIST_COLUMNS, PAGE_SIZE, applyLeadFilters, listCities, type LeadFilters } from "@/lib/leads-query";
 
 export const metadata = { title: "Leads" };
@@ -90,7 +90,16 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
             ))}
           </select>
         </div>
-        <div className="sm:col-span-2">
+        <div>
+          <label className="label" htmlFor="oferta">Oferta sugerida</label>
+          <select className="input" id="oferta" name="oferta" defaultValue={f.oferta ?? ""}>
+            <option value="">Todas</option>
+            {OFFERS.map((o) => (
+              <option key={o} value={o}>{OFFER_LABEL[o]}</option>
+            ))}
+          </select>
+        </div>
+        <div>
           <label className="label" htmlFor="site">Verificação de site</label>
           <select className="input" id="site" name="site" defaultValue={f.site ?? ""}>
             <option value="">Todas</option>
@@ -111,6 +120,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
           <label className="label" htmlFor="ordem">Ordenar por</label>
           <select className="input" id="ordem" name="ordem" defaultValue={f.ordem ?? "cadastro"}>
             <option value="cadastro">Cadastro mais recente</option>
+            <option value="potencial">Maior potencial</option>
             <option value="prioridade">Prioridade</option>
             <option value="retorno">Próximo retorno</option>
           </select>

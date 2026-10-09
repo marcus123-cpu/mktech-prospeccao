@@ -18,6 +18,33 @@ export const evidenceSchema = z
   })
   .strict();
 
+export const OFFERS = [
+  "landing_page",
+  "landing_por_procedimento",
+  "site_institucional",
+  "site_com_agendamento",
+  "nao_recomendado",
+] as const;
+
+// Diagnóstico comercial: material para o Marcos decidir e abordar.
+export const diagnosisSchema = z
+  .object({
+    fit_score: z.number().int().min(0).max(100),
+    confidence: z.enum(["baixa", "media", "alta"]),
+    summary: text(2000).min(1),
+    audience: optText(1000),
+    digital_presence: optText(2000),
+    pains: z
+      .array(z.object({ pain: text(300).min(1), evidence: text(500).min(1) }).strict())
+      .max(8),
+    opportunities: z.array(text(300).min(1)).max(8).optional(),
+    offer: z.enum(OFFERS),
+    offer_reason: text(2000).min(1),
+    approach: optText(2000),
+    objections: z.array(text(300).min(1)).max(6).optional(),
+  })
+  .strict();
+
 // Campos que o Hermes pode enviar. Etapa, contatos, valores e observações
 // manuais NÃO fazem parte do contrato: chaves desconhecidas são recusadas.
 export const candidateSchema = z
@@ -44,6 +71,7 @@ export const candidateSchema = z
       .enum(["site_proprio_encontrado", "site_nao_localizado", "apenas_redes_sociais", "verificacao_pendente"])
       .optional(),
     evidences: z.array(evidenceSchema).min(1).max(20),
+    diagnosis: diagnosisSchema.optional(),
   })
   .strict();
 
