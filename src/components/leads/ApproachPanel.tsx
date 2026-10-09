@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { markMessageUsed, requestApproach, saveMessageVersion } from "@/app/(painel)/leads/actions";
 import {
   MAX_CHARS,
@@ -50,6 +51,18 @@ export function ApproachPanel({
   requestedAt: string | null;
 }) {
   const [pending, start] = useTransition();
+  const router = useRouter();
+  // Enquanto há pedido aberto, recarrega os dados a cada 10 s (até 15 min) para
+  // as mensagens aparecerem sem precisar apertar F5.
+  useEffect(() => {
+    if (!requestedAt) return;
+    const until = new Date(requestedAt).getTime() + 15 * 60_000;
+    const t = setInterval(() => {
+      if (Date.now() > until) return clearInterval(t);
+      router.refresh();
+    }, 10_000);
+    return () => clearInterval(t);
+  }, [requestedAt, router]);
   const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const caution = needsCaution(ctx);
@@ -70,7 +83,12 @@ export function ApproachPanel({
       setError(null);
       const r = await requestApproach(leadId);
       if (r.error) setError(r.error);
-      else setNotice("Pedido registrado. Com o PC ligado, o Hermes escreve em até uns 15 minutos; recarregue a página depois.");
+      else
+        setNotice(
+          r.started
+            ? "O Hermes já começou a escrever. As mensagens aparecem aqui sozinhas em 1 a 3 minutos."
+            : "Pedido registrado. Com o PC ligado, o Hermes escreve em até 15 minutos.",
+        );
     });
 
   return (

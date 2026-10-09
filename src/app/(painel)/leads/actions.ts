@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { dbErrorMessage, requireAdmin } from "@/lib/auth";
 import { CHANNELS, PRIORITIES, SITE_STATUSES, STAGES } from "@/lib/labels";
+import { startApproachNow } from "@/lib/hermes/local";
 import { spLocalToIso } from "@/lib/time";
 
 export type ActionState = { error?: string; ok?: string };
@@ -292,7 +293,7 @@ export async function deleteLead(_: ActionState, form: FormData): Promise<Action
 
 // ---- Abordagem (rascunhos de mensagem; nada é enviado pelo sistema) ----
 
-export type MessageResult = { error?: string; id?: string };
+export type MessageResult = { error?: string; id?: string; started?: boolean };
 
 /** Salva o texto editado como versão nova; a versão anterior continua no histórico. */
 export async function saveMessageVersion(messageId: string, body: string): Promise<MessageResult> {
@@ -324,6 +325,7 @@ export async function requestApproach(leadId: string): Promise<MessageResult> {
   if (!id.success) return { error: "Lead inválido." };
   const { error } = await supabase.rpc("admin_request_approach", { p_lead: id.data });
   if (error) return { error: dbErrorMessage(error) };
+  const started = startApproachNow();
   refresh(id.data);
-  return { id: id.data };
+  return { id: id.data, started };
 }

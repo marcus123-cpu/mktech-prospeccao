@@ -8,6 +8,7 @@ vi.mock("@/app/(painel)/leads/actions", () => ({
   markMessageUsed: vi.fn(),
   requestApproach: vi.fn(),
 }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }) }));
 const { ApproachPanel } = await import("@/components/leads/ApproachPanel");
 
 const base = { lead_id: "l", batch_id: "b1", parent_id: null, pain_used: "Agendamento por telefone", evidence_used: "Post de 03/10/2026", risk: "baixo", alert: null };
