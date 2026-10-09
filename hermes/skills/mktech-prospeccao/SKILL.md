@@ -73,7 +73,9 @@ andamento (pare), `4` limite atingido (pare de cadastrar e encerre),
    `city`, `selection_reason`, pelo menos uma evidência com `kind` e
    `summary` (e `url` quando houver), e o `diagnosis`. Registre limitações
    em `limitation`. Não envie etapa, contato, valores nem observações
-   comerciais: o CRM recusa esses campos.
+   comerciais: o CRM recusa esses campos. `evidences[].kind` aceita somente `site`,
+   `instagram`, `google`, `whatsapp`, `diretorio`, `busca` ou `outro`;
+   notícias e Threads entram como `outro`.
 8. **Consulte duplicados:** `check --file candidato.json`.
    - `existente`: não cadastre de novo; conte como descartado.
    - `revisao`: pode cadastrar; o CRM manda para a fila de revisão.
