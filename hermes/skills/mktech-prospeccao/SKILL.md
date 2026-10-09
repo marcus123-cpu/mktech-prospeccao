@@ -1,7 +1,7 @@
 ---
 name: mktech-prospeccao
 description: Pesquisa diária de clínicas e profissionais de estética sem site próprio no interior de SP e cadastro no CRM da MKTech (sem contatar ninguém).
-version: 1.1.0
+version: 1.2.0
 platforms: [windows, linux, macos]
 metadata:
   hermes:
@@ -84,7 +84,9 @@ andamento (pare), `4` limite atingido (pare de cadastrar e encerre),
    (pare).
 10. **Pare** quando atingir `daily_target` cadastros, `max_searches`
     buscas, `max_run_minutes` minutos ou receber código 4.
-11. **Encerre a execução sempre**, mesmo em erro:
+11. **Escreva os rascunhos de abordagem** (seção "Abordagem" abaixo) para
+    os leads pendentes, antes de encerrar (inclusive quando parou por limite).
+12. **Encerre a execução sempre**, mesmo em erro:
     ```
     finish --run <run_id> --status concluida|parcial|falhou \
       --searched N --approved N --discarded N --errors N \
@@ -164,8 +166,72 @@ um domínio próprio funcionando, descarte (não é o público da MKTech). O
 - `priority` do candidato: `alta` se a nota for 70 ou mais, `media` de 40
   a 69, `baixa` abaixo de 40.
 
+## Abordagem (rascunhos para o Marcos)
+
+Você escreve rascunhos de primeira mensagem para o Marcos revisar e enviar
+**ele mesmo**. Você nunca envia, nunca abre conversa e nunca fala com o lead.
+
+1. `approach-pending --limit 10` devolve os leads que precisam de
+   mensagens (pedidos feitos no painel primeiro), cada um com `lead_id`,
+   dados, `diagnosis`, `evidences` e `notes` (observações do Marcos; valem
+   como fato e corrigem a pesquisa).
+2. Para cada lead, monte um JSON e grave com
+   `approach-save --lead <lead_id> --file abordagem.json`.
+3. Se a resposta for `invalido` (código 2), leia `errors`, reescreva só o
+   que foi apontado e tente de novo (no máximo 3 vezes por lead). Depois
+   disso, pule o lead.
+4. Se a execução for só de abordagem (o pedido diz "só abordagem"), não
+   abra `start-run` nem `finish`: faça apenas os passos 1 a 3.
+
+Formato do JSON:
+
+```json
+{
+  "alerta": null,
+  "variantes": [
+    {"estilo": "direta", "mensagem": "...", "dor_usada": "...", "evidencia_usada": "...", "risco": "baixo"},
+    {"estilo": "pulga", "mensagem": "...", "dor_usada": "...", "evidencia_usada": "...", "risco": "baixo"},
+    {"estilo": "consultiva", "mensagem": "...", "dor_usada": "...", "evidencia_usada": "...", "risco": "baixo"}
+  ]
+}
+```
+
+Estilos:
+- `direta`: diz quem é o Marcos (MKTech) e o que viu, sem rodeio.
+- `pulga`: uma observação concreta que faz a pessoa pensar no problema,
+  sem vender.
+- `consultiva`: abre conversa perguntando como a pessoa trabalha hoje.
+
+Regras (a API confere e recusa o que estiver fora):
+- Use **só** fatos que estão em `evidences`, `diagnosis`, `notes` e nos
+  dados do lead. Nunca invente procedimento, preço, cidade, número, nota,
+  avaliação, concorrente ou problema.
+- Se `verificacao_pendente` for `true` ou `confidence` for `baixa`, nunca
+  afirme "não tem site", "não tem agendamento" ou "perde clientes". Use
+  forma condicional ("se ainda não tiver...", "caso...").
+- Não afirme cidade ou endereço que esteja em `pending_items`. Se houver
+  um site em `website_url` ou em `notes`, parta dele.
+- `direta` e `pulga` citam um elemento observado (post com data, link da
+  bio, serviço listado) e preenchem `evidencia_usada` com a evidência
+  real de onde ele veio. Fato antigo leva ressalva ("vi uma matéria de
+  2025...").
+- Português do Brasil, trate por "você" e use o primeiro nome de
+  `responsible_name` quando houver.
+- **Exatamente uma** pergunta ou convite leve, no final. "Tudo bem?" também
+  conta como pergunta.
+- Sem pressão ("última chance", "não perca", "vagas limitadas"), sem
+  elogio genérico ("seu trabalho é incrível") e sem mencionar IA, robô,
+  sistema, automação, Hermes ou CRM.
+- Até 500 caracteres por mensagem. As três não podem repetir frases.
+- `risco`: `baixo`, `medio` ou `alto` (chance de soar invasivo ou
+  impreciso). Se ficar `alto`, reescreva de forma condicional até baixar.
+- Evidência fraca (sem dores no diagnóstico ou sem evidências): envie
+  `"alerta": "Poucas evidências. Recomendo confirmar antes de abordar."`
+  e **uma só** variante, `consultiva`.
+
 ## Resumo final
 
 Responda com: quantas buscas, quantos cadastrados (com nota e oferta de
-cada um), quantos descartados e por quê, erros, e o `run_id`. Nada de dados
+cada um), quantos descartados e por quê, para quantos leads gravou
+rascunhos de abordagem, erros, e o `run_id`. Nada de dados
 pessoais além do nome comercial e da cidade.

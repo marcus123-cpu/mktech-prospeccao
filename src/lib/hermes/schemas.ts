@@ -120,3 +120,27 @@ export const finishRunSchema = z
 export function compact<T extends Record<string, unknown>>(obj: T): Partial<T> {
   return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== null && v !== undefined)) as Partial<T>;
 }
+
+// Rascunhos de abordagem (o Hermes escreve, o Marcos revisa e envia).
+export const approachSchema = z
+  .object({
+    alerta: optText(500),
+    variantes: z
+      .array(
+        z
+          .object({
+            estilo: z.enum(["direta", "pulga", "consultiva"]),
+            mensagem: z.string().trim().min(1).max(500),
+            dor_usada: optText(500),
+            evidencia_usada: optText(1000),
+            risco: z.preprocess(
+              (v) => (typeof v === "string" ? v.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase() : v),
+              z.enum(["baixo", "medio", "alto"]),
+            ),
+          })
+          .strict(),
+      )
+      .min(1)
+      .max(3),
+  })
+  .strict();

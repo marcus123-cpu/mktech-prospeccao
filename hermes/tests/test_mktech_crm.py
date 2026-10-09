@@ -112,6 +112,27 @@ class ClientTest(unittest.TestCase):
         self.assertEqual(k1, k2)
         self.assertTrue(k1.startswith("hermes-"))
 
+    def test_approach_pending_count(self):
+        FakeApi.responses["GET /api/hermes/v1/approach/pending?limit=20"] = [(200, {"status": "ok", "leads": [{"lead_id": "a"}, {"lead_id": "b"}]}, {})]
+        code, out, _ = self.run_cli("approach-pending", "--limit", "50", "--count")
+        self.assertEqual(code, 0)
+        self.assertEqual(out["pending"], 2)
+
+    def test_approach_save_posts_and_reports_rejection(self):
+        lead = "11111111-2222-4333-8444-555555555555"
+        path = Path(self.tmp.name) / "a.json"
+        path.write_text(json.dumps({"alerta": None, "variantes": [{"estilo": "consultiva", "mensagem": "Olá, Ana! Como você agenda hoje?", "risco": "baixo"}]}), encoding="utf-8")
+        FakeApi.responses[f"POST /api/hermes/v1/approach/{lead}"] = [(422, {"status": "invalido", "errors": ["Envie exatamente 3 variantes"]}, {})]
+        code, out, _ = self.run_cli("approach-save", "--lead", lead, "--file", str(path))
+        self.assertEqual(code, mktech_crm.EXIT_INVALID)
+        self.assertEqual(out["errors"], ["Envie exatamente 3 variantes"])
+        self.assertEqual(FakeApi.calls[0]["body"]["variantes"][0]["mensagem"], "Olá, Ana! Como você agenda hoje?")
+
+    def test_approach_save_rejects_bad_lead_id(self):
+        code, _, _ = self.run_cli("approach-save", "--lead", "../runs", "--file", self.candidate_file())
+        self.assertEqual(code, mktech_crm.EXIT_INVALID)
+        self.assertEqual(FakeApi.calls, [])
+
     def test_retries_on_503_then_succeeds(self):
         FakeApi.responses["POST /api/hermes/v1/candidates"] = [
             (503, {"status": "falha_temporaria"}, {"Retry-After": "1"}),
