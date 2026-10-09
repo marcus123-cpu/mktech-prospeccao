@@ -1,0 +1,37 @@
+{
+  "business_name": "Nome Comercial da Clínica",
+  "responsible_name": "Nome do profissional, se público",
+  "niche": "Estética facial",
+  "services": ["limpeza de pele", "harmonização facial"],
+  "city": "Votuporanga",
+  "state": "SP",
+  "neighborhood": "Centro",
+  "unit_label": null,
+  "phone": "(17) 99999-0000",
+  "instagram": "@perfil_da_clinica",
+  "whatsapp_url": null,
+  "website_url": null,
+  "source_name": "busca_web",
+  "source_place_id": null,
+  "research_date": "2026-10-09",
+  "selection_reason": "Perfil ativo no Instagram com agenda pelo WhatsApp e nenhum site próprio encontrado.",
+  "pending_items": null,
+  "priority": "media",
+  "site_status": "apenas_redes_sociais",
+  "evidences": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/perfil_da_clinica/",
+      "summary": "Bio com Linktree e WhatsApp; último post há 3 dias.",
+      "observed_at": "2026-10-09",
+      "limitation": null
+    },
+    {
+      "kind": "busca",
+      "url": null,
+      "summary": "Busca por \"Nome Comercial da Clínica Votuporanga site\" não achou domínio próprio.",
+      "observed_at": "2026-10-09",
+      "limitation": "Só a primeira página de resultados foi verificada."
+    }
+  ]
+}
