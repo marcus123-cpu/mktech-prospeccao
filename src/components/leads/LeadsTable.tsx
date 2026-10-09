@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { bulkUpdate } from "@/app/(painel)/leads/actions";
 import { ActionForm } from "@/components/ActionForm";
@@ -39,6 +40,7 @@ export type LeadRow = {
 const BULK_STAGES = STAGES.filter((s) => !["fechado", "sem_interesse", "desqualificado"].includes(s));
 
 export function LeadsTable({ rows }: { rows: LeadRow[] }) {
+  const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [action, setAction] = useState("stage");
   const all = rows.length > 0 && selected.size === rows.length;
@@ -112,7 +114,16 @@ export function LeadsTable({ rows }: { rows: LeadRow[] }) {
               const wa = whatsappLink(r);
               const site = r.site_status === "site_proprio_encontrado" ? safeExternal(r.website_url) : null;
               return (
-                <tr key={r.id} className="hover:bg-panel-2/60">
+                <tr
+                  key={r.id}
+                  className="cursor-pointer hover:bg-panel-2/60"
+                  onClick={(e) => {
+                    // A linha inteira abre a ficha; links, botões e a caixa de seleção mantêm a própria ação.
+                    if ((e.target as HTMLElement).closest("a, button, input, label, select")) return;
+                    if (window.getSelection()?.toString()) return;
+                    router.push(`/leads/${r.id}`);
+                  }}
+                >
                   <td className="table-cell">
                     <input
                       type="checkbox"
