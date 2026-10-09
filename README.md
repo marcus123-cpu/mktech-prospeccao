@@ -40,6 +40,21 @@ do projeto `mktech-prospeccao`:
 
 O `.env.local` está no `.gitignore`. Não cole essas chaves em chat, print ou commit.
 
+### Jeito fácil: Docker (fica ligado sozinho)
+
+1. Instale o [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+   e, nas configurações dele, marque *Start Docker Desktop when you sign in*.
+2. Dê dois cliques em **`iniciar-painel.bat`** na pasta do projeto. Na
+   primeira vez ele demora alguns minutos para montar; depois abre
+   http://localhost:3000 sozinho.
+
+O painel continua ligado mesmo fechando a janela, e volta sozinho quando o
+PC reinicia (desde que o Docker Desktop abra com o Windows). Para desligar,
+rode **`parar-painel.bat`**. Rodar `iniciar-painel.bat` de novo também
+baixa e aplica as atualizações do GitHub.
+
+### Sem Docker
+
 ```powershell
 npm run build
 npm run start      # painel em http://localhost:3000
@@ -182,10 +197,11 @@ recusada depois do tempo máximo, e repetição de chamada não duplica lead.
 
 - **Banco:** Supabase, plano gratuito. Projetos gratuitos pausam depois de
   uma semana sem uso; reative no painel do Supabase se acontecer.
-- **Painel:** no seu PC (`npm run start`). O Hermes, no mesmo PC, usa
-  `http://localhost:3000`. Se quiser acessar de fora, dá para publicar na
-  Vercel (plano Hobby) com as mesmas variáveis; aí use o endereço publicado
-  no `.env` da skill e nas URLs do Supabase.
+- **Painel:** no seu PC, pelo Docker (`iniciar-painel.bat`) ou
+  `npm run start`. O Hermes, no mesmo PC, usa `http://localhost:3000`. O
+  Docker só aceita acesso deste computador. Para abrir do celular seria
+  preciso publicar (ex.: Vercel); o plano gratuito Hobby da Vercel é para uso
+  não comercial, então confira os termos antes.
 - **Hermes:** no seu PC. A rotina só roda com o PC ligado e o gateway ativo.
 
 ## 6. Backup e restauração

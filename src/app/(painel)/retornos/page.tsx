@@ -38,7 +38,7 @@ export default async function FollowUps() {
 
   return (
     <>
-      <PageHeader title="Retornos" subtitle="Leads com retorno agendado, no horário de São Paulo." />
+      <PageHeader title="Retornos" subtitle="Quem você combinou de chamar de novo. Os atrasados aparecem primeiro." />
       {error ? (
         <ErrorBox message={dbErrorMessage(error)} />
       ) : rows.length === 0 ? (

@@ -9,6 +9,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Gera um servidor enxuto para rodar no Docker (Dockerfile).
+  output: "standalone",
   serverExternalPackages: ["exceljs"],
   experimental: { serverActions: { bodySizeLimit: "10mb" } },
   async headers() {

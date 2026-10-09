@@ -4,11 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const ITEMS = [
-  { href: "/", label: "Dashboard" },
-  { href: "/leads", label: "Leads" },
-  { href: "/retornos", label: "Retornos" },
-  { href: "/execucoes", label: "Execuções do Hermes" },
-  { href: "/configuracoes", label: "Configurações" },
+  { href: "/", label: "Hoje", hint: "o que fazer agora" },
+  { href: "/leads", label: "Leads", hint: "todos os contatos" },
+  { href: "/retornos", label: "Retornos", hint: "quem chamar de novo" },
+  { href: "/execucoes", label: "Pesquisas do Hermes", hint: "o que o robô fez" },
+  { href: "/configuracoes", label: "Configurações", hint: "metas, cidades, token" },
 ];
 
 export function Nav({ pendingReviews }: { pendingReviews: number }) {
@@ -26,8 +26,11 @@ export function Nav({ pendingReviews }: { pendingReviews: number }) {
         >
           {item.label}
           {item.href === "/leads" && pendingReviews > 0 && (
-            <span className="ml-2 rounded-full bg-amber-500/20 px-1.5 text-xs text-amber-300">{pendingReviews}</span>
+            <span className="ml-2 rounded-full bg-amber-500/20 px-1.5 text-xs text-amber-300" title="possíveis duplicados para revisar">
+              {pendingReviews}
+            </span>
           )}
+          <span className="hidden text-xs font-normal text-muted md:block">{item.hint}</span>
         </Link>
       ))}
     </nav>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { DiagnosisCard, type Diagnosis } from "@/components/leads/DiagnosisCard";
+import { NextStep } from "@/components/leads/NextStep";
 import { notFound } from "next/navigation";
 import { ActionForm } from "@/components/ActionForm";
 import { LeadFields } from "@/components/leads/LeadForm";
@@ -171,6 +172,7 @@ export default async function LeadDetail({
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_400px]">
         <section className="space-y-6">
+          <NextStep stage={l.stage as Stage} />
           <DiagnosisCard d={(diagnoses.data?.[0] as Diagnosis | undefined) ?? null} olderCount={Math.max((diagnoses.data?.length ?? 0) - 1, 0)} />
           <div className="card grid gap-4 p-4 text-sm sm:grid-cols-2">
             <Info label="Telefone original" value={l.phone_raw} />

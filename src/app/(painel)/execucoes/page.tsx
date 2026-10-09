@@ -16,8 +16,8 @@ export default async function RunsPage() {
   return (
     <>
       <PageHeader
-        title="Execuções do Hermes"
-        subtitle="Cada pesquisa registrada pelo Hermes. O painel só mostra o que o Hermes informou; ele não fica ligado por estar aqui."
+        title="Pesquisas do Hermes"
+        subtitle="Cada vez que o Hermes pesquisou: quantas buscas fez, quantos leads cadastrou e por que parou."
       />
       {error ? (
         <ErrorBox message={dbErrorMessage(error)} />
