@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { dbErrorMessage, requireAdmin } from "@/lib/auth";
 import { CHANNELS, PRIORITIES, SITE_STATUSES, STAGES } from "@/lib/labels";
-import { startApproachNow } from "@/lib/hermes/local";
 import { spLocalToIso } from "@/lib/time";
 
 export type ActionState = { error?: string; ok?: string };
@@ -289,43 +288,4 @@ export async function deleteLead(_: ActionState, form: FormData): Promise<Action
   if (error) return { error: dbErrorMessage(error) };
   refresh();
   redirect("/leads?excluido=1");
-}
-
-// ---- Abordagem (rascunhos de mensagem; nada é enviado pelo sistema) ----
-
-export type MessageResult = { error?: string; id?: string; started?: boolean };
-
-/** Salva o texto editado como versão nova; a versão anterior continua no histórico. */
-export async function saveMessageVersion(messageId: string, body: string): Promise<MessageResult> {
-  const { supabase } = await requireAdmin();
-  const id = uuid.safeParse(messageId);
-  const text = String(body ?? "").trim();
-  if (!id.success) return { error: "Mensagem inválida." };
-  if (!text || text.length > 500) return { error: "A mensagem precisa ter entre 1 e 500 caracteres." };
-  const { data, error } = await supabase.rpc("admin_save_message_version", { p_parent: id.data, p_body: text });
-  if (error) return { error: dbErrorMessage(error) };
-  return { id: data as string };
-}
-
-/** "Usei esta": salva o texto atual (se mudou) e registra o uso. Não muda a etapa. */
-export async function markMessageUsed(leadId: string, messageId: string, body: string): Promise<MessageResult> {
-  const saved = await saveMessageVersion(messageId, body);
-  if (saved.error || !saved.id) return saved;
-  const { supabase } = await requireAdmin();
-  const { error } = await supabase.rpc("admin_mark_message_used", { p_message: saved.id });
-  if (error) return { error: dbErrorMessage(error) };
-  refresh(uuid.safeParse(leadId).success ? leadId : undefined);
-  return { id: saved.id };
-}
-
-/** Pede ao Hermes novas variantes na próxima execução. */
-export async function requestApproach(leadId: string): Promise<MessageResult> {
-  const { supabase } = await requireAdmin();
-  const id = uuid.safeParse(leadId);
-  if (!id.success) return { error: "Lead inválido." };
-  const { error } = await supabase.rpc("admin_request_approach", { p_lead: id.data });
-  if (error) return { error: dbErrorMessage(error) };
-  const started = startApproachNow();
-  refresh(id.data);
-  return { id: id.data, started };
 }

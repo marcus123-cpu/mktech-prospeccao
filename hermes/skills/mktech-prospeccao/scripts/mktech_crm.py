@@ -29,7 +29,6 @@ import hashlib
 import json
 import os
 import random
-import re
 import sys
 import time
 import unicodedata
@@ -230,22 +229,6 @@ def cmd_finish(args: argparse.Namespace) -> int:
     return emit(*request("POST", f"/api/hermes/v1/runs/{args.run}/finish", body))
 
 
-def cmd_approach_pending(args: argparse.Namespace) -> int:
-    limit = max(1, min(int(args.limit), 20))
-    status, payload = request("GET", f"/api/hermes/v1/approach/pending?limit={limit}")
-    if args.count and status == 200:
-        print(json.dumps({"http": status, "status": "ok", "pending": len(payload.get("leads") or [])}))
-        return EXIT_OK
-    return emit(status, payload)
-
-
-def cmd_approach_save(args: argparse.Namespace) -> int:
-    if not re.fullmatch(r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}", args.lead or ""):
-        return fail(EXIT_INVALID, "lead_id inválido")
-    body = read_json(args.file)
-    return emit(*request("POST", f"/api/hermes/v1/approach/{args.lead}", body))
-
-
 def main(argv: list[str] | None = None) -> int:
     load_env()
     p = argparse.ArgumentParser(description="Cliente da API do CRM MKTech para o Hermes")
@@ -273,14 +256,6 @@ def main(argv: list[str] | None = None) -> int:
     f.add_argument("--error-detail", action="append")
     f.add_argument("--notes")
     f.set_defaults(fn=cmd_finish)
-    ap = sub.add_parser("approach-pending", help="leads que precisam de rascunhos de abordagem")
-    ap.add_argument("--limit", type=int, default=5)
-    ap.add_argument("--count", action="store_true", help="só mostra quantos estão pendentes")
-    ap.set_defaults(fn=cmd_approach_pending)
-    asv = sub.add_parser("approach-save", help="grava as variantes de mensagem de um lead")
-    asv.add_argument("--lead", required=True)
-    asv.add_argument("--file", required=True, help="JSON com alerta e variantes, ou - para stdin")
-    asv.set_defaults(fn=cmd_approach_save)
     args = p.parse_args(argv)
     try:
         return args.fn(args)

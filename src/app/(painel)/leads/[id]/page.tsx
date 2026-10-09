@@ -1,9 +1,6 @@
 import Link from "next/link";
 import { DiagnosisCard, type Diagnosis } from "@/components/leads/DiagnosisCard";
 import { NextStep } from "@/components/leads/NextStep";
-import { ApproachPanel, type LeadMessage, type MessageUse } from "@/components/leads/ApproachPanel";
-import { LeadTabs } from "@/components/leads/LeadTabs";
-import { needsCaution, type ApproachContext } from "@/lib/approach";
 import { notFound } from "next/navigation";
 import { ActionForm } from "@/components/ActionForm";
 import { LeadFields } from "@/components/leads/LeadForm";
@@ -40,7 +37,7 @@ export default async function LeadDetail({
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
   const { supabase } = await requireAdmin();
 
-  const [lead, contacts, stages, notes, proposals, evidences, diagnoses, messages, uses] = await Promise.all([
+  const [lead, contacts, stages, notes, proposals, evidences, diagnoses] = await Promise.all([
     supabase.from("leads").select("*").eq("id", id).maybeSingle(),
     supabase.from("contact_events").select("*").eq("lead_id", id).order("created_at", { ascending: false }),
     supabase.from("stage_events").select("*").eq("lead_id", id).order("changed_at", { ascending: false }),
@@ -48,34 +45,12 @@ export default async function LeadDetail({
     supabase.from("proposals").select("*").eq("lead_id", id).order("sent_at", { ascending: false }),
     supabase.from("lead_evidences").select("*").eq("lead_id", id).order("observed_at", { ascending: false }),
     supabase.from("lead_diagnoses").select("*").eq("lead_id", id).order("created_at", { ascending: false }).limit(20),
-    supabase.from("lead_messages").select("*").eq("lead_id", id).order("created_at", { ascending: false }).limit(300),
-    supabase.from("lead_message_uses").select("id, message_id, used_at").eq("lead_id", id).order("used_at", { ascending: false }),
   ]);
   if (!lead.data) notFound();
   const l = lead.data;
   const wa = whatsappLink(l);
   const site = safeExternal(l.website_url);
   const nowLocal = isoToSpLocal(new Date());
-  const latestDiagnosis = (diagnoses.data?.[0] as Diagnosis | undefined) ?? null;
-  // Mesmo contexto que o Hermes recebe: as regras da tela batem com as da API.
-  const approachCtx: ApproachContext = {
-    business_name: l.business_name,
-    responsible_name: l.responsible_name,
-    niche: l.niche,
-    city: l.city,
-    state: l.state,
-    neighborhood: l.neighborhood,
-    services: l.services,
-    site_status: l.site_status,
-    pending_items: l.pending_items,
-    website_url: l.website_url,
-    instagram_handle: l.instagram_handle,
-    phone_e164: l.phone_e164,
-    selection_reason: l.selection_reason,
-    diagnosis: latestDiagnosis,
-    evidences: evidences.data ?? [],
-    notes: (notes.data ?? []).filter((n) => n.source === "manual").slice(0, 5).map((n) => n.body),
-  };
 
   const timeline: TimelineItem[] = [
     ...(contacts.data ?? []).map((c) => ({
@@ -198,29 +173,7 @@ export default async function LeadDetail({
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_400px]">
         <section className="space-y-6">
           <NextStep stage={l.stage as Stage} />
-          <LeadTabs
-            tabs={[
-              {
-                key: "diagnostico",
-                label: "Diagnóstico",
-                content: <DiagnosisCard d={latestDiagnosis} olderCount={Math.max((diagnoses.data?.length ?? 0) - 1, 0)} />,
-              },
-              {
-                key: "abordagem",
-                label: "Abordagem",
-                badge: needsCaution(approachCtx) ? "verificar" : null,
-                content: (
-                  <ApproachPanel
-                    leadId={id}
-                    ctx={approachCtx}
-                    messages={(messages.data ?? []) as LeadMessage[]}
-                    uses={(uses.data ?? []) as MessageUse[]}
-                    requestedAt={l.approach_requested_at ?? null}
-                  />
-                ),
-              },
-            ]}
-          />
+          <DiagnosisCard d={(diagnoses.data?.[0] as Diagnosis | undefined) ?? null} olderCount={Math.max((diagnoses.data?.length ?? 0) - 1, 0)} />
           <div className="card grid gap-4 p-4 text-sm sm:grid-cols-2">
             <Info label="Telefone original" value={l.phone_raw} />
             <Info label="Telefone normalizado" value={l.phone_e164 ?? (l.phone_raw ? "não reconhecido" : null)} />
@@ -264,7 +217,7 @@ export default async function LeadDetail({
         </section>
 
         <aside className="space-y-4">
-          <Panel title="Marcar como contatado" id="marcar-contatado">
+          <Panel title="Marcar como contatado">
             <ActionForm action={markContacted} submit="Marcar como contatado">
               <input type="hidden" name="lead_id" value={id} />
               <div className="grid grid-cols-2 gap-2">
@@ -371,9 +324,9 @@ function Info({ label, value }: { label: string; value: string | null | undefine
   );
 }
 
-function Panel({ title, children, id }: { title: string; children: React.ReactNode; id?: string }) {
+function Panel({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="card p-4" id={id}>
+    <div className="card p-4">
       <h2 className="mb-3 text-sm font-semibold">{title}</h2>
       {children}
     </div>
