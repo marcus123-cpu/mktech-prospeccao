@@ -24,6 +24,8 @@ const ONLY_TO = new Set(
 let ready = false;
 let myNumber = null;
 let lastQr = null;
+let lastState = "iniciando";
+const setState = (st) => { lastState = st; console.log("[estado]", st); };
 const inbox = [];
 
 const client = new Client({
@@ -33,16 +35,23 @@ const client = new Client({
 
 client.on("qr", (qr) => {
   lastQr = qr;
+  setState("aguardando leitura do QR");
   console.log("Escaneie o QR code com o WhatsApp do CHIP DE PROSPECÇÃO (Aparelhos conectados):");
   qrcode.generate(qr, { small: true });
 });
 client.on("ready", () => {
+  setState("conectado");
   ready = true;
   lastQr = null;
   myNumber = client.info && client.info.wid ? client.info.wid.user : null;
   console.log(`WhatsApp pronto (número ${myNumber}).`);
 });
+client.on("loading_screen", (pct, msg) => setState(`carregando ${pct}% ${msg || ""}`));
+client.on("authenticated", () => setState("autenticado, carregando conversas"));
+client.on("auth_failure", (m) => setState("falha de autenticação: " + m));
+client.on("change_state", (st) => console.log("[estado] WhatsApp:", st));
 client.on("disconnected", (reason) => {
+  setState("desconectado: " + reason);
   ready = false;
   console.log("WhatsApp desconectado:", reason);
 });
@@ -74,7 +83,7 @@ const QR_PAGE = (qr) => `<!doctype html><html lang="pt-BR"><meta charset="utf-8"
 <h2>Conectar o chip de prospecção</h2>
 ${ready ? "<p><b>Já está conectado.</b> Pode fechar esta página.</p>" : qr
   ? '<p>No celular do chip: WhatsApp &gt; Aparelhos conectados &gt; Conectar um aparelho, e escaneie:</p><div id="qr" style="display:inline-block"></div><p style="color:#666">A página atualiza sozinha.</p>'
-  : "<p>Aguardando o QR code... a página atualiza sozinha.</p>"}
+  : `<p>Aguardando o QR code... a página atualiza sozinha.</p><p style="color:#666">Estado: ${lastState}</p>`}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>const q=${JSON.stringify(qr || "")};if(q&&!${ready}){new QRCode(document.getElementById("qr"),{text:q,width:280,height:280});}</script>`;
 
@@ -105,7 +114,7 @@ const server = http.createServer(async (req, res) => {
   }
   if (TOKEN && req.headers["x-bridge-token"] !== TOKEN) return send(res, 401, { ok: false, erro: "token" });
   try {
-    if (req.method === "GET" && req.url === "/estado") return send(res, 200, { pronto: ready, numero: myNumber });
+    if (req.method === "GET" && req.url === "/estado") return send(res, 200, { pronto: ready, numero: myNumber, estado: lastState });
     if (req.method === "GET" && req.url === "/recebidas") return send(res, 200, inbox.splice(0, inbox.length));
     if (req.method === "POST" && req.url === "/enviar") {
       const { telefone, texto } = await readJson(req);
@@ -125,4 +134,5 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, "127.0.0.1", () => console.log(`Ponte em http://127.0.0.1:${PORT}`));
-client.initialize();
+setState("abrindo o navegador interno");
+client.initialize().catch((e) => setState("erro ao iniciar: " + String(e.message || e).slice(0, 300)));
