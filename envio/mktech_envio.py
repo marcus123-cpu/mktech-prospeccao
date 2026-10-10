@@ -162,6 +162,10 @@ class Transporte:
         """Mensagens novas recebidas: [{telefone, texto, tipo (texto/audio/imagem/outro), recebida_em}]."""
         return []
 
+    def pronto(self) -> bool:
+        """False enquanto o transporte não consegue enviar; nada é reservado no servidor."""
+        return True
+
 
 class Simulacao(Transporte):
     """Não contata ninguém: só registra o que seria enviado."""
@@ -224,6 +228,13 @@ class WhatsAppWeb(Transporte):
         if not (isinstance(out, dict) and out.get("ok")):
             raise RuntimeError("a ponte não confirmou o envio")
 
+    def pronto(self) -> bool:
+        try:
+            out = self._call("GET", "/estado")
+        except RuntimeError:
+            return False
+        return bool(isinstance(out, dict) and out.get("pronto"))
+
     def recebidas(self) -> list[dict[str, Any]]:
         try:
             out = self._call("GET", "/recebidas")
@@ -267,6 +278,8 @@ def forward_replies(transporte: Transporte) -> int:
 def step(transporte: Transporte) -> tuple[str, float]:
     """Executa uma rodada. Devolve (status, segundos até a próxima)."""
     forward_replies(transporte)
+    if not transporte.pronto():
+        return "ponte_desconectada", POLL_SECONDS
     status, nxt = request("POST", "/api/hermes/v1/envio/proximo", {})
     if status in (401, 403):
         raise ConfigError("token do enviador inválido, revogado ou sem permissão")

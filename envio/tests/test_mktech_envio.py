@@ -101,6 +101,15 @@ class SenderTest(unittest.TestCase):
         self.assertEqual(self.results(), [{"etapa": "saudacao", "ok": True, "erro": None}])
         self.assertEqual(FakeApi.calls[0]["auth"], f"Bearer {TOKEN}")
 
+    def test_ponte_desconectada_nao_reserva_nada_no_servidor(self):
+        self.next_is({"status": "enviar", "id": ITEM, "etapa": "saudacao", "telefone": "+5517991234567", "texto": "Bom dia! Tudo bem?"})
+        t = Gravador()
+        t.pronto = lambda: False
+        status, _ = mktech_envio.step(t)
+        self.assertEqual(status, "ponte_desconectada")
+        self.assertEqual(t.enviadas, [])
+        self.assertFalse([c for c in FakeApi.calls if c["path"].endswith("/proximo")])
+
     def test_texto_com_cara_de_erro_nunca_vai_ao_cliente(self):
         for texto in [
             "Ocorreu um erro ao gerar a mensagem. Tente novamente.",
@@ -175,6 +184,7 @@ class FakeBridge(BaseHTTPRequestHandler):
     calls: list[dict] = []
     inbox: list[dict] = []
     fail = False
+    ready = True
 
     def log_message(self, *args):
         pass
@@ -194,6 +204,8 @@ class FakeBridge(BaseHTTPRequestHandler):
         self._reply(200, {"ok": True, "id": "x"})
 
     def do_GET(self):
+        if self.path == "/estado":
+            return self._reply(200, {"pronto": FakeBridge.ready, "estado": "teste"})
         box, FakeBridge.inbox = FakeBridge.inbox, []
         self._reply(200, box)
 
@@ -217,6 +229,14 @@ class WhatsAppWebTest(unittest.TestCase):
         FakeBridge.calls = []
         FakeBridge.inbox = []
         FakeBridge.fail = False
+        FakeBridge.ready = True
+
+    def test_pronto_segue_o_estado_da_ponte(self):
+        t = self.make()
+        self.assertTrue(t.pronto())
+        FakeBridge.ready = False
+        self.assertFalse(t.pronto())
+        self.assertFalse(mktech_envio.WhatsAppWeb({"BRIDGE_URL": "http://127.0.0.1:1"}).pronto())
 
     def test_envia_o_texto_exato_so_com_digitos_e_token(self):
         self.make().enviar("+55 (17) 99225-0729", "Bom dia, Clínica! Tudo bem?")
