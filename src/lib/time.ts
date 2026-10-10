@@ -69,3 +69,15 @@ export function isoToSpLocal(iso: string | Date): string {
   }).format(d);
   return parts.replace(" ", "T");
 }
+
+/** "há 5 min", "há 2 h", "há 3 dias" a partir de um instante até agora. */
+export function haQuanto(v: string | Date | null | undefined, now = new Date()): string {
+  if (!v) return "";
+  const min = Math.max(0, Math.floor((now.getTime() - new Date(v).getTime()) / 60000));
+  if (min < 1) return "agora";
+  if (min < 60) return `há ${min} min`;
+  const h = Math.floor(min / 60);
+  if (h < 24) return `há ${h} h`;
+  const d = Math.floor(h / 24);
+  return `há ${d} ${d === 1 ? "dia" : "dias"}`;
+}

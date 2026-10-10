@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { CopyResumo } from "@/components/leads/CopyResumo";
+import { SugestoesResposta } from "@/components/leads/SugestoesResposta";
+import { sugestoesResposta } from "@/lib/envio/sugestoes";
 import { DiagnosisCard, type Diagnosis } from "@/components/leads/DiagnosisCard";
 import { NextStep } from "@/components/leads/NextStep";
 import { notFound } from "next/navigation";
@@ -191,6 +193,9 @@ export default async function LeadDetail({
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_400px]">
         <section className="min-w-0 space-y-6">
+          {(replies.data ?? []).some((r) => r.kind === "humana") && (
+            <SugestoesResposta items={sugestoesResposta({ nome: l.responsible_name, negocio: l.business_name })} />
+          )}
           <NextStep stage={l.stage as Stage} />
           <DiagnosisCard d={(diagnoses.data?.[0] as Diagnosis | undefined) ?? null} olderCount={Math.max((diagnoses.data?.length ?? 0) - 1, 0)} />
           <div className="card grid gap-4 p-4 text-sm sm:grid-cols-2">

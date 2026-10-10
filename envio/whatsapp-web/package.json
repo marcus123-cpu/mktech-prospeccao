@@ -1,0 +1,12 @@
+{
+  "name": "mktech-whatsapp-web-bridge",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Ponte local do WhatsApp Web (chip de prospecção) para o enviador do CRM MKTech",
+  "main": "bridge.js",
+  "scripts": { "start": "node bridge.js" },
+  "dependencies": {
+    "qrcode-terminal": "0.12.0",
+    "whatsapp-web.js": "1.34.7"
+  }
+}

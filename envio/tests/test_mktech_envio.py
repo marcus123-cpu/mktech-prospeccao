@@ -101,6 +101,15 @@ class SenderTest(unittest.TestCase):
         self.assertEqual(self.results(), [{"etapa": "saudacao", "ok": True, "erro": None}])
         self.assertEqual(FakeApi.calls[0]["auth"], f"Bearer {TOKEN}")
 
+    def test_ponte_desconectada_nao_reserva_nada_no_servidor(self):
+        self.next_is({"status": "enviar", "id": ITEM, "etapa": "saudacao", "telefone": "+5517991234567", "texto": "Bom dia! Tudo bem?"})
+        t = Gravador()
+        t.pronto = lambda: False
+        status, _ = mktech_envio.step(t)
+        self.assertEqual(status, "ponte_desconectada")
+        self.assertEqual(t.enviadas, [])
+        self.assertFalse([c for c in FakeApi.calls if c["path"].endswith("/proximo")])
+
     def test_texto_com_cara_de_erro_nunca_vai_ao_cliente(self):
         for texto in [
             "Ocorreu um erro ao gerar a mensagem. Tente novamente.",
@@ -169,6 +178,95 @@ class SenderTest(unittest.TestCase):
         with contextlib.redirect_stdout(out):
             self.assertEqual(mktech_envio.main(["selftest"]), 0)
         self.assertFalse(json.loads(out.getvalue())["enabled"])
+
+
+class FakeBridge(BaseHTTPRequestHandler):
+    calls: list[dict] = []
+    inbox: list[dict] = []
+    fail = False
+    ready = True
+
+    def log_message(self, *args):
+        pass
+
+    def _reply(self, status, payload):
+        data = json.dumps(payload).encode()
+        self.send_response(status)
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
+
+    def do_POST(self):
+        length = int(self.headers.get("Content-Length") or 0)
+        FakeBridge.calls.append({"path": self.path, "token": self.headers.get("X-Bridge-Token"), "body": json.loads(self.rfile.read(length))})
+        if FakeBridge.fail:
+            return self._reply(422, {"ok": False, "erro": "número não tem WhatsApp"})
+        self._reply(200, {"ok": True, "id": "x"})
+
+    def do_GET(self):
+        if self.path == "/estado":
+            return self._reply(200, {"pronto": FakeBridge.ready, "estado": "teste"})
+        box, FakeBridge.inbox = FakeBridge.inbox, []
+        self._reply(200, box)
+
+
+class WhatsAppWebTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.server = HTTPServer(("127.0.0.1", 0), FakeBridge)
+        threading.Thread(target=cls.server.serve_forever, daemon=True).start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.server.shutdown()
+
+    def make(self, **extra):
+        return mktech_envio.WhatsAppWeb(
+            {"BRIDGE_URL": f"http://127.0.0.1:{self.server.server_port}", "BRIDGE_TOKEN": "seg", "ENVIO_SO_PARA": "5517992250729", **extra}
+        )
+
+    def setUp(self):
+        FakeBridge.calls = []
+        FakeBridge.inbox = []
+        FakeBridge.fail = False
+        FakeBridge.ready = True
+
+    def test_pronto_segue_o_estado_da_ponte(self):
+        t = self.make()
+        self.assertTrue(t.pronto())
+        FakeBridge.ready = False
+        self.assertFalse(t.pronto())
+        self.assertFalse(mktech_envio.WhatsAppWeb({"BRIDGE_URL": "http://127.0.0.1:1"}).pronto())
+
+    def test_envia_o_texto_exato_so_com_digitos_e_token(self):
+        self.make().enviar("+55 (17) 99225-0729", "Bom dia, Clínica! Tudo bem?")
+        self.assertEqual(
+            FakeBridge.calls, [{"path": "/enviar", "token": "seg", "body": {"telefone": "5517992250729", "texto": "Bom dia, Clínica! Tudo bem?"}}]
+        )
+
+    def test_destino_fora_da_lista_do_teste_nao_chega_na_ponte(self):
+        with self.assertRaises(RuntimeError):
+            self.make().enviar("+5517991234567", "Texto")
+        self.assertEqual(FakeBridge.calls, [])
+
+    def test_recusa_da_ponte_vira_erro(self):
+        FakeBridge.fail = True
+        with self.assertRaises(RuntimeError) as cm:
+            self.make().enviar("+5517992250729", "Texto")
+        self.assertIn("não tem WhatsApp", str(cm.exception))
+
+    def test_ponte_fora_do_ar_vira_erro_e_recebidas_fica_vazio(self):
+        t = mktech_envio.WhatsAppWeb({"BRIDGE_URL": "http://127.0.0.1:1"})
+        with self.assertRaises(RuntimeError):
+            t.enviar("+5517992250729", "Texto")
+        with contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(t.recebidas(), [])
+
+    def test_recebidas_traz_e_esvazia_a_fila(self):
+        FakeBridge.inbox = [{"telefone": "+5517992250729", "texto": "oi", "tipo": "texto", "recebida_em": "2026-10-10T12:00:00Z"}]
+        t = self.make()
+        self.assertEqual(t.recebidas()[0]["texto"], "oi")
+        self.assertEqual(t.recebidas(), [])
 
 
 if __name__ == "__main__":
