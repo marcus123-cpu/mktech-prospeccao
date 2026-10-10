@@ -15,7 +15,11 @@ Ele nunca escreve texto próprio e nunca responde ao cliente.
 
 Transportes:
   simulacao  (padrão) não contata ninguém; grava em envio-simulado.log
-  whatsapp   envio real; ainda não configurado nesta versão
+  whatsapp   WhatsApp Business Cloud API (oficial) com o número de prospecção.
+             A primeira mensagem para quem nunca falou com o número TEM de ser um
+             modelo aprovado pela Meta: saudação e texto vão juntos como variáveis
+             do modelo, no passo da mensagem (o passo da saudação só guarda a saudação).
+             ENVIO_SO_PARA=5517... limita os destinos (use no teste).
 
 Comandos (saída em JSON no stdout; logs no stderr):
   selftest                               verifica URL, token e estado da chave
@@ -29,6 +33,7 @@ Códigos de saída: 0 ok · 2 dados inválidos · 5 falha temporária/rede · 6 
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import os
 import random
@@ -183,7 +188,90 @@ class WhatsAppNaoConfigurado(Transporte):
         raise RuntimeError("transporte whatsapp ainda não configurado")
 
 
-TRANSPORTES: dict[str, Callable[[], Transporte]] = {"simulacao": Simulacao, "whatsapp": WhatsAppNaoConfigurado}
+def _digits(telefone: str) -> str:
+    return re.sub(r"\D", "", telefone or "")
+
+
+def template_param(text: str) -> str:
+    """Variáveis de modelo da Meta não aceitam quebra de linha, tab nem 4+ espaços seguidos."""
+    return re.sub(r"\s+", " ", text).strip()
+
+
+class WhatsAppCloud(Transporte):
+    """WhatsApp Business Cloud API. Só envia o modelo aprovado, nunca texto livre.
+
+    Modelo (categoria MARKETING, idioma pt_BR), nome em WHATSAPP_TEMPLATE_NAME:
+      MKTech Dev. {{1}} {{2}} Se não quiser receber mais mensagens, responda PARAR.
+    {{1}} = saudação por horário, {{2}} = mensagem escrita pelo Hermes.
+    """
+
+    nome = "whatsapp"
+    MAX_PARAM = 900
+
+    def __init__(self, env: dict[str, str] | None = None) -> None:
+        e = env if env is not None else os.environ
+        self.phone_id = e.get("WHATSAPP_PHONE_NUMBER_ID", "").strip()
+        self.access_token = e.get("WHATSAPP_ACCESS_TOKEN", "").strip()
+        self.template = e.get("WHATSAPP_TEMPLATE_NAME", "mktech_primeiro_contato").strip()
+        self.lang = e.get("WHATSAPP_TEMPLATE_LANG", "pt_BR").strip()
+        self.version = e.get("WHATSAPP_API_VERSION", "v21.0").strip()
+        self.base = e.get("WHATSAPP_API_BASE", "https://graph.facebook.com").rstrip("/")
+        self.only_to = {_digits(x) for x in e.get("ENVIO_SO_PARA", "").split(",") if _digits(x)}
+        if not self.phone_id or not self.access_token:
+            raise ConfigError("WHATSAPP_PHONE_NUMBER_ID e WHATSAPP_ACCESS_TOKEN são obrigatórios no .env")
+        self.etapa = "mensagem"
+        self._saudacao: dict[str, str] = {}
+
+    def _post(self, payload: dict[str, Any]) -> None:
+        req = urllib.request.Request(
+            f"{self.base}/{self.version}/{self.phone_id}/messages",
+            data=json.dumps(payload).encode(),
+            method="POST",
+            headers={"Authorization": f"Bearer {self.access_token}", "Content-Type": "application/json"},
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=TIMEOUT_SECONDS) as resp:
+                body = json.loads(resp.read() or b"{}")
+        except urllib.error.HTTPError as e:
+            detail = ""
+            with contextlib.suppress(Exception):
+                detail = json.loads(e.read()).get("error", {}).get("message", "")
+            raise RuntimeError(f"Meta recusou (HTTP {e.code}): {detail}"[:300]) from None
+        if not body.get("messages"):
+            raise RuntimeError("Meta não confirmou a mensagem")
+
+    def enviar(self, telefone: str, texto: str) -> None:
+        fone = _digits(telefone)
+        if self.only_to and fone not in self.only_to:
+            raise RuntimeError("destino fora de ENVIO_SO_PARA; nada enviado")
+        if self.etapa == "saudacao":
+            self._saudacao[fone] = template_param(texto)  # sai junto com a mensagem, no modelo
+            return
+        saudacao = self._saudacao.pop(fone, "Olá! Tudo bem?")
+        corpo = template_param(texto)
+        if len(saudacao) + len(corpo) > self.MAX_PARAM:
+            raise RuntimeError("texto grande demais para o modelo; nada enviado")
+        self._post(
+            {
+                "messaging_product": "whatsapp",
+                "to": fone,
+                "type": "template",
+                "template": {
+                    "name": self.template,
+                    "language": {"code": self.lang},
+                    "components": [
+                        {"type": "body", "parameters": [{"type": "text", "text": saudacao}, {"type": "text", "text": corpo}]}
+                    ],
+                },
+            }
+        )
+
+
+def _make_whatsapp() -> Transporte:
+    return WhatsAppCloud()
+
+
+TRANSPORTES: dict[str, Callable[[], Transporte]] = {"simulacao": Simulacao, "whatsapp": _make_whatsapp}
 
 
 # Laço ------------------------------------------------------------------------
@@ -231,6 +319,7 @@ def step(transporte: Transporte) -> tuple[str, float]:
     if texto is None:
         report(item, etapa, False, "texto recusado pelo enviador (parece erro ou texto técnico); nada enviado")
         return "recusado", 5.0
+    transporte.etapa = etapa  # type: ignore[attr-defined]
     try:
         transporte.enviar(telefone, texto)
     except Exception as e:  # noqa: BLE001 - qualquer falha do transporte vira "falhou"
