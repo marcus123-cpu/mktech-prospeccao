@@ -1,0 +1,11 @@
+# Copie para envio/.env (fica fora do Git) e preencha.
+# Endereço do painel (o da Vercel ou http://localhost:3000)
+MKTECH_CRM_URL=https://mktech-prospeccao.vercel.app
+# Token do enviador: crie na tela "Envio automático" do painel
+MKTECH_ENVIO_TOKEN=
+
+# --- WhatsApp Web (transporte "whatsappweb"), chip novo só para prospecção ---
+BRIDGE_URL=http://127.0.0.1:3799
+BRIDGE_TOKEN=
+# Teste: só envia para estes números (separe por vírgula). Esvazie só depois da aprovação por escrito.
+ENVIO_SO_PARA=5517992250729
