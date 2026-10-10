@@ -4,6 +4,7 @@
 // Ela NÃO decide nada e NUNCA responde cliente sozinha: só entrega o que o
 // enviador pedir em POST /enviar e guarda o que chegar para GET /recebidas.
 //
+//   GET  /qr         -> página com o QR code para conectar o chip (abra no navegador do PC)
 //   GET  /estado     -> { pronto, numero }
 //   POST /enviar     -> { telefone, texto }  => { ok, id }
 //   GET  /recebidas  -> [ { telefone, texto, tipo, recebida_em } ]  (esvazia a fila)
@@ -22,6 +23,7 @@ const ONLY_TO = new Set(
 
 let ready = false;
 let myNumber = null;
+let lastQr = null;
 const inbox = [];
 
 const client = new Client({
@@ -30,11 +32,13 @@ const client = new Client({
 });
 
 client.on("qr", (qr) => {
+  lastQr = qr;
   console.log("Escaneie o QR code com o WhatsApp do CHIP DE PROSPECÇÃO (Aparelhos conectados):");
   qrcode.generate(qr, { small: true });
 });
 client.on("ready", () => {
   ready = true;
+  lastQr = null;
   myNumber = client.info && client.info.wid ? client.info.wid.user : null;
   console.log(`WhatsApp pronto (número ${myNumber}).`);
 });
@@ -63,6 +67,17 @@ client.on("message", async (msg) => {
   }
 });
 
+
+const QR_PAGE = (qr) => `<!doctype html><html lang="pt-BR"><meta charset="utf-8"><meta http-equiv="refresh" content="20">
+<title>Conectar o chip de prospecção</title>
+<body style="font-family:system-ui;text-align:center;padding:32px">
+<h2>Conectar o chip de prospecção</h2>
+${ready ? "<p><b>Já está conectado.</b> Pode fechar esta página.</p>" : qr
+  ? '<p>No celular do chip: WhatsApp &gt; Aparelhos conectados &gt; Conectar um aparelho, e escaneie:</p><div id="qr" style="display:inline-block"></div><p style="color:#666">A página atualiza sozinha.</p>'
+  : "<p>Aguardando o QR code... a página atualiza sozinha.</p>"}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>const q=${JSON.stringify(qr || "")};if(q&&!${ready}){new QRCode(document.getElementById("qr"),{text:q,width:280,height:280});}</script>`;
+
 function readJson(req) {
   return new Promise((resolve, reject) => {
     let data = "";
@@ -83,6 +98,11 @@ function send(res, status, body) {
 }
 
 const server = http.createServer(async (req, res) => {
+  if (req.method === "GET" && req.url === "/qr") {
+    // Página do QR: só abre no próprio PC (a ponte escuta em 127.0.0.1) e não usa o token.
+    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+    return res.end(QR_PAGE(lastQr));
+  }
   if (TOKEN && req.headers["x-bridge-token"] !== TOKEN) return send(res, 401, { ok: false, erro: "token" });
   try {
     if (req.method === "GET" && req.url === "/estado") return send(res, 200, { pronto: ready, numero: myNumber });
