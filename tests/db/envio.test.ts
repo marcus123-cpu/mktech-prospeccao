@@ -88,6 +88,10 @@ describe("envio automático", () => {
     expect(ld).toEqual({ stage: "contatado", contacted: true });
     expect(await count("contact_events", `lead_id = '${l}' and source = 'envio'`)).toBe(1);
 
+    // Sem resposta humana o texto não sai, nem por tempo.
+    await pool.query(`update outreach_messages set body_due_at = now() - interval '1 second'`);
+    expect((await next()).status).not.toBe("enviar");
+    await reply("+5517991234567", "Oi, boa tarde!");
     expect(await next()).toMatchObject({ status: "aguardar", motivo: "intervalo depois da saudação" });
     await pool.query(`update outreach_messages set body_due_at = now() - interval '1 second'`);
     const n2 = await next();
@@ -105,6 +109,7 @@ describe("envio automático", () => {
     await openAllDay();
     const n1 = await next();
     await result(n1.id, "saudacao");
+    await reply("+5517991234567", "Oi!");
     await pool.query(`update outreach_messages set body_due_at = now() - interval '1 second'`);
     const n2 = await next();
     await result(n2.id, "mensagem");
@@ -120,6 +125,7 @@ describe("envio automático", () => {
     await openAllDay();
     const n1 = await next();
     await result(n1.id, "saudacao");
+    await reply("+5517991234567", "Oi!");
     await pool.query(`update outreach_messages set body_due_at = now() - interval '1 second'`);
     await settings({ paused: true });
     expect(await next()).toEqual({ status: "pausado" });
@@ -306,6 +312,11 @@ describe("envio automático", () => {
       await pool.query(`update outreach_messages set body_due_at = now() - interval '1 second'`);
     });
 
+    it("sem nenhuma resposta o texto também não sai por tempo", async () => {
+      expect((await next()).status).not.toBe("enviar");
+      expect(await count("outreach_messages", "sent_at is not null")).toBe(0);
+    });
+
     it("com resposta automática o texto não sai", async () => {
       const r = await reply("+5517991234567", "Estamos fora do horário de atendimento.", "automatica");
       expect(r.segurada).toBe(true);
@@ -335,7 +346,7 @@ describe("envio automático", () => {
 
     it("sem pessoa em 2 dias úteis vai para Sem resposta e nada é enviado", async () => {
       await reply("+5517991234567", "Estamos fora do horário de atendimento.", "automatica");
-      await pool.query(`update outreach_messages set held_at = now() - interval '5 days'`);
+      await pool.query(`update outreach_messages set greeting_sent_at = now() - interval '5 days'`);
       const n = await next();
       expect(n.status).not.toBe("enviar");
       expect(await column(l)).toBe("sem_resposta");
