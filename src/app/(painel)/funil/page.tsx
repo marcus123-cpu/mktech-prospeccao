@@ -28,6 +28,8 @@ type Card = {
 const COLUMNS = [
   { key: "fila", title: "Na fila", hint: "mensagem pronta, aguardando a vez", tone: "border-slate-600" },
   { key: "enviado", title: "Enviado", hint: "aguardando resposta", tone: "border-indigo-700" },
+  { key: "aguardando", title: "Aguardando humano", hint: "resposta automática: o texto só sai quando uma pessoa escrever", tone: "border-cyan-700" },
+  { key: "sem_resposta", title: "Sem resposta", hint: "2 dias úteis sem pessoa responder: nada é enviado sozinho", tone: "border-zinc-600" },
   { key: "conversa", title: "Em conversa", hint: "uma pessoa respondeu: é com você", tone: "border-sky-600" },
   { key: "valor", title: "Pergunta de valor", hint: "perguntou preço: responda você", tone: "border-amber-500" },
   { key: "fechando", title: "Fechando", hint: "proposta enviada", tone: "border-violet-600" },
@@ -106,7 +108,7 @@ export default async function FunilPage() {
               );
             })}
           </nav>
-          <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-4 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 xl:grid-cols-6">
+          <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-4 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 xl:grid-cols-4 2xl:grid-cols-8">
             {COLUMNS.map((col) => {
               const items = cards.filter((c) => c.coluna === col.key);
               return (

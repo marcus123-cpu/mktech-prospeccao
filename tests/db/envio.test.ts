@@ -257,7 +257,7 @@ describe("envio automático", () => {
     await result(n1.id, "saudacao");
     expect(await column(l)).toBe("enviado");
     await reply("+5517991234567", "Olá! Em breve retornaremos.", "automatica");
-    expect(await column(l)).toBe("enviado");
+    expect(await column(l)).toBe("aguardando");
     await reply("+5517991234567", "Oi, quem é?");
     expect(await column(l)).toBe("conversa");
     await reply("+5517991234567", "Quanto custa?", "humana", false, true);
@@ -292,7 +292,66 @@ describe("envio automático", () => {
     const n1 = await next();
     await result(n1.id, "saudacao");
     await reply("+5517991234567", "Tabela de preços: digite 2", "automatica", false, true);
-    expect(await column(l)).toBe("enviado");
+    expect(await column(l)).toBe("aguardando");
+  });
+
+  describe("resposta automática segura o texto", () => {
+    let l: string;
+    beforeEach(async () => {
+      l = await lead();
+      await save(l);
+      await openAllDay();
+      const n1 = await next();
+      await result(n1.id, "saudacao");
+      await pool.query(`update outreach_messages set body_due_at = now() - interval '1 second'`);
+    });
+
+    it("com resposta automática o texto não sai", async () => {
+      const r = await reply("+5517991234567", "Estamos fora do horário de atendimento.", "automatica");
+      expect(r.segurada).toBe(true);
+      expect((await next()).status).not.toBe("enviar");
+      expect(await column(l)).toBe("aguardando");
+      expect(await count("outreach_messages", "status = 'saudacao_enviada' and sent_at is null")).toBe(1);
+    });
+
+    it("quando uma pessoa escreve, o texto é liberado depois de uma pausa curta", async () => {
+      await reply("+5517991234567", "Estamos fora do horário de atendimento.", "automatica");
+      await reply("+5517991234567", "Oi! Pode falar.");
+      expect(await column(l)).toBe("conversa");
+      const due = (await pool.query(`select held_at, body_due_at > now() as futuro from outreach_messages`)).rows[0];
+      expect(due.held_at).toBeNull();
+      expect(due.futuro).toBe(true);
+      await pool.query(`update outreach_messages set body_due_at = now() - interval '1 second'`);
+      expect((await next()).etapa).toBe("mensagem");
+    });
+
+    it("corrigir para pessoa também libera", async () => {
+      await reply("+5517991234567", "Seja bem-vinda! Digite 1.", "automatica");
+      const id = (await pool.query(`select id from outreach_replies`)).rows[0].id;
+      await asAdmin((c) => c.query(`select public.admin_outreach_reclassify($1, 'humana')`, [id]));
+      await pool.query(`update outreach_messages set body_due_at = now() - interval '1 second'`);
+      expect((await next()).etapa).toBe("mensagem");
+    });
+
+    it("sem pessoa em 2 dias úteis vai para Sem resposta e nada é enviado", async () => {
+      await reply("+5517991234567", "Estamos fora do horário de atendimento.", "automatica");
+      await pool.query(`update outreach_messages set held_at = now() - interval '5 days'`);
+      const n = await next();
+      expect(n.status).not.toBe("enviar");
+      expect(await column(l)).toBe("sem_resposta");
+      expect(await count("outreach_messages", "sent_at is not null")).toBe(0);
+      // se a pessoa aparecer depois, o texto volta a sair
+      await reply("+5517991234567", "Desculpa a demora, pode falar.");
+      await pool.query(`update outreach_messages set body_due_at = now() - interval '1 second'`);
+      expect((await next()).etapa).toBe("mensagem");
+    });
+
+    it("soma dias úteis pulando o fim de semana", async () => {
+      const r = await pool.query(
+        `select public.outreach_add_business_days('2026-10-09 15:00-03', 2) as d`,
+      );
+      expect(new Date(r.rows[0].d).toISOString()).toBe("2026-10-13T18:00:00.000Z");
+    });
   });
 
   it("3 recusas tiram o lead da fila do Hermes até o admin liberar", async () => {
