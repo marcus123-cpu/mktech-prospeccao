@@ -103,10 +103,20 @@ client.on("message_create", async (msg) => {
   }
 });
 
+// Eventos do próprio WhatsApp (aviso de criptografia, protocolo, chamada, mensagem apagada...) não são uma pessoa escrevendo.
+const TIPOS_DE_SISTEMA = new Set([
+  "e2e_notification", "notification", "notification_template", "gp2", "protocol", "call_log",
+  "revoked", "ciphertext", "unknown", "broadcast_notification", "reaction",
+]);
+
 client.on("message", async (msg) => {
   try {
     const from = msg.from || "";
     if (msg.fromMe || msg.isStatus || !ehConversaIndividual(from)) return;
+    if (TIPOS_DE_SISTEMA.has(msg.type)) {
+      console.log("[ignorada] evento do WhatsApp (" + msg.type + ") de", from);
+      return;
+    }
     const numero = await numeroDe(from, msg);
     if (!numero) {
       console.log("[recebida] sem número para", from, "- ignorada");
