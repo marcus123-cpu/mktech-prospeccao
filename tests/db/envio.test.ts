@@ -28,11 +28,16 @@ const save = (leadId: string, p: object = msg) => svc<any>(`select public.api_ou
 const next = () => svc<any>(`select public.api_outreach_next($1)`, [sender]);
 const result = (id: string, step: string, ok = true, err: string | null = null) =>
   svc<any>(`select public.api_outreach_result($1, $2, $3, $4, $5)`, [sender, id, step, ok, err]);
-const reply = (phone: string, body: string, kind = "humana", opt = false, price = false) =>
-  svc<any>(`select public.api_outreach_reply($1, $2::jsonb)`, [
+/** Por padrão a saudação "já tem 1 minuto" (resposta lenta); `fast` mantém a saudação recém-enviada. */
+const reply = async (phone: string, body: string, kind = "humana", opt = false, price = false, fast = false) => {
+  if (!fast) {
+    await pool.query(`update outreach_messages set greeting_sent_at = least(greeting_sent_at, now() - interval '1 minute') where greeting_sent_at is not null`);
+  }
+  return svc<any>(`select public.api_outreach_reply($1, $2::jsonb)`, [
     sender,
     JSON.stringify({ phone_e164: phone, body, kind, reason: "teste", opt_out: opt, asks_price: price }),
   ]);
+};
 const column = async (leadId: string) =>
   (await asAdmin((c) => c.query(`select coluna from outreach_funnel where id = $1`, [leadId]))).rows[0]?.coluna ?? null;
 async function settings(p: Record<string, unknown>) {
@@ -283,6 +288,7 @@ describe("envio automático", () => {
     await openAllDay();
     const n1 = await next();
     await result(n1.id, "saudacao");
+    await pool.query(`update outreach_messages set greeting_sent_at = now() - interval '1 minute'`);
     await svc(`select public.api_outreach_reply($1, $2::jsonb)`, [
       sender,
       JSON.stringify({ phone_e164: "+5517991234567", body: "[áudio]", kind: "humana", media: "audio" }),
@@ -334,6 +340,33 @@ describe("envio automático", () => {
       expect(due.futuro).toBe(true);
       await pool.query(`update outreach_messages set body_due_at = now() - interval '1 second'`);
       expect((await next()).etapa).toBe("mensagem");
+    });
+
+    it("resposta até 15 s depois da saudação conta como automática, mesmo com cara de pessoa", async () => {
+      const r = await reply("+5517991234567", "Oi, tudo bem? Aqui é a Lia, secretária da doutora. Qual a sua queixa?", "humana", false, false, true);
+      expect(r.kind).toBe("automatica");
+      expect(r.segurada).toBe(true);
+      expect(r.conversa).toBe(false);
+      expect(await column(l)).toBe("aguardando");
+      expect((await next()).status).not.toBe("enviar");
+      expect(await count("outreach_messages", "sent_at is not null")).toBe(0);
+      const row = (await pool.query(`select kind, reason from outreach_replies`)).rows[0];
+      expect(row.kind).toBe("automatica");
+      expect(row.reason).toContain("15 s");
+    });
+
+    it("resposta mais lenta que 15 s continua valendo como pessoa", async () => {
+      await pool.query(`update outreach_messages set greeting_sent_at = now() - interval '20 seconds'`);
+      const r = await reply("+5517991234567", "Oi! Pode falar.", "humana", false, false, true);
+      expect(r.kind).toBe("humana");
+      expect(r.conversa).toBe(true);
+      expect(await column(l)).toBe("conversa");
+    });
+
+    it("pedido para parar vale mesmo se chegar em até 15 s", async () => {
+      const r = await reply("+5517991234567", "Não quero receber mensagens, por favor.", "humana", true, false, true);
+      expect(r.opt_out).toBe(true);
+      expect(await count("leads", "do_not_contact")).toBe(1);
     });
 
     it("corrigir para pessoa também libera", async () => {

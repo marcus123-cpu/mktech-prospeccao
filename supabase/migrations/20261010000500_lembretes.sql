@@ -134,6 +134,7 @@ declare
   v_kind text := p ->> 'kind';
   v_opt boolean := coalesce((p ->> 'opt_out')::boolean, false);
   v_price boolean := coalesce((p ->> 'asks_price')::boolean, false) and (p ->> 'kind') = 'humana';
+  v_reason text := p ->> 'reason';
   v_at timestamptz := coalesce(nullif(p ->> 'received_at', '')::timestamptz, now());
   v_media text := coalesce(nullif(p ->> 'media', ''), 'texto');
   m outreach_messages;
@@ -153,8 +154,17 @@ begin
     return jsonb_build_object('status', 'ignorada', 'motivo', 'telefone não recebeu abordagem automática');
   end if;
 
+  -- Resposta até 15 segundos depois da saudação: rápido demais para ser uma
+  -- pessoa (secretária virtual, menu automático). Conta como automática.
+  if v_kind = 'humana' and not v_opt and v_at >= m.greeting_sent_at
+     and v_at <= m.greeting_sent_at + interval '15 seconds' then
+    v_kind := 'automatica';
+    v_price := false;
+    v_reason := 'chegou até 15 s depois da saudação, rápido demais para ser uma pessoa';
+  end if;
+
   insert into outreach_replies (lead_id, message_id, phone_e164, body, received_at, kind, reason, opt_out, asks_price, media)
-  values (m.lead_id, m.id, m.phone_e164, left(p ->> 'body', 4000), v_at, v_kind, left(p ->> 'reason', 500), v_opt, v_price, v_media)
+  values (m.lead_id, m.id, m.phone_e164, left(p ->> 'body', 4000), v_at, v_kind, left(v_reason, 500), v_opt, v_price, v_media)
   on conflict do nothing
   returning id into v_id;
   if v_id is null then
@@ -169,7 +179,7 @@ begin
   end if;
   if v_kind = 'automatica' and not v_opt then
     -- Texto personalizado ainda não saiu: segura até uma pessoa escrever.
-    update outreach_messages set held_at = coalesce(held_at, v_at), held_reason = left(p ->> 'reason', 500)
+    update outreach_messages set held_at = coalesce(held_at, v_at), held_reason = left(v_reason, 500)
     where id = m.id and status = 'saudacao_enviada' and sent_at is null and no_reply_at is null;
   end if;
   if v_kind = 'humana' then
