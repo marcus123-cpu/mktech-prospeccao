@@ -146,3 +146,26 @@ describe("áudio", () => {
     expect(classifyReply({ texto: "[áudio]", tipo: "audio" })).toMatchObject({ kind: "humana", reason: expect.stringMatching(/áudio/) });
   });
 });
+
+import { leadResumo } from "@/lib/leads/resumo";
+
+describe("copiar diagnóstico", () => {
+  it("junta dados, diagnóstico, evidências, envio e respostas em texto", () => {
+    const t = leadResumo({
+      lead: { business_name: "Clínica Bella Pelle", city: "Votuporanga", state: "SP", site_status: "site_nao_localizado", priority: "alta", stage: "contatado", phone_e164: "+5517991234567", instagram_handle: "bellapelle", services: ["botox"] },
+      diagnosis: { fit_score: 82, confidence: "media", summary: "Agenda só pelo WhatsApp.", pains: [{ pain: "Agenda manual", evidence: "Bio" }], opportunities: ["Página com agenda"], offer: "landing_page", offer_reason: "Simples", created_at: "2026-10-10T12:00:00Z" },
+      evidences: [{ kind: "google", summary: "4,9 no Google", observed_at: "2026-10-10T12:00:00Z" }],
+      outreach: { status: "enviada", body: "Olá!", sent_at: "2026-10-10T12:05:00Z" },
+      replies: [{ body: "Quanto custa?", kind: "humana", received_at: "2026-10-10T12:10:00Z" }],
+    });
+    for (const s of ["LEAD: Clínica Bella Pelle", "+5517991234567", "@bellapelle", "Nota: 82/100", "- Agenda manual (evidência: Bio)", "[google] 4,9 no Google", "ENVIO AUTOMÁTICO", "(pessoa): Quanto custa?"]) {
+      expect(t).toContain(s);
+    }
+  });
+
+  it("omite o que não existe", () => {
+    const t = leadResumo({ lead: { business_name: "X", city: "Bauru", state: "SP", site_status: "site_nao_localizado", priority: "media", stage: "novo" } });
+    expect(t).not.toContain("DIAGNÓSTICO");
+    expect(t).not.toContain("null");
+  });
+});

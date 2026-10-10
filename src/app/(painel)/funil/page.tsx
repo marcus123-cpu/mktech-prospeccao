@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ErrorBox, PageHeader } from "@/components/ui";
 import { dbErrorMessage, requireAdmin } from "@/lib/auth";
 import { fmtDateTime } from "@/lib/time";
+import { SwitchControls, type OutreachSettings } from "../envio/Forms";
 import { ClearPriceButton } from "./ClearPrice";
 
 export const metadata = { title: "Funil" };
@@ -40,6 +41,7 @@ export default async function FunilPage() {
     .select("id, business_name, city, fit_score, coluna, movido_em, last_reply, last_reply_kind, last_reply_at, greeting_sent_at, sent_at, sent_audio")
     .order("movido_em", { ascending: false })
     .limit(600);
+  const { data: bot } = await supabase.from("outreach_settings").select("*").eq("id", 1).maybeSingle();
   const cards = (data ?? []) as Card[];
   const attention = cards.filter((c) => c.coluna === "atencao").length;
 
@@ -49,6 +51,16 @@ export default async function FunilPage() {
         title="Funil"
         subtitle="Onde está cada lead do envio automático. O sistema nunca responde o cliente: quando alguém responde ou pergunta valor, a conversa é sua."
       />
+      {bot && (
+        <div className="card mb-4 flex flex-wrap items-center justify-between gap-3 p-3">
+          <div className="text-sm">
+            <span className="font-medium">Bot de WhatsApp: </span>
+            {!bot.enabled ? "desligado" : bot.paused ? "pausado" : "ligado"}
+            <span className="block text-xs text-muted">Mesma chave da tela Envio automático.</span>
+          </div>
+          <SwitchControls s={bot as OutreachSettings} />
+        </div>
+      )}
       {error ? (
         <ErrorBox message={dbErrorMessage(error)} />
       ) : (
