@@ -29,7 +29,7 @@ const setState = (st) => { lastState = st; console.log("[estado]", st); };
 const inbox = [];
 
 const client = new Client({
-  authStrategy: new LocalAuth({ dataPath: ".wwebjs_auth" }),
+  authStrategy: new LocalAuth({ dataPath: ".wwebjs_auth", clientId: "chip2" }),
   puppeteer: { headless: true, args: ["--no-sandbox"] },
   // Versão do WhatsApp Web servida pelo cache remoto: evita travar em "carregando conversas".
   webVersionCache: {
