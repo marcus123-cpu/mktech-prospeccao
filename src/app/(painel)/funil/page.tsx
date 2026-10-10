@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ErrorBox, PageHeader } from "@/components/ui";
 import { dbErrorMessage, requireAdmin } from "@/lib/auth";
-import { fmtDateTime } from "@/lib/time";
+import { fmtDateTime, haQuanto } from "@/lib/time";
 import { SwitchControls, type OutreachSettings } from "../envio/Forms";
 import { ClearPriceButton } from "./ClearPrice";
 
@@ -44,6 +44,10 @@ export default async function FunilPage() {
   const { data: bot } = await supabase.from("outreach_settings").select("*").eq("id", 1).maybeSingle();
   const cards = (data ?? []) as Card[];
   const attention = cards.filter((c) => c.coluna === "atencao").length;
+  // Quem respondeu e está esperando você, do mais antigo (mais urgente) ao mais novo.
+  const waiting = cards
+    .filter((c) => (c.coluna === "conversa" || c.coluna === "valor") && c.last_reply_at)
+    .sort((a, b) => new Date(a.last_reply_at as string).getTime() - new Date(b.last_reply_at as string).getTime());
 
   return (
     <>
@@ -65,6 +69,22 @@ export default async function FunilPage() {
         <ErrorBox message={dbErrorMessage(error)} />
       ) : (
         <>
+          {waiting.length > 0 && (
+            <div className="mb-4 rounded-lg border border-sky-700 bg-sky-950/50 p-3 text-sm text-sky-100">
+              <p className="font-semibold">
+                {waiting.length === 1 ? "1 cliente respondeu e espera você" : `${waiting.length} clientes responderam e esperam você`}
+              </p>
+              <ul className="mt-2 space-y-1">
+                {waiting.slice(0, 8).map((c) => (
+                  <li key={c.id}>
+                    <Link href={`/leads/${c.id}`} className="underline">{c.business_name}</Link>
+                    <span className="text-sky-300"> · respondeu {haQuanto(c.last_reply_at)}</span>
+                    {c.coluna === "valor" && <span className="text-amber-300"> · perguntou valor</span>}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           {attention > 0 && (
             <p className="mb-4 rounded-lg border border-rose-900 bg-rose-950/40 p-3 text-sm text-rose-200">
               {attention} envio(s) falharam.{" "}
@@ -117,7 +137,7 @@ export default async function FunilPage() {
                         )}
                         <div className="mt-1 text-[11px] text-muted">
                           {c.last_reply_at && (col.key === "conversa" || col.key === "valor")
-                            ? `respondeu ${fmtDateTime(c.last_reply_at)}`
+                            ? `respondeu ${fmtDateTime(c.last_reply_at)} (${haQuanto(c.last_reply_at)})`
                             : c.sent_at
                               ? `enviada ${fmtDateTime(c.sent_at)}`
                               : c.greeting_sent_at

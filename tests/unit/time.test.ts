@@ -26,3 +26,15 @@ describe("datas no fuso de São Paulo", () => {
     expect(fmtPercent(0.25)).toBe("25%");
   });
 });
+
+import { haQuanto } from "@/lib/time";
+describe("haQuanto", () => {
+  const now = new Date("2026-10-10T12:00:00Z");
+  it("formata minutos, horas e dias", () => {
+    expect(haQuanto("2026-10-10T11:59:50Z", now)).toBe("agora");
+    expect(haQuanto("2026-10-10T11:55:00Z", now)).toBe("há 5 min");
+    expect(haQuanto("2026-10-10T09:00:00Z", now)).toBe("há 3 h");
+    expect(haQuanto("2026-10-08T12:00:00Z", now)).toBe("há 2 dias");
+    expect(haQuanto(null, now)).toBe("");
+  });
+});
