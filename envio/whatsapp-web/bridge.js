@@ -63,14 +63,30 @@ client.on("disconnected", (reason) => {
 
 client.on("message", async (msg) => {
   try {
-    if (msg.fromMe || msg.isStatus || (msg.from || "").endsWith("@g.us")) return;
-    let numero = (msg.from || "").replace(/@.*/, "");
-    if ((msg.from || "").endsWith("@lid")) {
-      const c = await msg.getContact();
-      numero = c && c.number ? c.number : numero;
+    const from = msg.from || "";
+    if (msg.fromMe || msg.isStatus || from.endsWith("@g.us") || from.endsWith("@newsletter") || from.endsWith("@broadcast")) return;
+    let numero = from.replace(/@.*/, "");
+    if (from.endsWith("@lid")) {
+      // O WhatsApp esconde o número atrás de um identificador (LID): descobre o telefone real.
+      let achou = null;
+      try {
+        const r = await client.getContactLidAndPhone([from]);
+        if (r && r[0] && r[0].pn) achou = String(r[0].pn).replace(/@.*/, "");
+      } catch (_) { /* tenta o outro caminho */ }
+      if (!achou) {
+        try {
+          const c = await msg.getContact();
+          if (c && c.number) achou = c.number;
+        } catch (_) { /* sem número */ }
+      }
+      if (!achou) {
+        console.log("[recebida] sem número para", from, "- ignorada");
+        return;
+      }
+      numero = achou;
     }
     const tipo = msg.type === "ptt" || msg.type === "audio" ? "audio" : msg.type === "image" ? "imagem" : msg.type === "chat" ? "texto" : "outro";
-    console.log("[recebida]", tipo, "de", numero);
+    console.log("[recebida]", tipo, "de", from, "->", numero);
     inbox.push({
       telefone: "+" + numero.replace(/\D/g, ""),
       texto: tipo === "texto" ? msg.body : null,
