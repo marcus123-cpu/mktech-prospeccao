@@ -58,8 +58,8 @@ export default async function FollowUps() {
                     const wa = whatsappLink(r);
                     return (
                       <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 p-3">
-                        <div>
-                          <Link href={`/leads/${r.id}`} className="font-medium hover:text-accent">{r.business_name}</Link>
+                        <div className="min-w-0">
+                          <Link href={`/leads/${r.id}`} className="break-words font-medium hover:text-accent">{r.business_name}</Link>
                           <div className="text-xs text-muted">{r.city} · {fmtDateTime(r.next_follow_up_at)}</div>
                         </div>
                         <div className="flex items-center gap-2">

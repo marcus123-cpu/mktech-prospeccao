@@ -56,37 +56,58 @@ export function LeadsTable({ rows }: { rows: LeadRow[] }) {
     <div className="space-y-3">
       {selected.size > 0 && (
         <div className="card flex flex-wrap items-end gap-3 p-3">
-          <span className="text-sm">{selected.size} selecionados</span>
-          <ActionForm action={bulkUpdate} submit="Aplicar" className="flex flex-wrap items-end gap-2">
+          <div className="flex w-full items-center justify-between gap-2 sm:w-auto">
+            <span className="text-sm">{selected.size} selecionados</span>
+            <button type="button" className="text-xs text-muted hover:text-slate-200 sm:hidden" onClick={() => setSelected(new Set())}>
+              Limpar seleção
+            </button>
+          </div>
+          <ActionForm action={bulkUpdate} submit="Aplicar" className="grid w-full gap-2 sm:flex sm:w-auto sm:flex-wrap sm:items-end">
             {[...selected].map((id) => (
               <input key={id} type="hidden" name="ids" value={id} />
             ))}
-            <select className="input w-auto" name="action" value={action} onChange={(e) => setAction(e.target.value)}>
+            <select className="input sm:w-auto" name="action" value={action} onChange={(e) => setAction(e.target.value)}>
               <option value="stage">Alterar etapa</option>
               <option value="priority">Alterar prioridade</option>
               <option value="follow_up">Agendar retorno</option>
             </select>
             {action === "stage" && (
-              <select className="input w-auto" name="value">
+              <select className="input sm:w-auto" name="value">
                 {BULK_STAGES.map((s) => (
                   <option key={s} value={s}>{STAGE_LABEL[s]}</option>
                 ))}
               </select>
             )}
             {action === "priority" && (
-              <select className="input w-auto" name="value">
+              <select className="input sm:w-auto" name="value">
                 {PRIORITIES.map((p) => (
                   <option key={p} value={p}>{PRIORITY_LABEL[p]}</option>
                 ))}
               </select>
             )}
-            {action === "follow_up" && <input className="input w-auto" type="datetime-local" name="value" required />}
+            {action === "follow_up" && <input className="input sm:w-auto" type="datetime-local" name="value" required />}
           </ActionForm>
           <p className="w-full text-xs text-muted">Ações em lote só alteram dados internos. Nenhuma mensagem é enviada.</p>
         </div>
       )}
 
-      <div className="card overflow-x-auto">
+      {/* Celular: um cartão por lead. */}
+      <div className="space-y-2 md:hidden">
+        <label className="flex items-center gap-2 px-1 text-xs text-muted">
+          <input
+            type="checkbox"
+            className="h-4 w-4"
+            checked={all}
+            onChange={() => setSelected(all ? new Set() : new Set(rows.map((r) => r.id)))}
+          />
+          Selecionar todos desta página
+        </label>
+        {rows.map((r) => (
+          <LeadCard key={r.id} r={r} checked={selected.has(r.id)} onToggle={() => toggle(r.id)} />
+        ))}
+      </div>
+
+      <div className="card hidden overflow-x-auto md:block">
         <table className="w-full min-w-[960px]">
           <thead className="border-b border-line">
             <tr>
@@ -196,6 +217,87 @@ export function LeadsTable({ rows }: { rows: LeadRow[] }) {
           </tbody>
         </table>
       </div>
+    </div>
+  );
+}
+
+function LeadCard({ r, checked, onToggle }: { r: LeadRow; checked: boolean; onToggle: () => void }) {
+  const wa = whatsappLink(r);
+  const site = r.site_status === "site_proprio_encontrado" ? safeExternal(r.website_url) : null;
+  const overdue = r.next_follow_up_at ? new Date(r.next_follow_up_at) < new Date() : false;
+  return (
+    <div className={`card p-3 ${checked ? "border-accent/60" : ""}`}>
+      <div className="flex items-start gap-3">
+        <input
+          type="checkbox"
+          className="mt-1 h-4 w-4 shrink-0"
+          aria-label={`Selecionar ${r.business_name}`}
+          checked={checked}
+          onChange={onToggle}
+        />
+        <Link href={`/leads/${r.id}`} className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <div className="break-words font-medium">
+                {r.business_name}
+                {r.unit_label && <span className="ml-1 text-xs font-normal text-muted">· {r.unit_label}</span>}
+              </div>
+              <div className="text-xs text-muted">
+                {r.city}/{r.state}
+                {r.neighborhood && ` · ${r.neighborhood}`}
+              </div>
+            </div>
+            {r.fit_score !== null && (
+              <div className="shrink-0 text-right text-xs">
+                <div className="text-base font-semibold">{r.fit_score}</div>
+                <div className="text-[10px] uppercase tracking-wide text-muted">potencial</div>
+              </div>
+            )}
+          </div>
+          <div className="mt-2 flex flex-wrap items-center gap-1.5">
+            <StageBadge stage={r.stage} />
+            <ContactBadge contacted={r.contacted} unknownDate={r.contact_date_unknown} />
+            <SiteBadge status={r.site_status} />
+            <PriorityBadge priority={r.priority} />
+          </div>
+          {(r.recommended_offer || r.next_follow_up_at) && (
+            <div className="mt-2 space-y-0.5 text-xs">
+              {r.recommended_offer && (
+                <div>
+                  Oferecer: <span className="text-accent">{OFFER_LABEL[r.recommended_offer] ?? r.recommended_offer}</span>
+                </div>
+              )}
+              {r.next_follow_up_at && (
+                <div className={overdue ? "text-rose-300" : "text-muted"}>Retorno: {fmtDateTime(r.next_follow_up_at)}</div>
+              )}
+            </div>
+          )}
+        </Link>
+      </div>
+      {(wa || r.instagram_handle || site) && (
+        <div className="mt-3 flex flex-wrap gap-2 border-t border-line pt-3 pl-7">
+          {wa && (
+            <a href={wa} target="_blank" rel="noopener noreferrer" className="btn-ghost flex-1 text-emerald-300">
+              WhatsApp
+            </a>
+          )}
+          {r.instagram_handle && (
+            <a
+              href={`https://instagram.com/${r.instagram_handle}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-ghost flex-1 text-violet-300"
+            >
+              Instagram
+            </a>
+          )}
+          {site && (
+            <a href={site} target="_blank" rel="noopener noreferrer" className="btn-ghost flex-1">
+              Site
+            </a>
+          )}
+        </div>
+      )}
     </div>
   );
 }
