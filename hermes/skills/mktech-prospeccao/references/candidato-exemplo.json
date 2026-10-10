@@ -1,0 +1,74 @@
+{
+  "business_name": "Nome Comercial da Clínica",
+  "responsible_name": "Nome do profissional, se público",
+  "niche": "Estética facial",
+  "services": [
+    "limpeza de pele",
+    "harmonização facial"
+  ],
+  "city": "Votuporanga",
+  "state": "SP",
+  "neighborhood": "Centro",
+  "unit_label": null,
+  "phone": "(17) 99999-0000",
+  "instagram": "@perfil_da_clinica",
+  "whatsapp_url": null,
+  "website_url": null,
+  "source_name": "busca_web",
+  "source_place_id": null,
+  "research_date": "2026-10-09",
+  "selection_reason": "Perfil ativo no Instagram com agenda pelo WhatsApp e nenhum site próprio encontrado.",
+  "pending_items": null,
+  "priority": "media",
+  "site_status": "apenas_redes_sociais",
+  "evidences": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/perfil_da_clinica/",
+      "summary": "Bio com Linktree e WhatsApp; último post há 3 dias.",
+      "observed_at": "2026-10-09",
+      "limitation": null
+    },
+    {
+      "kind": "busca",
+      "url": null,
+      "summary": "Busca por \"Nome Comercial da Clínica Votuporanga site\" não achou domínio próprio.",
+      "observed_at": "2026-10-09",
+      "limitation": "Só a primeira página de resultados foi verificada."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 78,
+    "confidence": "media",
+    "summary": "Clínica de estética facial com 1 profissional, foco em limpeza de pele e harmonização. Perfil ativo (posts semanais), boa reputação e agenda feita toda pelo WhatsApp.",
+    "audience": "Mulheres de 25 a 50 anos em Votuporanga e cidades vizinhas.",
+    "digital_presence": "Instagram com ~2 mil seguidores e posts semanais; Linktree com WhatsApp; 4,8 no Google (32 avaliações); nenhum site ou página de procedimento.",
+    "pains": [
+      {
+        "pain": "Agendamento manual toma tempo e perde clientes fora do horário",
+        "evidence": "Bio: 'agende pelo WhatsApp'; sem agenda online no Linktree."
+      },
+      {
+        "pain": "Quem pesquisa no Google não encontra preços nem detalhes dos procedimentos",
+        "evidence": "Busca 'harmonização facial Votuporanga' mostra concorrentes com página própria; ela só aparece no Maps."
+      },
+      {
+        "pain": "Credibilidade depende só do Instagram",
+        "evidence": "Nenhum domínio próprio; avaliações boas espalhadas em diretórios."
+      }
+    ],
+    "opportunities": [
+      "Página por procedimento (harmonização, limpeza de pele) com fotos de antes/depois autorizadas e botão de WhatsApp",
+      "Agendamento online integrado para reduzir mensagens",
+      "Reunir as avaliações do Google numa página própria para passar confiança"
+    ],
+    "offer": "site_com_agendamento",
+    "offer_reason": "A demanda já existe (avaliações e posts frequentes); o gargalo é converter e organizar a agenda. Um site com agenda e páginas por procedimento resolve as duas coisas.",
+    "approach": "Começar pelas avaliações 4,8 no Google e mostrar que concorrentes aparecem antes na busca por harmonização em Votuporanga. Oferecer um exemplo de página de procedimento com agendamento.",
+    "objections": [
+      "Já tenho Instagram e WhatsApp",
+      "Não tenho tempo para cuidar de site",
+      "Preço"
+    ]
+  }
+}

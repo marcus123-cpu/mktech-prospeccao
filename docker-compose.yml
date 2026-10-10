@@ -1,0 +1,18 @@
+# Painel ligado o tempo todo enquanto o Docker Desktop estiver aberto.
+# Iniciar:  iniciar-painel.bat  (ou: docker compose --env-file .env.local up -d --build)
+# Parar:    parar-painel.bat    (ou: docker compose --env-file .env.local down)
+services:
+  painel:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+    image: mktech-prospeccao-painel
+    container_name: mktech-painel
+    env_file: .env.local
+    # Só este computador acessa (o Hermes usa http://localhost:3000).
+    ports:
+      - "127.0.0.1:3000:3000"
+    restart: unless-stopped

@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0b0d14;
+  --color-panel: #121521;
+  --color-panel-2: #181c2b;
+  --color-line: #262b3d;
+  --color-muted: #8b93ad;
+  --color-accent: #7c6cff;
+  --color-accent-2: #5b8cff;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-bg);
+  color: #e6e8f0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+@utility card {
+  @apply rounded-xl border border-line bg-panel;
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+@utility btn-primary {
+  @apply btn bg-accent text-white hover:bg-accent/90;
+}
+
+@utility btn-ghost {
+  @apply btn border border-line bg-panel-2 text-slate-200 hover:border-accent/60;
+}
+
+@utility btn-danger {
+  @apply btn border border-rose-800 bg-rose-950/60 text-rose-200 hover:bg-rose-900/60;
+}
+
+@utility input {
+  @apply w-full rounded-lg border border-line bg-panel-2 px-3 py-2 text-sm text-slate-100 placeholder:text-muted focus:border-accent focus:outline-none;
+}
+
+@utility label {
+  @apply mb-1 block text-xs font-medium uppercase tracking-wide text-muted;
+}
+
+@utility badge {
+  @apply inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium whitespace-nowrap;
+}
+
+@utility table-head {
+  @apply px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted;
+}
+
+@utility table-cell {
+  @apply px-3 py-2 align-top text-sm;
+}
