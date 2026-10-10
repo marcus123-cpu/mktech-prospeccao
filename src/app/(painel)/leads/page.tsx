@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FiltersToggle } from "@/components/leads/FiltersToggle";
 import { LeadsTable, type LeadRow } from "@/components/leads/LeadsTable";
 import { Empty, ErrorBox, PageHeader } from "@/components/ui";
 import { dbErrorMessage, requireAdmin } from "@/lib/auth";
@@ -43,13 +44,14 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
             </Link>
             <Link href="/leads/importar" className="btn-ghost">Importar</Link>
             <a href={`/api/leads/export?${params}`} className="btn-ghost">Exportar CSV</a>
-            <Link href="/leads/novo" className="btn-primary">Novo lead</Link>
+            <Link href="/leads/novo" className="btn-primary order-first sm:order-none">Novo lead</Link>
           </>
         }
       />
       {f.excluido && <p className="mb-4 text-sm text-emerald-300">Lead excluído.</p>}
 
-      <form className="card mb-4 grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6" action="/leads">
+      <FiltersToggle active={[...params.keys()].filter((k) => k !== "ordem").length}>
+      <form className="card grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6" action="/leads">
         <div className="sm:col-span-2">
           <label className="label" htmlFor="q">Buscar</label>
           <input className="input" id="q" name="q" placeholder="Nome, telefone ou @instagram" defaultValue={f.q} />
@@ -108,6 +110,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
             ))}
           </select>
         </div>
+        <div className="grid grid-cols-2 gap-3 sm:contents">
         <div>
           <label className="label" htmlFor="de">Cadastro de</label>
           <input className="input" type="date" id="de" name="de" defaultValue={f.de} />
@@ -115,6 +118,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
         <div>
           <label className="label" htmlFor="ate">até</label>
           <input className="input" type="date" id="ate" name="ate" defaultValue={f.ate} />
+        </div>
         </div>
         <div>
           <label className="label" htmlFor="ordem">Ordenar por</label>
@@ -130,10 +134,11 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
           Ainda não contatados
         </label>
         <div className="flex items-end gap-2 sm:col-span-2 lg:col-span-4 xl:col-span-6">
-          <button className="btn-primary">Filtrar</button>
-          {hasFilters && <Link href="/leads" className="btn-ghost">Limpar filtros</Link>}
+          <button className="btn-primary flex-1 sm:flex-none">Filtrar</button>
+          {hasFilters && <Link href="/leads" className="btn-ghost flex-1 sm:flex-none">Limpar filtros</Link>}
         </div>
       </form>
+      </FiltersToggle>
 
       {error ? (
         <ErrorBox message={dbErrorMessage(error)} />

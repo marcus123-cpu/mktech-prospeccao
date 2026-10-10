@@ -139,8 +139,8 @@ export default async function Hoje({
                   return (
                     <div key={l.id} className="card flex flex-col gap-2 p-4 text-sm">
                       <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <Link href={`/leads/${l.id}`} className="font-semibold hover:text-accent">{l.business_name}</Link>
+                        <div className="min-w-0">
+                          <Link href={`/leads/${l.id}`} className="break-words font-semibold hover:text-accent">{l.business_name}</Link>
                           <div className="text-xs text-muted">{l.city}</div>
                         </div>
                         <Score value={l.fit_score} />
@@ -152,8 +152,8 @@ export default async function Hoje({
                       )}
                       <p className="line-clamp-3 text-muted">{summaries.get(l.id) ?? l.selection_reason ?? "Sem resumo."}</p>
                       <div className="mt-auto flex gap-2 pt-1">
-                        <Link href={`/leads/${l.id}`} className="btn-primary">Ver diagnóstico</Link>
-                        {wa && <a href={wa} target="_blank" rel="noopener noreferrer" className="btn-ghost">WhatsApp</a>}
+                        <Link href={`/leads/${l.id}`} className="btn-primary flex-1 sm:flex-none">Ver diagnóstico</Link>
+                        {wa && <a href={wa} target="_blank" rel="noopener noreferrer" className="btn-ghost flex-1 sm:flex-none">WhatsApp</a>}
                       </div>
                     </div>
                   );
@@ -289,10 +289,12 @@ function ActionCard({
   alert?: boolean;
 }) {
   return (
-    <Link href={href} className="card block p-4 transition hover:border-accent/60">
-      <div className={`text-3xl font-semibold tabular-nums ${alert ? "text-rose-300" : ""}`}>{number}</div>
-      <div className="font-medium">{title}</div>
-      <p className="mt-1 text-xs text-muted">{text}</p>
+    <Link href={href} className="card flex items-center gap-4 p-4 transition hover:border-accent/60 md:block">
+      <div className={`w-12 shrink-0 text-center text-3xl font-semibold tabular-nums md:w-auto md:text-left ${alert ? "text-rose-300" : ""}`}>{number}</div>
+      <div className="min-w-0">
+        <div className="font-medium">{title}</div>
+        <p className="mt-1 text-xs text-muted">{text}</p>
+      </div>
     </Link>
   );
 }
@@ -313,7 +315,7 @@ function Funnel({ steps }: { steps: { label: string; value: number; help: string
   return (
     <div className="card space-y-2 p-4">
       {steps.map((s) => (
-        <div key={s.label} className="grid grid-cols-[120px_1fr_3rem] items-center gap-3 text-sm sm:grid-cols-[170px_1fr_3rem]">
+        <div key={s.label} className="grid grid-cols-[110px_1fr_2.5rem] items-center gap-2 text-sm sm:grid-cols-[170px_1fr_3rem] sm:gap-3">
           <div>
             <div>{s.label}</div>
             <div className="text-xs text-muted">{s.help}</div>
