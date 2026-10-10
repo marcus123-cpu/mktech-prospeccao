@@ -355,6 +355,27 @@ describe("envio automático", () => {
       expect(row.reason).toContain("15 s");
     });
 
+    it("resposta que chegou antes da confirmação do envio (relógio) também é automática", async () => {
+      const g = (await pool.query(`select greeting_sent_at from outreach_messages`)).rows[0].greeting_sent_at as Date;
+      const r = await svc<any>(`select public.api_outreach_reply($1, $2::jsonb)`, [
+        sender,
+        JSON.stringify({ phone_e164: "+5517991234567", body: "Olá! Aqui é a secretária.", kind: "humana", received_at: new Date(g.getTime() - 2000).toISOString() }),
+      ]);
+      expect(r.kind).toBe("automatica");
+      expect(await column(l)).toBe("aguardando");
+    });
+
+    it("mensagem sem texto (evento do WhatsApp Business) não libera o texto", async () => {
+      await pool.query(`update outreach_messages set greeting_sent_at = now() - interval '1 minute'`);
+      const r = await svc<any>(`select public.api_outreach_reply($1, $2::jsonb)`, [
+        sender,
+        JSON.stringify({ phone_e164: "+5517991234567", body: "[mensagem sem texto]", kind: "humana", media: "outro" }),
+      ]);
+      expect(r.kind).toBe("automatica");
+      await pool.query(`update outreach_messages set body_due_at = now() - interval '1 second'`);
+      expect((await next()).status).not.toBe("enviar");
+    });
+
     it("resposta mais lenta que 15 s continua valendo como pessoa", async () => {
       await pool.query(`update outreach_messages set greeting_sent_at = now() - interval '20 seconds'`);
       const r = await reply("+5517991234567", "Oi! Pode falar.", "humana", false, false, true);

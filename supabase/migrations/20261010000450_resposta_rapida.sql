@@ -32,13 +32,15 @@ begin
     return jsonb_build_object('status', 'ignorada', 'motivo', 'telefone não recebeu abordagem automática');
   end if;
 
-  -- Resposta até 15 segundos depois da saudação: rápido demais para ser uma
-  -- pessoa (secretária virtual, menu automático). Conta como automática.
-  if v_kind = 'humana' and not v_opt and v_at >= m.greeting_sent_at
-     and v_at <= m.greeting_sent_at + interval '15 seconds' then
+  -- Resposta até 15 segundos depois da saudação (a confirmação do envio pode
+  -- chegar depois da resposta), ou mensagem sem texto nenhum (evento do
+  -- WhatsApp Business): não é uma pessoa. Conta como automática.
+  if v_kind = 'humana' and not v_opt
+     and (v_at <= m.greeting_sent_at + interval '15 seconds'
+          or (v_media = 'outro' and p ->> 'body' = '[mensagem sem texto]')) then
     v_kind := 'automatica';
     v_price := false;
-    v_reason := 'chegou até 15 s depois da saudação, rápido demais para ser uma pessoa';
+    v_reason := 'chegou até 15 s depois da saudação ou veio sem texto: não é uma pessoa';
   end if;
 
   insert into outreach_replies (lead_id, message_id, phone_e164, body, received_at, kind, reason, opt_out, asks_price, media)
