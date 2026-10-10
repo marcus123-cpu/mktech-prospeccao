@@ -110,8 +110,8 @@ describe("envio automático", () => {
     await result(n2.id, "mensagem");
     const n3 = await next();
     expect(n3).toMatchObject({ status: "aguardar", motivo: "tempo de segurança entre leads" });
-    expect(n3.segundos).toBeGreaterThanOrEqual(590);
-    expect(n3.segundos).toBeLessThanOrEqual(1500);
+    expect(n3.segundos).toBeGreaterThanOrEqual(170);
+    expect(n3.segundos).toBeLessThanOrEqual(300);
   });
 
   it("pausa vale na hora, inclusive para a mensagem de quem já recebeu a saudação", async () => {
@@ -269,6 +269,20 @@ describe("envio automático", () => {
     await asAdmin((c) => c.query(`select public.admin_register_closing($1, 900, now())`, [l]));
     expect(await column(l)).toBe("fechado");
     expect((await as("authenticated", OUTSIDER_ID, (c) => c.query(`select * from outreach_funnel`))).rowCount).toBe(0);
+  });
+
+  it("áudio fica marcado no funil", async () => {
+    const l = await lead();
+    await save(l);
+    await openAllDay();
+    const n1 = await next();
+    await result(n1.id, "saudacao");
+    await svc(`select public.api_outreach_reply($1, $2::jsonb)`, [
+      sender,
+      JSON.stringify({ phone_e164: "+5517991234567", body: "[áudio]", kind: "humana", media: "audio" }),
+    ]);
+    const row = (await asAdmin((c) => c.query(`select coluna, sent_audio from outreach_funnel where id = $1`, [l]))).rows[0];
+    expect(row).toEqual({ coluna: "conversa", sent_audio: true });
   });
 
   it("pergunta de valor de mensagem automática não conta", async () => {

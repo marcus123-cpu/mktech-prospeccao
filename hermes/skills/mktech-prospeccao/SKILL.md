@@ -185,12 +185,18 @@ CRM: **não comece com saudação**.
      no Google, o antes e depois de um procedimento, a frequência de posts).
      Nada de "seu trabalho é incrível".
    - `dor`: uma dor do diagnóstico, com a evidência que a sustenta.
-   - `melhoria`: o que a MKTech faria para resolver (a oportunidade/oferta).
-   - `mensagem`: o texto que o cliente vai ler, de 120 a 600 caracteres,
-     que usa o elogio, a dor e a melhoria nessa ordem e termina com **uma**
-     pergunta leve. Trate por "você", escreva como o Marcos falaria (simples,
-     sem formalidade), sem links, preço, pressão, emojis em excesso ou
-     menção a IA/robô/sistema. Se o site ainda não foi verificado, fale em
+   - `melhoria`: o que a MKTech faria para resolver. A MKTech faz
+     **sistemas, landing pages, loja com vitrine e ERP, e automações**;
+     escolha o que resolve a dor (para clínica, normalmente landing page ou
+     página com agendamento; automação quando o atendimento é todo manual).
+   - `mensagem`: o texto que o cliente vai ler, **curto e claro, de 100 a
+     400 caracteres**, que usa o elogio, a dor e a melhoria nessa ordem e
+     termina com **uma** pergunta leve. Tom **formal e amigável**: trate por
+     "você", sem gíria e sem formalidade exagerada. Pode citar como exemplo
+     de trabalho o sistema que a MKTech fez para a **Polpuja**. Nunca fale
+     de valor, preço ou desconto (o preço depende do serviço e quem conversa
+     sobre isso é o Marcos). Sem links, pressão, emojis em excesso ou menção a
+     IA/robô/sistema automático. Se o site ainda não foi verificado, fale em
      forma condicional ("se você ainda não tem uma página...").
 3. Grave com `envio-salvar --lead <id> --file mensagem.json`.
    - Código 0: entrou na fila.
@@ -208,7 +214,7 @@ Exemplo de `mensagem.json`:
   "elogio": "4,9 no Google com 87 avaliações elogiando o atendimento",
   "dor": "agendamento só pelo direct e WhatsApp, sem página para quem pesquisa harmonização em Votuporanga",
   "melhoria": "uma página de harmonização com agendamento online",
-  "mensagem": "Vi que a Bella Pelle tem 4,9 no Google com 87 avaliações, e quase todas elogiam o atendimento. Reparei que hoje o agendamento é só pelo direct e pelo WhatsApp, então quem pesquisa harmonização em Votuporanga não encontra uma página de vocês. Eu monto páginas com agendamento online para clínicas de estética. Posso te mostrar uma ideia de como ficaria a de vocês?"
+  "mensagem": "Vi que a Bella Pelle tem 4,9 no Google com 87 avaliações elogiando o atendimento. Hoje o agendamento é só pelo direct e WhatsApp, e quem pesquisa harmonização em Votuporanga não encontra uma página de vocês. Eu crio páginas com agendamento online. Posso te mostrar uma ideia?"
 }
 ```
 

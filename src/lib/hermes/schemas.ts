@@ -145,9 +145,11 @@ export const outreachResultSchema = z
 export const outreachReplySchema = z
   .object({
     telefone: text(30).regex(/^\+?[0-9 ()-]{10,25}$/, "telefone inválido"),
-    texto: text(4000).min(1),
+    tipo: z.enum(["texto", "audio", "imagem", "outro"]).default("texto"),
+    texto: text(4000).optional().nullable(),
     recebida_em: z.string().regex(/^\d{4}-\d{2}-\d{2}T/).optional().nullable(),
     segundos_desde_envio: z.number().min(0).max(86400 * 30).optional().nullable(),
     anteriores: z.array(text(4000)).max(20).optional(),
   })
-  .strict();
+  .strict()
+  .refine((r) => r.tipo !== "texto" || !!r.texto, { message: "texto obrigatório", path: ["texto"] });

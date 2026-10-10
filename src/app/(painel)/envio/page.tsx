@@ -58,6 +58,7 @@ type Reply = {
   kind: "automatica" | "humana";
   reason: string | null;
   opt_out: boolean;
+  media: string;
   leads: { business_name: string } | null;
 };
 
@@ -73,7 +74,7 @@ export default async function EnvioPage() {
       .limit(60),
     supabase
       .from("outreach_replies")
-      .select("id, lead_id, body, received_at, kind, reason, opt_out, leads(business_name)")
+      .select("id, lead_id, body, received_at, kind, reason, opt_out, media, leads(business_name)")
       .order("received_at", { ascending: false })
       .limit(40),
     supabase
@@ -156,7 +157,9 @@ export default async function EnvioPage() {
                         <Link href={`/leads/${r.lead_id}`} className="font-medium hover:underline">{r.leads?.business_name ?? "Lead"}</Link>
                         <span className="text-xs text-muted"> · {fmtDateTime(r.received_at)}</span>{" "}
                         {r.kind === "humana" ? (
-                          <span className="badge bg-sky-900/70 text-sky-200">Pessoa{r.opt_out ? " · pediu para parar" : ""}</span>
+                          <span className="badge bg-sky-900/70 text-sky-200">
+                            Pessoa{r.opt_out ? " · pediu para parar" : ""}{r.media === "audio" ? " · mandou áudio" : ""}
+                          </span>
                         ) : (
                           <span className="badge bg-zinc-800 text-zinc-400">Automática</span>
                         )}

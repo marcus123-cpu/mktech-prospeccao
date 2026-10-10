@@ -8,6 +8,8 @@ export type ReplyKind = "automatica" | "humana";
 
 export type ReplyInput = {
   texto: string;
+  /** Tipo da mensagem recebida. Áudio é sempre de pessoa. */
+  tipo?: "texto" | "audio" | "imagem" | "outro";
   /** Segundos entre a nossa última mensagem e esta resposta, se o enviador souber. */
   segundos_desde_envio?: number | null;
   /** Respostas anteriores do mesmo telefone (para pegar texto repetido). */
@@ -59,6 +61,9 @@ const PRICE = [
 ];
 
 export function classifyReply(input: ReplyInput): ReplyClass {
+  if (input.tipo === "audio") {
+    return { kind: "humana", reason: "mandou áudio: mude o estilo da conversa", optOut: false, asksPrice: false };
+  }
   const text = norm(input.texto ?? "");
   const optOut = OPT_OUT.some((r) => r.test(text));
   if (optOut) return { kind: "humana", reason: "pediu para não receber mais mensagens", optOut: true, asksPrice: false };

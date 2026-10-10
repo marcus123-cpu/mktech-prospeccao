@@ -19,6 +19,7 @@ type Card = {
   last_reply_at: string | null;
   greeting_sent_at: string | null;
   sent_at: string | null;
+  sent_audio: boolean;
 };
 
 // Só mostra. Mover um lead entre colunas é feito na ficha (etapa, proposta,
@@ -36,7 +37,7 @@ export default async function FunilPage() {
   const { supabase } = await requireAdmin();
   const { data, error } = await supabase
     .from("outreach_funnel")
-    .select("id, business_name, city, fit_score, coluna, movido_em, last_reply, last_reply_kind, last_reply_at, greeting_sent_at, sent_at")
+    .select("id, business_name, city, fit_score, coluna, movido_em, last_reply, last_reply_kind, last_reply_at, greeting_sent_at, sent_at, sent_audio")
     .order("movido_em", { ascending: false })
     .limit(600);
   const cards = (data ?? []) as Card[];
@@ -96,6 +97,9 @@ export default async function FunilPage() {
                           {c.city}
                           {c.fit_score !== null && ` · nota ${c.fit_score}`}
                         </div>
+                        {c.sent_audio && (col.key === "conversa" || col.key === "valor") && (
+                          <p className="mt-2 rounded-md bg-amber-500/15 px-2 py-1 text-xs text-amber-200">Mandou áudio: mude o estilo da conversa</p>
+                        )}
                         {c.last_reply && (col.key === "conversa" || col.key === "valor") && (
                           <p className="mt-2 line-clamp-3 text-xs text-slate-300">“{c.last_reply}”</p>
                         )}

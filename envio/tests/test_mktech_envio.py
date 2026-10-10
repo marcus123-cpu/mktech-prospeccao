@@ -144,7 +144,7 @@ class SenderTest(unittest.TestCase):
         t = Gravador(recebidas=[{"telefone": "+5517991234567", "texto": "Oi, quem é?", "segundos_desde_envio": 90}])
         mktech_envio.step(t)
         sent = [c["body"] for c in FakeApi.calls if c["path"].endswith("/respostas")]
-        self.assertEqual(sent, [{"telefone": "+5517991234567", "texto": "Oi, quem é?", "segundos_desde_envio": 90}])
+        self.assertEqual(sent, [{"telefone": "+5517991234567", "texto": "Oi, quem é?", "tipo": "texto", "segundos_desde_envio": 90}])
 
     def test_simulacao_nao_contata_ninguem_e_grava_log(self):
         with tempfile.TemporaryDirectory() as d:

@@ -105,6 +105,16 @@ describe("rotas do envio automático", () => {
     expect(rpc).toHaveBeenLastCalledWith("api_outreach_reply", expect.objectContaining({ p: expect.objectContaining({ kind: "humana" }) }));
   });
 
+  it("áudio vai como pessoa, sem precisar de texto", async () => {
+    const res = await postReply(req("/api/hermes/v1/envio/respostas", { telefone: "+5517991234567", tipo: "audio" }));
+    expect(res.status).toBe(201);
+    expect(rpc).toHaveBeenLastCalledWith(
+      "api_outreach_reply",
+      expect.objectContaining({ p: expect.objectContaining({ kind: "humana", media: "audio", body: "[áudio]" }) }),
+    );
+    expect((await postReply(req("/api/hermes/v1/envio/respostas", { telefone: "+5517991234567" }))).status).toBe(422);
+  });
+
   it("resultado exige etapa válida", async () => {
     const id = "22222222-2222-4222-8222-222222222222";
     expect((await postResult(req(`/api/hermes/v1/envio/${id}/resultado`, { etapa: "outra", ok: true }), params({ id }))).status).toBe(422);

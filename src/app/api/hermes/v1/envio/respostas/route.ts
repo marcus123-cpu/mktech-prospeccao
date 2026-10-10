@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 // POST /api/hermes/v1/envio/respostas — mensagem que chegou de um telefone
 // abordado. Aqui ela é classificada (automática x pessoa). Só resposta de
 // pessoa move o lead para "respondeu"; pedido para parar bloqueia o lead.
+// Áudio conta como pessoa e avisa o Marcos para mudar o estilo da conversa.
 // Ninguém responde ao cliente automaticamente: o Marcos assume a conversa.
 export async function POST(request: Request) {
   const auth = await authenticate(request, "envio:operar");
@@ -15,12 +16,14 @@ export async function POST(request: Request) {
   const body = await parseBody(request, outreachReplySchema);
   if ("response" in body) return body.response;
   const r = body.data;
-  const c = classifyReply({ texto: r.texto, segundos_desde_envio: r.segundos_desde_envio, anteriores: r.anteriores });
+  const texto = r.texto || (r.tipo === "audio" ? "[áudio]" : r.tipo === "imagem" ? "[imagem]" : "[mensagem sem texto]");
+  const c = classifyReply({ texto, tipo: r.tipo, segundos_desde_envio: r.segundos_desde_envio, anteriores: r.anteriores });
   const { data, error } = await serviceClient().rpc("api_outreach_reply", {
     p_token: auth.tokenId,
     p: {
       phone_e164: r.telefone,
-      body: r.texto,
+      body: texto,
+      media: r.tipo,
       received_at: r.recebida_em ?? null,
       kind: c.kind,
       reason: c.reason,

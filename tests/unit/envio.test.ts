@@ -24,7 +24,7 @@ const good: OutreachPayload = {
   dor: "agendamento só pelo direct e WhatsApp",
   melhoria: "página de harmonização com agendamento online",
   mensagem:
-    "Vi que a Bella Pelle tem 4,9 no Google com 87 avaliações, e quase todas elogiam o atendimento. Reparei que hoje o agendamento é só pelo direct e pelo WhatsApp, então quem pesquisa harmonização em Votuporanga não encontra uma página de vocês. Eu monto páginas com agendamento online para clínicas de estética. Posso te mostrar uma ideia de como ficaria a de vocês?",
+    "Vi que a Bella Pelle tem 4,9 no Google com 87 avaliações elogiando o atendimento. Hoje o agendamento é só pelo direct e WhatsApp, e quem pesquisa harmonização em Votuporanga não encontra uma página de vocês. Eu crio páginas com agendamento online. Posso te mostrar uma ideia?",
 };
 
 describe("mensagem do envio automático", () => {
@@ -36,7 +36,7 @@ describe("mensagem do envio automático", () => {
     ["Ocorreu um erro ao gerar a mensagem. Tente novamente mais tarde, por favor, estamos verificando o problema agora mesmo."],
     ['{"mensagem": "Vi que a Bella Pelle tem 4,9 no Google com 87 avaliações e o agendamento é só pelo WhatsApp hoje."}'],
     ["Desculpe, como modelo de linguagem não posso escrever mensagens de prospecção para este lead da clínica de estética."],
-    ["Error: request failed with status 500 while generating the outreach message for Bella Pelle in Votuporanga today."],
+    ["Error: request failed with status 500 while generating the outreach message for Bella Pelle in Votuporanga."],
     ["**Mensagem:** Vi que a Bella Pelle tem 4,9 no Google com 87 avaliações e o agendamento é só pelo direct e WhatsApp."],
   ])("recusa saída técnica do agente: %s", (mensagem) => {
     const errors = validateOutreach(ctx, { ...good, mensagem });
@@ -71,7 +71,7 @@ describe("mensagem do envio automático", () => {
 
   it("com o site não verificado, só forma condicional", () => {
     const c = { ...ctx, site_status: "verificacao_pendente" };
-    const m = good.mensagem.replace("Eu monto", "Vocês estão sem site. Eu monto");
+    const m = good.mensagem.replace("Eu crio", "Vocês estão sem site. Eu crio");
     expect(validateOutreach(c, { ...good, mensagem: m }).join(" ")).toMatch(/condicional/);
   });
 
@@ -121,5 +121,28 @@ describe("classificação de respostas", () => {
 
   it.each(["Não tenho interesse", "pare", "Não me mande mais mensagens", "remova meu número"])("pedido para parar: %s", (texto) => {
     expect(classifyReply({ texto })).toMatchObject({ kind: "humana", optOut: true });
+  });
+});
+
+describe("serviços da MKTech na mensagem", () => {
+  it("pode citar sistema, automação e o caso Polpuja", () => {
+    const mensagem =
+      "Vi que a Bella Pelle tem 4,9 no Google com 87 avaliações elogiando o atendimento. Hoje o agendamento é só pelo direct e WhatsApp. Fiz o sistema da Polpuja e crio páginas de harmonização com agendamento online e automações. Posso te mostrar uma ideia?";
+    expect(validateOutreach(ctx, { ...good, mensagem })).toEqual([]);
+  });
+
+  it("mensagem longa demais é recusada (curta e clara)", () => {
+    expect(validateOutreach(ctx, { ...good, mensagem: good.mensagem + " " + good.mensagem }).join(" ")).toMatch(/Passou de 400/);
+  });
+
+  it("não pode dizer que a mensagem é automática", () => {
+    const mensagem = good.mensagem.replace("Posso", "Esta é uma mensagem automática. Posso");
+    expect(validateOutreach(ctx, { ...good, mensagem }).join(" ")).toMatch(/IA, sistema ou automação/);
+  });
+});
+
+describe("áudio", () => {
+  it("áudio é sempre de pessoa", () => {
+    expect(classifyReply({ texto: "[áudio]", tipo: "audio" })).toMatchObject({ kind: "humana", reason: expect.stringMatching(/áudio/) });
   });
 });

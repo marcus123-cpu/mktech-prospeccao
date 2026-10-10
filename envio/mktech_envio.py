@@ -21,7 +21,7 @@ Comandos (saída em JSON no stdout; logs no stderr):
   selftest                               verifica URL, token e estado da chave
   rodar [--transporte T] [--uma-vez]     laço de envio (Ctrl+C para parar)
   resposta --telefone N --texto "..."    registra uma mensagem recebida
-           [--segundos S]                (segundos desde a nossa mensagem)
+           [--segundos S] [--tipo audio] (segundos desde a nossa mensagem; tipo)
 
 Códigos de saída: 0 ok · 2 dados inválidos · 5 falha temporária/rede · 6 configuração/token.
 """
@@ -155,7 +155,7 @@ class Transporte:
         raise NotImplementedError
 
     def recebidas(self) -> list[dict[str, Any]]:
-        """Mensagens novas recebidas: [{telefone, texto, recebida_em}]."""
+        """Mensagens novas recebidas: [{telefone, texto, tipo (texto/audio/imagem/outro), recebida_em}]."""
         return []
 
 
@@ -199,7 +199,7 @@ def report(item_id: str, etapa: str, ok: bool, erro: str | None = None) -> dict[
 def forward_replies(transporte: Transporte) -> int:
     n = 0
     for msg in transporte.recebidas():
-        body = {"telefone": msg["telefone"], "texto": msg["texto"]}
+        body = {"telefone": msg["telefone"], "texto": msg.get("texto") or None, "tipo": msg.get("tipo") or "texto"}
         if msg.get("recebida_em"):
             body["recebida_em"] = msg["recebida_em"]
         if msg.get("segundos_desde_envio") is not None:
@@ -268,7 +268,7 @@ def cmd_selftest(_: argparse.Namespace) -> int:
 
 
 def cmd_resposta(args: argparse.Namespace) -> int:
-    body: dict[str, Any] = {"telefone": args.telefone, "texto": args.texto}
+    body: dict[str, Any] = {"telefone": args.telefone, "texto": args.texto or None, "tipo": args.tipo}
     if args.segundos is not None:
         body["segundos_desde_envio"] = args.segundos
     status, payload = request("POST", "/api/hermes/v1/envio/respostas", body)
@@ -289,7 +289,8 @@ def main(argv: list[str] | None = None) -> int:
     r.set_defaults(fn=cmd_rodar)
     a = sub.add_parser("resposta")
     a.add_argument("--telefone", required=True)
-    a.add_argument("--texto", required=True)
+    a.add_argument("--texto")
+    a.add_argument("--tipo", choices=["texto", "audio", "imagem", "outro"], default="texto")
     a.add_argument("--segundos", type=float)
     a.set_defaults(fn=cmd_resposta)
     args = p.parse_args(argv)

@@ -6,8 +6,9 @@
 // sinal de saída técnica do agente (erro, JSON, código, recusa do modelo)
 // derruba a mensagem inteira.
 
-export const MIN_CHARS = 120;
-export const MAX_CHARS = 600;
+// Mensagens curtas e claras, a pedido do Marcos.
+export const MIN_CHARS = 100;
+export const MAX_CHARS = 400;
 
 export type LeadContext = {
   business_name: string;
@@ -101,9 +102,11 @@ const PRESSURE = [
   /agora mesmo/, /antes que seja tarde/, /aproveite/, /promocao/, /oferta especial/, /desconto/, /ficando para tras/,
   /esta perdendo dinheiro/,
 ];
+// "sistema" e "automação" são serviços da MKTech e podem aparecer; o que não
+// pode é dizer que a própria mensagem é automática.
 const AI = [
-  /inteligencia artificial/, /\brobo\b/, /\bbot\b/, /\bsistema\b/, /automati/, /\balgoritmo/, /chatgpt/, /\bgpt\b/,
-  /\bhermes\b/, /\bcrm\b/, /gerad[ao] automaticamente/, /\bagente\b/,
+  /inteligencia artificial/, /\brobo\b/, /\bbot\b/, /\balgoritmo/, /chatgpt/, /\bgpt\b/, /\bhermes\b/, /\bcrm\b/,
+  /(mensagem|resposta|envio) automatic/, /(gerad|enviad|escrit)[ao] automaticamente/, /\bagente\b/,
 ];
 const GENERIC_PRAISE = [
   /trabalho (e |eh )?(incrivel|lindo|maravilhoso|sensacional|perfeito|top)/, /perfil (e |eh )?(incrivel|lindo|maravilhoso|sensacional)/,
