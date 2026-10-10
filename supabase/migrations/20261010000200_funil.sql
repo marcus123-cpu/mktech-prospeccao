@@ -51,7 +51,7 @@ begin
     update leads set do_not_contact = true, do_not_contact_at = now() where id = m.lead_id;
     update outreach_messages set status = 'cancelada', cancelled_at = now(),
       cancel_reason = 'lead pediu para não receber mensagens'
-    where lead_id = m.lead_id and status in ('pronta', 'saudacao_enviada');
+    where id = m.id and status in ('pronta', 'saudacao_enviada');
   end if;
   if v_kind = 'humana' then
     select stage into v_stage from leads where id = m.lead_id;

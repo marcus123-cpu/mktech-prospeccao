@@ -287,10 +287,13 @@ begin
   select * into s from outreach_settings where id = 1 for update;
 
   -- Etapa sem confirmação em 5 minutos: falhou e não é reenviada.
-  update outreach_messages
-  set status = 'falhou', failed_at = now(), timed_out = true,
-      error = 'o enviador não confirmou em 5 minutos; não foi reenviada'
-  where status in ('enviando_saudacao', 'enviando_mensagem') and claimed_at < now() - interval '5 minutes';
+  for m in select * from outreach_messages
+           where status in ('enviando_saudacao', 'enviando_mensagem') and claimed_at < now() - interval '5 minutes' loop
+    update outreach_messages
+    set status = 'falhou', failed_at = now(), timed_out = true,
+        error = 'o enviador não confirmou em 5 minutos; não foi reenviada'
+    where id = m.id;
+  end loop;
 
   if not s.enabled then
     return jsonb_build_object('status', 'desligado');
@@ -338,10 +341,12 @@ begin
   end if;
 
   -- Tira da fila quem deixou de estar apto (contatado à mão, bloqueado...).
-  update outreach_messages o set status = 'cancelada', cancelled_at = now(),
-    cancel_reason = 'lead deixou de estar apto (etapa, contato, bloqueio ou telefone já abordado)'
-  from leads x
-  where o.status = 'pronta' and x.id = o.lead_id and not outreach_lead_ok(x);
+  for m in select o.* from outreach_messages o join leads x on x.id = o.lead_id
+           where o.status = 'pronta' and not outreach_lead_ok(x) loop
+    update outreach_messages set status = 'cancelada', cancelled_at = now(),
+      cancel_reason = 'lead deixou de estar apto (etapa, contato, bloqueio ou telefone já abordado)'
+    where id = m.id;
+  end loop;
 
   select o.* into m from outreach_messages o
   where o.status = 'pronta'
@@ -465,7 +470,7 @@ begin
     update leads set do_not_contact = true, do_not_contact_at = now() where id = m.lead_id;
     update outreach_messages set status = 'cancelada', cancelled_at = now(),
       cancel_reason = 'lead pediu para não receber mensagens'
-    where lead_id = m.lead_id and status in ('pronta', 'saudacao_enviada');
+    where id = m.id and status in ('pronta', 'saudacao_enviada');
   end if;
   if v_kind = 'humana' then
     select stage into v_stage from leads where id = m.lead_id;
