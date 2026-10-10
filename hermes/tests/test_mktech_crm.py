@@ -112,6 +112,24 @@ class ClientTest(unittest.TestCase):
         self.assertEqual(k1, k2)
         self.assertTrue(k1.startswith("hermes-"))
 
+    def test_outreach_save_sends_only_the_four_fields(self):
+        lead = "11111111-1111-4111-8111-111111111111"
+        FakeApi.responses[f"POST /api/hermes/v1/envio/mensagens/{lead}"] = [(201, {"status": "criado"}, {})]
+        path = Path(self.tmp.name) / "m.json"
+        msg = {"elogio": "a", "dor": "b", "melhoria": "c", "mensagem": "d", "extra": "nada"}
+        path.write_text(json.dumps(msg), encoding="utf-8")
+        code, out, _ = self.run_cli("envio-salvar", "--lead", lead, "--file", str(path))
+        self.assertEqual(code, 0)
+        self.assertEqual(FakeApi.calls[-1]["body"], {"elogio": "a", "dor": "b", "melhoria": "c", "mensagem": "d"})
+
+    def test_outreach_save_rejected_returns_invalid(self):
+        lead = "11111111-1111-4111-8111-111111111111"
+        FakeApi.responses[f"POST /api/hermes/v1/envio/mensagens/{lead}"] = [(422, {"status": "invalido", "errors": ["x"]}, {})]
+        path = Path(self.tmp.name) / "m.json"
+        path.write_text(json.dumps({"elogio": "a", "dor": "b", "melhoria": "c", "mensagem": "d"}), encoding="utf-8")
+        code, out, _ = self.run_cli("envio-salvar", "--lead", lead, "--file", str(path))
+        self.assertEqual(code, mktech_crm.EXIT_INVALID)
+
     def test_retries_on_503_then_succeeds(self):
         FakeApi.responses["POST /api/hermes/v1/candidates"] = [
             (503, {"status": "falha_temporaria"}, {"Retry-After": "1"}),

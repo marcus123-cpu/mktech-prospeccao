@@ -59,7 +59,7 @@ export default async function Hoje({
   const { start, end } = periodRange(key, new Date(), { start: sp.inicio, end: sp.fim });
   const { supabase } = await requireAdmin();
 
-  const [metrics, top, toApproach, settings] = await Promise.all([
+  const [metrics, top, toApproach, settings, priceQuestions, conversations] = await Promise.all([
     supabase.rpc("dashboard_metrics", { p_start: start, p_end: end }),
     supabase
       .from("leads")
@@ -71,7 +71,10 @@ export default async function Hoje({
       .limit(6),
     supabase.from("leads").select("id", { count: "exact", head: true }).eq("stage", "novo").eq("contacted", false),
     supabase.from("prospecting_settings").select("routine_enabled, daily_target").eq("id", 1).maybeSingle(),
+    supabase.from("outreach_funnel").select("id", { count: "exact", head: true }).eq("coluna", "valor"),
+    supabase.from("outreach_funnel").select("id", { count: "exact", head: true }).eq("coluna", "conversa"),
   ]);
+  const waitingOnYou = (priceQuestions.count ?? 0) + (conversations.count ?? 0);
   const m = metrics.data as Metrics | null;
   const leads = (top.data ?? []) as TopLead[];
 
@@ -96,6 +99,15 @@ export default async function Hoje({
         <ErrorBox message={dbErrorMessage(metrics.error) || "Não foi possível carregar o painel."} />
       ) : (
         <div className="space-y-8">
+          {waitingOnYou > 0 && (
+            <Link
+              href="/funil"
+              className="block rounded-xl border border-amber-600 bg-amber-950/40 p-4 text-sm text-amber-100 hover:border-amber-400"
+            >
+              <span className="font-semibold">Clientes esperando você:</span> {priceQuestions.count ?? 0} perguntaram valor e{" "}
+              {conversations.count ?? 0} estão em conversa. Abrir o funil.
+            </Link>
+          )}
           {/* 1. Ações do dia */}
           <section>
             <h2 className="mb-3 text-sm font-semibold">O que fazer agora</h2>

@@ -250,3 +250,29 @@ hermes/skills/           skill e script do Hermes
 hermes/instalar-skill.ps1
 tests/                   testes de banco, unidade e API
 ```
+
+## Envio automático (WhatsApp)
+
+Tela **Envio automático** no painel. Fluxo:
+
+1. O Hermes escreve a primeira mensagem de cada lead com diagnóstico
+   (`mktech_crm.py envio-pendentes` / `envio-salvar`). A API valida (elogio
+   concreto, dor e melhoria vindos dos dados, sem texto técnico/erro, sem
+   fato inventado). Mensagem recusada não entra na fila; com 3 recusas o lead
+   aparece em "Precisa de atenção".
+2. O enviador do PC (`envio/mktech_envio.py rodar`) pede ao servidor a
+   próxima etapa. O servidor decide: chave global (nasce **desligada**),
+   pausa, horário e dias (São Paulo), limite diário e espera sorteada entre
+   leads. Primeiro sai a saudação (bom dia / boa tarde / boa noite), depois a
+   mensagem. Etapa não confirmada em 5 minutos vira "falhou" e não é reenviada.
+3. Respostas são classificadas em automática ou pessoa. Só pessoa move o lead
+   para "respondeu"; pedido para parar bloqueia o lead. Ninguém responde o
+   cliente sozinho.
+
+A tela **Funil** mostra cada lead numa coluna: Na fila, Enviado, Em conversa,
+Pergunta de valor (uma pessoa perguntou preço; quem responde é você), Fechando
+(proposta enviada) e Fechado. Ela só mostra; nada é respondido ao cliente.
+
+Configuração no PC: copie `envio/.env.exemplo` para `envio/.env`, crie o
+token do enviador na tela e rode `envio/rodar-envio-simulacao.bat`. O
+transporte `whatsapp` (envio real) ainda não está ligado nesta versão.

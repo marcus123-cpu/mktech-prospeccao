@@ -120,3 +120,36 @@ export const finishRunSchema = z
 export function compact<T extends Record<string, unknown>>(obj: T): Partial<T> {
   return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== null && v !== undefined)) as Partial<T>;
 }
+
+// Envio automático: mensagem que o Hermes escreve a partir do diagnóstico.
+// A saudação (bom dia / boa noite) não entra aqui: o servidor manda antes.
+export const outreachSchema = z
+  .object({
+    elogio: text(300).min(1),
+    dor: text(300).min(1),
+    melhoria: text(300).min(1),
+    mensagem: text(700).min(1),
+  })
+  .strict();
+
+// Enviador: resultado de uma etapa.
+export const outreachResultSchema = z
+  .object({
+    etapa: z.enum(["saudacao", "mensagem"]),
+    ok: z.boolean(),
+    erro: optText(500),
+  })
+  .strict();
+
+// Enviador: mensagem recebida de um telefone abordado.
+export const outreachReplySchema = z
+  .object({
+    telefone: text(30).regex(/^\+?[0-9 ()-]{10,25}$/, "telefone inválido"),
+    tipo: z.enum(["texto", "audio", "imagem", "outro"]).default("texto"),
+    texto: text(4000).optional().nullable(),
+    recebida_em: z.string().regex(/^\d{4}-\d{2}-\d{2}T/).optional().nullable(),
+    segundos_desde_envio: z.number().min(0).max(86400 * 30).optional().nullable(),
+    anteriores: z.array(text(4000)).max(20).optional(),
+  })
+  .strict()
+  .refine((r) => r.tipo !== "texto" || !!r.texto, { message: "texto obrigatório", path: ["texto"] });

@@ -4,11 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const ITEMS = [
-  { href: "/", label: "Hoje", short: "Hoje", hint: "o que fazer agora" },
-  { href: "/leads", label: "Leads", short: "Leads", hint: "todos os contatos" },
-  { href: "/retornos", label: "Retornos", short: "Retornos", hint: "quem chamar de novo" },
-  { href: "/execucoes", label: "Pesquisas do Hermes", short: "Hermes", hint: "o que o robô fez" },
-  { href: "/configuracoes", label: "Configurações", short: "Ajustes", hint: "metas, cidades, token" },
+  { href: "/", label: "Hoje", short: "Hoje", hint: "o que fazer agora", mobile: true },
+  { href: "/leads", label: "Leads", short: "Leads", hint: "todos os contatos", mobile: true },
+  { href: "/funil", label: "Funil", short: "Funil", hint: "envio, conversa e fechamento", mobile: true },
+  { href: "/retornos", label: "Retornos", short: "Retornos", hint: "quem chamar de novo", mobile: false },
+  { href: "/envio", label: "Envio automático", short: "Envio", hint: "WhatsApp e respostas", mobile: true },
+  { href: "/execucoes", label: "Pesquisas do Hermes", short: "Hermes", hint: "o que o robô fez", mobile: false },
+  { href: "/configuracoes", label: "Configurações", short: "Ajustes", hint: "metas, cidades, token", mobile: true },
 ];
 
 function useActive() {
@@ -50,7 +52,7 @@ export function Nav({ pendingReviews }: { pendingReviews: number }) {
   );
 }
 
-/** Barra de abas fixa no rodapé, usada no celular. */
+/** Barra de abas fixa no rodapé, usada no celular. Retornos e Pesquisas ficam acessíveis pela tela Hoje. */
 export function BottomNav({ pendingReviews }: { pendingReviews: number }) {
   const active = useActive();
   return (
@@ -59,7 +61,7 @@ export function BottomNav({ pendingReviews }: { pendingReviews: number }) {
       className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-panel/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
     >
       <ul className="grid grid-cols-5">
-        {ITEMS.map((item) => {
+        {ITEMS.filter((item) => item.mobile).map((item) => {
           const on = active(item.href);
           return (
             <li key={item.href}>

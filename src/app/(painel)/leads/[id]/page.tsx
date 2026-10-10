@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CopyResumo } from "@/components/leads/CopyResumo";
 import { DiagnosisCard, type Diagnosis } from "@/components/leads/DiagnosisCard";
 import { NextStep } from "@/components/leads/NextStep";
 import { notFound } from "next/navigation";
@@ -8,6 +9,7 @@ import { ContactBadge, PriorityBadge, SiteBadge, StageBadge } from "@/components
 import { requireAdmin } from "@/lib/auth";
 import { CHANNEL_LABEL, CHANNELS, EVIDENCE_LABEL, ORIGIN_LABEL, STAGE_LABEL, STAGES, type Origin, type Stage } from "@/lib/labels";
 import { safeExternal, whatsappLink } from "@/lib/leads-query";
+import { leadResumo } from "@/lib/leads/resumo";
 import { fmtDate, fmtDateTime, fmtMoney, isoToSpLocal } from "@/lib/time";
 import {
   addNote,
@@ -37,7 +39,7 @@ export default async function LeadDetail({
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
   const { supabase } = await requireAdmin();
 
-  const [lead, contacts, stages, notes, proposals, evidences, diagnoses] = await Promise.all([
+  const [lead, contacts, stages, notes, proposals, evidences, diagnoses, outreach, replies] = await Promise.all([
     supabase.from("leads").select("*").eq("id", id).maybeSingle(),
     supabase.from("contact_events").select("*").eq("lead_id", id).order("created_at", { ascending: false }),
     supabase.from("stage_events").select("*").eq("lead_id", id).order("changed_at", { ascending: false }),
@@ -45,12 +47,27 @@ export default async function LeadDetail({
     supabase.from("proposals").select("*").eq("lead_id", id).order("sent_at", { ascending: false }),
     supabase.from("lead_evidences").select("*").eq("lead_id", id).order("observed_at", { ascending: false }),
     supabase.from("lead_diagnoses").select("*").eq("lead_id", id).order("created_at", { ascending: false }).limit(20),
+    supabase
+      .from("outreach_messages")
+      .select("status, greeting, body, greeting_sent_at, sent_at")
+      .eq("lead_id", id)
+      .neq("status", "cancelada")
+      .maybeSingle(),
+    supabase.from("outreach_replies").select("body, kind, received_at").eq("lead_id", id).order("received_at", { ascending: true }),
   ]);
   if (!lead.data) notFound();
   const l = lead.data;
   const wa = whatsappLink(l);
   const site = safeExternal(l.website_url);
   const nowLocal = isoToSpLocal(new Date());
+  const resumo = leadResumo({
+    lead: l,
+    diagnosis: (diagnoses.data?.[0] as Diagnosis | undefined) ?? null,
+    evidences: evidences.data ?? [],
+    notes: (notes.data ?? []).filter((n) => n.source === "manual"),
+    outreach: outreach.data ?? null,
+    replies: replies.data ?? [],
+  });
 
   const timeline: TimelineItem[] = [
     ...(contacts.data ?? []).map((c) => ({
@@ -159,6 +176,7 @@ export default async function LeadDetail({
           </div>
         </div>
         <div className="flex w-full flex-wrap gap-2 sm:w-auto [&>*]:flex-1 sm:[&>*]:flex-none">
+          <CopyResumo text={resumo} />
           {wa && <a className="btn-ghost" href={wa} target="_blank" rel="noopener noreferrer">Abrir WhatsApp</a>}
           {l.instagram_handle && (
             <a className="btn-ghost" href={`https://instagram.com/${l.instagram_handle}`} target="_blank" rel="noopener noreferrer">

@@ -1,7 +1,7 @@
 ---
 name: mktech-prospeccao
 description: Pesquisa diária de clínicas e profissionais de estética sem site próprio no interior de SP e cadastro no CRM da MKTech (sem contatar ninguém).
-version: 1.1.0
+version: 1.3.0
 platforms: [windows, linux, macos]
 metadata:
   hermes:
@@ -169,6 +169,54 @@ um domínio próprio funcionando, descarte (não é o público da MKTech). O
   `baixa` com 1 ou com divergências.
 - `priority` do candidato: `alta` se a nota for 70 ou mais, `media` de 40
   a 69, `baixa` abaixo de 40.
+
+## Mensagem para o envio automático
+
+Quando o Marcos pedir (ou a rotina de mensagens rodar), escreva a primeira
+mensagem de WhatsApp dos leads que já têm diagnóstico. **Você só escreve.
+Quem envia é o enviador do PC**, e só depois que o CRM aprovar o texto. O
+bom dia / boa tarde / boa noite é enviado antes, separado, pelo próprio
+CRM: **não comece com saudação**.
+
+1. `envio-pendentes --count 5` traz os leads com dados, diagnóstico,
+   evidências e observações do Marcos.
+2. Para cada lead, monte um JSON com quatro campos:
+   - `elogio`: algo **concreto** que aparece nas evidências (as avaliações
+     no Google, o antes e depois de um procedimento, a frequência de posts).
+     Nada de "seu trabalho é incrível".
+   - `dor`: uma dor do diagnóstico, com a evidência que a sustenta.
+   - `melhoria`: o que a MKTech faria para resolver. A MKTech faz
+     **sistemas, landing pages, loja com vitrine e ERP, e automações**;
+     escolha o que resolve a dor (para clínica, normalmente landing page ou
+     página com agendamento; automação quando o atendimento é todo manual).
+   - `mensagem`: o texto que o cliente vai ler, **curto e claro, de 100 a
+     400 caracteres**, que usa o elogio, a dor e a melhoria nessa ordem e
+     termina com **uma** pergunta leve. Tom **formal e amigável**: trate por
+     "você", sem gíria e sem formalidade exagerada. Pode citar como exemplo
+     de trabalho o sistema que a MKTech fez para a **Polpuja**. Nunca fale
+     de valor, preço ou desconto (o preço depende do serviço e quem conversa
+     sobre isso é o Marcos). Sem links, pressão, emojis em excesso ou menção a
+     IA/robô/sistema automático. Se o site ainda não foi verificado, fale em
+     forma condicional ("se você ainda não tem uma página...").
+3. Grave com `envio-salvar --lead <id> --file mensagem.json`.
+   - Código 0: entrou na fila.
+   - Código 2: o CRM recusou e devolveu `errors`. Corrija e tente **uma**
+     vez. Se recusar de novo, pule o lead: ele aparece para o Marcos no
+     painel e **nada é enviado**.
+4. **Nunca** coloque no JSON mensagem de erro, explicação sua, rascunho,
+   marcação (`**`, `#`, listas) ou texto em inglês. Se não conseguir
+   escrever uma boa mensagem para o lead, não grave nada para ele.
+
+Exemplo de `mensagem.json`:
+
+```json
+{
+  "elogio": "4,9 no Google com 87 avaliações elogiando o atendimento",
+  "dor": "agendamento só pelo direct e WhatsApp, sem página para quem pesquisa harmonização em Votuporanga",
+  "melhoria": "uma página de harmonização com agendamento online",
+  "mensagem": "Vi que a Bella Pelle tem 4,9 no Google com 87 avaliações elogiando o atendimento. Hoje o agendamento é só pelo direct e WhatsApp, e quem pesquisa harmonização em Votuporanga não encontra uma página de vocês. Eu crio páginas com agendamento online. Posso te mostrar uma ideia?"
+}
+```
 
 ## Resumo final
 
