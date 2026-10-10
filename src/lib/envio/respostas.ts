@@ -65,6 +65,10 @@ export function classifyReply(input: ReplyInput): ReplyClass {
     return { kind: "humana", reason: "mandou áudio: mude o estilo da conversa", optOut: false, asksPrice: false };
   }
   const text = norm(input.texto ?? "");
+  // Evento sem texto (aviso do WhatsApp, protocolo): não é uma pessoa escrevendo.
+  if (input.tipo === "outro" && (text === "" || text === "[mensagem sem texto]")) {
+    return { kind: "automatica", reason: "evento sem texto, não é uma pessoa", optOut: false, asksPrice: false };
+  }
   const optOut = OPT_OUT.some((r) => r.test(text));
   if (optOut) return { kind: "humana", reason: "pediu para não receber mais mensagens", optOut: true, asksPrice: false };
 

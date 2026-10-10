@@ -26,14 +26,16 @@ type Card = {
 // Só mostra. Mover um lead entre colunas é feito na ficha (etapa, proposta,
 // fechamento); a resposta ao cliente é sempre sua.
 const COLUMNS = [
-  { key: "fila", title: "Na fila", hint: "mensagem pronta, aguardando a vez", tone: "border-slate-600" },
-  { key: "enviado", title: "Enviado", hint: "aguardando resposta", tone: "border-indigo-700" },
-  { key: "aguardando", title: "Aguardando humano", hint: "resposta automática: o texto só sai quando uma pessoa escrever", tone: "border-cyan-700" },
-  { key: "sem_resposta", title: "Sem resposta", hint: "2 dias úteis sem pessoa responder: nada é enviado sozinho", tone: "border-zinc-600" },
-  { key: "conversa", title: "Em conversa", hint: "uma pessoa respondeu: é com você", tone: "border-sky-600" },
-  { key: "valor", title: "Pergunta de valor", hint: "perguntou preço: responda você", tone: "border-amber-500" },
-  { key: "fechando", title: "Fechando", hint: "proposta enviada", tone: "border-violet-600" },
-  { key: "fechado", title: "Fechado", hint: "venda fechada", tone: "border-emerald-600" },
+  { key: "fila", title: "⏳ Na fila", hint: "mensagem pronta, aguardando a vez", tone: "border-slate-400 bg-slate-500/10!" },
+  { key: "enviado", title: "📤 Enviado", hint: "aguardando resposta", tone: "border-indigo-400 bg-indigo-500/10!" },
+  { key: "aguardando", title: "🕐 Aguardando humano", hint: "resposta automática: o texto só sai quando uma pessoa escrever", tone: "border-cyan-400 bg-cyan-500/10!" },
+  { key: "sem_resposta", title: "😶 Sem resposta", hint: "2 dias úteis sem pessoa responder: nada é enviado sozinho", tone: "border-zinc-400 bg-zinc-500/10!" },
+  { key: "lembrando", title: "🔔 Lembrete enviado", hint: "você falou por último e o cliente sumiu: o sistema já lembrou", tone: "border-teal-400 bg-teal-500/10!" },
+  { key: "sem_retorno", title: "💤 Sem retorno", hint: "2 lembretes sem resposta: encerrado, nada mais é enviado", tone: "border-stone-400 bg-stone-500/10!" },
+  { key: "conversa", title: "💬 Em conversa", hint: "uma pessoa respondeu: é com você", tone: "border-sky-400 bg-sky-500/10!" },
+  { key: "valor", title: "💰 Pergunta de valor", hint: "perguntou preço: responda você", tone: "border-amber-400 bg-amber-500/10!" },
+  { key: "fechando", title: "🤝 Fechando", hint: "proposta enviada", tone: "border-violet-400 bg-violet-500/10!" },
+  { key: "fechado", title: "🎉 Fechado", hint: "venda fechada", tone: "border-emerald-400 bg-emerald-500/10!" },
 ] as const;
 
 export default async function FunilPage() {
@@ -54,7 +56,7 @@ export default async function FunilPage() {
   return (
     <>
       <PageHeader
-        title="Funil"
+        title="🎯 Funil"
         subtitle="Onde está cada lead do envio automático. O sistema nunca responde o cliente: quando alguém responde ou pergunta valor, a conversa é sua."
       />
       {bot && (
@@ -108,7 +110,7 @@ export default async function FunilPage() {
               );
             })}
           </nav>
-          <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-4 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 xl:grid-cols-4 2xl:grid-cols-8">
+          <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-4 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 xl:grid-cols-4 2xl:grid-cols-5">
             {COLUMNS.map((col) => {
               const items = cards.filter((c) => c.coluna === col.key);
               return (

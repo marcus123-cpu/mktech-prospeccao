@@ -17,8 +17,14 @@ export default async function PainelLayout({ children }: { children: React.React
       {/* Celular: cabeçalho compacto no topo e menu em abas no rodapé. */}
       <header className="sticky top-0 z-30 flex items-center justify-between border-b border-line bg-panel/95 px-4 py-3 backdrop-blur md:hidden">
         <div>
-          <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-accent">MKTech Dev</div>
-          <div className="text-sm font-semibold">Prospecção</div>
+          <div className="flex items-center gap-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/icon.svg" alt="" width={28} height={28} className="rounded-lg" />
+            <div>
+              <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-accent">MKTech Dev</div>
+              <div className="text-sm font-semibold">Prospecção 🤖</div>
+            </div>
+          </div>
         </div>
         <div className="flex items-center gap-1">
           {chip}
@@ -29,9 +35,13 @@ export default async function PainelLayout({ children }: { children: React.React
       </header>
 
       <aside className="hidden md:sticky md:top-0 md:block md:h-screen md:w-60 md:shrink-0 md:overflow-y-auto md:border-r md:border-line md:bg-panel md:px-4 md:py-6">
-        <div className="mb-8">
-          <div className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">MKTech Dev</div>
-          <div className="text-sm font-semibold">Prospecção</div>
+        <div className="mb-8 flex items-center gap-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/icon.svg" alt="" width={36} height={36} className="rounded-xl shadow-lg shadow-violet-900/40" />
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">MKTech Dev</div>
+            <div className="text-sm font-semibold">Prospecção 🤖</div>
+          </div>
         </div>
         <div className="mb-4">{chip}</div>
         <Nav pendingReviews={count ?? 0} />

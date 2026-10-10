@@ -14,7 +14,7 @@ export default async function SettingsPage() {
 
   return (
     <>
-      <PageHeader title="Configurações" />
+      <PageHeader title="⚙️ Configurações" />
       <div className="space-y-6">
         <section className="card p-4">
           <h2 className="mb-1 text-sm font-semibold">Prospecção do Hermes</h2>

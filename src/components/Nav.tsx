@@ -3,14 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+// Cada aba tem um emoji e uma cor própria (dot = bolinha/ícone, on = fundo quando está aberta).
 const ITEMS = [
-  { href: "/", label: "Hoje", short: "Hoje", hint: "o que fazer agora", mobile: true },
-  { href: "/leads", label: "Leads", short: "Leads", hint: "todos os contatos", mobile: true },
-  { href: "/funil", label: "Funil", short: "Funil", hint: "envio, conversa e fechamento", mobile: true },
-  { href: "/retornos", label: "Retornos", short: "Retornos", hint: "quem chamar de novo", mobile: false },
-  { href: "/envio", label: "Envio automático", short: "Envio", hint: "WhatsApp e respostas", mobile: true },
-  { href: "/execucoes", label: "Pesquisas do Hermes", short: "Hermes", hint: "o que o robô fez", mobile: false },
-  { href: "/configuracoes", label: "Configurações", short: "Ajustes", hint: "metas, cidades, token", mobile: true },
+  { href: "/", emoji: "🏠", label: "Hoje", short: "Hoje", hint: "o que fazer agora", mobile: true, on: "bg-violet-500/20", bar: "bg-violet-400" },
+  { href: "/leads", emoji: "👥", label: "Leads", short: "Leads", hint: "todos os contatos", mobile: true, on: "bg-sky-500/20", bar: "bg-sky-400" },
+  { href: "/funil", emoji: "🎯", label: "Funil", short: "Funil", hint: "envio, conversa e fechamento", mobile: true, on: "bg-teal-500/20", bar: "bg-teal-400" },
+  { href: "/retornos", emoji: "🔔", label: "Retornos", short: "Retornos", hint: "quem chamar de novo", mobile: false, on: "bg-amber-500/20", bar: "bg-amber-400" },
+  { href: "/envio", emoji: "💬", label: "Envio automático", short: "Envio", hint: "WhatsApp e respostas", mobile: true, on: "bg-emerald-500/20", bar: "bg-emerald-400" },
+  { href: "/execucoes", emoji: "🤖", label: "Pesquisas do Hermes", short: "Hermes", hint: "o que o robô fez", mobile: false, on: "bg-fuchsia-500/20", bar: "bg-fuchsia-400" },
+  { href: "/configuracoes", emoji: "⚙️", label: "Configurações", short: "Ajustes", hint: "metas, cidades, token", mobile: true, on: "bg-slate-500/25", bar: "bg-slate-300" },
 ];
 
 function useActive() {
@@ -36,16 +37,17 @@ export function Nav({ pendingReviews }: { pendingReviews: number }) {
           key={item.href}
           href={item.href}
           className={`rounded-lg px-3 py-2 text-sm transition ${
-            active(item.href) ? "bg-accent/15 font-medium text-white" : "text-muted hover:bg-panel-2 hover:text-slate-200"
+            active(item.href) ? `${item.on} font-medium text-white` : "text-muted hover:bg-panel-2 hover:text-slate-200"
           }`}
         >
+          <span aria-hidden className="mr-2">{item.emoji}</span>
           {item.label}
           {item.href === "/leads" && pendingReviews > 0 && (
             <span className="ml-2">
               <Badge count={pendingReviews} />
             </span>
           )}
-          <span className="block text-xs font-normal text-muted">{item.hint}</span>
+          <span className="block pl-7 text-xs font-normal text-muted">{item.hint}</span>
         </Link>
       ))}
     </nav>
@@ -72,7 +74,8 @@ export function BottomNav({ pendingReviews }: { pendingReviews: number }) {
                   on ? "font-semibold text-white" : "text-muted"
                 }`}
               >
-                <span className={`h-1 w-6 rounded-full ${on ? "bg-accent" : "bg-transparent"}`} />
+                <span className={`h-1 w-6 rounded-full ${on ? item.bar : "bg-transparent"}`} />
+                <span aria-hidden className="text-base leading-none">{item.emoji}</span>
                 <span className="truncate">{item.short}</span>
                 {item.href === "/leads" && pendingReviews > 0 && (
                   <span className="absolute right-2 top-1.5">

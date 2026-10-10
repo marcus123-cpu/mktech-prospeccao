@@ -8,6 +8,7 @@
 //   GET  /estado     -> { pronto, numero }
 //   POST /enviar     -> { telefone, texto }  => { ok, id }
 //   GET  /recebidas  -> [ { telefone, texto, tipo, recebida_em } ]  (esvazia a fila)
+//   GET  /minhas     -> [ { telefone, enviada_em } ]  o que o Marcos escreveu à mão (sem texto)
 //
 // Variáveis: BRIDGE_PORT (3799), BRIDGE_TOKEN (opcional), ENVIO_SO_PARA (lista de números).
 
@@ -27,6 +28,8 @@ let lastQr = null;
 let lastState = "iniciando";
 const setState = (st) => { lastState = st; console.log("[estado]", st); };
 const inbox = [];
+const minhas = []; // o que o Marcos escreveu à mão (só telefone e horário; nunca o texto)
+const enviadasPelaPonte = new Set();
 
 const client = new Client({
   authStrategy: new LocalAuth({ dataPath: ".wwebjs_auth", clientId: "chip2" }),
@@ -61,29 +64,63 @@ client.on("disconnected", (reason) => {
   console.log("WhatsApp desconectado:", reason);
 });
 
+// O WhatsApp esconde o número atrás de um identificador (LID): descobre o telefone real.
+async function numeroDe(id, msg) {
+  if (!id.endsWith("@lid")) return id.replace(/@.*/, "");
+  let achou = null;
+  try {
+    const r = await client.getContactLidAndPhone([id]);
+    if (r && r[0] && r[0].pn) achou = String(r[0].pn).replace(/@.*/, "");
+  } catch (_) { /* tenta o outro caminho */ }
+  if (!achou) {
+    try {
+      const c = await msg.getContact();
+      if (c && c.number) achou = c.number;
+    } catch (_) { /* sem número */ }
+  }
+  return achou;
+}
+
+const ehConversaIndividual = (id) => id && !id.endsWith("@g.us") && !id.endsWith("@newsletter") && !id.endsWith("@broadcast");
+
+// Mensagem escrita à mão no celular do chip: guarda só telefone e horário, para saber quem falou por último.
+client.on("message_create", async (msg) => {
+  try {
+    if (!msg.fromMe || msg.isStatus) return;
+    const id = msg.id && msg.id._serialized;
+    if (id && enviadasPelaPonte.has(id)) return; // foi a própria ponte (saudação, texto ou lembrete)
+    const to = msg.to || "";
+    if (!ehConversaIndividual(to)) return;
+    const numero = await numeroDe(to, msg);
+    if (!numero) return;
+    console.log("[minha]", to, "->", numero);
+    minhas.push({
+      telefone: "+" + numero.replace(/\D/g, ""),
+      enviada_em: new Date((msg.timestamp || Date.now() / 1000) * 1000).toISOString(),
+    });
+  } catch (e) {
+    console.log("erro ao guardar mensagem minha:", e.message);
+  }
+});
+
+// Eventos do próprio WhatsApp (aviso de criptografia, protocolo, chamada, mensagem apagada...) não são uma pessoa escrevendo.
+const TIPOS_DE_SISTEMA = new Set([
+  "e2e_notification", "notification", "notification_template", "gp2", "protocol", "call_log",
+  "revoked", "ciphertext", "unknown", "broadcast_notification", "reaction",
+]);
+
 client.on("message", async (msg) => {
   try {
     const from = msg.from || "";
-    if (msg.fromMe || msg.isStatus || from.endsWith("@g.us") || from.endsWith("@newsletter") || from.endsWith("@broadcast")) return;
-    let numero = from.replace(/@.*/, "");
-    if (from.endsWith("@lid")) {
-      // O WhatsApp esconde o número atrás de um identificador (LID): descobre o telefone real.
-      let achou = null;
-      try {
-        const r = await client.getContactLidAndPhone([from]);
-        if (r && r[0] && r[0].pn) achou = String(r[0].pn).replace(/@.*/, "");
-      } catch (_) { /* tenta o outro caminho */ }
-      if (!achou) {
-        try {
-          const c = await msg.getContact();
-          if (c && c.number) achou = c.number;
-        } catch (_) { /* sem número */ }
-      }
-      if (!achou) {
-        console.log("[recebida] sem número para", from, "- ignorada");
-        return;
-      }
-      numero = achou;
+    if (msg.fromMe || msg.isStatus || !ehConversaIndividual(from)) return;
+    if (TIPOS_DE_SISTEMA.has(msg.type)) {
+      console.log("[ignorada] evento do WhatsApp (" + msg.type + ") de", from);
+      return;
+    }
+    const numero = await numeroDe(from, msg);
+    if (!numero) {
+      console.log("[recebida] sem número para", from, "- ignorada");
+      return;
     }
     const tipo = msg.type === "ptt" || msg.type === "audio" ? "audio" : msg.type === "image" ? "imagem" : msg.type === "chat" ? "texto" : "outro";
     console.log("[recebida]", tipo, "de", from, "->", numero);
@@ -138,6 +175,7 @@ const server = http.createServer(async (req, res) => {
   try {
     if (req.method === "GET" && req.url === "/estado") return send(res, 200, { pronto: ready, numero: myNumber, estado: lastState });
     if (req.method === "GET" && req.url === "/recebidas") return send(res, 200, inbox.splice(0, inbox.length));
+    if (req.method === "GET" && req.url === "/minhas") return send(res, 200, minhas.splice(0, minhas.length));
     if (req.method === "POST" && req.url === "/enviar") {
       const { telefone, texto } = await readJson(req);
       const digits = String(telefone || "").replace(/\D/g, "");
@@ -147,6 +185,10 @@ const server = http.createServer(async (req, res) => {
       const id = await client.getNumberId(digits);
       if (!id) return send(res, 422, { ok: false, erro: "número não tem WhatsApp" });
       const sent = await client.sendMessage(id._serialized, texto);
+      if (sent && sent.id && sent.id._serialized) {
+        enviadasPelaPonte.add(sent.id._serialized);
+        if (enviadasPelaPonte.size > 500) enviadasPelaPonte.delete(enviadasPelaPonte.values().next().value);
+      }
       return send(res, 200, { ok: true, id: sent && sent.id ? sent.id._serialized : null });
     }
     return send(res, 404, { ok: false, erro: "não encontrado" });

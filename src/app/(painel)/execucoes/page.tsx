@@ -16,7 +16,7 @@ export default async function RunsPage() {
   return (
     <>
       <PageHeader
-        title="Pesquisas do Hermes"
+        title="🤖 Pesquisas do Hermes"
         subtitle="Cada vez que o Hermes pesquisou: quantas buscas fez, quantos leads cadastrou e por que parou."
       />
       {error ? (
