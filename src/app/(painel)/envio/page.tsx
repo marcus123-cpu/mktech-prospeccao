@@ -98,7 +98,7 @@ export default async function EnvioPage() {
   return (
     <>
       <PageHeader
-        title="Envio automático"
+        title="💬 Envio automático"
         subtitle="O Hermes escreve a primeira mensagem a partir do diagnóstico; o enviador do PC manda a saudação e depois a mensagem. Ninguém responde o cliente sozinho: quando uma pessoa responde, a conversa é sua."
       />
       {settings.error || !s ? (

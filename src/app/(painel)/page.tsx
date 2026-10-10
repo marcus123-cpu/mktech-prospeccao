@@ -93,7 +93,7 @@ export default async function Hoje({
 
   return (
     <>
-      <PageHeader title="Hoje" subtitle={`${fmtDate(`${today}T12:00:00Z`)} · o que fazer agora e como está a prospecção`} />
+      <PageHeader title="🏠 Hoje" subtitle={`${fmtDate(`${today}T12:00:00Z`)} · o que fazer agora e como está a prospecção`} />
 
       {metrics.error || !m ? (
         <ErrorBox message={dbErrorMessage(metrics.error) || "Não foi possível carregar o painel."} />

@@ -35,7 +35,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
   return (
     <>
       <PageHeader
-        title="Leads"
+        title="👥 Leads"
         subtitle={`${total} ${total === 1 ? "lead encontrado" : "leads encontrados"}`}
         actions={
           <>
