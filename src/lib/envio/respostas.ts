@@ -14,7 +14,7 @@ export type ReplyInput = {
   anteriores?: string[];
 };
 
-export type ReplyClass = { kind: ReplyKind; reason: string; optOut: boolean };
+export type ReplyClass = { kind: ReplyKind; reason: string; optOut: boolean; asksPrice: boolean };
 
 const norm = (s: string) =>
   s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
@@ -50,10 +50,18 @@ const OPT_OUT = [
   /\b(spam|denunciar|denuncia|bloquear|bloqueado)\b/,
 ];
 
+// Pessoa perguntando preço: o lead vai para "Pergunta de valor" no funil.
+const PRICE = [
+  /\bquanto (custa|custaria|fica|ficaria|sai|sairia|cobra|cobram|e|seria|vale|voce cobra)\b/,
+  /\b(qual|quais) (o|e o|seria o|sao os|os)? ?(valor|valores|preco|precos|investimento)\b/,
+  /\b(valor|valores|preco|precos|orcamento|investimento|tabela de precos?)\b/,
+  /r\$/,
+];
+
 export function classifyReply(input: ReplyInput): ReplyClass {
   const text = norm(input.texto ?? "");
   const optOut = OPT_OUT.some((r) => r.test(text));
-  if (optOut) return { kind: "humana", reason: "pediu para não receber mais mensagens", optOut: true };
+  if (optOut) return { kind: "humana", reason: "pediu para não receber mais mensagens", optOut: true, asksPrice: false };
 
   const reasons: string[] = [];
   let score = 0;
@@ -78,6 +86,14 @@ export function classifyReply(input: ReplyInput): ReplyClass {
     score -= 1;
   }
 
-  if (score >= 2) return { kind: "automatica", reason: reasons.join("; ") || "padrão de mensagem automática", optOut: false };
-  return { kind: "humana", reason: "texto escrito por uma pessoa", optOut: false };
+  if (score >= 2) {
+    return { kind: "automatica", reason: reasons.join("; ") || "padrão de mensagem automática", optOut: false, asksPrice: false };
+  }
+  const asksPrice = PRICE.some((r) => r.test(text));
+  return {
+    kind: "humana",
+    reason: asksPrice ? "pessoa perguntando valor" : "texto escrito por uma pessoa",
+    optOut: false,
+    asksPrice,
+  };
 }

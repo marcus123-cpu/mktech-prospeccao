@@ -269,6 +269,10 @@ Tela **Envio automático** no painel. Fluxo:
    para "respondeu"; pedido para parar bloqueia o lead. Ninguém responde o
    cliente sozinho.
 
+A tela **Funil** mostra cada lead numa coluna: Na fila, Enviado, Em conversa,
+Pergunta de valor (uma pessoa perguntou preço; quem responde é você), Fechando
+(proposta enviada) e Fechado. Ela só mostra; nada é respondido ao cliente.
+
 Configuração no PC: copie `envio/.env.exemplo` para `envio/.env`, crie o
 token do enviador na tela e rode `envio/rodar-envio-simulacao.bat`. O
 transporte `whatsapp` (envio real) ainda não está ligado nesta versão.

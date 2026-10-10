@@ -108,6 +108,17 @@ describe("classificação de respostas", () => {
     expect(classifyReply({ texto, anteriores: [texto] }).kind).toBe("automatica");
   });
 
+  it.each(["Quanto custa?", "Qual o valor de uma página dessas?", "me passa o orçamento", "Quanto fica pra fazer?"])(
+    "pergunta de valor: %s",
+    (texto) => {
+      expect(classifyReply({ texto })).toMatchObject({ kind: "humana", asksPrice: true });
+    },
+  );
+
+  it("conversa sem preço não é pergunta de valor", () => {
+    expect(classifyReply({ texto: "Oi, quem é?" }).asksPrice).toBe(false);
+  });
+
   it.each(["Não tenho interesse", "pare", "Não me mande mais mensagens", "remova meu número"])("pedido para parar: %s", (texto) => {
     expect(classifyReply({ texto })).toMatchObject({ kind: "humana", optOut: true });
   });

@@ -28,11 +28,13 @@ const save = (leadId: string, p: object = msg) => svc<any>(`select public.api_ou
 const next = () => svc<any>(`select public.api_outreach_next($1)`, [sender]);
 const result = (id: string, step: string, ok = true, err: string | null = null) =>
   svc<any>(`select public.api_outreach_result($1, $2, $3, $4, $5)`, [sender, id, step, ok, err]);
-const reply = (phone: string, body: string, kind = "humana", opt = false) =>
+const reply = (phone: string, body: string, kind = "humana", opt = false, price = false) =>
   svc<any>(`select public.api_outreach_reply($1, $2::jsonb)`, [
     sender,
-    JSON.stringify({ phone_e164: phone, body, kind, reason: "teste", opt_out: opt }),
+    JSON.stringify({ phone_e164: phone, body, kind, reason: "teste", opt_out: opt, asks_price: price }),
   ]);
+const column = async (leadId: string) =>
+  (await asAdmin((c) => c.query(`select coluna from outreach_funnel where id = $1`, [leadId]))).rows[0]?.coluna ?? null;
 async function settings(p: Record<string, unknown>) {
   await asAdmin((c) => c.query(`select public.admin_outreach_settings($1::jsonb)`, [JSON.stringify(p)]));
 }
@@ -243,6 +245,40 @@ describe("envio automático", () => {
       await asAdmin((c) => c.query(`select public.admin_outreach_reclassify($1, 'humana')`, [id]));
       expect((await pool.query(`select stage from leads where id = $1`, [l])).rows[0].stage).toBe("respondeu");
     });
+  });
+
+  it("funil: fila, enviado, conversa, pergunta de valor, fechando e fechado", async () => {
+    const l = await lead();
+    expect(await column(l)).toBeNull();
+    await save(l);
+    expect(await column(l)).toBe("fila");
+    await openAllDay();
+    const n1 = await next();
+    await result(n1.id, "saudacao");
+    expect(await column(l)).toBe("enviado");
+    await reply("+5517991234567", "Olá! Em breve retornaremos.", "automatica");
+    expect(await column(l)).toBe("enviado");
+    await reply("+5517991234567", "Oi, quem é?");
+    expect(await column(l)).toBe("conversa");
+    await reply("+5517991234567", "Quanto custa?", "humana", false, true);
+    expect(await column(l)).toBe("valor");
+    await asAdmin((c) => c.query(`select public.admin_clear_price_question($1)`, [l]));
+    expect(await column(l)).toBe("conversa");
+    await asAdmin((c) => c.query(`select public.admin_register_proposal($1, 900, now())`, [l]));
+    expect(await column(l)).toBe("fechando");
+    await asAdmin((c) => c.query(`select public.admin_register_closing($1, 900, now())`, [l]));
+    expect(await column(l)).toBe("fechado");
+    expect((await as("authenticated", OUTSIDER_ID, (c) => c.query(`select * from outreach_funnel`))).rowCount).toBe(0);
+  });
+
+  it("pergunta de valor de mensagem automática não conta", async () => {
+    const l = await lead();
+    await save(l);
+    await openAllDay();
+    const n1 = await next();
+    await result(n1.id, "saudacao");
+    await reply("+5517991234567", "Tabela de preços: digite 2", "automatica", false, true);
+    expect(await column(l)).toBe("enviado");
   });
 
   it("3 recusas tiram o lead da fila do Hermes até o admin liberar", async () => {

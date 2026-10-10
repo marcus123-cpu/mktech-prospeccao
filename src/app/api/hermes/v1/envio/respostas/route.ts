@@ -25,6 +25,7 @@ export async function POST(request: Request) {
       kind: c.kind,
       reason: c.reason,
       opt_out: c.optOut,
+      asks_price: c.asksPrice,
     },
   });
   if (error) return temporaryFailure();
