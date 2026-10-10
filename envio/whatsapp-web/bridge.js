@@ -70,6 +70,7 @@ client.on("message", async (msg) => {
       numero = c && c.number ? c.number : numero;
     }
     const tipo = msg.type === "ptt" || msg.type === "audio" ? "audio" : msg.type === "image" ? "imagem" : msg.type === "chat" ? "texto" : "outro";
+    console.log("[recebida]", tipo, "de", numero);
     inbox.push({
       telefone: "+" + numero.replace(/\D/g, ""),
       texto: tipo === "texto" ? msg.body : null,

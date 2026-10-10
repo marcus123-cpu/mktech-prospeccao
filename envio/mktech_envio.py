@@ -257,7 +257,9 @@ def forward_replies(transporte: Transporte) -> int:
         status, payload = request("POST", "/api/hermes/v1/envio/respostas", body)
         if payload.get("status") == "registrada":
             quem = "PESSOA" if payload.get("conversa") else "automática"
-            log(f"resposta de {msg['telefone']} registrada como {quem}")
+            log(f"resposta de {msg['telefone']} registrada como {quem}" + (" (texto segurado)" if payload.get("segurada") else ""))
+        else:
+            log(f"resposta de {msg['telefone']} não registrada: {payload.get('status') or status} {payload.get('motivo') or ''}".strip())
         n += 1
     return n
 
