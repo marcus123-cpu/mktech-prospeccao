@@ -162,6 +162,10 @@ class Transporte:
         """Mensagens novas recebidas: [{telefone, texto, tipo (texto/audio/imagem/outro), recebida_em}]."""
         return []
 
+    def minhas(self) -> list[dict[str, Any]]:
+        """Mensagens que o Marcos escreveu à mão no celular do chip: [{telefone, enviada_em}]. Sem texto."""
+        return []
+
     def pronto(self) -> bool:
         """False enquanto o transporte não consegue enviar; nada é reservado no servidor."""
         return True
@@ -243,6 +247,14 @@ class WhatsAppWeb(Transporte):
             return []
         return out if isinstance(out, list) else []
 
+    def minhas(self) -> list[dict[str, Any]]:
+        try:
+            out = self._call("GET", "/minhas")
+        except RuntimeError as e:
+            log(str(e))
+            return []
+        return out if isinstance(out, list) else []
+
 
 TRANSPORTES: dict[str, Callable[[], Transporte]] = {"simulacao": Simulacao, "whatsapp": WhatsAppNaoConfigurado, "whatsappweb": WhatsAppWeb}
 
@@ -275,9 +287,24 @@ def forward_replies(transporte: Transporte) -> int:
     return n
 
 
+def forward_minhas(transporte: Transporte) -> int:
+    """Avisa o servidor (só o horário, nunca o texto) que o Marcos escreveu para um telefone."""
+    n = 0
+    for msg in transporte.minhas():
+        body = {"telefone": msg["telefone"]}
+        if msg.get("enviada_em"):
+            body["enviada_em"] = msg["enviada_em"]
+        status, payload = request("POST", "/api/hermes/v1/envio/minhas", body)
+        if payload.get("status") == "registrada":
+            log(f"mensagem sua para {msg['telefone']} registrada (conta para os lembretes)")
+        n += 1
+    return n
+
+
 def step(transporte: Transporte) -> tuple[str, float]:
     """Executa uma rodada. Devolve (status, segundos até a próxima)."""
     forward_replies(transporte)
+    forward_minhas(transporte)
     if not transporte.pronto():
         return "ponte_desconectada", POLL_SECONDS
     status, nxt = request("POST", "/api/hermes/v1/envio/proximo", {})
@@ -290,7 +317,7 @@ def step(transporte: Transporte) -> tuple[str, float]:
 
     item, etapa, telefone = nxt.get("id"), nxt.get("etapa"), nxt.get("telefone")
     texto = safe_text(nxt.get("texto"))
-    if not item or etapa not in ("saudacao", "mensagem") or not telefone:
+    if not item or etapa not in ("saudacao", "mensagem", "lembrete") or not telefone:
         log(f"resposta inesperada do servidor; nada enviado: {nxt}")
         return "invalido", POLL_SECONDS
     if texto is None:

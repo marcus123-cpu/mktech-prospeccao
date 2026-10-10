@@ -401,4 +401,172 @@ describe("envio automático", () => {
     await expect(asAdmin((c) => c.query(`select public.api_outreach_next($1)`, [sender]))).rejects.toThrow();
     await expect(as("authenticated", OUTSIDER_ID, (c) => c.query(`select public.admin_outreach_settings('{"enabled": true}')`))).rejects.toThrow();
   });
+
+  describe("lembretes para quem parou de responder", () => {
+    const PHONE = "+5517991234567";
+    let l: string;
+    const outbound = (daysAgo: number, phone = PHONE) =>
+      svc<any>(`select public.api_outreach_outbound($1, $2::jsonb)`, [
+        sender,
+        JSON.stringify({ phone_e164: phone, sent_at: new Date(Date.now() - daysAgo * 86400_000).toISOString() }),
+      ]);
+    const clearWait = () => pool.query(`update outreach_settings set next_send_at = null`);
+    const followupsOn = () => asAdmin((c) => c.query(`select public.admin_outreach_followups(true)`));
+    /** Envia o lembrete que o enviador pedir e confirma. */
+    async function sendFollowup(ok = true) {
+      await clearWait();
+      const n = await next();
+      expect(n.etapa).toBe("lembrete");
+      await result(n.id, "lembrete", ok, ok ? null : "falha de teste");
+      return n;
+    }
+    /** Empurra o relógio dos lembretes N dias para trás (dias corridos folgados). */
+    const age = (days: number) =>
+      pool.query(
+        `update outreach_followups set sent_at = sent_at - make_interval(days => $1), claimed_at = claimed_at - make_interval(days => $1)`,
+        [days],
+      );
+
+    beforeEach(async () => {
+      l = await lead();
+      await save(l);
+      await openAllDay();
+      const n1 = await next();
+      await result(n1.id, "saudacao");
+      await reply(PHONE, "Oi, pode falar.");
+      await pool.query(`update outreach_messages set body_due_at = now() - interval '1 second'`);
+      const n2 = await next();
+      await result(n2.id, "mensagem");
+      // a conversa já tem 12 dias; o Marcos respondeu há 10
+      await pool.query(`update outreach_replies set received_at = now() - interval '12 days'`);
+      await clearWait();
+    });
+
+    it("vem desligado: sem a chave dos lembretes nada sai", async () => {
+      await outbound(10);
+      expect((await next()).status).toBe("fila_vazia");
+    });
+
+    it("sem mensagem nossa depois da resposta do cliente, o Marcos é quem deve: nada sai", async () => {
+      await followupsOn();
+      expect((await next()).status).toBe("fila_vazia");
+    });
+
+    it("1º lembrete sai 2 dias úteis depois da mensagem do Marcos, sem preço", async () => {
+      await followupsOn();
+      await outbound(1); // ainda não passaram 2 dias úteis
+      await pool.query(`update outreach_outbound set sent_at = now() - interval '30 minutes'`);
+      expect((await next()).status).toBe("fila_vazia");
+      await pool.query(`update outreach_outbound set sent_at = now() - interval '10 days'`);
+      const n = await sendFollowup();
+      expect(n.texto).toBe("Oi! Você gostou da minha proposta?");
+      expect(n.texto).not.toMatch(/R\$|\d+,\d{2}/);
+      expect(await column(l)).toBe("lembrando");
+      expect((await next()).status).not.toBe("enviar");
+    });
+
+    it("2º lembrete depois de mais 2 dias úteis, e depois encerra o lead", async () => {
+      await followupsOn();
+      await outbound(10);
+      await sendFollowup();
+      await age(10);
+      const n2 = await sendFollowup();
+      expect(n2.texto).toContain("você viu minha mensagem");
+      expect(await column(l)).toBe("lembrando");
+      // sem um 3º lembrete: passa o tempo e o lead é encerrado
+      await age(10);
+      await clearWait();
+      expect((await next()).status).not.toBe("enviar");
+      expect(await column(l)).toBe("sem_retorno");
+      expect(await count("outreach_followups")).toBe(2);
+      await age(30);
+      await clearWait();
+      expect((await next()).status).not.toBe("enviar");
+    });
+
+    it("resposta do cliente para tudo e devolve a conversa ao Marcos", async () => {
+      await followupsOn();
+      await outbound(10);
+      await sendFollowup();
+      await reply(PHONE, "Oi! Vi sim, me manda mais detalhes.");
+      expect(await column(l)).toBe("conversa");
+      await age(10);
+      await clearWait();
+      expect((await next()).status).not.toBe("enviar");
+    });
+
+    it("resposta depois de encerrado reabre a conversa e zera o ciclo", async () => {
+      await followupsOn();
+      await outbound(10);
+      await sendFollowup();
+      await age(10);
+      await sendFollowup();
+      await age(10);
+      await clearWait();
+      await next();
+      expect(await column(l)).toBe("sem_retorno");
+      await reply(PHONE, "Desculpa o sumiço! Podemos conversar?");
+      expect(await column(l)).toBe("conversa");
+      expect((await pool.query(`select followup_closed_at from leads where id = $1`, [l])).rows[0].followup_closed_at).toBeNull();
+    });
+
+    it("lembrete que falha não é reenviado", async () => {
+      await followupsOn();
+      await outbound(10);
+      await sendFollowup(false);
+      await clearWait();
+      expect((await next()).status).not.toBe("enviar");
+      expect(await count("outreach_followups", "status = 'falhou'")).toBe(1);
+    });
+
+    it("lembrete sem confirmação em 5 minutos falha e não é reenviado", async () => {
+      await followupsOn();
+      await outbound(10);
+      await clearWait();
+      expect((await next()).etapa).toBe("lembrete");
+      await pool.query(`update outreach_followups set claimed_at = now() - interval '6 minutes'`);
+      expect((await next()).status).not.toBe("enviar");
+      expect(await count("outreach_followups", "status = 'falhou'")).toBe(1);
+    });
+
+    it("quem pediu para parar nunca recebe lembrete", async () => {
+      await followupsOn();
+      await outbound(10);
+      await reply(PHONE, "Não quero mais receber mensagens, por favor.", "humana", true);
+      await pool.query(`update outreach_replies set received_at = now() - interval '12 days'`);
+      await clearWait();
+      expect((await next()).status).not.toBe("enviar");
+      expect(await count("outreach_followups")).toBe(0);
+    });
+
+    it("respeita horário e limite diário", async () => {
+      await followupsOn();
+      await outbound(10);
+      await settings({ window_start: 3, window_end: 4 });
+      await pool.query(`update outreach_settings set send_days = '{1,2,3,4,5,6,7}'`);
+      const hour = Number((await pool.query(`select extract(hour from now() at time zone 'America/Sao_Paulo') as h`)).rows[0].h);
+      if (hour !== 3) expect((await next()).status).toBe("fora_do_horario");
+      await openAllDay();
+      await pool.query(`update outreach_settings set daily_limit = 1`);
+      await clearWait();
+      expect((await next()).status).toBe("limite_diario");
+    });
+
+    it("mensagem do Marcos para telefone desconhecido é ignorada e duplicada é idempotente", async () => {
+      expect((await outbound(1, "+5517999990000")).status).toBe("ignorada");
+      expect((await outbound(5)).status).toBe("registrada");
+      const sentAt = (await pool.query(`select sent_at from outreach_outbound`)).rows[0].sent_at;
+      const again = await svc<any>(`select public.api_outreach_outbound($1, $2::jsonb)`, [
+        sender,
+        JSON.stringify({ phone_e164: PHONE, sent_at: sentAt.toISOString() }),
+      ]);
+      expect(again.status).toBe("existente");
+    });
+
+    it("só admin liga os lembretes", async () => {
+      await expect(as("authenticated", OUTSIDER_ID, (c) => c.query(`select public.admin_outreach_followups(true)`))).rejects.toThrow();
+      await expect(asAdmin((c) => c.query(`select public.api_outreach_outbound($1, '{}'::jsonb)`, [sender]))).rejects.toThrow();
+    });
+  });
+
 });

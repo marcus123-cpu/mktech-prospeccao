@@ -48,10 +48,15 @@ class FakeApi(BaseHTTPRequestHandler):
 class Gravador(mktech_envio.Transporte):
     nome = "gravador"
 
-    def __init__(self, falhar: bool = False, recebidas: list | None = None):
+    def __init__(self, falhar: bool = False, recebidas: list | None = None, minhas: list | None = None):
         self.enviadas: list[tuple[str, str]] = []
         self.falhar = falhar
         self._recebidas = recebidas or []
+        self._minhas = minhas or []
+
+    def minhas(self):
+        r, self._minhas = self._minhas, []
+        return r
 
     def enviar(self, telefone, texto):
         if self.falhar:
@@ -155,6 +160,22 @@ class SenderTest(unittest.TestCase):
         sent = [c["body"] for c in FakeApi.calls if c["path"].endswith("/respostas")]
         self.assertEqual(sent, [{"telefone": "+5517991234567", "texto": "Oi, quem é?", "tipo": "texto", "segundos_desde_envio": 90}])
 
+    def test_envia_o_lembrete_do_servidor_e_confirma_como_lembrete(self):
+        self.next_is({"status": "enviar", "id": ITEM, "etapa": "lembrete", "telefone": "+5517991234567", "texto": "Oi! Você gostou da minha proposta?"})
+        t = Gravador()
+        status, _ = mktech_envio.step(t)
+        self.assertEqual(status, "enviado")
+        self.assertEqual(t.enviadas, [("+5517991234567", "Oi! Você gostou da minha proposta?")])
+        self.assertEqual(self.results(), [{"etapa": "lembrete", "ok": True, "erro": None}])
+
+    def test_avisa_o_servidor_so_com_telefone_e_horario_do_que_o_marcos_escreveu(self):
+        self.next_is({"status": "fila_vazia"})
+        FakeApi.responses["POST /api/hermes/v1/envio/minhas"] = [(201, {"status": "registrada"})]
+        t = Gravador(minhas=[{"telefone": "+5517991234567", "enviada_em": "2026-10-08T15:00:00Z", "texto": "NÃO DEVE SAIR"}])
+        mktech_envio.step(t)
+        sent = [c["body"] for c in FakeApi.calls if c["path"].endswith("/minhas")]
+        self.assertEqual(sent, [{"telefone": "+5517991234567", "enviada_em": "2026-10-08T15:00:00Z"}])
+
     def test_simulacao_nao_contata_ninguem_e_grava_log(self):
         with tempfile.TemporaryDirectory() as d:
             sim = mktech_envio.Simulacao(Path(d) / "sim.log")
@@ -183,6 +204,7 @@ class SenderTest(unittest.TestCase):
 class FakeBridge(BaseHTTPRequestHandler):
     calls: list[dict] = []
     inbox: list[dict] = []
+    mine: list[dict] = []
     fail = False
     ready = True
 
@@ -206,6 +228,9 @@ class FakeBridge(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/estado":
             return self._reply(200, {"pronto": FakeBridge.ready, "estado": "teste"})
+        if self.path == "/minhas":
+            box, FakeBridge.mine = FakeBridge.mine, []
+            return self._reply(200, box)
         box, FakeBridge.inbox = FakeBridge.inbox, []
         self._reply(200, box)
 
@@ -228,6 +253,7 @@ class WhatsAppWebTest(unittest.TestCase):
     def setUp(self):
         FakeBridge.calls = []
         FakeBridge.inbox = []
+        FakeBridge.mine = []
         FakeBridge.fail = False
         FakeBridge.ready = True
 
@@ -267,6 +293,12 @@ class WhatsAppWebTest(unittest.TestCase):
         t = self.make()
         self.assertEqual(t.recebidas()[0]["texto"], "oi")
         self.assertEqual(t.recebidas(), [])
+
+    def test_minhas_traz_e_esvazia_a_fila(self):
+        FakeBridge.mine = [{"telefone": "+5517992250729", "enviada_em": "2026-10-10T12:00:00Z"}]
+        t = self.make()
+        self.assertEqual(t.minhas()[0]["telefone"], "+5517992250729")
+        self.assertEqual(t.minhas(), [])
 
 
 if __name__ == "__main__":

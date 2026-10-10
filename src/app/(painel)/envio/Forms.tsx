@@ -8,6 +8,7 @@ import {
   retryLead,
   saveOutreachSettings,
   setEnabled,
+  setFollowups,
   setPaused,
   type EnvioState,
 } from "./actions";
@@ -26,6 +27,7 @@ export type OutreachSettings = {
   window_end: number;
   send_days: number[];
   min_fit_score: number;
+  followups_enabled?: boolean;
 };
 
 const DAYS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
@@ -91,6 +93,17 @@ export function SwitchControls({ s }: { s: OutreachSettings }) {
         ) : (
           <MiniAction action={setPaused} fields={{ paused: "true" }} label="Pausar agora" variant="btn-ghost" />
         ))}
+      {s.followups_enabled ? (
+        <MiniAction action={setFollowups} fields={{ enabled: "false" }} label="Desligar lembretes" variant="btn-ghost" />
+      ) : (
+        <MiniAction
+          action={setFollowups}
+          fields={{ enabled: "true" }}
+          label="Ligar lembretes"
+          variant="btn-ghost"
+          confirmText="Ligar os lembretes? Quem conversou com você e parou de responder recebe até 2 lembretes curtos, cada um 2 dias úteis depois da sua última mensagem sem resposta. Eles só saem com o envio automático ligado, dentro do horário e do limite diário."
+        />
+      )}
     </div>
   );
 }

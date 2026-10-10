@@ -102,3 +102,11 @@ export async function createSenderToken(_: EnvioState, form: FormData): Promise<
   revalidatePath("/envio");
   return { ok: "Token do enviador criado. Copie agora: ele não será mostrado de novo.", token: (data as { token: string }).token };
 }
+
+export async function setFollowups(_: EnvioState, form: FormData): Promise<EnvioState> {
+  const { supabase } = await requireAdmin();
+  const on = form.get("enabled") === "true";
+  const { error } = await supabase.rpc("admin_outreach_followups", { p_enabled: on });
+  if (error) return { error: dbErrorMessage(error) };
+  return done(on ? "Lembretes LIGADOS." : "Lembretes desligados.");
+}

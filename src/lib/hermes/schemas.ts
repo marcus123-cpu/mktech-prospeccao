@@ -135,9 +135,17 @@ export const outreachSchema = z
 // Enviador: resultado de uma etapa.
 export const outreachResultSchema = z
   .object({
-    etapa: z.enum(["saudacao", "mensagem"]),
+    etapa: z.enum(["saudacao", "mensagem", "lembrete"]),
     ok: z.boolean(),
     erro: optText(500),
+  })
+  .strict();
+
+// Enviador: mensagem que o Marcos escreveu à mão no celular do chip (só o horário é guardado).
+export const outreachOutboundSchema = z
+  .object({
+    telefone: text(30).regex(/^\+?[0-9 ()-]{10,25}$/, "telefone inválido"),
+    enviada_em: z.string().regex(/^\d{4}-\d{2}-\d{2}T/).optional().nullable(),
   })
   .strict();
 
