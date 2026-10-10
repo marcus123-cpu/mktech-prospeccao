@@ -376,6 +376,93 @@ describe("envio automático", () => {
       expect((await next()).status).not.toBe("enviar");
     });
 
+    it("caso da Carol Rodrigues: evento sem texto 2 s antes da confirmação não libera; a pessoa de verdade libera", async () => {
+      const g = (await pool.query(`select greeting_sent_at from outreach_messages`)).rows[0].greeting_sent_at as Date;
+      const early = await svc<any>(`select public.api_outreach_reply($1, $2::jsonb)`, [
+        sender,
+        JSON.stringify({ phone_e164: "+5517991234567", body: "[mensagem sem texto]", kind: "humana", media: "outro", received_at: new Date(g.getTime() - 2000).toISOString() }),
+      ]);
+      expect(early.kind).toBe("automatica");
+      await pool.query(`update outreach_messages set body_due_at = now() - interval '1 second'`);
+      for (let i = 0; i < 3; i++) expect((await next()).status).not.toBe("enviar");
+      expect(await count("outreach_messages", "sent_at is not null")).toBe(0);
+      expect(await column(l)).toBe("aguardando");
+      // 1 minuto depois uma pessoa escreve
+      await svc<any>(`select public.api_outreach_reply($1, $2::jsonb)`, [
+        sender,
+        JSON.stringify({ phone_e164: "+5517991234567", body: "Oi! Pode falar.", kind: "humana", received_at: new Date(g.getTime() + 60_000).toISOString() }),
+      ]);
+      expect(await column(l)).toBe("conversa");
+      await pool.query(`update outreach_messages set body_due_at = now() - interval '1 second'`);
+      expect((await next()).etapa).toBe("mensagem");
+    });
+
+    it("limite exato: 15 s é automática e 16 s é pessoa", async () => {
+      const g = (await pool.query(`select greeting_sent_at from outreach_messages`)).rows[0].greeting_sent_at as Date;
+      const at = (s: number, body: string) =>
+        svc<any>(`select public.api_outreach_reply($1, $2::jsonb)`, [
+          sender,
+          JSON.stringify({ phone_e164: "+5517991234567", body, kind: "humana", received_at: new Date(g.getTime() + s * 1000).toISOString() }),
+        ]);
+      expect((await at(15, "Olá, tudo bem?")).kind).toBe("automatica");
+      expect((await at(16, "Oi, sou eu mesmo, pode falar")).kind).toBe("humana");
+    });
+
+    it("várias respostas rápidas seguidas continuam segurando, e só a lenta libera", async () => {
+      for (const body of ["Olá!", "Menu: digite 1", "Qual seu nome completo?", "[mensagem sem texto]"]) {
+        const r = await reply("+5517991234567", body, "humana", false, false, true);
+        expect(r.kind).toBe("automatica");
+      }
+      await pool.query(`update outreach_messages set body_due_at = now() - interval '1 second'`);
+      expect((await next()).status).not.toBe("enviar");
+      await pool.query(`update outreach_messages set greeting_sent_at = now() - interval '2 minutes'`);
+      await reply("+5517991234567", "Oi, aqui é a dra. Pode me contar.", "humana", false, false, true);
+      await pool.query(`update outreach_messages set body_due_at = now() - interval '1 second'`);
+      expect((await next()).etapa).toBe("mensagem");
+    });
+
+    it("pessoa só libera depois da pausa de 45 s, e o texto sai uma única vez", async () => {
+      await reply("+5517991234567", "Oi! Pode falar.");
+      expect((await next()).status).toBe("aguardar"); // pausa curta ainda não passou
+      await pool.query(`update outreach_messages set body_due_at = now() - interval '1 second'`);
+      const n = await next();
+      expect(n.etapa).toBe("mensagem");
+      await result(n.id, "mensagem");
+      await result(n.id, "mensagem"); // confirmação repetida não duplica
+      expect(await count("outreach_messages", "status = 'enviada'")).toBe(1);
+      expect((await next()).status).not.toBe("enviar");
+      // resposta depois do texto não reabre nada
+      await reply("+5517991234567", "Obrigada, vou ver.");
+      expect((await next()).status).not.toBe("enviar");
+    });
+
+    it("sem nenhuma resposta nem 2 dias úteis depois o texto sai (só vai para Sem resposta)", async () => {
+      await pool.query(`update outreach_messages set greeting_sent_at = now() - interval '30 days'`);
+      for (let i = 0; i < 3; i++) expect((await next()).status).not.toBe("enviar");
+      expect(await column(l)).toBe("sem_resposta");
+      expect(await count("outreach_messages", "sent_at is not null")).toBe(0);
+    });
+
+    it("resposta de outro telefone não libera o texto deste lead", async () => {
+      expect((await reply("+5517999990000", "Oi, pode falar")).status).toBe("ignorada");
+      await pool.query(`update outreach_messages set body_due_at = now() - interval '1 second'`);
+      expect((await next()).status).not.toBe("enviar");
+    });
+
+    it("resposta de áudio lenta é pessoa e libera; áudio rápido não", async () => {
+      const fast = await svc<any>(`select public.api_outreach_reply($1, $2::jsonb)`, [
+        sender,
+        JSON.stringify({ phone_e164: "+5517991234567", body: "[áudio]", kind: "humana", media: "audio" }),
+      ]);
+      expect(fast.kind).toBe("automatica");
+      await pool.query(`update outreach_messages set greeting_sent_at = now() - interval '1 minute'`);
+      const slow = await svc<any>(`select public.api_outreach_reply($1, $2::jsonb)`, [
+        sender,
+        JSON.stringify({ phone_e164: "+5517991234567", body: "[áudio]", kind: "humana", media: "audio", received_at: new Date(Date.now() + 1000).toISOString() }),
+      ]);
+      expect(slow.kind).toBe("humana");
+    });
+
     it("resposta mais lenta que 15 s continua valendo como pessoa", async () => {
       await pool.query(`update outreach_messages set greeting_sent_at = now() - interval '20 seconds'`);
       const r = await reply("+5517991234567", "Oi! Pode falar.", "humana", false, false, true);
