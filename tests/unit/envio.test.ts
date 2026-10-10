@@ -103,6 +103,11 @@ describe("classificação de respostas", () => {
     expect(classifyReply({ texto, segundos_desde_envio: 120 }).kind).toBe("humana");
   });
 
+  it("evento sem texto não é pessoa", () => {
+    expect(classifyReply({ texto: "[mensagem sem texto]", tipo: "outro" }).kind).toBe("automatica");
+    expect(classifyReply({ texto: "", tipo: "outro" }).kind).toBe("automatica");
+  });
+
   it("texto idêntico a uma resposta anterior é automático", () => {
     const texto = "Oi, tudo bem? Já já te respondo!";
     expect(classifyReply({ texto, anteriores: [texto] }).kind).toBe("automatica");
