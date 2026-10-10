@@ -171,5 +171,83 @@ class SenderTest(unittest.TestCase):
         self.assertFalse(json.loads(out.getvalue())["enabled"])
 
 
+class FakeBridge(BaseHTTPRequestHandler):
+    calls: list[dict] = []
+    inbox: list[dict] = []
+    fail = False
+
+    def log_message(self, *args):
+        pass
+
+    def _reply(self, status, payload):
+        data = json.dumps(payload).encode()
+        self.send_response(status)
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
+
+    def do_POST(self):
+        length = int(self.headers.get("Content-Length") or 0)
+        FakeBridge.calls.append({"path": self.path, "token": self.headers.get("X-Bridge-Token"), "body": json.loads(self.rfile.read(length))})
+        if FakeBridge.fail:
+            return self._reply(422, {"ok": False, "erro": "número não tem WhatsApp"})
+        self._reply(200, {"ok": True, "id": "x"})
+
+    def do_GET(self):
+        box, FakeBridge.inbox = FakeBridge.inbox, []
+        self._reply(200, box)
+
+
+class WhatsAppWebTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.server = HTTPServer(("127.0.0.1", 0), FakeBridge)
+        threading.Thread(target=cls.server.serve_forever, daemon=True).start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.server.shutdown()
+
+    def make(self, **extra):
+        return mktech_envio.WhatsAppWeb(
+            {"BRIDGE_URL": f"http://127.0.0.1:{self.server.server_port}", "BRIDGE_TOKEN": "seg", "ENVIO_SO_PARA": "5517992250729", **extra}
+        )
+
+    def setUp(self):
+        FakeBridge.calls = []
+        FakeBridge.inbox = []
+        FakeBridge.fail = False
+
+    def test_envia_o_texto_exato_so_com_digitos_e_token(self):
+        self.make().enviar("+55 (17) 99225-0729", "Bom dia, Clínica! Tudo bem?")
+        self.assertEqual(
+            FakeBridge.calls, [{"path": "/enviar", "token": "seg", "body": {"telefone": "5517992250729", "texto": "Bom dia, Clínica! Tudo bem?"}}]
+        )
+
+    def test_destino_fora_da_lista_do_teste_nao_chega_na_ponte(self):
+        with self.assertRaises(RuntimeError):
+            self.make().enviar("+5517991234567", "Texto")
+        self.assertEqual(FakeBridge.calls, [])
+
+    def test_recusa_da_ponte_vira_erro(self):
+        FakeBridge.fail = True
+        with self.assertRaises(RuntimeError) as cm:
+            self.make().enviar("+5517992250729", "Texto")
+        self.assertIn("não tem WhatsApp", str(cm.exception))
+
+    def test_ponte_fora_do_ar_vira_erro_e_recebidas_fica_vazio(self):
+        t = mktech_envio.WhatsAppWeb({"BRIDGE_URL": "http://127.0.0.1:1"})
+        with self.assertRaises(RuntimeError):
+            t.enviar("+5517992250729", "Texto")
+        with contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(t.recebidas(), [])
+
+    def test_recebidas_traz_e_esvazia_a_fila(self):
+        FakeBridge.inbox = [{"telefone": "+5517992250729", "texto": "oi", "tipo": "texto", "recebida_em": "2026-10-10T12:00:00Z"}]
+        t = self.make()
+        self.assertEqual(t.recebidas()[0]["texto"], "oi")
+        self.assertEqual(t.recebidas(), [])
+
+
 if __name__ == "__main__":
     unittest.main()

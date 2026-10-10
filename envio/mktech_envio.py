@@ -15,7 +15,10 @@ Ele nunca escreve texto próprio e nunca responde ao cliente.
 
 Transportes:
   simulacao  (padrão) não contata ninguém; grava em envio-simulado.log
-  whatsapp   envio real; ainda não configurado nesta versão
+  whatsappweb  envio real pelo WhatsApp Web do chip de prospecção, via a ponte local
+             envio/whatsapp-web/bridge.js (http://127.0.0.1:3799). Veja envio/WHATSAPP-WEB.md.
+             ENVIO_SO_PARA=5517... limita os destinos (use no teste).
+  whatsapp   reservado (não configurado)
 
 Comandos (saída em JSON no stdout; logs no stderr):
   selftest                               verifica URL, token e estado da chave
@@ -29,6 +32,7 @@ Códigos de saída: 0 ok · 2 dados inválidos · 5 falha temporária/rede · 6 
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import os
 import random
@@ -183,7 +187,53 @@ class WhatsAppNaoConfigurado(Transporte):
         raise RuntimeError("transporte whatsapp ainda não configurado")
 
 
-TRANSPORTES: dict[str, Callable[[], Transporte]] = {"simulacao": Simulacao, "whatsapp": WhatsAppNaoConfigurado}
+class WhatsAppWeb(Transporte):
+    """Entrega pela ponte local do WhatsApp Web. Só envia o texto que o servidor mandou."""
+
+    nome = "whatsappweb"
+
+    def __init__(self, env: dict[str, str] | None = None) -> None:
+        e = env if env is not None else os.environ
+        self.base = e.get("BRIDGE_URL", "http://127.0.0.1:3799").rstrip("/")
+        self.token = e.get("BRIDGE_TOKEN", "").strip()
+        self.only_to = {re.sub(r"\D", "", x) for x in e.get("ENVIO_SO_PARA", "").split(",") if re.sub(r"\D", "", x)}
+
+    def _call(self, method: str, path: str, body: Any = None) -> Any:
+        headers = {"Content-Type": "application/json"}
+        if self.token:
+            headers["X-Bridge-Token"] = self.token
+        req = urllib.request.Request(
+            self.base + path, data=json.dumps(body).encode() if body is not None else None, method=method, headers=headers
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=TIMEOUT_SECONDS) as resp:
+                return json.loads(resp.read() or b"null")
+        except urllib.error.HTTPError as e:
+            detail = ""
+            with contextlib.suppress(Exception):
+                detail = json.loads(e.read()).get("erro", "")
+            raise RuntimeError(f"ponte recusou (HTTP {e.code}): {detail}"[:300]) from None
+        except (urllib.error.URLError, OSError) as e:
+            raise RuntimeError(f"ponte do WhatsApp fora do ar: {e}"[:300]) from None
+
+    def enviar(self, telefone: str, texto: str) -> None:
+        digits = re.sub(r"\D", "", telefone or "")
+        if self.only_to and digits not in self.only_to:
+            raise RuntimeError("destino fora de ENVIO_SO_PARA; nada enviado")
+        out = self._call("POST", "/enviar", {"telefone": digits, "texto": texto})
+        if not (isinstance(out, dict) and out.get("ok")):
+            raise RuntimeError("a ponte não confirmou o envio")
+
+    def recebidas(self) -> list[dict[str, Any]]:
+        try:
+            out = self._call("GET", "/recebidas")
+        except RuntimeError as e:
+            log(str(e))
+            return []
+        return out if isinstance(out, list) else []
+
+
+TRANSPORTES: dict[str, Callable[[], Transporte]] = {"simulacao": Simulacao, "whatsapp": WhatsAppNaoConfigurado, "whatsappweb": WhatsAppWeb}
 
 
 # Laço ------------------------------------------------------------------------

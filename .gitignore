@@ -16,3 +16,7 @@ coverage/
 .DS_Store
 envio/.env
 envio/*.log
+
+envio/whatsapp-web/node_modules/
+envio/whatsapp-web/.wwebjs_auth/
+envio/whatsapp-web/.wwebjs_cache/
