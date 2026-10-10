@@ -4,7 +4,13 @@ import { NextResponse } from "next/server";
 import type { z } from "zod";
 import { serviceClient } from "@/lib/supabase/admin";
 
-export type Scope = "duplicados:ler" | "candidatos:criar" | "execucoes:registrar" | "config:ler";
+export type Scope =
+  | "duplicados:ler"
+  | "candidatos:criar"
+  | "execucoes:registrar"
+  | "config:ler"
+  | "mensagens:escrever"
+  | "envio:operar";
 
 const MAX_BODY_BYTES = 256 * 1024;
 const RATE_LIMIT = 120; // requisições por minuto, por token
@@ -97,6 +103,9 @@ const STATUS_HTTP: Record<string, number> = {
   ja_em_andamento: 409,
   encerrada: 200,
   ja_encerrada: 409,
+  registrado: 200,
+  registrada: 201,
+  ignorada: 200,
 };
 
 /** Converte o resultado jsonb de uma função api_* em resposta HTTP. */

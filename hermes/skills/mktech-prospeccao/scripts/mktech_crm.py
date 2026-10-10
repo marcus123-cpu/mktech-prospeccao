@@ -6,7 +6,9 @@ Lê MKTECH_CRM_URL e MKTECH_CRM_TOKEN do ambiente ou de um arquivo .env
 (caminho em MKTECH_CRM_ENV_FILE, ou .env ao lado deste script).
 
 O token só permite consultar duplicados, cadastrar candidatos, registrar
-execuções e ler configurações. Este script não envia mensagens a ninguém.
+execuções, ler configurações e escrever a mensagem do envio automático.
+Este script não envia mensagens a ninguém: quem envia é o enviador do PC,
+e só o texto que passou na validação do CRM.
 
 Comandos (saída sempre em JSON no stdout; logs no stderr):
   selftest                         verifica URL, token e configurações
@@ -17,6 +19,8 @@ Comandos (saída sempre em JSON no stdout; logs no stderr):
   register --run ID --file c.json  cadastra um candidato (idempotente)
   finish  --run ID --status S --searched N --approved N --discarded N
           --errors N --end-reason "texto" [--error-detail "..."]
+  envio-pendentes [--count N]      leads que precisam da mensagem do envio
+  envio-salvar --lead ID --file m.json  grava a mensagem (validada pelo CRM)
 
 Códigos de saída: 0 ok · 2 dados inválidos · 3 rotina pausada no painel ou já
 em andamento · 4 limite atingido · 5 falha temporária/rede · 6 configuração/token.
@@ -229,6 +233,19 @@ def cmd_finish(args: argparse.Namespace) -> int:
     return emit(*request("POST", f"/api/hermes/v1/runs/{args.run}/finish", body))
 
 
+def cmd_outreach_pending(args: argparse.Namespace) -> int:
+    count = max(1, min(int(args.count), 20))
+    return emit(*request("GET", f"/api/hermes/v1/envio/pendentes?limit={count}"))
+
+
+def cmd_outreach_save(args: argparse.Namespace) -> int:
+    msg = read_json(args.file)
+    if not isinstance(msg, dict):
+        return fail(EXIT_INVALID, "o arquivo precisa ter um objeto com elogio, dor, melhoria e mensagem")
+    body = {k: msg.get(k) for k in ("elogio", "dor", "melhoria", "mensagem")}
+    return emit(*request("POST", f"/api/hermes/v1/envio/mensagens/{args.lead}", body))
+
+
 def main(argv: list[str] | None = None) -> int:
     load_env()
     p = argparse.ArgumentParser(description="Cliente da API do CRM MKTech para o Hermes")
@@ -256,6 +273,13 @@ def main(argv: list[str] | None = None) -> int:
     f.add_argument("--error-detail", action="append")
     f.add_argument("--notes")
     f.set_defaults(fn=cmd_finish)
+    ep = sub.add_parser("envio-pendentes")
+    ep.add_argument("--count", type=int, default=5)
+    ep.set_defaults(fn=cmd_outreach_pending)
+    es = sub.add_parser("envio-salvar")
+    es.add_argument("--lead", required=True)
+    es.add_argument("--file", required=True, help="JSON com elogio, dor, melhoria e mensagem, ou - para stdin")
+    es.set_defaults(fn=cmd_outreach_save)
     args = p.parse_args(argv)
     try:
         return args.fn(args)

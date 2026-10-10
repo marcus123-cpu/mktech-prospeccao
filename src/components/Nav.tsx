@@ -7,6 +7,7 @@ const ITEMS = [
   { href: "/", label: "Hoje", hint: "o que fazer agora" },
   { href: "/leads", label: "Leads", hint: "todos os contatos" },
   { href: "/retornos", label: "Retornos", hint: "quem chamar de novo" },
+  { href: "/envio", label: "Envio automático", hint: "WhatsApp e respostas" },
   { href: "/execucoes", label: "Pesquisas do Hermes", hint: "o que o robô fez" },
   { href: "/configuracoes", label: "Configurações", hint: "metas, cidades, token" },
 ];
