@@ -68,7 +68,7 @@ export default async function ReviewsPage() {
                     {(r.matched_lead_ids as string[]).map((id) => {
                       const m = byId.get(id);
                       return m ? (
-                        <Link key={id} href={`/leads/${id}`} className="block hover:text-accent">
+                        <Link key={id} href={`/leads/${id}`} className="block break-words hover:text-accent">
                           {m.business_name}
                           {m.unit_label ? ` · ${m.unit_label}` : ""} — {m.city} · {m.phone_raw ?? "—"} ·{" "}
                           {m.instagram_handle ? `@${m.instagram_handle}` : "—"}
@@ -78,26 +78,26 @@ export default async function ReviewsPage() {
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <ActionForm action={resolveReview} submit="Vincular à ficha" variant="btn-ghost" className="flex flex-wrap items-end gap-2">
+                  <ActionForm action={resolveReview} submit="Vincular à ficha" variant="btn-ghost" className="grid gap-2 sm:flex sm:flex-wrap sm:items-end">
                     <input type="hidden" name="review_id" value={r.id} />
                     <input type="hidden" name="action" value="vincular" />
-                    <select className="input w-auto" name="lead_id" aria-label="Ficha">
+                    <select className="input sm:w-auto" name="lead_id" aria-label="Ficha">
                       {(r.matched_lead_ids as string[]).map((id) => (
                         <option key={id} value={id}>{byId.get(id)?.business_name ?? id}</option>
                       ))}
                     </select>
                   </ActionForm>
-                  <ActionForm action={resolveReview} submit="Criar como novo lead" variant="btn-ghost" className="flex flex-wrap items-end gap-2">
+                  <ActionForm action={resolveReview} submit="Criar como novo lead" variant="btn-ghost" className="grid gap-2 sm:flex sm:flex-wrap sm:items-end">
                     <input type="hidden" name="review_id" value={r.id} />
                     <input type="hidden" name="action" value="criar_novo" />
                     {r.reason === "instagram_outra_unidade" && (
-                      <input className="input w-auto" name="unit_label" placeholder="Nome da unidade" required maxLength={120} />
+                      <input className="input sm:w-auto" name="unit_label" placeholder="Nome da unidade" required maxLength={120} />
                     )}
                   </ActionForm>
-                  <ActionForm action={resolveReview} submit="Descartar" variant="btn-danger" className="flex flex-wrap items-end gap-2">
+                  <ActionForm action={resolveReview} submit="Descartar" variant="btn-danger" className="grid gap-2 sm:flex sm:flex-wrap sm:items-end">
                     <input type="hidden" name="review_id" value={r.id} />
                     <input type="hidden" name="action" value="descartar" />
-                    <input className="input w-auto" name="note" placeholder="Motivo (opcional)" maxLength={1000} />
+                    <input className="input sm:w-auto" name="note" placeholder="Motivo (opcional)" maxLength={1000} />
                   </ActionForm>
                 </div>
               </div>

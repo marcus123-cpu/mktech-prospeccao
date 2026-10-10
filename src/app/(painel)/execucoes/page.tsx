@@ -26,7 +26,50 @@ export default async function RunsPage() {
           Rode a pesquisa manual descrita no README para validar a integração.
         </Empty>
       ) : (
-        <div className="card overflow-x-auto">
+        <>
+        {/* Celular: um cartão por pesquisa. */}
+        <ul className="space-y-2 md:hidden">
+          {data.map((r) => (
+            <li key={r.id} className="card p-3 text-sm">
+              <div className="flex items-start justify-between gap-2">
+                <div className="text-xs text-muted">
+                  {fmtDateTime(r.started_at)}
+                  {r.finished_at && <> até {fmtDateTime(r.finished_at)}</>}
+                </div>
+                <span className={`shrink-0 text-xs font-medium ${statusColor(r.status)}`}>{RUN_STATUS_LABEL[r.status] ?? r.status}</span>
+              </div>
+              <dl className="mt-2 grid grid-cols-4 gap-2 text-center">
+                {([
+                  ["Pesquis.", r.searched],
+                  ["Aprov.", r.approved],
+                  ["Criados", r.created],
+                  ["Já exist.", r.existing],
+                  ["Dupl.?", r.possible_duplicates],
+                  ["Descart.", r.discarded],
+                  ["Inválid.", r.invalid],
+                  ["Erros", r.errors],
+                ] as [string, number][]).map(([label, v]) => (
+                  <div key={label} className="rounded-lg bg-panel-2 px-1 py-1.5">
+                    <dd className="font-semibold tabular-nums">{v}</dd>
+                    <dt className="text-[10px] text-muted">{label}</dt>
+                  </div>
+                ))}
+              </dl>
+              {r.end_reason && <p className="mt-2 break-words text-sm">{r.end_reason}</p>}
+              {Array.isArray(r.error_details) && r.error_details.length > 0 && (
+                <details className="mt-1 text-xs text-rose-300">
+                  <summary className="cursor-pointer">Erros</summary>
+                  <ul className="list-disc break-words pl-4">
+                    {(r.error_details as string[]).map((e, i) => <li key={i}>{e}</li>)}
+                  </ul>
+                </details>
+              )}
+              {r.notes && <p className="mt-1 break-words text-xs text-muted">{r.notes}</p>}
+            </li>
+          ))}
+        </ul>
+
+        <div className="card hidden overflow-x-auto md:block">
           <table className="w-full min-w-[900px]">
             <thead className="border-b border-line">
               <tr>
@@ -41,7 +84,7 @@ export default async function RunsPage() {
                   <td className="table-cell text-xs">{fmtDateTime(r.started_at)}</td>
                   <td className="table-cell text-xs">{fmtDateTime(r.finished_at)}</td>
                   <td className="table-cell">
-                    <span className={r.status === "falhou" || r.status === "abandonada" ? "text-rose-300" : r.status === "em_andamento" ? "text-amber-300" : "text-emerald-300"}>
+                    <span className={statusColor(r.status)}>
                       {RUN_STATUS_LABEL[r.status] ?? r.status}
                     </span>
                   </td>
@@ -65,7 +108,12 @@ export default async function RunsPage() {
             </tbody>
           </table>
         </div>
+        </>
       )}
     </>
   );
+}
+
+function statusColor(status: string) {
+  return status === "falhou" || status === "abandonada" ? "text-rose-300" : status === "em_andamento" ? "text-amber-300" : "text-emerald-300";
 }

@@ -141,9 +141,9 @@ export default async function LeadDetail({
         </p>
       )}
       <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
+        <div className="min-w-0">
           <Link href="/leads" className="text-xs text-muted hover:text-slate-200">← Leads</Link>
-          <h1 className="mt-1 text-2xl font-semibold">
+          <h1 className="mt-1 break-words text-xl font-semibold md:text-2xl">
             {l.business_name}
             {l.unit_label && <span className="ml-2 text-base font-normal text-muted">· {l.unit_label}</span>}
           </h1>
@@ -158,7 +158,7 @@ export default async function LeadDetail({
             <span className="text-xs text-muted">Origem: {ORIGIN_LABEL[l.origin as Origin]}</span>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex w-full flex-wrap gap-2 sm:w-auto [&>*]:flex-1 sm:[&>*]:flex-none">
           {wa && <a className="btn-ghost" href={wa} target="_blank" rel="noopener noreferrer">Abrir WhatsApp</a>}
           {l.instagram_handle && (
             <a className="btn-ghost" href={`https://instagram.com/${l.instagram_handle}`} target="_blank" rel="noopener noreferrer">
@@ -169,9 +169,10 @@ export default async function LeadDetail({
         </div>
       </div>
       <p className="text-xs text-muted">Abrir o WhatsApp não registra contato. Use “Marcar como contatado” depois de falar com o lead.</p>
+      <a href="#acoes" className="btn-primary w-full xl:hidden">Registrar contato, etapa ou retorno ↓</a>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_400px]">
-        <section className="space-y-6">
+        <section className="min-w-0 space-y-6">
           <NextStep stage={l.stage as Stage} />
           <DiagnosisCard d={(diagnoses.data?.[0] as Diagnosis | undefined) ?? null} olderCount={Math.max((diagnoses.data?.length ?? 0) - 1, 0)} />
           <div className="card grid gap-4 p-4 text-sm sm:grid-cols-2">
@@ -216,11 +217,11 @@ export default async function LeadDetail({
           </div>
         </section>
 
-        <aside className="space-y-4">
+        <aside id="acoes" className="scroll-mt-20 space-y-4">
           <Panel title="Marcar como contatado">
             <ActionForm action={markContacted} submit="Marcar como contatado">
               <input type="hidden" name="lead_id" value={id} />
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid gap-2 sm:grid-cols-2">
                 <select className="input" name="channel" defaultValue="whatsapp" aria-label="Canal">
                   {CHANNELS.map((c) => (
                     <option key={c} value={c}>{CHANNEL_LABEL[c]}</option>
@@ -269,7 +270,7 @@ export default async function LeadDetail({
           <Panel title="Registrar proposta">
             <ActionForm action={registerProposal} submit="Registrar proposta">
               <input type="hidden" name="lead_id" value={id} />
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid gap-2 sm:grid-cols-2">
                 <input className="input" name="value" inputMode="decimal" placeholder="Valor (R$)" required />
                 <input className="input" type="datetime-local" name="sent_at" defaultValue={nowLocal} required />
               </div>
@@ -280,7 +281,7 @@ export default async function LeadDetail({
           <Panel title="Registrar fechamento">
             <ActionForm action={registerClosing} submit="Registrar fechamento" confirmText="Confirmar o fechamento desta venda?">
               <input type="hidden" name="lead_id" value={id} />
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid gap-2 sm:grid-cols-2">
                 <input className="input" name="value" inputMode="decimal" placeholder="Valor fechado (R$)" required />
                 <input className="input" type="datetime-local" name="closed_at" defaultValue={nowLocal} required />
               </div>
