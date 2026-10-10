@@ -1,4 +1,5 @@
 import { BottomNav, Nav } from "@/components/Nav";
+import { AutoRefresh } from "@/components/AutoRefresh";
 import { BotChip } from "@/components/BotChip";
 import { requireAdmin } from "@/lib/auth";
 
@@ -12,6 +13,7 @@ export default async function PainelLayout({ children }: { children: React.React
 
   return (
     <div className="md:flex">
+      <AutoRefresh />
       {/* Celular: cabeçalho compacto no topo e menu em abas no rodapé. */}
       <header className="sticky top-0 z-30 flex items-center justify-between border-b border-line bg-panel/95 px-4 py-3 backdrop-blur md:hidden">
         <div>
