@@ -45,6 +45,9 @@ type Settings = {
   send_days: number[];
   next_send_at: string | null;
   followups_enabled?: boolean;
+  reply_window_start?: number;
+  reply_window_end?: number;
+  prospect_after_noon?: boolean;
 };
 
 // Colunas do funil do envio, na ordem em que o lead anda.
@@ -127,14 +130,14 @@ export default async function Hoje({
 
   const agora = agoraSP();
   const diaOk = !!env?.send_days.includes(agora.dow);
-  const horaOk = !!env && agora.hour >= env.window_start && agora.hour < env.window_end;
+  const prospFim = env ? (env.prospect_after_noon ? Math.max(env.window_end, env.reply_window_end ?? 18) : env.window_end) : 0;
+  const prospAberta = diaOk && !!env && agora.hour >= env.window_start && agora.hour < prospFim;
+  const atendAberto = diaOk && !!env && agora.hour >= (env.reply_window_start ?? 8) && agora.hour < (env.reply_window_end ?? 18);
   const estado = !env ? "—" : !env.enabled ? "Desligado" : env.paused ? "Pausado" : "Ligado";
   const estadoCor = !env?.enabled ? "text-slate-300" : env.paused ? "text-amber-300" : "text-emerald-300";
   const janela = !env
     ? ""
-    : diaOk && horaOk
-      ? "Janela aberta agora"
-      : `Janela fechada · abre ${env.send_days.map((d) => DIAS[d]).join(", ")}, ${env.window_start}h às ${env.window_end}h`;
+    : `Prospecção ${prospAberta ? "aberta" : "fechada"} (${env.window_start}h às ${prospFim}h) · Atendimento ${atendAberto ? "aberto" : "fechado"} (${env.reply_window_start ?? 8}h às ${env.reply_window_end ?? 18}h) · ${env.send_days.map((d) => DIAS[d]).join(", ")}`;
 
   const today = todaySP();
 

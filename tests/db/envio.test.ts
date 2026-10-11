@@ -45,7 +45,7 @@ async function settings(p: Record<string, unknown>) {
 }
 /** Liga o envio em qualquer dia e horário, sem espera entre leads. */
 async function openAllDay() {
-  await settings({ enabled: true, window_start: 0, window_end: 24, send_days: [1, 2, 3, 4, 5, 6, 7] });
+  await settings({ enabled: true, window_start: 0, window_end: 24, reply_window_start: 0, reply_window_end: 24, send_days: [1, 2, 3, 4, 5, 6, 7] });
 }
 
 let writer: string;
@@ -710,4 +710,86 @@ describe("envio automático", () => {
     });
   });
 
+});
+
+describe("janelas de atendimento e de prospecção", () => {
+  const horaSP = async () =>
+    Number((await pool.query(`select extract(hour from now() at time zone 'America/Sao_Paulo')::int as h`)).rows[0].h);
+  /** Janela [h, h+1) que contém a hora atual de São Paulo. */
+  const incluiAgora = (h: number) => ({ start: h, end: h + 1 });
+  /** Janela de 1 hora que NÃO contém a hora atual. */
+  const excluiAgora = (h: number) => (h < 23 ? { start: h + 1, end: h + 2 } : { start: 0, end: 1 });
+  const todosDias = [1, 2, 3, 4, 5, 6, 7];
+
+  beforeEach(async () => {
+    await resetData();
+    writer = (await tokenId((await createToken()).token, "mensagens:escrever"))!;
+    const t = await asAdmin((c) => rpc<{ token: string }>(c, `select public.admin_create_sender_token('enviador')`));
+    sender = (await tokenId(t.token, "envio:operar"))!;
+  });
+
+  /** Lead com saudação enviada e pessoa já respondeu; texto pronto para sair. */
+  async function textoPronto() {
+    const l = await lead();
+    await save(l);
+    await openAllDay();
+    const n1 = await next();
+    await result(n1.id, "saudacao");
+    await reply("+5517991234567", "Oi, boa tarde!");
+    await pool.query(`update outreach_messages set body_due_at = now() - interval '1 second'`);
+    return l;
+  }
+
+  it("padrão: atendimento 8h às 18h, prospecção 8h ao meio-dia, depois do meio-dia desligado", async () => {
+    const r = (await pool.query(`select reply_window_start, reply_window_end, window_start, window_end, prospect_after_noon from outreach_settings`)).rows[0];
+    expect(r).toEqual({ reply_window_start: 8, reply_window_end: 18, window_start: 8, window_end: 12, prospect_after_noon: false });
+  });
+
+  it("o texto depois da resposta da pessoa sai dentro do atendimento, mesmo com a prospecção fechada", async () => {
+    await textoPronto();
+    const h = await horaSP();
+    const a = incluiAgora(h);
+    const p = excluiAgora(h);
+    await settings({ reply_window_start: a.start, reply_window_end: a.end, window_start: p.start, window_end: p.end, send_days: todosDias });
+    expect(await next()).toMatchObject({ status: "enviar", etapa: "mensagem" });
+  });
+
+  it("fora do atendimento o texto espera, mesmo com a chave ligada", async () => {
+    await textoPronto();
+    const h = await horaSP();
+    const f = excluiAgora(h);
+    await settings({ reply_window_start: f.start, reply_window_end: f.end, window_start: f.start, window_end: f.end, send_days: todosDias });
+    const n = await next();
+    expect(n.status).toBe("fora_do_horario");
+    expect(await count("outreach_messages", "status = 'enviando_mensagem'")).toBe(0);
+  });
+
+  it("fora dos dias da semana o texto também espera", async () => {
+    await textoPronto();
+    const h = await horaSP();
+    const a = incluiAgora(h);
+    const hoje = Number((await pool.query(`select extract(isodow from now() at time zone 'America/Sao_Paulo')::int as d`)).rows[0].d);
+    await settings({ reply_window_start: a.start, reply_window_end: a.end, window_start: a.start, window_end: a.end, send_days: todosDias.filter((d) => d !== hoje) });
+    expect((await next()).status).toBe("fora_do_horario");
+  });
+
+  it("saudação de lead novo não sai fora da prospecção; com 'depois do meio-dia' ligado vale até o fim do atendimento", async () => {
+    const h = await horaSP();
+    if (h === 0) return; // sem janela anterior possível à meia-noite
+    const l = await lead();
+    await save(l);
+    await settings({ enabled: true, window_start: 0, window_end: h, reply_window_start: 0, reply_window_end: 24, send_days: todosDias, prospect_after_noon: false });
+    expect((await next()).status).toBe("fora_do_horario");
+    await settings({ prospect_after_noon: true });
+    expect(await next()).toMatchObject({ status: "enviar", etapa: "saudacao" });
+  });
+
+  it("'depois do meio-dia' nunca passa do fim do atendimento", async () => {
+    const h = await horaSP();
+    if (h === 0) return;
+    const l = await lead();
+    await save(l);
+    await settings({ enabled: true, window_start: 0, window_end: h, reply_window_start: 0, reply_window_end: h, send_days: todosDias, prospect_after_noon: true });
+    expect((await next()).status).toBe("fora_do_horario");
+  });
 });

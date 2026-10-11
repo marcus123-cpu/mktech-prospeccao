@@ -8,6 +8,7 @@ import {
   retryLead,
   saveOutreachSettings,
   setEnabled,
+  setAfterNoon,
   setFollowups,
   setPaused,
   type EnvioState,
@@ -28,6 +29,9 @@ export type OutreachSettings = {
   send_days: number[];
   min_fit_score: number;
   followups_enabled?: boolean;
+  reply_window_start?: number;
+  reply_window_end?: number;
+  prospect_after_noon?: boolean;
 };
 
 const DAYS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
@@ -104,6 +108,17 @@ export function SwitchControls({ s }: { s: OutreachSettings }) {
           confirmText="Ligar os lembretes? Quem conversou com você e parou de responder recebe até 2 lembretes curtos, cada um 2 dias úteis depois da sua última mensagem sem resposta. Eles só saem com o envio automático ligado, dentro do horário e do limite diário."
         />
       )}
+      <MiniAction
+        action={setAfterNoon}
+        fields={{ enabled: s.prospect_after_noon ? "false" : "true" }}
+        label={s.prospect_after_noon ? "Prospectar só até o fim do horário" : "Liberar prospecção depois do meio-dia"}
+        variant="btn-ghost"
+        confirmText={
+          s.prospect_after_noon
+            ? undefined
+            : `Liberar a prospecção (saudação e lembretes) até as ${s.reply_window_end ?? 18}h? Normalmente ela para às ${s.window_end}h; o bot continua respondendo clientes até ${s.reply_window_end ?? 18}h de qualquer forma.`
+        }
+      />
     </div>
   );
 }
@@ -125,8 +140,10 @@ export function OutreachSettingsForm({ s }: { s: OutreachSettings }) {
       {num("greeting_gap_max_seconds", "Depois da saudação, esperar no máximo (s)", s.greeting_gap_max_seconds, 10, 1800)}
       {num("daily_limit", "Leads abordados por dia (até)", s.daily_limit, 1, 200, "Começar baixo reduz o risco de bloqueio do WhatsApp.")}
       {num("min_fit_score", "Nota mínima do diagnóstico", s.min_fit_score, 0, 100)}
-      {num("window_start", "Horário: começa às (h)", s.window_start, 0, 23)}
-      {num("window_end", "Horário: para às (h)", s.window_end, 1, 24, "Horário de São Paulo.")}
+      {num("window_start", "Prospecção: começa às (h)", s.window_start, 0, 23)}
+      {num("window_end", "Prospecção: para às (h)", s.window_end, 1, 24, "Saudação e lembretes. Horário de São Paulo.")}
+      {num("reply_window_start", "Atendimento: começa às (h)", s.reply_window_start ?? 8, 0, 23)}
+      {num("reply_window_end", "Atendimento: para às (h)", s.reply_window_end ?? 18, 1, 24, "Resposta aos clientes que já falaram com você.")}
       <fieldset className="sm:col-span-2">
         <legend className="label">Dias da semana</legend>
         <div className="flex flex-wrap gap-3 text-sm">
