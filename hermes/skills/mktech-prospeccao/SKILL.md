@@ -1,7 +1,7 @@
 ---
 name: mktech-prospeccao
 description: Pesquisa diária de clínicas e profissionais de estética sem site próprio no interior de SP e cadastro no CRM da MKTech (sem contatar ninguém).
-version: 1.3.0
+version: 1.4.0
 platforms: [windows, linux, macos]
 metadata:
   hermes:
@@ -34,7 +34,10 @@ candidato no CRM. Quem decide e faz contato é o Marcos.
 4. Só fale com o CRM pelo script `scripts/mktech_crm.py`. Não mexa em
    arquivos fora desta skill e não mostre o token em respostas ou logs.
 5. Respeite os limites do painel (meta diária, minutos, buscas). O script
-   devolve código 4 quando um limite é atingido: pare de cadastrar.
+   devolve código 4 quando um limite é atingido: pare de cadastrar. Conte
+   cada chamada individual de busca web, inclusive buscas agrupadas na mesma
+   execução Python; mantenha um contador explícito e confira-o antes de cada
+   lote. Aberturas de URL não são buscas.
 
 ## Como rodar o script
 
@@ -67,41 +70,69 @@ andamento (pare), `4` limite atingido (pare de cadastrar e encerre),
    configurados. Exemplos: `clínica de estética Votuporanga`, `esteticista
    Bauru instagram`, `harmonização facial Marília`, `limpeza de pele São José
    do Rio Preto`. Conte cada busca e não passe de `max_searches`.
-6. **Pesquise cada candidato a fundo** (seção "Pesquisa do lead" abaixo) e
+6. **Faça a triagem rápida** (seção "Triagem rápida" abaixo) antes de
+   gastar buscas com o candidato. Só quem passa nela segue.
+7. **Pesquise cada candidato a fundo** (seção "Pesquisa do lead" abaixo) e
    monte o diagnóstico. Qualidade vale mais que quantidade: é melhor
    cadastrar 5 leads bem pesquisados do que 20 rasos.
-7. **Monte o JSON** do candidato (modelo completo em
+8. **Monte o JSON** do candidato (modelo completo em
    `references/candidato-exemplo.json`). Obrigatórios: `business_name`,
    `city`, `selection_reason`, pelo menos uma evidência com `kind` e
    `summary` (e `url` quando houver), e o `diagnosis`. Registre limitações
    em `limitation`. Não envie etapa, contato, valores nem observações
    comerciais: o CRM recusa esses campos. `evidences[].kind` aceita somente `site`,
    `instagram`, `google`, `whatsapp`, `diretorio`, `busca` ou `outro`;
-   notícias e Threads entram como `outro`.
-8. **Consulte duplicados:** `check --file candidato.json`.
+   notícias e Threads entram como `outro`. `pending_items` é um texto; se
+   mandar lista, o CRM junta em linhas, então não reenvie por causa disso.
+9. **Consulte duplicados:** `check --file candidato.json`.
    - `existente`: não cadastre de novo; conte como descartado.
    - `revisao`: pode cadastrar; o CRM manda para a fila de revisão.
    - `novo`: siga.
-9. **Cadastre:** `register --run <run_id> --file candidato.json`.
+10. **Cadastre:** `register --run <run_id> --file candidato.json`.
    Respostas: `criado`, `existente` (já estava), `possivel_duplicado` (foi
    para revisão), `invalido` (corrija ou descarte), `limite_atingido`
    (pare).
-10. **Pare** quando atingir `run_target` cadastros (o servidor também recusa
+11. **Pare** quando atingir `run_target` cadastros (o servidor também recusa
     com código 4 ao passar da meta), `max_searches`
     buscas, `max_run_minutes` minutos ou receber código 4.
-11. **Encerre a execução sempre**, mesmo em erro:
+12. **Encerre a execução sempre**, mesmo em erro:
     ```
     finish --run <run_id> --status concluida|parcial|falhou \
       --searched N --approved N --discarded N --errors N \
       --end-reason "motivo curto" [--error-detail "..."] [--notes "..."]
     ```
+    `--searched` é o total de buscas da execução inteira (descoberta,
+    triagem e pesquisa). `--errors` conta só falhas de verdade (API fora do
+    ar, cadastro recusado que você não conseguiu corrigir). Chegar ao
+    limite de buscas, passar dele por 1 ou 2, ou descartar candidato **não**
+    é erro: vai em `--end-reason`.
     Use `concluida` ao bater a meta ou esgotar as buscas normalmente,
     `parcial` quando parou antes por limite de tempo ou erros, e `falhou`
     quando não foi possível pesquisar.
 
+## Triagem rápida
+
+No máximo **2 buscas** por candidato, antes da pesquisa completa. Descarte
+na hora (conta em `discarded`, sem cadastrar) se:
+
+1. **Sem contato comercial:** não aparece telefone nem Instagram do negócio
+   no resultado da descoberta ou em uma busca `<nome> <cidade>`. O CRM
+   recusa candidato sem telefone ou Instagram, então não vale pesquisar.
+2. **Site próprio:** a busca `<nome> <cidade> site` mostra um domínio
+   próprio funcionando (Linktree, Instagram, Google Meu Negócio e
+   `sites.google.com` não contam).
+3. **Já está no CRM:** nome, telefone ou Instagram batem com a lista do
+   `identifiers`.
+4. **Fora do escopo:** cidade fora das configuradas ou não é estética.
+
+Prefira buscas de descoberta que tragam vários negócios com telefone de uma
+vez (Google Maps, diretórios, "clínica de estética <cidade>") e faça a
+triagem de todos antes de aprofundar em qualquer um.
+
 ## Pesquisa do lead
 
-Para cada candidato, use de 3 a 6 buscas e aberturas de página. Anote cada
+Para cada candidato que passou na triagem, use de 2 a 4 buscas e aberturas
+de página. Anote cada
 fonte como evidência (`instagram`, `google`, `diretorio`, `whatsapp`,
 `site`, `busca`).
 
