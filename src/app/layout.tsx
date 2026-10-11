@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: { default: "MKTech Prospecção", template: "%s · MKTech Prospecção" },
+  title: { default: "MKTech Dev · Prospecção", template: "%s · MKTech Dev" },
   description: "CRM de prospecção da MKTech Dev",
   robots: { index: false, follow: false },
 };
