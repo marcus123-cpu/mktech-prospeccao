@@ -124,7 +124,7 @@ describe("classificação de respostas", () => {
     expect(classifyReply({ texto: "Oi, quem é?" }).asksPrice).toBe(false);
   });
 
-  it.each(["Não tenho interesse", "pare", "Não me mande mais mensagens", "remova meu número"])("pedido para parar: %s", (texto) => {
+  it.each(["Não tenho interesse", "pare", "Não me mande mais mensagens", "remova meu número", "Nao estamos interessadas, obrigada!!", "Não estou interessado, obrigado", "Sem interesse, obrigada", "Não nos interessa"])("pedido para parar: %s", (texto) => {
     expect(classifyReply({ texto })).toMatchObject({ kind: "humana", optOut: true });
   });
 });
