@@ -15,11 +15,14 @@ const settingsSchema = z
     daily_limit: z.coerce.number().int().min(1).max(200),
     window_start: z.coerce.number().int().min(0).max(23),
     window_end: z.coerce.number().int().min(1).max(24),
+    reply_window_start: z.coerce.number().int().min(0).max(23),
+    reply_window_end: z.coerce.number().int().min(1).max(24),
     min_fit_score: z.coerce.number().int().min(0).max(100),
   })
   .refine((v) => v.max_delay_minutes >= v.min_delay_minutes, "A espera máxima precisa ser maior ou igual à mínima.")
   .refine((v) => v.greeting_gap_max_seconds >= v.greeting_gap_min_seconds, "O intervalo máximo depois da saudação precisa ser maior ou igual ao mínimo.")
-  .refine((v) => v.window_end > v.window_start, "O fim do horário precisa ser depois do início.");
+  .refine((v) => v.window_end > v.window_start, "O fim da prospecção precisa ser depois do início.")
+  .refine((v) => v.reply_window_end > v.reply_window_start, "O fim do atendimento precisa ser depois do início.");
 
 function done(ok: string): EnvioState {
   revalidatePath("/envio");
@@ -42,6 +45,8 @@ export async function saveOutreachSettings(_: EnvioState, form: FormData): Promi
       daily_limit: v.daily_limit,
       window_start: v.window_start,
       window_end: v.window_end,
+      reply_window_start: v.reply_window_start,
+      reply_window_end: v.reply_window_end,
       min_fit_score: v.min_fit_score,
       send_days: days,
     },
@@ -109,4 +114,12 @@ export async function setFollowups(_: EnvioState, form: FormData): Promise<Envio
   const { error } = await supabase.rpc("admin_outreach_followups", { p_enabled: on });
   if (error) return { error: dbErrorMessage(error) };
   return done(on ? "Lembretes LIGADOS." : "Lembretes desligados.");
+}
+
+export async function setAfterNoon(_: EnvioState, form: FormData): Promise<EnvioState> {
+  const { supabase } = await requireAdmin();
+  const on = form.get("enabled") === "true";
+  const { error } = await supabase.rpc("admin_outreach_settings", { p: { prospect_after_noon: on } });
+  if (error) return { error: dbErrorMessage(error) };
+  return done(on ? "Prospecção liberada depois do meio-dia." : "Prospecção volta a parar no fim do horário.");
 }
