@@ -206,7 +206,7 @@ def cmd_start_run(args: argparse.Namespace) -> int:
     settings = s_payload.get("settings") or {}
     if not args.manual and not settings.get("routine_enabled"):
         return fail(EXIT_BLOCKED, "rotina diária pausada no painel (Configurações); use --manual para teste manual")
-    config_used = {k: settings.get(k) for k in ("daily_target", "cities", "niches", "max_run_minutes", "max_searches", "max_cost_usd")}
+    config_used = {k: settings.get(k) for k in ("daily_target", "run_target", "stock_ready", "cities", "niches", "max_run_minutes", "max_searches", "max_cost_usd")}
     config_used["manual"] = bool(args.manual)
     return emit(*request("POST", "/api/hermes/v1/runs", {"routine": args.routine, "config": config_used}))
 

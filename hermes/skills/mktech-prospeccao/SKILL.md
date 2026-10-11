@@ -53,12 +53,14 @@ andamento (pare), `4` limite atingido (pare de cadastrar e encerre),
 ## Procedimento
 
 1. **Teste a conexão:** `selftest`. Se não der código 0, pare e relate.
-2. **Leia as configurações** que vieram no `selftest`: `daily_target`,
-   `cities`, `niches`, `max_run_minutes`, `max_searches`.
+2. **Leia as configurações** que vieram no `selftest`: `run_target` (quantos
+   leads cadastrar nesta passada: 20 quando o estoque de leads prontos está
+   abaixo do mínimo, senão `daily_target`), `stock_ready`, `cities`, `niches`, `max_run_minutes`, `max_searches`.
 3. **Abra a execução:** `start-run` (na rotina agendada) ou
    `start-run --manual` (teste pedido pelo Marcos). Guarde o `run_id`.
    Código 3 significa rotina pausada no painel ou outra execução aberta:
-   pare sem pesquisar.
+   pare sem pesquisar. A resposta traz `run_target` e `restock` (verdadeiro
+   quando o servidor abriu esta execução para repor o estoque).
 4. **Baixe o que já existe:** `identifiers`. Use a lista para não perder
    tempo com quem já está no CRM.
 5. **Encontre candidatos** com a busca web, cidade por cidade, nos nichos
@@ -84,7 +86,8 @@ andamento (pare), `4` limite atingido (pare de cadastrar e encerre),
    Respostas: `criado`, `existente` (já estava), `possivel_duplicado` (foi
    para revisão), `invalido` (corrija ou descarte), `limite_atingido`
    (pare).
-10. **Pare** quando atingir `daily_target` cadastros, `max_searches`
+10. **Pare** quando atingir `run_target` cadastros (o servidor também recusa
+    com código 4 ao passar da meta), `max_searches`
     buscas, `max_run_minutes` minutos ou receber código 4.
 11. **Encerre a execução sempre**, mesmo em erro:
     ```
