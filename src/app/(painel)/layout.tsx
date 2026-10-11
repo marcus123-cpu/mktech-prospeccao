@@ -19,7 +19,7 @@ export default async function PainelLayout({ children }: { children: React.React
         <div>
           <div className="flex items-center gap-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/icon.svg" alt="" width={28} height={28} className="rounded-lg" />
+            <img src="/logo-mk.png" alt="MKTech Dev" width={44} height={21} className="h-[21px] w-11 object-contain" />
             <div>
               <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-accent">MKTech Dev</div>
               <div className="text-sm font-semibold">Prospecção 🤖</div>
@@ -35,13 +35,10 @@ export default async function PainelLayout({ children }: { children: React.React
       </header>
 
       <aside className="hidden md:sticky md:top-0 md:block md:h-screen md:w-60 md:shrink-0 md:overflow-y-auto md:border-r md:border-line md:bg-panel md:px-4 md:py-6">
-        <div className="mb-8 flex items-center gap-3">
+        <div className="mb-8 text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/icon.svg" alt="" width={36} height={36} className="rounded-xl shadow-lg shadow-violet-900/40" />
-          <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">MKTech Dev</div>
-            <div className="text-sm font-semibold">Prospecção 🤖</div>
-          </div>
+          <img src="/logo.png" alt="MKTech Dev" width={640} height={401} className="mx-auto w-40 max-w-full" />
+          <div className="mt-1 text-sm font-semibold">Prospecção 🤖</div>
         </div>
         <div className="mb-4">{chip}</div>
         <Nav pendingReviews={count ?? 0} />
