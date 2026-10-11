@@ -25,6 +25,14 @@ describe("contrato da API do Hermes", () => {
     expect(candidateSchema.safeParse(semMotivo).success).toBe(false);
   });
 
+  it("aceita pendências em lista e junta em texto, um item por linha", () => {
+    const r = candidateSchema.safeParse({ ...example, pending_items: ["confirmar telefone", " ", "ver último post"] });
+    expect(r.success).toBe(true);
+    expect(r.success && r.data.pending_items).toBe("- confirmar telefone\n- ver último post");
+    expect(candidateSchema.parse({ ...example, pending_items: "texto" }).pending_items).toBe("texto");
+    expect(candidateSchema.safeParse({ ...example, pending_items: [1, 2] }).success).toBe(false);
+  });
+
   it("consulta de duplicados não aceita evidências nem notas", () => {
     expect(checkSchema.safeParse({ business_name: "A", city: "Bauru", evidences: [] }).success).toBe(false);
   });

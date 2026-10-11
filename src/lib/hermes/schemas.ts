@@ -2,6 +2,15 @@ import { z } from "zod";
 
 const text = (max: number) => z.string().trim().max(max);
 const optText = (max: number) => text(max).optional().nullable();
+
+// O Hermes às vezes manda as pendências como lista. Em vez de recusar (e ele
+// gastar tentativas corrigindo), junta em um texto só, um item por linha.
+const pendingItems = z
+  .union([text(2000), z.array(text(500)).max(30)])
+  .transform((v) => (Array.isArray(v) ? v.filter(Boolean).map((i) => `- ${i}`).join("\n") : v))
+  .pipe(text(2000))
+  .optional()
+  .nullable();
 const httpUrl = z
   .string()
   .trim()
@@ -65,7 +74,7 @@ export const candidateSchema = z
     source_place_id: optText(300),
     research_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
     selection_reason: text(2000).min(1),
-    pending_items: optText(2000),
+    pending_items: pendingItems,
     priority: z.enum(["alta", "media", "baixa"]).optional(),
     site_status: z
       .enum(["site_proprio_encontrado", "site_nao_localizado", "apenas_redes_sociais", "verificacao_pendente"])
