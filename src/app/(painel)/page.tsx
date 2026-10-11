@@ -84,16 +84,19 @@ export default async function Hoje({
   const dayStart = new Date(`${todaySP()}T00:00:00-03:00`).toISOString();
   const weekStart = new Date(new Date(dayStart).getTime() - 6 * 86400000).toISOString();
 
-  const [metrics, settings, hermes, funil, greetings, texts, replies] = await Promise.all([
+  const [metrics, settings, hermes, funil, greetings, texts, replies, stock] = await Promise.all([
     supabase.rpc("dashboard_metrics", { p_start: start, p_end: end }),
     supabase.from("outreach_settings").select("*").eq("id", 1).maybeSingle(),
-    supabase.from("prospecting_settings").select("routine_enabled, daily_target").eq("id", 1).maybeSingle(),
+    supabase.from("prospecting_settings").select("*").eq("id", 1).maybeSingle(),
     supabase.from("outreach_funnel").select("coluna").limit(1000),
     supabase.from("outreach_messages").select("greeting_sent_at").gte("greeting_sent_at", weekStart).limit(1000),
     supabase.from("outreach_messages").select("sent_at").gte("sent_at", dayStart).limit(1000),
     supabase.from("outreach_replies").select("received_at, kind, opt_out").gte("received_at", weekStart).limit(2000),
+    supabase.rpc("prospecting_stock"),
   ]);
   const m = metrics.data as Metrics | null;
+  const stockReady = typeof stock.data === "number" ? stock.data : null;
+  const stockMin = (hermes.data as { restock_min?: number } | null)?.restock_min ?? 20;
   const env = settings.data as Settings | null;
 
   const porColuna: Record<string, number> = {};
@@ -170,7 +173,7 @@ export default async function Hoje({
           {/* 2. O que precisa de você */}
           <section>
             <h2 className="mb-3 text-sm font-semibold">O que fazer agora</h2>
-            <div className="grid gap-3 md:grid-cols-4">
+            <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-5">
               <ActionCard
                 href="/funil"
                 number={waitingOnYou}
@@ -178,6 +181,19 @@ export default async function Hoje({
                 text={`${porColuna.valor ?? 0} perguntaram valor e ${porColuna.conversa ?? 0} estão em conversa.`}
                 alert={waitingOnYou > 0}
               />
+              {stockReady !== null && (
+                <ActionCard
+                  href="/leads?etapa=novo&nao_contatados=1&ordem=potencial"
+                  number={stockReady}
+                  title={`leads prontos: ${stockReady} de ${stockMin}`}
+                  text={
+                    stockReady < stockMin
+                      ? "Abaixo do mínimo: a próxima pesquisa do Hermes busca mais 20."
+                      : "Estoque cheio: com WhatsApp, nota 60+ e diagnóstico."
+                  }
+                  alert={stockReady < stockMin}
+                />
+              )}
               <ActionCard
                 href="/funil"
                 number={porColuna.aguardando ?? 0}
