@@ -46,18 +46,38 @@ describe("reposição do estoque de leads", () => {
        select id, phone_e164, 'pronta', 'x', 'x', 'x', 'x' from leads where id = $1`,
       [comMsg],
     );
+    expect(await stock()).toBe(2);
+  });
+
+  it("mensagem na fila ainda conta; saudação enviada sai da conta", async () => {
+    const a = (await novo()).lead_id;
+    const b = (await novo()).lead_id;
+    for (const [id, st] of [[a, "pronta"], [b, "saudacao_enviada"]] as const) {
+      await pool.query(
+        `insert into outreach_messages (lead_id, phone_e164, status, body, compliment, pain, improvement)
+         select id, phone_e164, $2, 'x', 'x', 'x', 'x' from leads where id = $1`,
+        [id, st],
+      );
+    }
     expect(await stock()).toBe(1);
   });
 
-  it("estoque abaixo de 20: o servidor abre a execução como reposição de 20", async () => {
+  it("10 prontos: a reposição busca 10 para voltar a 20", async () => {
+    for (let i = 0; i < 10; i++) await novo();
+    expect(await stock()).toBe(10);
+    expect((await apiSettings()).run_target).toBe(10);
+    expect(await start()).toMatchObject({ restock: true, run_target: 10, stock_ready: 10 });
+  });
+
+  it("estoque abaixo de 20: o servidor abre a execução buscando só a diferença até 20", async () => {
     await novo();
     const s = await apiSettings();
     expect(s.restock_needed).toBe(true);
-    expect(s.run_target).toBe(20);
+    expect(s.run_target).toBe(19);
     expect(s.stock_ready).toBe(1);
     const r = await start();
-    expect(r).toMatchObject({ status: "iniciada", restock: true, run_target: 20, stock_ready: 1 });
-    expect((await pool.query(`select restock_target from hermes_runs where id = $1`, [r.run_id])).rows[0].restock_target).toBe(20);
+    expect(r).toMatchObject({ status: "iniciada", restock: true, run_target: 19, stock_ready: 1 });
+    expect((await pool.query(`select restock_target from hermes_runs where id = $1`, [r.run_id])).rows[0].restock_target).toBe(19);
   });
 
   it("estoque com 20 ou mais: execução normal, meta diária", async () => {

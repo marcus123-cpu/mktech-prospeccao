@@ -54,8 +54,8 @@ andamento (pare), `4` limite atingido (pare de cadastrar e encerre),
 
 1. **Teste a conexão:** `selftest`. Se não der código 0, pare e relate.
 2. **Leia as configurações** que vieram no `selftest`: `run_target` (quantos
-   leads cadastrar nesta passada: 20 quando o estoque de leads prontos está
-   abaixo do mínimo, senão `daily_target`), `stock_ready`, `cities`, `niches`, `max_run_minutes`, `max_searches`.
+   leads cadastrar nesta passada: a diferença até 20 quando o estoque de leads
+   prontos está abaixo de 20, senão `daily_target`), `stock_ready`, `cities`, `niches`, `max_run_minutes`, `max_searches`.
 3. **Abra a execução:** `start-run` (na rotina agendada) ou
    `start-run --manual` (teste pedido pelo Marcos). Guarde o `run_id`.
    Código 3 significa rotina pausada no painel ou outra execução aberta:

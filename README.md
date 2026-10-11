@@ -165,6 +165,24 @@ Depois confira no painel, em **Execuções** e **Leads** (origem Hermes), se os
 cadastros têm evidências reais e se nada foi duplicado. Para testar só a
 conexão: `python "<pasta da skill>\scripts\mktech_crm.py" selftest`.
 
+### 4.5a Reposição do estoque: segunda rodada às 13h
+
+O painel conta os leads "prontos para abordar" (novos, sem contato, com
+WhatsApp, nota 60+, com diagnóstico, ainda sem saudação enviada; mensagem na
+fila conta). Quando há menos de 20, a execução do Hermes busca só a diferença
+até 20. O site não acorda o Hermes: a checagem acontece quando a rotina roda.
+Para o dia seguinte começar sempre com 20, rode a rotina também depois da
+janela de envio (8h às 12h), criando um segundo agendamento:
+
+```
+hermes cron create "0 13 * * 1-5" "Use a skill mktech-prospeccao para a prospecção diária. Não envie mensagens a ninguém." --skill mktech-prospeccao --name mktech-prospeccao-tarde --paused --deliver local
+hermes cron resume mktech-prospeccao-tarde
+```
+
+Confira os parâmetros na sua versão com `hermes cron create --help`. A rodada da
+manhã (9h) continua como está. As duas usam a mesma rotina e a mesma trava
+"Rotina diária" do painel.
+
 ### 4.5 Rotina diária (fica pausada até você ligar)
 
 A rotina tem duas travas: o agendamento do Hermes e o botão "Rotina diária"
