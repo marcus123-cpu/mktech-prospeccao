@@ -1,7 +1,7 @@
 ---
 name: mktech-prospeccao
 description: Pesquisa diária de clínicas e profissionais de estética sem site próprio no interior de SP e cadastro no CRM da MKTech (sem contatar ninguém).
-version: 1.3.0
+version: 1.4.0
 platforms: [windows, linux, macos]
 metadata:
   hermes:
@@ -34,7 +34,10 @@ candidato no CRM. Quem decide e faz contato é o Marcos.
 4. Só fale com o CRM pelo script `scripts/mktech_crm.py`. Não mexa em
    arquivos fora desta skill e não mostre o token em respostas ou logs.
 5. Respeite os limites do painel (meta diária, minutos, buscas). O script
-   devolve código 4 quando um limite é atingido: pare de cadastrar.
+   devolve código 4 quando um limite é atingido: pare de cadastrar. Conte
+   cada chamada individual de busca web, inclusive buscas agrupadas na mesma
+   execução Python; mantenha um contador explícito e confira-o antes de cada
+   lote. Aberturas de URL não são buscas.
 
 ## Como rodar o script
 
