@@ -1,7 +1,7 @@
 ---
 name: mktech-prospeccao
 description: Pesquisa diária de clínicas e profissionais de estética sem site próprio no interior de SP e cadastro no CRM da MKTech (sem contatar ninguém).
-version: 1.4.0
+version: 1.5.0
 platforms: [windows, linux, macos]
 metadata:
   hermes:
@@ -73,8 +73,9 @@ andamento (pare), `4` limite atingido (pare de cadastrar e encerre),
 6. **Faça a triagem rápida** (seção "Triagem rápida" abaixo) antes de
    gastar buscas com o candidato. Só quem passa nela segue.
 7. **Pesquise cada candidato a fundo** (seção "Pesquisa do lead" abaixo) e
-   monte o diagnóstico. Qualidade vale mais que quantidade: é melhor
-   cadastrar 5 leads bem pesquisados do que 20 rasos.
+   monte o diagnóstico. Não baixe o padrão para bater a meta (nada de
+   inventar dado ou pular a pesquisa), mas também não pare cedo: candidato
+   difícil se resolve buscando mais, não encerrando.
 8. **Monte o JSON** do candidato (modelo completo em
    `references/candidato-exemplo.json`). Obrigatórios: `business_name`,
    `city`, `selection_reason`, pelo menos uma evidência com `kind` e
@@ -94,7 +95,15 @@ andamento (pare), `4` limite atingido (pare de cadastrar e encerre),
    (pare).
 11. **Pare** quando atingir `run_target` cadastros (o servidor também recusa
     com código 4 ao passar da meta), `max_searches`
-    buscas, `max_run_minutes` minutos ou receber código 4.
+    buscas, `max_run_minutes` minutos ou receber código 4. **Não pare antes
+    da meta por achar os candidatos fracos** enquanto sobrarem buscas e
+    tempo: quando uma cidade ou nicho esgotar, passe para a próxima
+    combinação de cidade × nicho das configurações, depois para bairros
+    (`limpeza de pele <bairro> <cidade>`) e variações (`esteticista
+    <cidade>`, `biomédica esteta <cidade>`, `harmonização <cidade>
+    instagram`). Só encerre abaixo da meta com menos de 90% das buscas
+    usadas se já tiver tentado todas as cidades e nichos configurados, e
+    diga isso em `--end-reason`.
 12. **Encerre a execução sempre**, mesmo em erro:
     ```
     finish --run <run_id> --status concluida|parcial|falhou \
