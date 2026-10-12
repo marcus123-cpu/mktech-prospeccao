@@ -17,17 +17,35 @@ const draftSchema = z.object({
 });
 
 export function modelDraft(context: DraftContext): ReplyDraft {
-  const last = [...context.messages].reverse().find((m) => m.direction === "entrada" && m.body)?.body?.toLowerCase() ?? "";
-  const choice = /preço|valor|quanto|custa|orçamento/.test(last) ? "valor"
-    : /não tenho interesse|sem interesse|não quero|pare|parar/.test(last) ? "sem-interesse"
-    : /como funciona|como seria|explica|entender/.test(last) ? "como-funciona" : "aceitou";
+  const last = ([...context.messages].reverse().find((m) => m.direction === "entrada" && m.body)?.body ?? "")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+  const declined = /\bnao (?:estou|estamos|esta|estao|sou|somos) interessad[oa]s?\b|\bnao (?:tenho|temos) interesse\b|\bsem interesse\b|\bnao (?:quero|queremos|preciso|precisamos)\b|\b(?:pare|parem|parar)\b|\bnao (?:me |nos )?(?:mande|mandem|envie|enviem|chame|chamem)\b|\b(?:remova|exclua) (?:meu|nosso|o meu) (?:numero|contato)\b|^nao[,.!\s]*(?:obrigad[oa]s?[!.\s]*)?$/.test(last);
+  if (declined) return {
+    intent: "Cliente recusou a proposta",
+    reply: "Entendido, obrigado pelo retorno e pela atenção. Tudo de bom!",
+    next_action: "Encerrar a conversa e respeitar a recusa. Não insistir nem sugerir ligação ou nova oferta.",
+    mode: "modelo",
+  };
+  const choice = /\bpreco\b|\bvalor\b|\bquanto\b|\bcusta\b|\borcamento\b/.test(last) ? "valor"
+    : /como funciona|como seria|explica|entender/.test(last) ? "como-funciona"
+    : /^(?:sim|pode|claro|quero ver|pode mostrar|pode mandar|manda|mostra|tenho interesse)\b/.test(last)
+      && !/\bnao\b/.test(last) ? "aceitou" : null;
+  if (!choice) return {
+    intent: "Intenção ainda não confirmada",
+    reply: "Obrigado pelo retorno! Aqui é o Marcos, da MKTech. Posso explicar o motivo do meu contato por aqui?",
+    next_action: "Confira a última mensagem no WhatsApp e adapte o rascunho. Não trate uma saudação ou resposta ambígua como aceite.",
+    mode: "modelo",
+  };
   const selected = sugestoesResposta({ negocio: context.business_name }).find((s) => s.id === choice)!;
   return { intent: selected.titulo, reply: selected.texto, next_action: "Revise a mensagem e confirme os detalhes antes de responder.", mode: "modelo" };
 }
 
 export async function generateReplyDraft(context: DraftContext): Promise<ReplyDraft> {
+  const fallback = modelDraft(context);
+  // Recusa explícita não precisa de interpretação comercial por outro modelo.
+  if (fallback.intent === "Cliente recusou a proposta") return fallback;
   const key = process.env.OPENAI_API_KEY;
-  if (!key) return modelDraft(context);
+  if (!key) return fallback;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000);
   try {
