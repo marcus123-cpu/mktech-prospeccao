@@ -33,7 +33,8 @@ mensagem já em andamento nem interrompe respostas a clientes. Lembretes usam
 um limite diário separado, baseado no padrão diário configurado.
 
 Para instalar a skill atualizada, rode o instalador com `-Force` no PowerShell.
-Ele preserva o arquivo `.env` da skill. Depois reinicie os loops do Hermes para
+Ele preserva o arquivo `.env` e os candidatos gerados na pasta instalada.
+Depois reinicie os loops do Hermes para
 que usem os novos arquivos. Teste uma conversa em modo controlado antes de
 liberar o secretário para clientes.
 
