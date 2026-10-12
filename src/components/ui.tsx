@@ -66,3 +66,32 @@ export function Stat({ label, value, hint }: { label: string; value: React.React
     </div>
   );
 }
+
+/** Seção que abre e fecha com a setinha; começa fechada para a página não ficar cheia. */
+export function Fold({
+  title,
+  count,
+  hint,
+  open = false,
+  tone,
+  children,
+}: {
+  title: React.ReactNode;
+  count?: number;
+  hint?: string;
+  open?: boolean;
+  tone?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <details open={open} className={`card group p-4 ${tone ?? ""}`}>
+      <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold [&::-webkit-details-marker]:hidden">
+        <span aria-hidden className="inline-block text-muted transition-transform group-open:rotate-90">▶</span>
+        <span>{title}</span>
+        {count !== undefined && <span className="badge bg-panel-2 text-slate-300">{count}</span>}
+        {hint && <span className="ml-auto hidden text-xs font-normal text-muted sm:inline">{hint}</span>}
+      </summary>
+      <div className="mt-3">{children}</div>
+    </details>
+  );
+}

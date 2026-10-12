@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { asAdmin, asService, candidate, count, createToken, pool, register, resetData, rpc, tokenId } from "./helpers";
+import { as, asAdmin, asService, candidate, count, createToken, OUTSIDER_ID, pool, register, resetData, rpc, tokenId } from "./helpers";
 
 const diagnosis = {
   fit_score: 82,
@@ -211,5 +211,20 @@ describe("secretário", () => {
 
   it("o painel só lê; liga e desliga só como admin", async () => {
     await expect(asService((c) => c.query(`select public.admin_secretary(true)`))).rejects.toThrow();
+  });
+
+  it("arquivar tira do funil sem apagar nada, e volta com um clique", async () => {
+    const lead = await conversation();
+    const col = async () =>
+      (await asAdmin((c) => c.query(`select coluna from outreach_funnel where id = $1`, [lead]))).rows[0]?.coluna;
+    expect(await col()).toBe("conversa");
+    await asAdmin((c) => c.query(`select public.admin_funnel_archive($1, true)`, [lead]));
+    expect(await col()).toBe("arquivado");
+    expect(await count("outreach_messages", `lead_id = '${lead}'`)).toBe(1);
+    await asAdmin((c) => c.query(`select public.admin_funnel_archive($1, false)`, [lead]));
+    expect(await col()).toBe("conversa");
+    await expect(
+      as("authenticated", OUTSIDER_ID, (c) => c.query(`select public.admin_funnel_archive($1, true)`, [lead])),
+    ).rejects.toThrow();
   });
 });
