@@ -176,6 +176,22 @@ export default async function EnvioPage() {
             <Stat label="Respostas de pessoas hoje" value={counts.human_today} />
           </div>
 
+          {counts.ready_count === 0 && (
+            <section className="card p-4" aria-label="Preparação da fila">
+              <h2 className="text-sm font-semibold">Aguardando mensagens preparadas</h2>
+              <p className="mt-2 text-sm text-muted">
+                A fila é preenchida pelo Hermes no seu PC, com mensagens dos leads aptos.
+                Mantenha o PC ligado e aguarde a preparação. A chave de envio libera as mensagens
+                prontas dentro dos horários configurados.
+              </p>
+              <p className="mt-2 text-sm text-muted">
+                Se a fila continuar vazia, abra o atalho “Ativar fila MKTech” na área de trabalho do PC
+                e atualize esta página após alguns minutos. Se não houver leads aptos, solicite
+                mais leads em <Link href="/execucoes" className="text-primary hover:underline">Pesquisas do Hermes</Link>.
+              </p>
+            </section>
+          )}
+
           <TodayTargetForm key={`${todaySP()}-${todayTarget}`} target={todayTarget} sent={counts.sent_today} enabled={s.enabled} paused={s.paused} />
 
           <section className="card p-4">
