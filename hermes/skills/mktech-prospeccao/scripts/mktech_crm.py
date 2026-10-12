@@ -16,7 +16,8 @@ Comandos (saída sempre em JSON no stdout; logs no stderr):
   settings                         configurações de prospecção
   identifiers                      identificadores já cadastrados
   check   --file candidato.json    consulta duplicados (não grava)
-  start-run [--manual]             registra o início da execução
+  pedido-pendente                  há pedido de busca do painel? (só olha)
+  start-run [--manual] [--routine pedido-painel]  registra o início da execução
   register --run ID --file c.json  cadastra um candidato (idempotente)
   finish  --run ID --status S --searched N --approved N --discarded N
           --errors N --end-reason "texto" [--error-detail "..."]
@@ -25,8 +26,8 @@ Comandos (saída sempre em JSON no stdout; logs no stderr):
   secretario-pendentes [--count N] conversas que esperam resposta do secretário
   secretario-salvar --lead ID --file r.json  grava a resposta e/ou passa para o Marcos
 
-Códigos de saída: 0 ok · 2 dados inválidos · 3 rotina pausada no painel ou já
-em andamento · 4 limite atingido · 5 falha temporária/rede · 6 configuração/token.
+Códigos de saída: 0 ok · 2 dados inválidos · 3 rotina pausada no painel, já
+em andamento ou sem pedido · 4 limite atingido · 5 falha temporária/rede · 6 configuração/token.
 """
 
 from __future__ import annotations
@@ -150,7 +151,7 @@ def emit(status: int, payload: dict[str, Any]) -> int:
         return EXIT_CONFIG
     if s == "limite_atingido":
         return EXIT_LIMIT
-    if s == "ja_em_andamento":
+    if s in ("ja_em_andamento", "sem_pedido"):
         return EXIT_BLOCKED
     if s == "invalido" or status >= 400:
         return EXIT_INVALID
@@ -207,7 +208,8 @@ def cmd_start_run(args: argparse.Namespace) -> int:
     if s_status != 200:
         return emit(s_status, s_payload)
     settings = s_payload.get("settings") or {}
-    if not args.manual and not settings.get("routine_enabled"):
+    # Pedido do painel ("buscar N qualificados") vale mesmo com a rotina diária pausada.
+    if not args.manual and args.routine != "pedido-painel" and not settings.get("routine_enabled"):
         return fail(EXIT_BLOCKED, "rotina diária pausada no painel (Configurações); use --manual para teste manual")
     config_used = {k: settings.get(k) for k in ("daily_target", "run_target", "stock_ready", "cities", "niches", "max_run_minutes", "max_searches", "max_cost_usd")}
     config_used["manual"] = bool(args.manual)
@@ -234,6 +236,10 @@ def cmd_finish(args: argparse.Namespace) -> int:
     if args.notes:
         body["notes"] = args.notes
     return emit(*request("POST", f"/api/hermes/v1/runs/{args.run}/finish", body))
+
+
+def cmd_request_pending(_: argparse.Namespace) -> int:
+    return emit(*request("GET", "/api/hermes/v1/pedidos"))
 
 
 def cmd_outreach_pending(args: argparse.Namespace) -> int:
@@ -289,6 +295,7 @@ def main(argv: list[str] | None = None) -> int:
     f.add_argument("--error-detail", action="append")
     f.add_argument("--notes")
     f.set_defaults(fn=cmd_finish)
+    sub.add_parser("pedido-pendente").set_defaults(fn=cmd_request_pending)
     ep = sub.add_parser("envio-pendentes")
     ep.add_argument("--count", type=int, default=5)
     ep.set_defaults(fn=cmd_outreach_pending)
