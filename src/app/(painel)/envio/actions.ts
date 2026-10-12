@@ -123,3 +123,20 @@ export async function setAfterNoon(_: EnvioState, form: FormData): Promise<Envio
   if (error) return { error: dbErrorMessage(error) };
   return done(on ? "Prospecção liberada depois do meio-dia." : "Prospecção volta a parar no fim do horário.");
 }
+
+export async function setSecretary(_: EnvioState, form: FormData): Promise<EnvioState> {
+  const { supabase } = await requireAdmin();
+  const on = form.get("enabled") === "true";
+  const { error } = await supabase.rpc("admin_secretary", { p_enabled: on });
+  if (error) return { error: dbErrorMessage(error) };
+  return done(on ? "Secretário LIGADO: ele responde as clientes no horário de atendimento." : "Secretário desligado.");
+}
+
+export async function returnToSecretary(_: EnvioState, form: FormData): Promise<EnvioState> {
+  const { supabase } = await requireAdmin();
+  const id = z.uuid().safeParse(form.get("id"));
+  if (!id.success) return { error: "Lead inválido." };
+  const { error } = await supabase.rpc("admin_secretary_return", { p_lead: id.data });
+  if (error) return { error: dbErrorMessage(error) };
+  return done("Conversa devolvida ao secretário.");
+}

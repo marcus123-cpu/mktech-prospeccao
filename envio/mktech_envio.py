@@ -7,11 +7,13 @@ Lê MKTECH_CRM_URL e MKTECH_ENVIO_TOKEN do ambiente ou de um arquivo .env
 
 Quem decide o que sai e quando é o servidor do CRM (chave global, pausa,
 horário, limite diário, tempo de espera). Este script só:
-  1. pergunta a próxima etapa (saudação ou mensagem principal);
+  1. pergunta a próxima etapa (saudação, mensagem principal, lembrete ou
+     resposta do secretário);
   2. confere o texto de novo e entrega ao transporte;
   3. confirma o resultado;
   4. repassa as mensagens recebidas para o CRM classificar.
-Ele nunca escreve texto próprio e nunca responde ao cliente.
+Ele nunca escreve texto próprio: as respostas do secretário são escritas pelo
+Hermes, conferidas pelo CRM e só chegam aqui com o secretário ligado no painel.
 
 Transportes:
   simulacao  (padrão) não contata ninguém; grava em envio-simulado.log
@@ -317,7 +319,7 @@ def step(transporte: Transporte) -> tuple[str, float]:
 
     item, etapa, telefone = nxt.get("id"), nxt.get("etapa"), nxt.get("telefone")
     texto = safe_text(nxt.get("texto"))
-    if not item or etapa not in ("saudacao", "mensagem", "lembrete") or not telefone:
+    if not item or etapa not in ("saudacao", "mensagem", "lembrete", "resposta") or not telefone:
         log(f"resposta inesperada do servidor; nada enviado: {nxt}")
         return "invalido", POLL_SECONDS
     if texto is None:

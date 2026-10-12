@@ -9,6 +9,7 @@ import {
   RetryButton,
   SenderTokenForm,
   SwitchControls,
+  ReturnToSecretaryButton,
   type OutreachSettings,
 } from "./Forms";
 
@@ -62,10 +63,29 @@ type Reply = {
   leads: { business_name: string } | null;
 };
 
+type SecretaryMsg = {
+  id: string;
+  lead_id: string;
+  status: string;
+  body: string;
+  sent_at: string | null;
+  created_at: string;
+  error: string | null;
+  cancel_reason: string | null;
+  leads: { business_name: string } | null;
+};
+const SECRETARY_STATUS: Record<string, string> = {
+  pronta: "esperando a vez",
+  enviando: "saindo",
+  enviada: "enviada",
+  falhou: "falhou (não reenvia)",
+  cancelada: "cancelada",
+};
+
 export default async function EnvioPage() {
   const { supabase } = await requireAdmin();
   const dayStart = new Date(`${todaySP()}T00:00:00-03:00`).toISOString();
-  const [settings, queue, replies, flagged, sentToday] = await Promise.all([
+  const [settings, queue, replies, flagged, sentToday, handoffs, secretary] = await Promise.all([
     supabase.from("outreach_settings").select("*").eq("id", 1).maybeSingle(),
     supabase
       .from("outreach_messages")
@@ -84,6 +104,17 @@ export default async function EnvioPage() {
       .order("outreach_last_error_at", { ascending: false })
       .limit(30),
     supabase.from("outreach_messages").select("id", { count: "exact", head: true }).gte("greeting_sent_at", dayStart),
+    supabase
+      .from("leads")
+      .select("id, business_name, city, secretary_handoff_at, secretary_handoff_reason")
+      .not("secretary_handoff_at", "is", null)
+      .order("secretary_handoff_at", { ascending: false })
+      .limit(30),
+    supabase
+      .from("outreach_secretary")
+      .select("id, lead_id, status, body, sent_at, created_at, error, cancel_reason, leads(business_name)")
+      .order("created_at", { ascending: false })
+      .limit(30),
   ]);
 
   const s = settings.data as (OutreachSettings & { next_send_at: string | null }) | null;
@@ -99,7 +130,7 @@ export default async function EnvioPage() {
     <>
       <PageHeader
         title="💬 Envio automático"
-        subtitle="O Hermes escreve a primeira mensagem a partir do diagnóstico; o enviador do PC manda a saudação e depois a mensagem. Ninguém responde o cliente sozinho: quando uma pessoa responde, a conversa é sua."
+        subtitle="O Hermes escreve a primeira mensagem a partir do diagnóstico; o enviador do PC manda a saudação e depois a mensagem. Com o secretário ligado, o Hermes continua a conversa e passa para você em dúvida, preço ou hora de fechar."
       />
       {settings.error || !s ? (
         <ErrorBox message={dbErrorMessage(settings.error) || "Configuração do envio não encontrada."} />
@@ -141,6 +172,49 @@ export default async function EnvioPage() {
               </ul>
             </section>
           )}
+
+          <section className="card p-4">
+            <h2 className="mb-1 text-sm font-semibold">🤝 Secretário</h2>
+            <p className="mb-3 text-xs text-muted">
+              {s.secretary_enabled
+                ? `Ligado: responde as clientes das ${s.reply_window_start ?? 8}h às ${s.reply_window_end ?? 18}h, sem limite de mensagens.`
+                : "Desligado: quando uma cliente responde a mensagem personalizada, a conversa é sua."}
+            </p>
+            {(handoffs.data?.length ?? 0) > 0 && (
+              <>
+                <h3 className="mb-1 text-xs font-semibold uppercase text-muted">Conversas com você</h3>
+                <ul className="mb-4 divide-y divide-line">
+                  {handoffs.data!.map((l) => (
+                    <li key={l.id} className="flex flex-wrap items-start justify-between gap-2 py-3 text-sm">
+                      <div className="min-w-0">
+                        <Link href={`/leads/${l.id}`} className="font-medium hover:underline">{l.business_name}</Link>
+                        <span className="text-xs text-muted"> · {l.city} · {fmtDateTime(l.secretary_handoff_at)}</span>
+                        <p className="mt-1 text-xs text-amber-300">{l.secretary_handoff_reason}</p>
+                      </div>
+                      <ReturnToSecretaryButton id={l.id} />
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            {(secretary.data?.length ?? 0) > 0 ? (
+              <>
+                <h3 className="mb-1 text-xs font-semibold uppercase text-muted">Últimas respostas do secretário</h3>
+                <ul className="divide-y divide-line">
+                  {(secretary.data as unknown as SecretaryMsg[]).map((m) => (
+                    <li key={m.id} className="py-3 text-sm">
+                      <Link href={`/leads/${m.lead_id}`} className="font-medium hover:underline">{m.leads?.business_name ?? "Lead"}</Link>
+                      <span className="text-xs text-muted"> · {SECRETARY_STATUS[m.status] ?? m.status} · {fmtDateTime(m.sent_at ?? m.created_at)}</span>
+                      <p className="mt-1 whitespace-pre-wrap text-slate-300">{m.body}</p>
+                      {(m.error || m.cancel_reason) && <p className="mt-1 text-xs text-muted">{m.error ?? m.cancel_reason}</p>}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <p className="text-sm text-muted">O secretário ainda não respondeu ninguém.</p>
+            )}
+          </section>
 
           <section className="card p-4">
             <h2 className="mb-3 text-sm font-semibold">Respostas</h2>
