@@ -1,4 +1,5 @@
-// Regras da mensagem do envio automático. Funções puras: a API recusa o que o
+// Regras da mensagem do envio automático (passo 2 do método em degraus:
+// sinal percebido + uma pergunta de investigação). Funções puras: a API recusa o que o
 // Hermes escreveu fora das regras (o lead é pulado e nada é enviado), e o
 // painel usa as mesmas regras para mostrar o motivo.
 //
@@ -155,6 +156,11 @@ export function validateOutreach(ctx: LeadContext, p: OutreachPayload): string[]
   if (/https?:|www\.|\.com\b|\.br\b/.test(n)) out.push("Não coloque links na primeira mensagem.");
   if (/r\$|\breais\b/.test(n)) out.push("Não cite preço.");
   if ((text.match(/\?/g) ?? []).length > 1) out.push("Use no máximo uma pergunta, no final.");
+  if (!/\?\s*\p{Extended_Pictographic}?\s*$/u.test(text)) out.push("Termine com uma pergunta de investigação (como o cliente chega ou agenda).");
+  // Método em degraus: nesta mensagem ainda não se fala do que a MKTech faz.
+  if (/\b(site|pagina|landing|polpuja|sistema|solucao)\b/.test(n)) {
+    out.push("Não fale de site, página, sistema ou solução nesta mensagem: isso fica para depois que a pessoa responder.");
+  }
   if (/\?/.test(text) && /[a-zà-ú]{3,}/i.test(text.slice(text.lastIndexOf("?") + 1))) out.push("A pergunta precisa ficar no final.");
   if ((text.match(/\p{Extended_Pictographic}/gu) ?? []).length > 2) out.push("No máximo 2 emojis.");
   if (/[A-ZÀ-Ú]{6,}/.test(text)) out.push("Não escreva palavras em CAIXA ALTA.");
@@ -182,7 +188,8 @@ export function validateOutreach(ctx: LeadContext, p: OutreachPayload): string[]
     if (r.test(n) && !src.includes(stem)) out.push(`Procedimento "${stem}" não aparece nos dados do lead.`);
   }
 
-  // As três partes precisam vir dos dados e aparecer na mensagem.
+  // As três partes precisam vir dos dados. Só o elogio aparece na mensagem:
+  // a dor e a melhoria ficam guardadas para o passo seguinte da conversa.
   const names = words(`${ctx.business_name} ${ctx.responsible_name ?? ""} ${ctx.city ?? ""}`);
   const srcWords = words(src);
   const msgWords = words(text);
@@ -198,7 +205,7 @@ export function validateOutreach(ctx: LeadContext, p: OutreachPayload): string[]
       continue;
     }
     if (key !== "melhoria" && overlap(w, srcWords, names) < 2) out.push(`${label[0].toUpperCase()}${label.slice(1)} precisa vir das evidências ou do diagnóstico.`);
-    if (overlap(w, msgWords) < 1) out.push(`A mensagem não usa ${label}.`);
+    if (key === "elogio" && overlap(w, msgWords) < 1) out.push(`A mensagem não usa ${label}.`);
   }
   return [...new Set(out)];
 }

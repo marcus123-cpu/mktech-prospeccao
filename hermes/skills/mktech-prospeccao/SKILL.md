@@ -215,32 +215,46 @@ um domínio próprio funcionando, descarte (não é o público da MKTech). O
 
 ## Mensagem para o envio automático
 
-Quando o Marcos pedir (ou a rotina de mensagens rodar), escreva a primeira
-mensagem de WhatsApp dos leads que já têm diagnóstico. **Você só escreve.
-Quem envia é o enviador do PC**, e só depois que o CRM aprovar o texto. O
-bom dia / boa tarde / boa noite é enviado antes, separado, pelo próprio
-CRM: **não comece com saudação**.
+Quando o Marcos pedir (ou a rotina de mensagens rodar), escreva a mensagem
+personalizada dos leads que já têm diagnóstico. **Você só escreve. Quem
+envia é o enviador do PC**, e só depois que o CRM aprovar o texto. O bom
+dia / boa tarde / boa noite é enviado antes pelo CRM, e a mensagem
+personalizada só sai **depois que uma pessoa de verdade responder** a
+saudação: **não comece com saudação**.
+
+A abordagem segue o **método em degraus** de
+`references/metodo-abordagem.md` (leia antes de escrever). Esta mensagem é
+o **passo 2**: mostrar que você olhou o negócio de verdade e fazer uma
+pergunta para ela contar como vende. **Não despeje o diagnóstico**: a dor e
+a solução ficam guardadas para o passo 3, depois que ela responder.
 
 1. `envio-pendentes --count 5` traz os leads com dados, diagnóstico,
    evidências e observações do Marcos.
 2. Para cada lead, monte um JSON com quatro campos:
-   - `elogio`: algo **concreto** que aparece nas evidências (as avaliações
-     no Google, o antes e depois de um procedimento, a frequência de posts).
-     Nada de "seu trabalho é incrível".
-   - `dor`: uma dor do diagnóstico, com a evidência que a sustenta.
-   - `melhoria`: o que a MKTech faria para resolver. A MKTech faz
-     **sistemas, landing pages, loja com vitrine e ERP, e automações**;
-     escolha o que resolve a dor (para clínica, normalmente landing page ou
-     página com agendamento; automação quando o atendimento é todo manual).
-   - `mensagem`: o texto que o cliente vai ler, **curto e claro, de 100 a
-     400 caracteres**, que usa o elogio, a dor e a melhoria nessa ordem e
-     termina com **uma** pergunta leve. Tom **formal e amigável**: trate por
-     "você", sem gíria e sem formalidade exagerada. Pode citar como exemplo
-     de trabalho o sistema que a MKTech fez para a **Polpuja**. Nunca fale
-     de valor, preço ou desconto (o preço depende do serviço e quem conversa
-     sobre isso é o Marcos). Sem links, pressão, emojis em excesso ou menção a
-     IA/robô/sistema automático. Se o site ainda não foi verificado, fale em
-     forma condicional ("se você ainda não tem uma página...").
+   - `elogio`: o **sinal percebido**, algo **concreto** que aparece nas
+     evidências (as avaliações no Google, o antes e depois de um
+     procedimento, a frequência de posts). Nada de "seu trabalho é
+     incrível".
+   - `dor`: a dor principal do diagnóstico, com a evidência que a sustenta.
+     **Não vai na mensagem**; fica guardada para o passo 3.
+   - `melhoria`: o que a MKTech faria para resolver (sistemas, landing
+     pages, loja com vitrine e ERP, automações; para clínica, normalmente
+     landing page ou página com agendamento). **Não vai na mensagem**; fica
+     para o passo 3.
+   - `mensagem`: o texto que o cliente vai ler, **de 100 a 400
+     caracteres**, nesta ordem:
+     1. agradecimento curto pelo retorno ("Obrigado pelo retorno!");
+     2. apresentação só com o nome ("Me chamo Marcos.");
+     3. o elogio, dizendo onde viu ("Tava olhando o Instagram de vocês e
+        vi...");
+     4. **uma** pergunta de investigação ligada à dor, sem afirmar a dor
+        ("Fiquei com uma dúvida: quando alguém pesquisa <procedimento> em
+        <cidade> e ainda não conhece vocês, como essa pessoa costuma chegar
+        até vocês?").
+     Tom **formal e amigável**: trate por "você", sem gíria e sem
+     formalidade exagerada. **Não fale** de site, página, solução, Polpuja,
+     valor, preço ou desconto nesta mensagem. Sem links, pressão, emojis em
+     excesso ou menção a IA/robô/sistema automático.
 3. Grave com `envio-salvar --lead <id> --file mensagem.json`.
    - Código 0: entrou na fila.
    - Código 2: o CRM recusou e devolveu `errors`. Corrija e tente **uma**
@@ -257,9 +271,13 @@ Exemplo de `mensagem.json`:
   "elogio": "4,9 no Google com 87 avaliações elogiando o atendimento",
   "dor": "agendamento só pelo direct e WhatsApp, sem página para quem pesquisa harmonização em Votuporanga",
   "melhoria": "uma página de harmonização com agendamento online",
-  "mensagem": "Vi que a Bella Pelle tem 4,9 no Google com 87 avaliações elogiando o atendimento. Hoje o agendamento é só pelo direct e WhatsApp, e quem pesquisa harmonização em Votuporanga não encontra uma página de vocês. Eu crio páginas com agendamento online. Posso te mostrar uma ideia?"
+  "mensagem": "Obrigado pelo retorno! Me chamo Marcos. Tava olhando o Instagram de vocês e vi as 87 avaliações no Google, muita gente elogiando o atendimento. Fiquei com uma dúvida: quando alguém pesquisa harmonização em Votuporanga e ainda não conhece vocês, como essa pessoa costuma chegar até vocês?"
 }
 ```
+
+Quando a pessoa responder a essa pergunta, a conversa é do Marcos. Os
+passos 3 a 5 de `references/metodo-abordagem.md` feitos por você ainda não
+estão ligados: não responda clientes até o Marcos aprovar.
 
 ## Resumo final
 
