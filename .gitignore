@@ -16,6 +16,10 @@ coverage/
 .DS_Store
 envio/.env
 envio/*.log
+envio/logs/
+logs-rotina/
+# Lista pontual de números aprovada apenas para a operação local.
+envio/liberar-lista-de-hoje.bat
 
 envio/whatsapp-web/node_modules/
 envio/whatsapp-web/.wwebjs_auth/

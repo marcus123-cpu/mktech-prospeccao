@@ -9,6 +9,7 @@ import {
   RetryButton,
   SenderTokenForm,
   SwitchControls,
+  TodayTargetForm,
   ReturnToSecretaryButton,
   type OutreachSettings,
 } from "./Forms";
@@ -116,8 +117,7 @@ function MsgItem({ m }: { m: Msg }) {
 
 export default async function EnvioPage() {
   const { supabase } = await requireAdmin();
-  const dayStart = new Date(`${todaySP()}T00:00:00-03:00`).toISOString();
-  const [settings, queue, replies, flagged, sentToday, handoffs, secretary] = await Promise.all([
+  const [settings, queue, replies, flagged, activity, handoffs, secretary] = await Promise.all([
     supabase.from("outreach_settings").select("*").eq("id", 1).maybeSingle(),
     supabase
       .from("outreach_messages")
@@ -135,7 +135,7 @@ export default async function EnvioPage() {
       .gt("outreach_failures", 0)
       .order("outreach_last_error_at", { ascending: false })
       .limit(30),
-    supabase.from("outreach_messages").select("id", { count: "exact", head: true }).gte("greeting_sent_at", dayStart),
+    supabase.rpc("dashboard_activity"),
     supabase
       .from("leads")
       .select("id, business_name, city, secretary_handoff_at, secretary_handoff_reason")
@@ -152,8 +152,9 @@ export default async function EnvioPage() {
   const s = settings.data as (OutreachSettings & { next_send_at: string | null }) | null;
   const msgs = (queue.data ?? []) as unknown as Msg[];
   const reps = (replies.data ?? []) as unknown as Reply[];
-  const waiting = msgs.filter((m) => m.status === "pronta").length;
-  const humans = reps.filter((r) => r.kind === "humana").length;
+  const counts = activity.data as { sent_today: number; ready_count: number; human_today: number } | null;
+  const todayTarget = s?.today_new_leads_date === todaySP() && s.today_new_leads_target != null
+    ? s.today_new_leads_target : s?.daily_limit ?? 0;
 
   const state = !s ? "—" : !s.enabled ? "Desligado" : s.paused ? "Pausado" : "Ligado";
   const stateColor = !s?.enabled ? "text-slate-300" : s.paused ? "text-amber-300" : "text-emerald-300";
@@ -164,16 +165,18 @@ export default async function EnvioPage() {
         title="💬 Envio automático"
         subtitle="Saudação, mensagem personalizada e secretário. Clique numa seção para abrir."
       />
-      {settings.error || !s ? (
-        <ErrorBox message={dbErrorMessage(settings.error) || "Configuração do envio não encontrada."} />
+      {settings.error || activity.error || !s || !counts ? (
+        <ErrorBox message={dbErrorMessage(settings.error ?? activity.error) || "Configuração do envio não encontrada."} />
       ) : (
         <div className="space-y-6">
           <div className="grid gap-3 sm:grid-cols-4">
             <Stat label="Chave global" value={<span className={stateColor}>{state}</span>} hint={s.next_send_at ? `próximo lead a partir de ${fmtDateTime(s.next_send_at)}` : undefined} />
-            <Stat label="Abordados hoje" value={`${sentToday.count ?? 0} / ${s.daily_limit}`} />
-            <Stat label="Na fila" value={waiting} />
-            <Stat label="Responderam (pessoa)" value={humans} hint="nas últimas respostas" />
+            <Stat label="Novos contatos hoje" value={`${counts.sent_today} / ${todayTarget}`} />
+            <Stat label="Na fila" value={counts.ready_count} />
+            <Stat label="Respostas de pessoas hoje" value={counts.human_today} />
           </div>
+
+          <TodayTargetForm key={`${todaySP()}-${todayTarget}`} target={todayTarget} sent={counts.sent_today} enabled={s.enabled} paused={s.paused} />
 
           <section className="card p-4">
             <h2 className="mb-1 text-sm font-semibold">Chave do envio</h2>
@@ -251,7 +254,7 @@ export default async function EnvioPage() {
             )}
           </Fold>
 
-          <Fold title="📥 Respostas" count={reps.length} hint={`${humans} de pessoas`}>
+          <Fold title="📥 Respostas" count={reps.length} hint={`${reps.filter((r) => r.kind === "humana").length} de pessoas nas últimas ${reps.length}`}>
             {replies.error ? (
               <ErrorBox message={dbErrorMessage(replies.error)} />
             ) : reps.length === 0 ? (

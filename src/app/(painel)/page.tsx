@@ -40,6 +40,8 @@ type Settings = {
   enabled: boolean;
   paused: boolean;
   daily_limit: number;
+  today_new_leads_target?: number | null;
+  today_new_leads_date?: string | null;
   window_start: number;
   window_end: number;
   send_days: number[];
@@ -48,6 +50,16 @@ type Settings = {
   reply_window_start?: number;
   reply_window_end?: number;
   prospect_after_noon?: boolean;
+};
+
+type Activity = {
+  sent_today: number;
+  texts_today: number;
+  human_today: number;
+  optouts_today: number;
+  ready_count: number;
+  by_column: Record<string, number>;
+  days: { day: string; saudacoes: number; respostas: number }[];
 };
 
 // Colunas do funil do envio, na ordem em que o lead anda.
@@ -84,49 +96,31 @@ export default async function Hoje({
   const { start, end } = periodRange(key, new Date(), { start: sp.inicio, end: sp.fim });
   const { supabase } = await requireAdmin();
 
-  const dayStart = new Date(`${todaySP()}T00:00:00-03:00`).toISOString();
-  const weekStart = new Date(new Date(dayStart).getTime() - 6 * 86400000).toISOString();
-
-  const [metrics, settings, hermes, funil, greetings, texts, replies, stock] = await Promise.all([
+  const [metrics, settings, hermes, activity, stock] = await Promise.all([
     supabase.rpc("dashboard_metrics", { p_start: start, p_end: end }),
     supabase.from("outreach_settings").select("*").eq("id", 1).maybeSingle(),
     supabase.from("prospecting_settings").select("*").eq("id", 1).maybeSingle(),
-    supabase.from("outreach_funnel").select("coluna").limit(1000),
-    supabase.from("outreach_messages").select("greeting_sent_at").gte("greeting_sent_at", weekStart).limit(1000),
-    supabase.from("outreach_messages").select("sent_at").gte("sent_at", dayStart).limit(1000),
-    supabase.from("outreach_replies").select("received_at, kind, opt_out").gte("received_at", weekStart).limit(2000),
+    supabase.rpc("dashboard_activity"),
     supabase.rpc("prospecting_stock"),
   ]);
   const m = metrics.data as Metrics | null;
+  const a = activity.data as Activity | null;
   const stockReady = typeof stock.data === "number" ? stock.data : null;
   const stockMin = (hermes.data as { restock_min?: number } | null)?.restock_min ?? 20;
   const env = settings.data as Settings | null;
+  const todayTarget = env?.today_new_leads_date === todaySP() && env.today_new_leads_target != null
+    ? env.today_new_leads_target : env?.daily_limit ?? 0;
 
-  const porColuna: Record<string, number> = {};
-  for (const r of (funil.data ?? []) as { coluna: string | null }[]) if (r.coluna) porColuna[r.coluna] = (porColuna[r.coluna] ?? 0) + 1;
+  const porColuna = a?.by_column ?? {};
   const waitingOnYou = (porColuna.valor ?? 0) + (porColuna.conversa ?? 0);
 
-  // Últimos 7 dias, por dia de São Paulo.
-  const diaSP = (iso: string) => new Date(new Date(iso).getTime() - 3 * 3600000).toISOString().slice(0, 10);
-  const semana = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(new Date(dayStart).getTime() - (6 - i) * 86400000);
-    const iso = diaSP(d.toISOString());
-    return { iso, label: `${iso.slice(8, 10)}/${iso.slice(5, 7)}`, saudacoes: 0, respostas: 0 };
-  });
-  for (const g of (greetings.data ?? []) as { greeting_sent_at: string }[]) {
-    const row = semana.find((x) => x.iso === diaSP(g.greeting_sent_at));
-    if (row) row.saudacoes += 1;
-  }
-  const repAll = (replies.data ?? []) as { received_at: string; kind: string; opt_out: boolean }[];
-  for (const r of repAll) {
-    if (r.kind !== "humana") continue;
-    const row = semana.find((x) => x.iso === diaSP(r.received_at));
-    if (row) row.respostas += 1;
-  }
-  const hoje = semana[6];
-  const repHoje = repAll.filter((r) => r.received_at >= dayStart);
-  const pediramParar = repHoje.filter((r) => r.opt_out).length;
-  const textosHoje = (texts.data ?? []).length;
+  const semana = (a?.days ?? []).map((d) => ({
+    label: `${d.day.slice(8, 10)}/${d.day.slice(5, 7)}`,
+    saudacoes: d.saudacoes,
+    respostas: d.respostas,
+  }));
+  const pediramParar = a?.optouts_today ?? 0;
+  const textosHoje = a?.texts_today ?? 0;
 
   const agora = agoraSP();
   const diaOk = !!env?.send_days.includes(agora.dow);
@@ -145,8 +139,8 @@ export default async function Hoje({
     <>
       <PageHeader title="🏠 Hoje" subtitle={`${fmtDate(`${today}T12:00:00Z`)} · o robô trabalha sozinho; aqui você acompanha e vê o que precisa de você`} />
 
-      {metrics.error || !m ? (
-        <ErrorBox message={dbErrorMessage(metrics.error) || "Não foi possível carregar o painel."} />
+      {metrics.error || activity.error || !m || !a ? (
+        <ErrorBox message={dbErrorMessage(metrics.error ?? activity.error) || "Não foi possível carregar o painel."} />
       ) : (
         <div className="space-y-8">
           {/* 1. Robô agora */}
@@ -159,17 +153,18 @@ export default async function Hoje({
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <Stat label="Envio" value={<span className={estadoCor}>{estado}</span>} hint={janela} />
                 <Stat
-                  label="Abordados hoje"
-                  value={`${hoje.saudacoes} / ${env.daily_limit}`}
-                  hint={env.next_send_at && env.enabled ? `próximo lead a partir de ${fmtDateTime(env.next_send_at)}` : "limite diário"}
+                  label="Novos contatos hoje"
+                  value={`${a.sent_today} / ${todayTarget}`}
+                  hint={env.next_send_at && env.enabled ? `próximo lead a partir de ${fmtDateTime(env.next_send_at)}` : "meta definida por você"}
                 />
                 <Stat label="Textos enviados hoje" value={textosHoje} hint="mensagem personalizada, depois que uma pessoa respondeu" />
                 <Stat
                   label="Respostas de pessoas hoje"
-                  value={hoje.respostas}
+                  value={a.human_today}
                   hint={pediramParar ? `${pediramParar} pediram para parar` : "ninguém pediu para parar"}
                 />
               </div>
+              <Link href="/envio#meta-do-dia" className="mt-3 inline-block text-sm text-accent hover:underline">Ajustar meta de disparos de hoje</Link>
             </section>
           )}
 

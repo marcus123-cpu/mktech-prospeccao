@@ -178,6 +178,7 @@ export default async function LeadDetail({
           </div>
         </div>
         <div className="flex w-full flex-wrap gap-2 sm:w-auto [&>*]:flex-1 sm:[&>*]:flex-none">
+          <Link className="btn-ghost" href={`/conversas?lead=${id}`}>Conversa e memória</Link>
           <CopyResumo text={resumo} />
           {wa && <a className="btn-ghost" href={wa} target="_blank" rel="noopener noreferrer">Abrir WhatsApp</a>}
           {l.instagram_handle && (

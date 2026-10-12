@@ -155,6 +155,41 @@ describe("envio automático", () => {
     expect(await next()).toMatchObject({ status: "limite_diario", enviadas_hoje: 1 });
   });
 
+  it("para na meta de novos contatos de hoje e continua do próximo lead ao aumentar", async () => {
+    const first = await lead();
+    const second = await lead({ business_name: "Studio Rosa", phone: "(17) 99777-1111", instagram: "@studiorosa" });
+    const one = await save(first);
+    const two = await save(second);
+    await openAllDay();
+    await settings({ daily_limit: 1 });
+    await asAdmin((c) => c.query(`select public.admin_outreach_today_target(1)`));
+
+    const n1 = await next();
+    expect(n1).toMatchObject({ status: "enviar", id: one.message_id, etapa: "saudacao" });
+    await result(n1.id, "saudacao");
+    await pool.query(`update outreach_settings set next_send_at = null`);
+    expect(await next()).toMatchObject({ status: "limite_diario", enviadas_hoje: 1, meta_hoje: 1 });
+    expect(await count("outreach_messages", `id = '${two.message_id}' and status = 'pronta'`)).toBe(1);
+
+    await asAdmin((c) => c.query(`select public.admin_outreach_today_target(2)`));
+    const n2 = await next();
+    expect(n2).toMatchObject({ status: "enviar", id: two.message_id, etapa: "saudacao" });
+    await result(n2.id, "saudacao");
+    await pool.query(`update outreach_settings set next_send_at = null`);
+    expect(await next()).toMatchObject({ status: "limite_diario", enviadas_hoje: 2, meta_hoje: 2 });
+  });
+
+  it("zero bloqueia novos disparos hoje, sem alterar o padrão do dia seguinte", async () => {
+    const id = await lead();
+    await save(id);
+    await openAllDay();
+    await asAdmin((c) => c.query(`select public.admin_outreach_today_target(0)`));
+    expect(await next()).toMatchObject({ status: "limite_diario", meta_hoje: 0 });
+    await pool.query(`update outreach_settings set today_new_leads_date = (now() at time zone 'America/Sao_Paulo')::date - 1`);
+    expect(await next()).toMatchObject({ status: "enviar", etapa: "saudacao" });
+    await expect(as("authenticated", OUTSIDER_ID, (c) => c.query(`select public.admin_outreach_today_target(200)`))).rejects.toThrow();
+  });
+
   it("etapa sem confirmação vira falhou e não é reenviada; confirmação atrasada é aceita", async () => {
     const l = await lead();
     await save(l);

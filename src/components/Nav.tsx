@@ -7,7 +7,8 @@ import { usePathname } from "next/navigation";
 const ITEMS = [
   { href: "/", emoji: "🏠", label: "Hoje", short: "Hoje", hint: "o que fazer agora", mobile: true, on: "bg-violet-500/20", bar: "bg-violet-400" },
   { href: "/leads", emoji: "👥", label: "Leads", short: "Leads", hint: "todos os contatos", mobile: true, on: "bg-sky-500/20", bar: "bg-sky-400" },
-  { href: "/funil", emoji: "🎯", label: "Funil", short: "Funil", hint: "envio, conversa e fechamento", mobile: true, on: "bg-teal-500/20", bar: "bg-teal-400" },
+  { href: "/conversas", emoji: "💬", label: "Conversas", short: "Conversas", hint: "atendimento e memória do cliente", mobile: true, on: "bg-sky-500/20", bar: "bg-sky-400" },
+  { href: "/funil", emoji: "🎯", label: "Funil", short: "Funil", hint: "envio, conversa e fechamento", mobile: false, on: "bg-teal-500/20", bar: "bg-teal-400" },
   { href: "/retornos", emoji: "🔔", label: "Retornos", short: "Retornos", hint: "quem chamar de novo", mobile: false, on: "bg-amber-500/20", bar: "bg-amber-400" },
   { href: "/envio", emoji: "💬", label: "Envio automático", short: "Envio", hint: "WhatsApp e respostas", mobile: true, on: "bg-emerald-500/20", bar: "bg-emerald-400" },
   { href: "/execucoes", emoji: "🤖", label: "Pesquisas do Hermes", short: "Hermes", hint: "o que o robô fez", mobile: false, on: "bg-fuchsia-500/20", bar: "bg-fuchsia-400" },
@@ -62,7 +63,7 @@ export function BottomNav({ pendingReviews }: { pendingReviews: number }) {
       aria-label="Menu principal"
       className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-panel/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
     >
-      <ul className="grid grid-cols-5">
+      <ul className="grid grid-cols-6">
         {ITEMS.filter((item) => item.mobile).map((item) => {
           const on = active(item.href);
           return (

@@ -179,6 +179,22 @@ describe("secretário", () => {
     expect(l.com_marcos).toBe(true);
   });
 
+  it("guarda texto manual, distingue IDs e não duplica o mesmo evento", async () => {
+    const lead = await conversation();
+    const sent_at = new Date().toISOString();
+    const manual = (body: string, external_id: string) => svc<any>(`select public.api_outreach_outbound($1, $2::jsonb)`, [
+      sender, JSON.stringify({ phone_e164: PHONE, sent_at, body, media: "texto", external_id }),
+    ]);
+    expect((await manual("Podemos conversar amanhã?", "wa-1")).status).toBe("registrada");
+    expect((await manual("Pode ser às 10h?", "wa-2")).status).toBe("registrada");
+    expect((await manual("Podemos conversar amanhã?", "wa-1")).status).toBe("existente");
+    const rows = await asAdmin((c) => c.query(`select body, media from conversation_timeline where lead_id = $1 and source = 'manual' order by body`, [lead]));
+    expect(rows.rows).toEqual([
+      { body: "Pode ser às 10h?", media: "texto" },
+      { body: "Podemos conversar amanhã?", media: "texto" },
+    ]);
+  });
+
   it("pedido para parar: não responde e cancela o que estava pronto", async () => {
     const lead = await conversation();
     await secretary(true);
@@ -211,6 +227,77 @@ describe("secretário", () => {
 
   it("o painel só lê; liga e desliga só como admin", async () => {
     await expect(asService((c) => c.query(`select public.admin_secretary(true)`))).rejects.toThrow();
+  });
+
+  it("memória factual chega ao Hermes e invalida rascunhos anteriores", async () => {
+    const lead = await conversation();
+    await secretary(true);
+    await reply("Pelo Instagram.");
+    await age();
+    const before = (await pending()).conversas[0];
+    expect(before.memory).toEqual({});
+    await saveReply(lead, { reply_ref: before.reply_ref, resposta: "Entendi!" });
+    await asAdmin((c) => c.query(`select public.admin_save_conversation_memory($1, $2::jsonb)`, [lead,
+      JSON.stringify({ summary: "Já usa agenda", facts: "Cliente usa agenda online", next_action: "Perguntar como chegam clientes novos" })]));
+    expect(await count("outreach_secretary", "status = 'cancelada'")).toBe(1);
+    const after = (await pending()).conversas[0];
+    expect(after.memory.facts).toBe("Cliente usa agenda online");
+    expect(after.memory).not.toHaveProperty("updated_by");
+    expect(after.memory_ref).toBeTruthy();
+    expect((await saveReply(lead, { reply_ref: after.reply_ref, resposta: "Contexto antigo" })).status).toBe("desatualizada");
+    expect((await saveReply(lead, { reply_ref: after.reply_ref, memory_ref: after.memory_ref, resposta: "Como chegam clientes novos?" })).status).toBe("criada");
+  });
+
+  it("assumir cancela a resposta pronta e bloqueia novas respostas até devolver", async () => {
+    const lead = await conversation();
+    await secretary(true);
+    await reply("Tenho uma dúvida");
+    await age();
+    const ctx = (await pending()).conversas[0];
+    await saveReply(lead, { reply_ref: ctx.reply_ref, resposta: "Pode falar!" });
+    await asAdmin((c) => c.query(`select public.admin_take_conversation($1)`, [lead]));
+    expect(await count("outreach_secretary", "status = 'cancelada'")).toBe(1);
+    expect((await pending()).conversas).toEqual([]);
+    expect((await saveReply(lead, { reply_ref: ctx.reply_ref, resposta: "Outra" })).status).toBe("sem_conversa");
+    await asAdmin((c) => c.query(`select public.admin_secretary_return($1)`, [lead]));
+    expect((await pending()).conversas).toHaveLength(1);
+  });
+
+  it("central só considera enviados no histórico e protege dados contra não-admin", async () => {
+    const lead = await conversation();
+    await secretary(true);
+    await reply("Pelo Instagram.");
+    await age();
+    const ctx = (await pending()).conversas[0];
+    await saveReply(lead, { reply_ref: ctx.reply_ref, resposta: "Rascunho ainda não enviado" });
+    let rows = await asAdmin((c) => c.query(`select * from conversation_timeline where lead_id = $1 order by occurred_at`, [lead]));
+    expect(rows.rows.some((r) => r.body === "Rascunho ainda não enviado")).toBe(false);
+    await age();
+    const send = await next();
+    await result(send.id, "resposta");
+    rows = await asAdmin((c) => c.query(`select * from conversation_timeline where lead_id = $1`, [lead]));
+    expect(rows.rows.some((r) => r.body === "Rascunho ainda não enviado")).toBe(true);
+    const inbox = await asAdmin((c) => c.query(`select * from conversation_inbox where id = $1`, [lead]));
+    expect(inbox.rows[0].needs_reply).toBe(false);
+    await reply("E o próximo passo?");
+    expect((await asAdmin((c) => c.query(`select needs_reply from conversation_inbox where id = $1`, [lead]))).rows[0].needs_reply).toBe(true);
+    for (const view of ["conversation_inbox", "conversation_timeline", "lead_conversation_memory"]) {
+      expect((await as("authenticated", OUTSIDER_ID, (c) => c.query(`select * from ${view}`))).rows).toEqual([]);
+    }
+    await expect(as("authenticated", OUTSIDER_ID, (c) => c.query(`select public.admin_take_conversation($1)`, [lead]))).rejects.toThrow();
+    await expect(as("authenticated", OUTSIDER_ID, (c) => c.query(`select public.admin_save_conversation_memory($1, '{}'::jsonb)`, [lead]))).rejects.toThrow();
+  });
+
+  it("assumir recusa mensagem que já está em transporte", async () => {
+    const lead = await conversation();
+    await secretary(true);
+    await reply("Tenho uma dúvida");
+    await age();
+    const ctx = (await pending()).conversas[0];
+    await saveReply(lead, { reply_ref: ctx.reply_ref, resposta: "Pode falar!" });
+    await age();
+    expect((await next()).etapa).toBe("resposta");
+    await expect(asAdmin((c) => c.query(`select public.admin_take_conversation($1)`, [lead]))).rejects.toThrow(/saindo agora/);
   });
 
   it("arquivar tira do funil sem apagar nada, e volta com um clique", async () => {

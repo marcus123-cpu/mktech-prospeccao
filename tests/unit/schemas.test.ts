@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { candidateSchema, checkSchema, finishRunSchema } from "@/lib/hermes/schemas";
+import { candidateSchema, checkSchema, finishRunSchema, secretaryReplySchema } from "@/lib/hermes/schemas";
 
 const example = JSON.parse(
   readFileSync(path.resolve(import.meta.dirname, "../../hermes/skills/mktech-prospeccao/references/candidato-exemplo.json"), "utf8"),
@@ -60,5 +60,13 @@ describe("diagnóstico no contrato", () => {
   it("diagnóstico não aceita campos de mensagem ou contato", () => {
     const d = example.diagnosis;
     expect(candidateSchema.safeParse({ ...example, diagnosis: { ...d, message_to_send: "Oi!" } }).success).toBe(false);
+  });
+});
+
+describe("memória da conversa no contrato", () => {
+  it("aceita a referência da memória e recusa formatos inválidos", () => {
+    const body = { reply_ref: "2026-10-12T15:04:10.123+00:00", resposta: "Entendi.", memory_ref: "2026-10-12T15:00:00.000+00:00" };
+    expect(secretaryReplySchema.safeParse(body).success).toBe(true);
+    expect(secretaryReplySchema.safeParse({ ...body, memory_ref: "ontem" }).success).toBe(false);
   });
 });

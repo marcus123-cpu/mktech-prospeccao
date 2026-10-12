@@ -264,7 +264,7 @@ def cmd_secretary_save(args: argparse.Namespace) -> int:
     msg = read_json(args.file)
     if not isinstance(msg, dict):
         return fail(EXIT_INVALID, "o arquivo precisa ter um objeto com reply_ref e resposta e/ou passar_para_marcos")
-    body = {k: msg.get(k) for k in ("reply_ref", "resposta", "passar_para_marcos") if msg.get(k) is not None}
+    body = {k: msg.get(k) for k in ("reply_ref", "memory_ref", "resposta", "passar_para_marcos") if msg.get(k) is not None}
     return emit(*request("POST", f"/api/hermes/v1/secretario/{args.lead}", body))
 
 

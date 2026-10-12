@@ -26,7 +26,18 @@ const settingsSchema = z
 
 function done(ok: string): EnvioState {
   revalidatePath("/envio");
+  revalidatePath("/");
   return { ok };
+}
+
+export async function setTodayTarget(_: EnvioState, form: FormData): Promise<EnvioState> {
+  const { supabase } = await requireAdmin();
+  const target = z.string().regex(/^(0|[1-9]\d{0,2})$/).transform(Number).refine((n) => n <= 200)
+    .safeParse(form.get("target"));
+  if (!target.success) return { error: "Informe de 0 a 200 novos contatos para hoje." };
+  const { error } = await supabase.rpc("admin_outreach_today_target", { p_target: target.data });
+  if (error) return { error: dbErrorMessage(error) };
+  return done(target.data === 0 ? "Novos contatos parados pelo resto do dia." : `Meta de hoje atualizada para ${target.data} novos contatos.`);
 }
 
 export async function saveOutreachSettings(_: EnvioState, form: FormData): Promise<EnvioState> {

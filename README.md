@@ -1,12 +1,50 @@
 # CRM de prospecção MKTech
 
+## Central de conversas (nova versão)
+
+Em **Conversas**, você vê os atendimentos por estado: com você, esperando
+resposta ou com uma resposta do secretário na fila. A ficha reúne o histórico
+registrado no WhatsApp, o diagnóstico e uma memória editável com fatos
+confirmados, objeções e próxima ação. Com a ponte atualizada, a integração
+também recebe o texto das mensagens escritas por você no celular. As mensagens
+antigas, capturadas antes desta atualização, continuam só com o horário.
+
+**Atualização necessária:** aplique, em ordem, `supabase/migrations/20261012000400_central_conversas.sql`
+e `supabase/migrations/20261012000500_painel_atividade.sql` no banco após as
+migrações anteriores, depois aplique `supabase/migrations/20261012000600_meta_disparos_hoje.sql`
+e `supabase/migrations/20261012000700_mensagens_manuais.sql`,
+e atualize a skill instalada do Hermes para a versão 1.9
+desta pasta. A nova API entrega `memory` e `memory_ref` ao
+secretário; ele deve devolver a referência ao salvar a resposta. Ao editar a
+memória ou assumir a conversa, respostas ainda na fila são canceladas. Se uma
+mensagem já estiver saindo, a ação de assumir pede que você aguarde a
+confirmação e tente de novo.
+
+As telas **Hoje** e **Envio automático** usam contagens calculadas no banco.
+Assim, os números de mensagens e respostas continuam corretos mesmo quando o
+histórico passa dos antigos limites de 1.000/2.000 registros.
+
+Em **Envio automático > Controle dos disparos de hoje**, defina quantos
+**novos leads** receberão a primeira saudação no dia. A meta vale apenas para
+hoje em São Paulo; amanhã volta ao padrão diário das configurações. Zero
+interrompe novos contatos. Se a meta for aumentada, o enviador continua da
+fila de onde parou, respeitando horários e intervalos. A meta não cancela uma
+mensagem já em andamento nem interrompe respostas a clientes. Lembretes usam
+um limite diário separado, baseado no padrão diário configurado.
+
+Para instalar a skill atualizada, rode o instalador com `-Force` no PowerShell.
+Ele preserva o arquivo `.env` da skill. Depois reinicie os loops do Hermes para
+que usem os novos arquivos. Teste uma conversa em modo controlado antes de
+liberar o secretário para clientes.
+
 Painel para acompanhar a prospecção de clínicas e profissionais de estética
 sem site próprio (Fernandópolis, Votuporanga, São José do Rio Preto, Bauru e
 Marília), com o Hermes Agent pesquisando e cadastrando candidatos todo dia.
 
-O Hermes **só pesquisa e cadastra**. Ele não manda mensagem, não liga, não
-negocia e não marca venda: o token dele não tem permissão para isso e a API
-recusa esses campos.
+Na prospecção, o Hermes pesquisa e cadastra. Na rotina de envio e no modo
+secretário, ele prepara textos para validação e fila no CRM; o enviador do PC
+faz o envio conforme as regras configuradas. O Hermes não liga, não negocia
+valores e não marca venda.
 
 - Painel: Next.js 15 + TypeScript + Tailwind, login pelo Supabase Auth.
 - Banco: Supabase (Postgres) com RLS. As regras de duplicado, limites e
@@ -37,8 +75,12 @@ do projeto `mktech-prospeccao`:
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | chave `anon` / publishable | pode ir ao navegador |
 | `SUPABASE_SERVICE_ROLE_KEY` | chave `service_role` / secret | **só no servidor**, nunca compartilhe |
 | `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` ou o endereço publicado | link de recuperação de senha |
+| `OPENAI_API_KEY` | chave da API OpenAI (opcional) | gera sugestões personalizadas na aba Conversas; sem chave, aparecem modelos locais |
+| `OPENAI_REPLY_MODEL` | `gpt-5.4-mini` (opcional) | modelo usado apenas para criar rascunhos |
 
 O `.env.local` está no `.gitignore`. Não cole essas chaves em chat, print ou commit.
+
+Na aba **Conversas**, "Sugerir resposta" usa o histórico, a memória e o diagnóstico para preparar um rascunho editável. O painel nunca envia esse rascunho: revise, copie e responda pelo WhatsApp. Mensagens escritas no celular do chip passam a ter texto e tipo no histórico depois que a migração `20261012000700_mensagens_manuais.sql` e a ponte atualizada entrarem em operação; mensagens antigas continuam apenas com horário.
 
 ### Jeito fácil: Docker (fica ligado sozinho)
 
@@ -284,13 +326,14 @@ Tela **Envio automático** no painel. Fluxo:
    leads. Primeiro sai a saudação (bom dia / boa tarde / boa noite), depois a
    mensagem. Etapa não confirmada em 5 minutos vira "falhou" e não é reenviada.
 3. Respostas são classificadas em automática ou pessoa. Só pessoa move o lead
-   para "respondeu"; pedido para parar bloqueia o lead. Ninguém responde o
-   cliente sozinho.
+   para "respondeu"; pedido para parar bloqueia o lead. Com o secretário ligado,
+   o Hermes prepara respostas para o enviador dentro do horário de atendimento
+   e passa dúvidas sobre preço ou fechamento para você.
 
 A tela **Funil** mostra cada lead numa coluna: Na fila, Enviado, Em conversa,
 Pergunta de valor (uma pessoa perguntou preço; quem responde é você), Fechando
-(proposta enviada) e Fechado. Ela só mostra; nada é respondido ao cliente.
+(proposta enviada) e Fechado.
 
 Configuração no PC: copie `envio/.env.exemplo` para `envio/.env`, crie o
-token do enviador na tela e rode `envio/rodar-envio-simulacao.bat`. O
-transporte `whatsapp` (envio real) ainda não está ligado nesta versão.
+token do enviador na tela e rode `envio/rodar-envio-simulacao.bat` para testar.
+O transporte real usa a ponte WhatsApp Web descrita em `envio/WHATSAPP-WEB.md`.
