@@ -106,6 +106,11 @@ const STATUS_HTTP: Record<string, number> = {
   registrado: 200,
   registrada: 201,
   ignorada: 200,
+  criada: 201,
+  passada: 200,
+  desatualizada: 409,
+  sem_conversa: 409,
+  desligado: 409,
 };
 
 /** Converte o resultado jsonb de uma função api_* em resposta HTTP. */

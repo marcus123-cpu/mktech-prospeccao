@@ -144,11 +144,21 @@ export const outreachSchema = z
 // Enviador: resultado de uma etapa.
 export const outreachResultSchema = z
   .object({
-    etapa: z.enum(["saudacao", "mensagem", "lembrete"]),
+    etapa: z.enum(["saudacao", "mensagem", "lembrete", "resposta"]),
     ok: z.boolean(),
     erro: optText(500),
   })
   .strict();
+
+// Hermes no modo secretário: resposta para a conversa e/ou passar para o Marcos.
+export const secretaryReplySchema = z
+  .object({
+    reply_ref: z.string().regex(/^\d{4}-\d{2}-\d{2}T/, "reply_ref inválido"),
+    resposta: text(700).optional().nullable(),
+    passar_para_marcos: text(300).optional().nullable(),
+  })
+  .strict()
+  .refine((r) => !!r.resposta || !!r.passar_para_marcos, { message: "mande resposta ou passar_para_marcos", path: ["resposta"] });
 
 // Enviador: mensagem que o Marcos escreveu à mão no celular do chip (só o horário é guardado).
 export const outreachOutboundSchema = z

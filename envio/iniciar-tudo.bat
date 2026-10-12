@@ -1,5 +1,6 @@
 @echo off
-rem Sobe a ponte e o enviador em segundo plano (chamado pelo Windows ao ligar o PC).
+rem Sobe a ponte, o secretario e o enviador em segundo plano (chamado pelo Windows ao ligar o PC).
 cd /d "%~dp0"
 start "" /b cmd /c "%~dp0ponte-loop.bat"
+start "" /b cmd /c "%~dp0secretario-loop.bat"
 call "%~dp0enviador-loop.bat"

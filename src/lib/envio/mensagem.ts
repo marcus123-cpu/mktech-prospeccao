@@ -185,7 +185,7 @@ export function validateOutreach(ctx: LeadContext, p: OutreachPayload): string[]
   }
   if (/concorr/.test(n) && !/concorr/.test(src)) out.push("Não cite concorrentes.");
   for (const [r, stem] of PROCEDURES) {
-    if (r.test(n) && !src.includes(stem)) out.push(`Procedimento "${stem}" não aparece nos dados do lead.`);
+    if (r.test(n) && !src.includes(stem) && !r.test(src)) out.push(`Procedimento "${stem}" não aparece nos dados do lead.`);
   }
 
   // As três partes precisam vir dos dados. Só o elogio aparece na mensagem:
@@ -207,5 +207,28 @@ export function validateOutreach(ctx: LeadContext, p: OutreachPayload): string[]
     if (key !== "melhoria" && overlap(w, srcWords, names) < 2) out.push(`${label[0].toUpperCase()}${label.slice(1)} precisa vir das evidências ou do diagnóstico.`);
     if (key === "elogio" && overlap(w, msgWords) < 1) out.push(`A mensagem não usa ${label}.`);
   }
+  return [...new Set(out)];
+}
+
+// Secretário: respostas da conversa depois da mensagem personalizada.
+export const SECRETARY_MAX_CHARS = 600;
+
+/** Problemas da resposta do secretário. Lista vazia = pode ir para a fila. */
+export function validateSecretaryReply(texto: string): string[] {
+  const out: string[] = [];
+  const text = (texto ?? "").trim();
+  const n = norm(text);
+  if (!text) out.push("Resposta vazia.");
+  if (text.length > SECRETARY_MAX_CHARS) out.push(`Passou de ${SECRETARY_MAX_CHARS} caracteres (${text.length}); seja curto como no WhatsApp.`);
+  if (TECHNICAL.some((r) => r.test(n))) out.push("Tem texto técnico ou de erro; a resposta não pode ter isso.");
+  if (PRESSURE.some((r) => r.test(n))) out.push("Tem frase de pressão; tire.");
+  if (AI.some((r) => r.test(n)) || /\bI\.?A\b/.test(text)) out.push("Não mencione IA, robô ou automação; se perguntarem, passe para o Marcos.");
+  if (/https?:|www\.|\.com\b|\.br\b|\.app\b/.test(n)) out.push("Não mande links.");
+  if (/portfolio/.test(n)) out.push("Não ofereça portfólio.");
+  if (/r\$|\breais\b|\b\d+\s*(mil|k)\b/.test(n)) out.push("Não cite valor: diga que já explica certinho e passe para o Marcos.");
+  if (/\b(reuniao|call|videochamada|ligacao|ligar pra|te ligo)\b/.test(n)) out.push("Sem reunião nem ligação: tudo pelo WhatsApp.");
+  if ((text.match(/\p{Extended_Pictographic}/gu) ?? []).length > 2) out.push("No máximo 2 emojis.");
+  if (/[A-ZÀ-Ú]{6,}/.test(text)) out.push("Não escreva palavras em CAIXA ALTA.");
+  if (/\bo marcos (vai|vai te|te) /.test(n)) out.push('Fale em primeira pessoa, como o Marcos ("já te explico"), nunca "o Marcos vai".');
   return [...new Set(out)];
 }

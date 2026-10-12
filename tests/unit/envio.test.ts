@@ -180,3 +180,33 @@ describe("copiar diagnóstico", () => {
     expect(t).not.toContain("null");
   });
 });
+
+import { validateSecretaryReply } from "@/lib/envio/mensagem";
+
+describe("resposta do secretário", () => {
+  it("aceita resposta normal de conversa, falando de página e da Polpuja", () => {
+    expect(
+      validateSecretaryReply(
+        "Entendi, então quase tudo chega pelo Instagram. Eu trabalho com páginas e sistemas para clínicas, fiz recentemente o sistema da Polpuja. Quem pesquisa no Google pode acabar chegando em quem tem página primeiro. Posso te mostrar uma ideia de como ficaria para vocês?",
+      ),
+    ).toEqual([]);
+    expect(validateSecretaryReply("Depende do que fizer sentido para vocês, já te explico certinho.")).toEqual([]);
+  });
+
+  it.each([
+    ["Dá uma olhada no meu portfólio: www.mktech.com.br", /links|portfólio/],
+    ["Fica R$ 1.500 a página.", /valor/],
+    ["Fica uns 2 mil.", /valor/],
+    ["Sou um robô da MKTech, posso ajudar?", /IA, robô/],
+    ["Ocorreu um erro ao gerar a resposta.", /técnico/],
+    ["Vamos marcar uma reunião amanhã?", /reunião/],
+    ["O Marcos vai te explicar o valor.", /primeira pessoa/],
+    ["Aproveite, só hoje!", /pressão/],
+  ])("recusa: %s", (texto, motivo) => {
+    expect(validateSecretaryReply(texto).join(" ")).toMatch(motivo);
+  });
+
+  it("resposta longa demais é recusada", () => {
+    expect(validateSecretaryReply("a ".repeat(400)).join(" ")).toMatch(/Passou de 600/);
+  });
+});

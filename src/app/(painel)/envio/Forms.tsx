@@ -6,11 +6,13 @@ import {
   createSenderToken,
   reclassifyReply,
   retryLead,
+  returnToSecretary,
   saveOutreachSettings,
   setEnabled,
   setAfterNoon,
   setFollowups,
   setPaused,
+  setSecretary,
   type EnvioState,
 } from "./actions";
 
@@ -32,6 +34,7 @@ export type OutreachSettings = {
   reply_window_start?: number;
   reply_window_end?: number;
   prospect_after_noon?: boolean;
+  secretary_enabled?: boolean;
 };
 
 const DAYS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
@@ -106,6 +109,17 @@ export function SwitchControls({ s }: { s: OutreachSettings }) {
           label="Ligar lembretes"
           variant="btn-ghost"
           confirmText="Ligar os lembretes? Quem conversou com você e parou de responder recebe até 2 lembretes curtos, cada um 2 dias úteis depois da sua última mensagem sem resposta. Eles só saem com o envio automático ligado, dentro do horário e do limite diário."
+        />
+      )}
+      {s.secretary_enabled ? (
+        <MiniAction action={setSecretary} fields={{ enabled: "false" }} label="Desligar secretário" variant="btn-ghost" />
+      ) : (
+        <MiniAction
+          action={setSecretary}
+          fields={{ enabled: "true" }}
+          label="Ligar secretário"
+          variant="btn-ghost"
+          confirmText={`Ligar o secretário? Depois da mensagem personalizada, o Hermes responde as clientes como você, sem limite de mensagens, das ${s.reply_window_start ?? 8}h às ${s.reply_window_end ?? 18}h. Ele passa a conversa para você em dúvida que não sabe, preço, hora de fechar ou áudio. Só funciona com o envio automático ligado.`}
         />
       )}
       <MiniAction
@@ -201,4 +215,8 @@ export function SenderTokenForm() {
       )}
     </form>
   );
+}
+
+export function ReturnToSecretaryButton({ id }: { id: string }) {
+  return <MiniAction action={returnToSecretary} fields={{ id }} label="Devolver ao secretário" variant="btn-ghost" />;
 }

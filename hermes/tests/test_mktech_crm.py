@@ -130,6 +130,20 @@ class ClientTest(unittest.TestCase):
         code, out, _ = self.run_cli("envio-salvar", "--lead", lead, "--file", str(path))
         self.assertEqual(code, mktech_crm.EXIT_INVALID)
 
+    def test_secretary_save_sends_only_known_fields(self):
+        lead = "11111111-1111-4111-8111-111111111111"
+        FakeApi.responses[f"POST /api/hermes/v1/secretario/{lead}"] = [(201, {"status": "criada"}, {})]
+        path = Path(self.tmp.name) / "r.json"
+        path.write_text(json.dumps({"reply_ref": "2026-10-12T15:00:00Z", "resposta": "Entendi!", "extra": 1}), encoding="utf-8")
+        code, out, _ = self.run_cli("secretario-salvar", "--lead", lead, "--file", str(path))
+        self.assertEqual(code, 0)
+        self.assertEqual(FakeApi.calls[-1]["body"], {"reply_ref": "2026-10-12T15:00:00Z", "resposta": "Entendi!"})
+
+    def test_secretary_pending_caps_count(self):
+        FakeApi.responses["GET /api/hermes/v1/secretario/pendentes?limit=20"] = [(200, {"status": "ok", "conversas": []}, {})]
+        code, out, _ = self.run_cli("secretario-pendentes", "--count", "99")
+        self.assertEqual(code, 0)
+
     def test_retries_on_503_then_succeeds(self):
         FakeApi.responses["POST /api/hermes/v1/candidates"] = [
             (503, {"status": "falha_temporaria"}, {"Retry-After": "1"}),

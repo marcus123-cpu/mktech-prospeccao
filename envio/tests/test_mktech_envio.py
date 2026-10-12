@@ -160,6 +160,14 @@ class SenderTest(unittest.TestCase):
         sent = [c["body"] for c in FakeApi.calls if c["path"].endswith("/respostas")]
         self.assertEqual(sent, [{"telefone": "+5517991234567", "texto": "Oi, quem é?", "tipo": "texto", "segundos_desde_envio": 90}])
 
+    def test_envia_a_resposta_do_secretario_e_confirma_como_resposta(self):
+        self.next_is({"status": "enviar", "id": ITEM, "etapa": "resposta", "telefone": "+5517991234567", "texto": "Entendi! Posso te mostrar uma ideia?"})
+        t = Gravador()
+        status, _ = mktech_envio.step(t)
+        self.assertEqual(status, "enviado")
+        self.assertEqual(t.enviadas, [("+5517991234567", "Entendi! Posso te mostrar uma ideia?")])
+        self.assertEqual(self.results(), [{"etapa": "resposta", "ok": True, "erro": None}])
+
     def test_envia_o_lembrete_do_servidor_e_confirma_como_lembrete(self):
         self.next_is({"status": "enviar", "id": ITEM, "etapa": "lembrete", "telefone": "+5517991234567", "texto": "Oi! Você gostou da minha proposta?"})
         t = Gravador()

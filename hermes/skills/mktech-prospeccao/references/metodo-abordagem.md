@@ -5,10 +5,12 @@ adaptado às regras da MKTech. Ideia central: **um passo por resposta**.
 Nunca despeje o diagnóstico inteiro numa mensagem; cada mensagem tem um
 único objetivo e termina esperando a pessoa responder.
 
-> **Ainda não ligado:** os passos 3 e 4 feitos pelo Hermes dependem de
-> aprovação do Marcos (número de respostas por conversa, modo rascunho e
-> link do portfólio). Até lá, o Hermes só escreve a mensagem do passo 2;
-> quando a pessoa responder, a conversa é do Marcos.
+> **Quem faz cada passo:** os passos 3 e 4 são do **modo secretário** da
+> skill (só quando o Marcos liga o secretário no painel). O secretário
+> responde sem limite de mensagens, até o atendimento acabar, e passa a
+> conversa para o Marcos em dúvida que não sabe, preço ou hora de fechar.
+> Nunca manda link de portfólio; quando ela quiser ver um trabalho, o Marcos
+> manda o vídeo da Rosana (só a parte do PC).
 
 ## Os passos
 
@@ -60,8 +62,9 @@ Ordem de preferência, conforme o que existir para o lead:
 1. **Prévia personalizada** (quando o Marcos tiver gerado e anexado ao
    lead): "Fiz uma prévia de como poderia ficar a página de vocês. As fotos
    são ilustrativas, só para ter uma ideia. Queria sua opinião sincera."
-2. **Vídeo explicativo** do nicho: "Posso te mandar um vídeo curto
-   explicando?"
+2. **Vídeo** de um trabalho real (o da Rosana, landing pages, só a parte
+   do PC): "Posso te mandar um vídeo curto de uma página que fiz?" Se ela
+   quiser, passe para o Marcos mandar o vídeo.
 3. **Print da página inteira** de um trabalho real (Polpuja) no lugar de
    link solto.
 Peça opinião, não compra. Se ela gostar → passe para o Marcos (passo 5).
