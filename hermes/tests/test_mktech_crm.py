@@ -103,6 +103,26 @@ class ClientTest(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertTrue(FakeApi.calls[-1]["body"]["config"]["manual"])
 
+    def test_panel_request_runs_while_daily_routine_paused(self):
+        FakeApi.responses["GET /api/hermes/v1/settings"] = [(200, {"settings": {"routine_enabled": False}}, {})]
+        FakeApi.responses["POST /api/hermes/v1/runs"] = [(201, {"status": "iniciada", "run_id": "r1", "run_target": 30}, {})]
+        code, out, _ = self.run_cli("start-run", "--routine", "pedido-painel")
+        self.assertEqual(code, 0)
+        self.assertEqual(FakeApi.calls[-1]["body"]["routine"], "pedido-painel")
+
+    def test_no_panel_request_stops_the_run(self):
+        FakeApi.responses["GET /api/hermes/v1/settings"] = [(200, {"settings": {"routine_enabled": True}}, {})]
+        FakeApi.responses["POST /api/hermes/v1/runs"] = [(409, {"status": "sem_pedido"}, {})]
+        code, out, _ = self.run_cli("start-run", "--routine", "pedido-painel")
+        self.assertEqual(code, mktech_crm.EXIT_BLOCKED)
+
+    def test_request_pending_only_reads(self):
+        FakeApi.responses["GET /api/hermes/v1/pedidos"] = [(200, {"status": "pendente", "pedido_id": "p1", "qualificados": 30}, {})]
+        code, out, _ = self.run_cli("pedido-pendente")
+        self.assertEqual(code, 0)
+        self.assertEqual(out["qualificados"], 30)
+        self.assertTrue(all(c["method"] == "GET" for c in FakeApi.calls))
+
     def test_register_uses_stable_idempotency_key(self):
         FakeApi.responses["POST /api/hermes/v1/candidates"] = [(201, {"status": "criado", "lead_id": "x"}, {})]
         f = self.candidate_file()

@@ -1,7 +1,7 @@
 ---
 name: mktech-prospeccao
 description: Pesquisa diária de clínicas e profissionais de estética sem site próprio no interior de SP e cadastro no CRM da MKTech (sem contatar ninguém).
-version: 1.6.0
+version: 1.7.0
 platforms: [windows, linux, macos]
 metadata:
   hermes:
@@ -39,7 +39,12 @@ candidato no CRM. Quem decide e faz contato é o Marcos.
    devolve código 4 quando um limite é atingido: pare de cadastrar. Conte
    cada chamada individual de busca web, inclusive buscas agrupadas na mesma
    execução Python; mantenha um contador explícito e confira-o antes de cada
-   lote. Aberturas de URL não são buscas.
+   lote. Aberturas de URL não são buscas. **Não delegue pesquisas de cidades
+   em paralelo sem orçamento de buscas previamente reservado para cada agente**:
+   contadores independentes podem ultrapassar o limite global antes de qualquer
+   cadastro. Prefira lotes sequenciais, com checagem do total antes do próximo.
+   Se ultrapassar o limite, interrompa novas buscas e cadastros e encerre a
+   execução informando o número real e o motivo, sem inventar resultados.
 
 ## Como rodar o script
 
@@ -61,8 +66,10 @@ andamento (pare), `4` limite atingido (pare de cadastrar e encerre),
 2. **Leia as configurações** que vieram no `selftest`: `run_target` (quantos
    leads cadastrar nesta passada: a diferença até 20 quando o estoque de leads
    prontos está abaixo de 20, senão `daily_target`), `stock_ready`, `cities`, `niches`, `max_run_minutes`, `max_searches`.
-3. **Abra a execução:** `start-run` (na rotina agendada) ou
-   `start-run --manual` (teste pedido pelo Marcos). Guarde o `run_id`.
+3. **Abra a execução:** `start-run` (na rotina agendada),
+   `start-run --manual` (teste pedido pelo Marcos) ou
+   `start-run --routine pedido-painel` (modo pedido do painel, abaixo).
+   Guarde o `run_id`.
    Código 3 significa rotina pausada no painel ou outra execução aberta:
    pare sem pesquisar. A resposta traz `run_target` e `restock` (verdadeiro
    quando o servidor abriu esta execução para repor o estoque).
@@ -120,6 +127,25 @@ andamento (pare), `4` limite atingido (pare de cadastrar e encerre),
     Use `concluida` ao bater a meta ou esgotar as buscas normalmente,
     `parcial` quando parou antes por limite de tempo ou erros, e `falhou`
     quando não foi possível pesquisar.
+
+## Modo pedido do painel
+
+O Marcos pede na aba Pesquisas do Hermes "buscar N leads qualificados". O
+programa do PC só chama você quando há pedido. Então:
+
+1. `start-run --routine pedido-painel`. Código 3 (`sem_pedido` ou
+   `ja_em_andamento`): pare sem pesquisar.
+2. A resposta traz a meta e os limites **deste pedido**: `meta_qualificados`
+   (= `run_target`), `max_searches` e `max_run_minutes`. Use esses números,
+   não os do `selftest`.
+3. Siga o procedimento normal (passos 4 a 12). **Qualificado** é o lead
+   cadastrado com WhatsApp, diagnóstico e nota 60 ou mais; só esses contam
+   para a meta. Cadastre os outros normalmente, mas continue buscando até
+   bater a meta de qualificados.
+4. O servidor recusa com código 4 quando a meta de qualificados é batida (ou
+   quando já cadastrou 4 vezes a meta): pare e encerre com `finish`.
+5. Sem paralelismo: um lote de buscas por vez, conferindo o total antes do
+   próximo, para nunca passar de `max_searches`.
 
 ## Triagem rápida
 

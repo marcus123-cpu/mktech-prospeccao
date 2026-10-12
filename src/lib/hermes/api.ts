@@ -111,6 +111,9 @@ const STATUS_HTTP: Record<string, number> = {
   desatualizada: 409,
   sem_conversa: 409,
   desligado: 409,
+  sem_pedido: 409,
+  nenhum: 200,
+  pendente: 200,
 };
 
 /** Converte o resultado jsonb de uma função api_* em resposta HTTP. */
