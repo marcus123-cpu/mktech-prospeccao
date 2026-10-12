@@ -24,7 +24,7 @@ const good: OutreachPayload = {
   dor: "agendamento só pelo direct e WhatsApp",
   melhoria: "página de harmonização com agendamento online",
   mensagem:
-    "Vi que a Bella Pelle tem 4,9 no Google com 87 avaliações elogiando o atendimento. Hoje o agendamento é só pelo direct e WhatsApp, e quem pesquisa harmonização em Votuporanga não encontra uma página de vocês. Eu crio páginas com agendamento online. Posso te mostrar uma ideia?",
+    "Obrigado pelo retorno! Me chamo Marcos. Tava olhando o Instagram de vocês e vi as 87 avaliações no Google, muita gente elogiando o atendimento. Fiquei com uma dúvida: quando alguém pesquisa harmonização em Votuporanga e ainda não conhece vocês, como essa pessoa costuma chegar até vocês?",
 };
 
 describe("mensagem do envio automático", () => {
@@ -56,7 +56,7 @@ describe("mensagem do envio automático", () => {
   });
 
   it("recusa elogio genérico, pressão, link e preço", () => {
-    const m = `Amei o seu perfil, de verdade. ${good.mensagem.replace("Posso", "Aproveite: só hoje R$ 300 em www.mktech.com.br. Posso")}`;
+    const m = `Amei o seu perfil, de verdade. ${good.mensagem.replace("Fiquei", "Aproveite: só hoje R$ 300 em www.mktech.com.br. Fiquei")}`;
     const errors = validateOutreach(ctx, { ...good, mensagem: m }).join(" ");
     expect(errors).toMatch(/genérico/);
     expect(errors).toMatch(/pressão/);
@@ -69,10 +69,16 @@ describe("mensagem do envio automático", () => {
     expect(errors).toMatch(/elogio precisa vir/);
   });
 
-  it("com o site não verificado, só forma condicional", () => {
-    const c = { ...ctx, site_status: "verificacao_pendente" };
-    const m = good.mensagem.replace("Eu crio", "Vocês estão sem site. Eu crio");
-    expect(validateOutreach(c, { ...good, mensagem: m }).join(" ")).toMatch(/condicional/);
+  it("método em degraus: não fala de site nem da solução, e termina com uma pergunta", () => {
+    const pitch = good.mensagem.replace("Fiquei", "Vocês estão sem site. Eu crio páginas como a da Polpuja. Fiquei");
+    expect(validateOutreach(ctx, { ...good, mensagem: pitch }).join(" ")).toMatch(/Não fale de site/);
+    const semPergunta = good.mensagem.replace(/Fiquei.*$/, "Gostaria de conversar com vocês sobre isso quando puderem, obrigado.");
+    expect(validateOutreach(ctx, { ...good, mensagem: semPergunta }).join(" ")).toMatch(/Termine com uma pergunta/);
+  });
+
+  it("a dor e a melhoria ficam guardadas: a pergunta não precisa citá-las", () => {
+    const m = good.mensagem.replace(/Fiquei.*$/, "Fiquei com uma dúvida: hoje a maioria das clientes novas chega pelo Instagram ou por indicação?");
+    expect(validateOutreach(ctx, { ...good, mensagem: m })).toEqual([]);
   });
 
   it("lead sem diagnóstico não recebe mensagem", () => {
@@ -130,10 +136,10 @@ describe("classificação de respostas", () => {
 });
 
 describe("serviços da MKTech na mensagem", () => {
-  it("pode citar sistema, automação e o caso Polpuja", () => {
+  it("no passo 2 ainda não cita sistema nem o caso Polpuja (isso fica para o passo 3)", () => {
     const mensagem =
-      "Vi que a Bella Pelle tem 4,9 no Google com 87 avaliações elogiando o atendimento. Hoje o agendamento é só pelo direct e WhatsApp. Fiz o sistema da Polpuja e crio páginas de harmonização com agendamento online e automações. Posso te mostrar uma ideia?";
-    expect(validateOutreach(ctx, { ...good, mensagem })).toEqual([]);
+      "Vi que a Bella Pelle tem 4,9 no Google com 87 avaliações elogiando o atendimento. Fiz o sistema da Polpuja e crio páginas de harmonização com agendamento online. Posso te mostrar uma ideia?";
+    expect(validateOutreach(ctx, { ...good, mensagem }).join(" ")).toMatch(/Não fale de site, página, sistema/);
   });
 
   it("mensagem longa demais é recusada (curta e clara)", () => {
@@ -141,7 +147,7 @@ describe("serviços da MKTech na mensagem", () => {
   });
 
   it("não pode dizer que a mensagem é automática", () => {
-    const mensagem = good.mensagem.replace("Posso", "Esta é uma mensagem automática. Posso");
+    const mensagem = good.mensagem.replace("Fiquei", "Esta é uma mensagem automática. Fiquei");
     expect(validateOutreach(ctx, { ...good, mensagem }).join(" ")).toMatch(/IA, sistema ou automação/);
   });
 });
