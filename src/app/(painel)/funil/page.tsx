@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { ErrorBox, PageHeader } from "@/components/ui";
+import { ErrorBox, Fold, PageHeader } from "@/components/ui";
 import { dbErrorMessage, requireAdmin } from "@/lib/auth";
 import { fmtDateTime, haQuanto } from "@/lib/time";
 import { SwitchControls, type OutreachSettings } from "../envio/Forms";
+import { ArchiveButton } from "./Archive";
 import { ClearPriceButton } from "./ClearPrice";
 
 export const metadata = { title: "Funil" };
@@ -47,6 +48,7 @@ export default async function FunilPage() {
     .limit(600);
   const { data: bot } = await supabase.from("outreach_settings").select("*").eq("id", 1).maybeSingle();
   const cards = (data ?? []) as Card[];
+  const archived = cards.filter((c) => c.coluna === "arquivado");
   const attention = cards.filter((c) => c.coluna === "atencao").length;
   // Quem respondeu e está esperando você, do mais antigo (mais urgente) ao mais novo.
   const waiting = cards
@@ -149,6 +151,7 @@ export default async function FunilPage() {
                                 : c.movido_em && fmtDateTime(c.movido_em)}
                         </div>
                         {col.key === "valor" && <ClearPriceButton id={c.id} />}
+                        <ArchiveButton id={c.id} name={c.business_name} archived={false} />
                       </li>
                     ))}
                     {items.length > 50 && <li className="text-xs text-muted">e mais {items.length - 50}…</li>}
@@ -158,6 +161,19 @@ export default async function FunilPage() {
               );
             })}
           </div>
+          {archived.length > 0 && (
+            <Fold title="🗄️ Arquivados" count={archived.length} hint="tirados do funil por você; nada foi apagado">
+              <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                {archived.slice(0, 100).map((c) => (
+                  <li key={c.id} className="rounded-lg bg-panel-2 p-3 text-sm">
+                    <Link href={`/leads/${c.id}`} className="font-medium hover:underline">{c.business_name}</Link>
+                    <div className="text-xs text-muted">{c.city}</div>
+                    <ArchiveButton id={c.id} name={c.business_name} archived />
+                  </li>
+                ))}
+              </ul>
+            </Fold>
+          )}
         </>
       )}
     </>

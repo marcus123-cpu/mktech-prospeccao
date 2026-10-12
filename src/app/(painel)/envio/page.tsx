@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ErrorBox, PageHeader, Stat } from "@/components/ui";
+import { ErrorBox, Fold, PageHeader, Stat } from "@/components/ui";
 import { dbErrorMessage, requireAdmin } from "@/lib/auth";
 import { fmtDateTime, todaySP } from "@/lib/time";
 import {
@@ -82,6 +82,38 @@ const SECRETARY_STATUS: Record<string, string> = {
   cancelada: "cancelada",
 };
 
+// A fila aparece em três grupos que abrem com a setinha.
+const FILA_GRUPOS = [
+  { title: "⏳ Na fila", status: ["pronta", "enviando_saudacao"], hint: "esperando a vez" },
+  { title: "📤 Enviadas", status: ["saudacao_enviada", "enviando_mensagem", "enviada"], hint: "saudação ou mensagem já saiu" },
+  { title: "❌ Falhas e canceladas", status: ["falhou", "cancelada"], hint: "nada é reenviado sozinho" },
+] as const satisfies readonly { title: string; status: readonly string[]; hint: string }[];
+
+function MsgItem({ m }: { m: Msg }) {
+  return (
+    <li className="py-3 text-sm">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <Link href={`/leads/${m.lead_id}`} className="font-medium hover:underline">{m.leads?.business_name ?? "Lead"}</Link>
+          <span className="text-xs text-muted"> · {m.leads?.city}</span>{" "}
+          <span className={`badge ${STATUS_COLOR[m.status] ?? ""}`}>{STATUS_LABEL[m.status] ?? m.status}</span>
+          <span className="text-xs text-muted">
+            {m.sent_at ? ` · enviada ${fmtDateTime(m.sent_at)}` : m.greeting_sent_at ? ` · saudação ${fmtDateTime(m.greeting_sent_at)}` : ` · escrita ${fmtDateTime(m.created_at)}`}
+          </span>
+        </div>
+        {["pronta", "saudacao_enviada", "falhou"].includes(m.status) && <CancelButton id={m.id} />}
+      </div>
+      <div className="mt-2 rounded-lg bg-panel-2 p-3">
+        <p className="text-xs text-muted">{m.greeting ?? "Saudação (bom dia / boa tarde / boa noite) definida na hora do envio"}</p>
+        <p className="mt-1 whitespace-pre-wrap">{m.body}</p>
+      </div>
+      <p className="mt-1 text-xs text-muted">Elogio: {m.compliment} · Dor: {m.pain} · Melhoria: {m.improvement}</p>
+      {m.error && <p className="mt-1 text-xs text-rose-300">{m.error}</p>}
+      {m.cancel_reason && m.status === "cancelada" && <p className="mt-1 text-xs text-muted">{m.cancel_reason}</p>}
+    </li>
+  );
+}
+
 export default async function EnvioPage() {
   const { supabase } = await requireAdmin();
   const dayStart = new Date(`${todaySP()}T00:00:00-03:00`).toISOString();
@@ -130,7 +162,7 @@ export default async function EnvioPage() {
     <>
       <PageHeader
         title="💬 Envio automático"
-        subtitle="O Hermes escreve a primeira mensagem a partir do diagnóstico; o enviador do PC manda a saudação e depois a mensagem. Com o secretário ligado, o Hermes continua a conversa e passa para você em dúvida, preço ou hora de fechar."
+        subtitle="Saudação, mensagem personalizada e secretário. Clique numa seção para abrir."
       />
       {settings.error || !s ? (
         <ErrorBox message={dbErrorMessage(settings.error) || "Configuração do envio não encontrada."} />
@@ -152,8 +184,7 @@ export default async function EnvioPage() {
           </section>
 
           {(flagged.data?.length ?? 0) > 0 && (
-            <section className="card p-4">
-              <h2 className="mb-1 text-sm font-semibold">Precisa de atenção</h2>
+            <Fold title="⚠️ Precisa de atenção" count={flagged.data!.length} open tone="border border-rose-900">
               <p className="mb-3 text-xs text-muted">
                 A mensagem escrita pelo Hermes para estes leads não passou na validação, então nada foi enviado. Com 3 recusas o lead
                 sai da fila até você liberar.
@@ -170,11 +201,15 @@ export default async function EnvioPage() {
                   </li>
                 ))}
               </ul>
-            </section>
+            </Fold>
           )}
 
-          <section className="card p-4">
-            <h2 className="mb-1 text-sm font-semibold">🤝 Secretário</h2>
+          <Fold
+            title="🤝 Secretário"
+            count={handoffs.data?.length ?? 0}
+            hint={s.secretary_enabled ? "ligado" : "desligado"}
+            open={(handoffs.data?.length ?? 0) > 0}
+          >
             <p className="mb-3 text-xs text-muted">
               {s.secretary_enabled
                 ? `Ligado: responde as clientes das ${s.reply_window_start ?? 8}h às ${s.reply_window_end ?? 18}h, sem limite de mensagens.`
@@ -214,10 +249,9 @@ export default async function EnvioPage() {
             ) : (
               <p className="text-sm text-muted">O secretário ainda não respondeu ninguém.</p>
             )}
-          </section>
+          </Fold>
 
-          <section className="card p-4">
-            <h2 className="mb-3 text-sm font-semibold">Respostas</h2>
+          <Fold title="📥 Respostas" count={reps.length} hint={`${humans} de pessoas`}>
             {replies.error ? (
               <ErrorBox message={dbErrorMessage(replies.error)} />
             ) : reps.length === 0 ? (
@@ -246,55 +280,44 @@ export default async function EnvioPage() {
                 ))}
               </ul>
             )}
-          </section>
+          </Fold>
 
-          <section className="card p-4">
-            <h2 className="mb-3 text-sm font-semibold">Fila e histórico</h2>
-            {queue.error ? (
-              <ErrorBox message={dbErrorMessage(queue.error)} />
-            ) : msgs.length === 0 ? (
-              <p className="text-sm text-muted">Nenhuma mensagem escrita ainda. O Hermes escreve para os leads com diagnóstico e telefone.</p>
-            ) : (
-              <ul className="divide-y divide-line">
-                {msgs.map((m) => (
-                  <li key={m.id} className="py-3 text-sm">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div>
-                        <Link href={`/leads/${m.lead_id}`} className="font-medium hover:underline">{m.leads?.business_name ?? "Lead"}</Link>
-                        <span className="text-xs text-muted"> · {m.leads?.city}</span>{" "}
-                        <span className={`badge ${STATUS_COLOR[m.status] ?? ""}`}>{STATUS_LABEL[m.status] ?? m.status}</span>
-                        <span className="text-xs text-muted">
-                          {m.sent_at ? ` · enviada ${fmtDateTime(m.sent_at)}` : m.greeting_sent_at ? ` · saudação ${fmtDateTime(m.greeting_sent_at)}` : ` · escrita ${fmtDateTime(m.created_at)}`}
-                        </span>
-                      </div>
-                      {["pronta", "saudacao_enviada", "falhou"].includes(m.status) && <CancelButton id={m.id} />}
-                    </div>
-                    <div className="mt-2 rounded-lg bg-panel-2 p-3">
-                      <p className="text-xs text-muted">{m.greeting ?? "Saudação (bom dia / boa tarde / boa noite) definida na hora do envio"}</p>
-                      <p className="mt-1 whitespace-pre-wrap">{m.body}</p>
-                    </div>
-                    <p className="mt-1 text-xs text-muted">Elogio: {m.compliment} · Dor: {m.pain} · Melhoria: {m.improvement}</p>
-                    {m.error && <p className="mt-1 text-xs text-rose-300">{m.error}</p>}
-                    {m.cancel_reason && m.status === "cancelada" && <p className="mt-1 text-xs text-muted">{m.cancel_reason}</p>}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
+          {queue.error ? (
+            <ErrorBox message={dbErrorMessage(queue.error)} />
+          ) : msgs.length === 0 ? (
+            <p className="card p-4 text-sm text-muted">Nenhuma mensagem escrita ainda. O Hermes escreve para os leads com diagnóstico e telefone.</p>
+          ) : (
+            <>
+              {FILA_GRUPOS.map((g) => {
+                const items = msgs.filter((m) => (g.status as readonly string[]).includes(m.status));
+                return (
+                  <Fold key={g.title} title={g.title} count={items.length} hint={g.hint}>
+                    {items.length === 0 ? (
+                      <p className="text-sm text-muted">Nada aqui.</p>
+                    ) : (
+                      <ul className="divide-y divide-line">
+                        {items.map((m) => (
+                          <MsgItem key={m.id} m={m} />
+                        ))}
+                      </ul>
+                    )}
+                  </Fold>
+                );
+              })}
+            </>
+          )}
 
-          <section className="card p-4">
-            <h2 className="mb-1 text-sm font-semibold">Regras do envio</h2>
+          <Fold title="⚙️ Regras do envio" hint="horários, intervalos e limites">
             <p className="mb-4 text-xs text-muted">
               Um lead e um telefone recebem no máximo uma abordagem automática. Se o enviador não confirmar uma etapa, ela não é reenviada.
             </p>
             <OutreachSettingsForm s={s} />
-          </section>
+          </Fold>
 
-          <section className="card p-4">
-            <h2 className="mb-1 text-sm font-semibold">Token do enviador</h2>
+          <Fold title="🔑 Token do enviador">
             <p className="mb-4 text-xs text-muted">Token separado do Hermes: só pede a próxima mensagem, confirma envios e registra respostas.</p>
             <SenderTokenForm />
-          </section>
+          </Fold>
         </div>
       )}
     </>
