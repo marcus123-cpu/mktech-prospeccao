@@ -3,7 +3,13 @@ import { verifiedEvidence } from "./research";
 import type { SemanticProposal, V6Context } from "./contracts";
 const norm=(text:string)=>text.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 export function sources(ctx:V6Context):Map<string,string>{
-  return new Map([...verifiedEvidence(ctx).map(e=>[e.url!,e.summary] as [string,string]),...ctx.pending_messages.map(m=>[m.id,m.body] as [string,string]),...ctx.messages.filter(m=>m.direction==='entrada'&&m.id).map(m=>[m.id!,m.body??''] as [string,string])]);
+  const history=ctx.messages.filter(m=>m.direction==='entrada'&&m.id).flatMap(m=>{
+    const rows:[string,string][]=[[m.id!,m.body??'']];
+    const canonical=/^([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}):/i.exec(m.id!);
+    if(canonical)rows.push([canonical[1],m.body??'']);
+    return rows;
+  });
+  return new Map([...verifiedEvidence(ctx).map(e=>[e.url!,e.summary] as [string,string]),...history,...ctx.pending_messages.map(m=>[m.id,m.body] as [string,string])]);
 }
 export function validateProposal(ctx:V6Context,p:SemanticProposal):string[]{
   const errors:string[]=[];const known=sources(ctx);const pending=new Map(ctx.pending_messages.map(m=>[m.id,m]));

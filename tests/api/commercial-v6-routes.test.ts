@@ -24,4 +24,10 @@ describe('V6: fronteira de autorização HTTP',()=>{
  it('não aceita mensagem arbitrária',async()=>{expect((await decide(request({lease_id:id,body:'texto enviado pelo worker'}))).status).toBe(422);});
  it('modelo e proposta são obrigatórios depois da saudação',async()=>{rpc.mockImplementation(async(name:string)=>({data:name==='api_token_check'?id:name==='api_commercial_v6_snapshot'?{...ctx,first_contact:false}:null,error:null}));expect((await decide(request({lease_id:id}))).status).toBe(422);});
  it('lease inexistente não autoriza envio',async()=>{rpc.mockImplementation(async(name:string)=>({data:name==='api_token_check'?id:null,error:null}));expect((await decide(request({lease_id:id}))).status).toBe(409);});
+ it('proposta inválida aplica espera e registra motivo sem enfileirar',async()=>{
+  const c={...ctx,first_contact:false,reply_id:id,phase:'WAITING_FIRST_REPLY',pending_messages:[{id,body:'Oi',media:'texto',kind:'pendente_semantica',received_at:ctx.now}]};
+  rpc.mockImplementation(async(name:string)=>({data:name==='api_token_check'?id:name==='api_commercial_v6_snapshot'?c:name==='api_commercial_v6_failure'?{status:'aguardar'}:null,error:null}));
+  const proposal={interpretations:[{message_id:id,type:'human',confidence:.95,intentions:[{kind:'HUMAN_GREETING',confidence:.95,evidence:'Oi'}]}],action:'respond',response:'Me chamo Marcos',reason:'teste',phase:'WAITING_CHANNEL_CONFIRMATION',role:'UNKNOWN',role_evidence:'',solution:null,opportunity_index:null,demonstration_id:null,product_id:null,confirmed_facts:[],uncertain_facts:[],answered_questions:[],objections:[],summary:'teste',next_action:'aguardar',followup_at:null,followup_evidence:'',source_ids:[]};
+  const res=await(await decide(request({lease_id:id,proposal,model:'test'}))).json();expect(res.status).toBe('validacao_recusada');expect(res.errors).toContain('Identidade deve ser de assistente comercial');expect(rpc.mock.calls.some(call=>call[0]==='api_commercial_v6_save')).toBe(false);
+ });
 });

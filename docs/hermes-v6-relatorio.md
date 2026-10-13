@@ -78,6 +78,17 @@ Primeira resposta participativa recebida às 20:54:50 UTC: UUID
 O teste revelou indicação provisória de transporte confundida com automação;
 nenhuma resposta comercial foi enviada durante a recusa da validação. Contexto
 e prompt corrigidos para distinguir entrada pendente de interpretação confirmada.
+Apresentação enviada às 21:14:14 UTC e entregue às 21:14:28 UTC, outbox
+`e5d43dae-f0e6-4420-8ee1-06bd5e1dd504`; cargo `RECEPTIONIST` confirmado.
+Confirmação humana “Sim pode fala comigo”, UUID
+`e295d439-f812-4585-9911-7d69166046ff`, recebida pelo WhatsApp.
+Resposta contextual reconhecendo site existente, oportunidade simulada e landing
+page entregue às 21:19:26 UTC, outbox `005b171d-dd7b-41a8-bca4-3450e43341bb`.
+O teste também identificou cancelamento da fila por projeção automática de memória,
+bloqueio indevido da palavra diagnóstico pelo filtro legado e referência histórica
+UUID vs UUID:sufixo. Correções testadas; edições humanas continuam cancelando fila.
+67 testes focados V4/V6 passaram após a correção da memória, e 32 Python após
+ajuste do filtro (posteriormente acrescentados 2 testes de referências).
 Conversa completa e demonstrações V6 **não validadas ainda**. Envios anteriores
 do V4 não substituem a prova do novo motor. Banco, ponte e enviador restritos ao
 número autorizado; secretário preservado. Publicação `bed2a03`, deployment

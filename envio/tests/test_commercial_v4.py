@@ -20,6 +20,11 @@ class FakeV4(sender.Transporte):
     def ack(self,item):self.acked.append(item)
 
 class V4Tests(unittest.TestCase):
+    def test_simulated_diagnosis_is_commercial_text_not_debug_dump(self):
+        text='Sou o assistente comercial da MKTech Dev. No diagnóstico demonstrativo e simulado da Clínica Teste, constam limpeza de pele e avaliação facial.'
+        self.assertEqual(sender.safe_text(text),text)
+        self.assertIsNone(sender.safe_text('Diagnóstico: dados técnicos do lead'))
+        self.assertIsNone(sender.safe_text('{"diagnostico": "privado"}'))
     def test_video_uses_exact_reserved_asset(self):
         transport=FakeV4()
         item={'status':'enviar','id':'item-1','etapa':'comercial','telefone':'+5517991234567','texto':'Perfeito! Este vídeo mostra a ideia.','media':'video','asset':'demo'}

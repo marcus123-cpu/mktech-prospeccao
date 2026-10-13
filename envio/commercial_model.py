@@ -2,11 +2,31 @@
 import json
 import os
 import subprocess
+from copy import deepcopy
 from pathlib import Path
 
 
 class InferenceError(RuntimeError):
     pass
+
+
+def normalize_sources(proposal, context):
+    """Resolve apenas UUID vs UUID:sufixo do mesmo histórico; não altera texto/fatos."""
+    resolved = deepcopy(proposal)
+    pending = {item.get('id') for item in context.get('pending_messages', [])}
+    aliases = {}
+    for item in context.get('messages', []):
+        key = item.get('id')
+        if item.get('direction') == 'entrada' and isinstance(key, str) and ':' in key:
+            raw = key.split(':', 1)[0]
+            if raw not in pending:
+                aliases[raw] = key
+    for fact in resolved.get('confirmed_facts', []) if isinstance(resolved.get('confirmed_facts'), list) else []:
+        if isinstance(fact, dict) and isinstance(fact.get('source_id'), str):
+            fact['source_id'] = aliases.get(fact['source_id'], fact['source_id'])
+    if isinstance(resolved.get('source_ids'), list):
+        resolved['source_ids'] = [aliases.get(key, key) if isinstance(key, str) else key for key in resolved['source_ids']]
+    return resolved
 
 
 def infer(system, context, timeout=115):
@@ -36,6 +56,6 @@ def infer(system, context, timeout=115):
             raise ValueError()
         if not isinstance(payload.get('model'), str) or not payload['model']:
             raise ValueError()
-        return {'proposal': payload['result'], 'model': payload['model']}
+        return {'proposal': normalize_sources(payload['result'],context), 'model': payload['model']}
     except (ValueError, TypeError, AttributeError):
         raise InferenceError('invalid_model_output') from None

@@ -60,7 +60,7 @@ EXIT_OK, EXIT_INVALID, EXIT_TEMPORARY, EXIT_CONFIG = 0, 2, 5, 6
 _TECHNICAL = re.compile(
     r"\berr(o|or)\b|ocorreu um (erro|problema)|exception|traceback|undefined|\bnull\b|\bnan\b|\bjson\b|\bapi\b|"
     r"https?:|\bstatus\b|tente novamente|timeout|\btoken\b|\bprompt\b|como (um )?(modelo|assistente)|"
-    r"nao (posso|consigo) (ajudar|gerar|escrever)|\bdesculpe\b|\blead\b|diagnostico|[\[\]{}<>`]|\*\*|\\n"
+    r"nao (posso|consigo) (ajudar|gerar|escrever)|\bdesculpe\b|\blead\b|(?:^|\n)\s*diagnostico\s*:|[\[\]{}<>`]|\*\*|\\n"
 )
 
 

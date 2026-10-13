@@ -44,6 +44,16 @@ describe('V6: leases e persistência isolada',()=>{
   expect((await pool.query('select count(*) from commercial_outbox')).rows[0].count).toBe('1');
  });
  it('sessão real exige número autorizado e modo teste',async()=>{await expect(asAdmin(c=>c.query('select admin_commercial_v6_test_begin($1::jsonb)',[JSON.stringify({simulation:true})]))).rejects.toThrow(/número autorizado/);});
+ it('memória automática mantém fila; edição humana cancela',async()=>{
+  await sentLead();await inbound('Quem é?');const ctx=(await contexts()).contexts[0];
+  const p:any={interpretations:[{message_id:ctx.reply_id,type:'human',confidence:.99,intentions:[{kind:'BUSINESS_QUESTION',confidence:.99,evidence:'Quem é?'}]}],action:'respond',response:'Sou o assistente comercial da MKTech Dev, empresa de sites e sistemas.',reason:'Responder quem somos',phase:'WAITING_CHANNEL_CONFIRMATION',role:'UNKNOWN',role_evidence:'',solution:null,opportunity_index:null,demonstration_id:null,product_id:null,confirmed_facts:[],uncertain_facts:[],answered_questions:[],objections:[],summary:'Cliente perguntou quem somos',next_action:'Confirmar canal comercial',followup_at:null,followup_evidence:'',source_ids:[]};
+  const d=contextualDecision(ctx,p,'mock-test');expect(d.validation_errors).toEqual([]);
+  const r=await svc('select api_commercial_v6_save($1,$2,$3::jsonb)',[token,ctx.lease_id,JSON.stringify(d)]);expect(r.status).toBe('registrado');
+  expect((await pool.query('select status from commercial_outbox where id=$1',[r.id])).rows[0].status).toBe('enfileirada');
+  expect((await pool.query('select processed_reply from commercial_leads')).rows[0].processed_reply).toBe(ctx.reply_id);
+  await asAdmin(c=>c.query('select admin_save_conversation_memory($1,$2::jsonb)',[lead,JSON.stringify({facts:'Correção factual do administrador'})]));
+  expect((await pool.query('select status from commercial_outbox where id=$1',[r.id])).rows[0].status).toBe('cancelada');
+ });
  it('sessão real preserva histórico anterior e enfileira só saudação',async()=>{
   await pool.query("update leads set phone_raw='+5517992250729' where id=$1",[lead]);
   await pool.query("update commercial_settings set test_phones=array['+5517992250729']");

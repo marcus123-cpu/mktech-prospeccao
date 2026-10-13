@@ -13,7 +13,7 @@ export const interpretationSchema = z.object({
 export const proposalSchema = z.object({
   interpretations:z.array(interpretationSchema).max(20),
   action:z.enum(["wait","respond","handoff","offer_demo","send_demo","stop"]),
-  response:z.string().min(1).max(900).nullable(),reason:z.string().min(1).max(500),
+  response:z.string().min(1).max(700).nullable(),reason:z.string().min(1).max(500),
   phase:z.enum(PHASES),role:z.enum(["UNKNOWN","AUTOMATED_ATTENDANT","RECEPTIONIST","SECRETARY","MANAGER","MARKETING_RESPONSIBLE","OWNER","DECISION_MAKER","AUTHORIZED_INTERMEDIARY"]),
   role_evidence:z.string().max(1000),solution:z.enum(SOLUTIONS).nullable(),
   opportunity_index:z.number().int().min(0).max(7).nullable(),demonstration_id:z.string().max(100).nullable(),product_id:z.string().uuid().nullable(),
