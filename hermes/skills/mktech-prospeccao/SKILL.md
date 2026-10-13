@@ -152,7 +152,11 @@ O Marcos pede na aba Pesquisas do Hermes "buscar N leads qualificados". O
 programa do PC só chama você quando há pedido. Então:
 
 1. `start-run --routine pedido-painel`. Código 3 (`sem_pedido` ou
-   `ja_em_andamento`): pare sem pesquisar.
+   `ja_em_andamento`): pare sem pesquisar. Status `retomada`: a execução
+   anterior deste pedido parou no meio e você continua **a mesma** (mesmo
+   `run_id`). `ja_vieram` diz quantos qualificados já entraram e `faltam`
+   quantos ainda precisa; `minutos_restantes` é o tempo que sobra. Não
+   recadastre quem já está no CRM: use `identifiers` e `check`.
 2. A resposta traz a meta e os limites **deste pedido**: `meta_qualificados`
    (= `run_target`), `max_searches` e `max_run_minutes`. Use esses números,
    não os do `selftest`.
@@ -162,6 +166,11 @@ programa do PC só chama você quando há pedido. Então:
    bater a meta de qualificados.
 4. O servidor recusa com código 4 quando a meta de qualificados é batida (ou
    quando já cadastrou 4 vezes a meta): pare e encerre com `finish`.
+   Não use `pedido-pendente` para decidir se continua: ele é só do programa
+   do PC e responde `nenhum` enquanto o seu pedido está em andamento. Quem
+   diz quando parar é o código 4 do `register` ou o fim das buscas/do tempo.
+   Só encerre o turno depois do `finish`: se você parar antes, o programa do
+   PC chama de novo depois de 15 minutos sem cadastro (até 3 vezes).
 5. Sem paralelismo: um lote de buscas por vez, conferindo o total antes do
    próximo, para nunca passar de `max_searches`.
 
@@ -327,6 +336,50 @@ Exemplo de `mensagem.json`:
 Quando a pessoa responder a essa pergunta, quem continua é o **modo
 secretário** (abaixo), se o Marcos tiver ligado o secretário no painel.
 
+## Modo leitura da resposta (estilo "lendo a resposta")
+
+Com os estilos alternando no painel, metade dos leads não recebe o texto
+pronto: o CRM espera a pessoa responder a saudação e pede para você **ler o
+que ela escreveu** antes de escrever a mensagem. Você só escreve; quem envia
+é o enviador do PC, depois que o CRM aprovar.
+
+1. `envio-leitura-pendentes --count 5` traz, para cada mensagem:
+   `message_id`, `saudacao_enviada`, `respostas` (o que a pessoa escreveu),
+   `elogio`, `dor`, `melhoria`, `texto_preparado` (o texto do estilo
+   agradecimento, só como referência) e `lead` (dados, diagnóstico e
+   evidências).
+2. Escreva **uma** mensagem que responda ao que ela disse e siga o
+   **passo 2** do método:
+   - Se ela cumprimentou ("Olá, bom dia", "Oi, tudo bem?"), responda o
+     cumprimento de forma natural ("Bom dia! Tudo ótimo, e com você?").
+   - Se ela perguntou quem é ou como pode ajudar, apresente-se com o nome
+     ("Me chamo Marcos") e diga em uma frase por que escreveu, usando o
+     `elogio`.
+   - Termine com **uma** pergunta de investigação ligada à `dor`, como no
+     texto preparado.
+   - **Não** use o "Obrigado pelo retorno!" fixo: o texto tem que soar
+     como resposta ao que ela escreveu.
+   - Mesmas regras da mensagem preparada: 100 a 400 caracteres, "você",
+     só fatos do lead, sem site, página, preço, link, pressão ou menção a
+     IA/robô. Pode começar com "Bom dia"/"Oi", porque aqui é resposta.
+   - Se ela pediu para não receber mensagens, **não grave nada**.
+3. Grave com `envio-leitura-salvar --message <message_id> --file texto.json`
+   (`{"mensagem": "..."}`).
+   - Código 0: entrou na fila e sai no horário de atendimento.
+   - Código 2: o CRM recusou e devolveu `errors`. Corrija e tente **uma**
+     vez. Se recusar de novo, não grave: a mensagem fica parada e o Marcos
+     vê no painel.
+   - `desatualizada`: o texto já foi escrito ou a mensagem não espera mais;
+     siga para a próxima.
+
+Exemplo de `texto.json`, para a resposta "Olá, bom dia! Como posso ajudar?":
+
+```json
+{
+  "mensagem": "Bom dia! Me chamo Marcos, tudo bem? Vi as 87 avaliações de vocês no Google, muita gente elogiando o atendimento. Fiquei com uma dúvida: quando alguém pesquisa harmonização em Votuporanga e ainda não conhece vocês, como essa pessoa costuma chegar até vocês?"
+}
+```
+
 ## Modo secretário (responder a conversa)
 
 Depois que a mensagem personalizada saiu e a pessoa respondeu, você é o
@@ -372,6 +425,9 @@ respostas**, até o atendimento acabar. Segue os passos 3 e 4 de
    - Código 0: entrou na fila (sai no horário de atendimento).
    - Código 2: o CRM recusou e devolveu `errors`. Corrija e tente **uma**
      vez; se recusar de novo, grave só `passar_para_marcos` com o motivo.
+     O validador pode recusar até uma menção ao portfólio existente do lead
+     como "Não ofereça portfólio"; na correção, descreva a oportunidade sem
+     essa palavra, sem sugerir link ou material não disponível.
    - `desatualizada`: ela escreveu de novo ou o Marcos atualizou a memória; leia a conversa outra vez na
      próxima rodada.
 
