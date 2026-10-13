@@ -12,6 +12,7 @@ const memorySchema = z.object({
 });
 
 function refresh(id: string) {
+  revalidatePath("/comercial");
   revalidatePath("/conversas");
   revalidatePath("/funil");
   revalidatePath("/envio");

@@ -1,0 +1,56 @@
+import { describe, expect, it } from "vitest";
+import { decide, identifyRole, initialMessage, scoreResearch, type Context, type CommercialState, type Strategy } from "@/lib/commercial/engine";
+import { classifyReply } from "@/lib/envio/respostas";
+
+const state: CommercialState={stage:"CONTATO_ENVIADO",role:"UNKNOWN",role_confidence:0,role_evidence:"",strategy:"A",video_offered:false,video_authorized:false,video_sent_at:null,facts:{},followup_at:null,followup_reason:null};
+function context(text:string,extra:Partial<Context>={},patch:Partial<CommercialState>={}):Context {
+  return {business_name:"Clínica Teste",research:{},state:{...state,...patch},messages:[{direction:"entrada",body:text,kind:"humana",media:"texto"}],products:[],video_configured:true,manual:false,do_not_contact:false,first_contact:false,now:"2026-10-13T10:00:00-03:00",...extra};
+}
+const videoOffer={direction:"saida",body:"Tenho um vídeo curto. Posso te enviar?"};
+const product={name:"Landing page",price:1500,scope:"landing_page_whatsapp",conditions:"50% na contratação e 50% na entrega.",delivery_days:10,approved:true};
+describe("Hermes V4: cenários comerciais",()=>{
+  it("pesquisa não concede oportunidade só por não localizar site",()=>{const r=scoreResearch({site_status:"site_nao_localizado",evidences:[{kind:"busca",url:"https://exemplo.com",summary:"Site não localizado",observed_at:"2026-10-13"}]},"2026-10-13");expect(r.components.oportunidade).toBe(0);expect(r.score).toBe(0);});
+  it("separa oportunidade e confiança com evidência limitada",()=>{const r=scoreResearch({evidences:[{kind:"instagram",url:"https://instagram.com/teste",summary:"Clínica estética",observed_at:"2026-10-13",limitation:"Identidade não confirmada"}]},"2026-10-13");expect(r.confidence).toBe(0);expect(r.score).toBe(0);});
+  it("site existente pode representar oportunidade verificável",()=>{const r=scoreResearch({site_status:"site_proprio_encontrado",website_url:"https://clinica.test",services:["tratamentos"],evidences:[{kind:"site",url:"https://clinica.test",summary:"Clínica de estética: tratamentos desatualizados",observed_at:"2026-10-13"},{kind:"instagram",url:"https://instagram.com/teste",summary:"Publicação em 2026-10-13 com WhatsApp comercial",observed_at:"2026-10-13"}],diagnosis:{pains:[{pain:"Tratamentos desatualizados",evidence:"tratamentos desatualizados"}]}},"2026-10-13T20:00:00Z");expect(r.score).toBe(100);expect(r.confidence).toBe(100);});
+  it("data de verificação não substitui data de atividade comercial",()=>{const r=scoreResearch({evidences:[{kind:"instagram",url:"https://instagram.com/teste",summary:"Publicação sem data visível",observed_at:"2026-10-13"}]},"2026-10-13");expect(r.components.atividade).toBe(0);expect(r.confidence).toBeLessThan(100);});
+  it.each(["A","B","C"] as Strategy[])("seleciona abordagem %s sem alegar fonte inventada",strategy=>{const d=decide(context("",{first_contact:true},{strategy}));expect(d.action).toBe("text");expect(d.body).toContain("MKTech");expect(d.body).not.toContain("Conheci pelo Instagram");});
+  it("consultiva não pergunta se tem site já confirmado",()=>expect(initialMessage("B",{site_status:"site_proprio_encontrado",website_url:"https://clinica.test"})).not.toContain("usam uma página própria"));
+  it.each([["Sou a recepcionista","RECEPTIONIST"],["Sou a secretária","SECRETARY"],["Sou a proprietária","OWNER"],["Sou a gerente","MANAGER"],["Sou responsável pelo marketing","MARKETING_RESPONSIBLE"],["Eu decido","DECISION_MAKER"],["Pode falar comigo","AUTHORIZED_INTERMEDIARY"]])("identifica cargo declarado: %s",(text,role)=>expect(identifyRole(text).role).toBe(role));
+  it("não assume cargo de pessoa mencionada",()=>expect(identifyRole("Vou falar com a proprietária").role).toBe("UNKNOWN"));
+  it("recepcionista recebe pedido educado de responsável",()=>expect(decide(context("Sou a recepcionista")).body).toContain("Quem costuma avaliar"));
+  it("bom dia não implica cargo",()=>expect(decide(context("Bom dia")).state.role).toBe("UNKNOWN"));
+  it("em que posso ajudar curto não é confundido com atendimento automático",()=>expect(classifyReply({texto:"Em que posso ajudar?"}).kind).toBe("humana"));
+  it("recepcionista encaminha sem contornar atendimento",()=>{const d=decide(context("Vou encaminhar para a dona"));expect(d.state.stage).toBe("AGUARDANDO_RESPONSAVEL");expect(d.state.video_offered).toBe(true);});
+  it("atendente autorizada não recebe nova insistência na proprietária",()=>expect(decide(context("Pode falar comigo")).body).toContain("Posso te enviar"));
+  it("proprietária direta recebe apresentação visual",()=>{const d=decide(context("Sou a proprietária"));expect(d.state.stage).toBe("CONTATO_COM_DECISOR");expect(d.body).toContain("vídeo");});
+  it("marketing pode avaliar apresentação",()=>expect(decide(context("Sou responsável pelo marketing")).state.stage).toBe("CONTATO_COM_DECISOR"));
+  it("atendimento automático não avança funil",()=>{const d=decide(context("Mensagem automática",{messages:[{direction:"entrada",kind:"automatica",body:"Mensagem automática"}]}));expect(d.action).toBe("wait");expect(d.state.stage).toBe(state.stage);});
+  it("automática posterior não apaga a pergunta humana pendente",()=>{const d=decide(context("",{messages:[{direction:"entrada",body:"Quanto custa?",kind:"humana"},{direction:"entrada",body:"Mensagem automática",kind:"automatica"}],products:[product]}));expect(d.intent).toBe("preco_oficial");});
+  it("explica ideia sem termos de programação",()=>expect(decide(context("Que ideia?")).body).toContain("complementando o Instagram"));
+  it("envia vídeo somente depois de oferta e autorização contextual",()=>{const d=decide(context("Pode mandar",{messages:[videoOffer,{direction:"entrada",body:"Pode mandar"}]},{video_offered:true}));expect(d.action).toBe("video");expect(d.state.video_authorized).toBe(true);expect(d.state.video_sent_at).toBeNull();});
+  it("pode mandar vou passar não repete triagem",()=>{const d=decide(context("",{messages:[videoOffer,{direction:"entrada",body:"Pode mandar, vou passar para a responsável."}]},{video_offered:true}));expect(d.action).toBe("video");expect(d.body).not.toContain("Quem");});
+  it("sim sem oferta de vídeo não autoriza material",()=>expect(decide(context("Sim")).action).not.toBe("video"));
+  it("vídeo já enviado não é reenviado",()=>expect(decide(context("",{messages:[videoOffer,{direction:"entrada",body:"Pode mandar"}]},{video_offered:true,video_sent_at:"2026-10-12T15:00:00Z"})).action).toBe("text"));
+  it("vídeo ausente suspende apenas conversa",()=>expect(decide(context("",{video_configured:false,first_contact:true},{strategy:"C"})).action).toBe("handoff"));
+  it("preço oficial é informado diretamente",()=>{const d=decide(context("Quanto custa?",{products:[product]}));expect(d.intent).toBe("preco_oficial");expect(d.body).toContain("1.500,00");});
+  it("não inventa preço sem tabela",()=>expect(decide(context("Quanto custa?")).body).not.toMatch(/R\$|\d{3}/));
+  it("tabela de landing não é aplicada a agendamento",()=>expect(decide(context("Quanto custa?",{products:[product]},{facts:{agendamento:"Solicitado"}})).action).toBe("handoff"));
+  it("caro não cria desconto",()=>expect(decide(context("Está caro")).body).not.toMatch(/desconto|R\$/));
+  it("cliente já tem site não recebe oferta de outro sem necessidade",()=>expect(decide(context("Já temos site")).intent).toBe("site_existente"));
+  it("solicitação de proposta notifica administrador",()=>{const d=decide(context("Me manda uma proposta"));expect(d.state.stage).toBe("PROPOSTA_SOLICITADA");expect(d.notification).toBeTruthy();});
+  it("prepara proposta no modelo aprovado com qualificação disponível",()=>{const d=decide(context("Me manda uma proposta",{products:[product]},{facts:{procedimentos:"limpeza de pele",contato:"WhatsApp"}}));expect(d.intent).toBe("proposta_preparada");expect(d.body).toContain("1.500,00");expect(d.state.stage).toBe("PROPOSTA_SOLICITADA");});
+  it("retorno em data explícita preserva combinado",()=>{const d=decide(context("Retorne em 2026-10-20 às 14:30"));expect(d.state.followup_at).toBe("2026-10-20T14:30:00-03:00");});
+  it("data ambígua pede combinação em vez de inventar",()=>expect(decide(context("Me chama semana que vem")).intent).toBe("combinar_retorno"));
+  it("retorno amanhã usa a data de São Paulo",()=>expect(decide(context("Me chama amanhã às 14h")).state.followup_at).toBe("2026-10-14T14:00:00-03:00"));
+  it("retorno aceita data brasileira com horário explícito",()=>expect(decide(context("Retorne em 20/10/2026 às 14:30")).state.followup_at).toBe("2026-10-20T14:30:00-03:00"));
+  it("data sem horário pede confirmação sem inventar horário",()=>{const d=decide(context("Retorne em 20/10/2026"));expect(d.intent).toBe("combinar_horario");expect(d.state.followup_at).toBeNull();});
+  it("resposta de horário usa a data combinada no histórico",()=>expect(decide(context("",{messages:[{direction:"saida",body:"Qual horário seria melhor para retornar nessa data?"},{direction:"entrada",body:"Às 14:30"}]},{facts:{retorno_data:"2026-10-20"}})).state.followup_at).toBe("2026-10-20T14:30:00-03:00"));
+  it("recusa fecha contato e cancela retorno",()=>{const d=decide(context("Ela não tem interesse",{}, {followup_at:"2026-10-20T14:30:00Z"}));expect(d.action).toBe("stop");expect(d.state.stage).toBe("NAO_CONTATAR");expect(d.state.followup_at).toBeNull();});
+  it("desconto excepcional transfere só a conversa",()=>expect(decide(context("Me dá desconto especial")).action).toBe("handoff"));
+  it("Marcos assumiu: não responder",()=>expect(decide(context("Tenho interesse",{manual:true})).body).toBeNull());
+  it("não confirma pagamento pelo texto do cliente",()=>expect(decide(context("Já paguei no pix")).action).toBe("handoff"));
+  it("respeita procedimentos e canal já respondidos no histórico",()=>{const d=decide(context("",{messages:[{direction:"entrada",body:"Oferecemos limpeza de pele"},{direction:"entrada",body:"Quero somente WhatsApp"},{direction:"entrada",body:"Me manda uma proposta"}],products:[product]}));expect(d.intent).toBe("proposta_preparada");});
+  it("não assume que vídeo foi assistido",()=>expect(decide(context("Obrigado",{}, {video_sent_at:"2026-10-12T12:00:00Z"})).state.facts.video_assistido).toBeUndefined());
+  it("recusar recurso não equivale a pedir descadastro",()=>{const d=decide(context("Não quero agendamento, só WhatsApp"));expect(d.action).not.toBe("stop");expect(d.state.facts.agendamento).toBe("Não solicitado");expect(classifyReply({texto:"Não quero agendamento, só WhatsApp"}).optOut).toBe(false);});
+  it("recusar vídeo não envia nem oferece novamente",()=>{const d=decide(context("Não quero o vídeo",{}, {video_offered:true}));expect(d.action).toBe("wait");expect(d.state.video_offered).toBe(false);});
+});

@@ -1,5 +1,25 @@
 # CRM de prospecção MKTech
 
+## Hermes Prospector V4
+
+A nova aba **Hermes V4** (`/comercial`) reúne operação, vinte etapas comerciais,
+interlocutores com evidências, score separado da confiança, experimento A/B/C,
+vídeo autorizado, preços oficiais, propostas, retornos combinados e notificações.
+Mensagens comuns são preparadas e enfileiradas automaticamente. Exceções ficam
+com Marcos. A descrição do secretário e das abordagens antigas abaixo se refere
+ao modo legado, disponível quando o motor V4 está desligado.
+
+**Atualização:** após as migrações anteriores, aplique
+`supabase/migrations/20261013141307_hermes_v4.sql`. Atualize painel, ponte e Python
+juntos, e reinstale a skill Hermes 2.0 com `-Force`. A migração mantém o V4
+desligado e todos os contatos sem elegibilidade automática. A ponte WhatsApp Web
+existente foi preservada; a conexão por si só não comprova permissão para contato.
+
+Consulte [relatório e instruções V4](docs/hermes-v4-relatorio.md) e
+[auditoria técnica](docs/hermes-v4-auditoria.md). O primeiro teste exige vídeo,
+tabela comercial, canal e contatos controlados configurados; nenhum disparo real
+foi ativado durante a implementação.
+
 ## Central de conversas (nova versão)
 
 Em **Conversas**, você vê os atendimentos por estado: com você, esperando
@@ -338,3 +358,7 @@ Pergunta de valor (uma pessoa perguntou preço; quem responde é você), Fechand
 Configuração no PC: copie `envio/.env.exemplo` para `envio/.env`, crie o
 token do enviador na tela e rode `envio/rodar-envio-simulacao.bat` para testar.
 O transporte real usa a ponte WhatsApp Web descrita em `envio/WHATSAPP-WEB.md`.
+
+Biblioteca comercial: [materiais e instalação](docs/hermes-demonstracoes.md).
+Vídeo da Rosana e site da Polpujá são selecionados pelo catálogo e enviados após
+autorização do cliente, com histórico no CRM e prevenção de duplicatas.

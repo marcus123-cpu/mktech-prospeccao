@@ -46,7 +46,11 @@ const OPT_OUT = [
   /\bnao (me )?(mande|mandem|envie|enviem|chame|chamem) mais\b/,
   /\b(remova|remover|tira|tire|exclua|excluir) (meu|o meu|esse|este) (numero|contato)/,
   /\bnao (tenho|temos) interesse\b/,
-  /\bnao quero\b/,
+  /\b(ela|ele|a proprietaria|a dona|a responsavel) nao tem interesse\b/,
+  /^nao (quero|queremos)[.!]*$/,
+  /\bnao (quero|queremos) (mais )?(receber|conversar|continuar|contratar|comprar)\b/,
+  /\bnao (quero|queremos) (mais )?(esse|este|seu|o seu|o) (servico|contato)\b/,
+  /^nao (quero|queremos|preciso|precisamos) (de )?(um |uma |o |a )?(site|pagina|landing page)[.!]*$/,
   /\b(descadastr|sair da lista)/,
   /^\s*(pare|parar|sair|stop)\s*[.!]*\s*$/,
   /\b(spam|denunciar|denuncia|bloquear|bloqueado)\b/,
@@ -59,6 +63,8 @@ const PRICE = [
   /\b(valor|valores|preco|precos|orcamento|investimento|tabela de precos?)\b/,
   /r\$/,
 ];
+
+export function isOptOutText(text:string):boolean { return OPT_OUT.some(r=>r.test(norm(text))); }
 
 export function classifyReply(input: ReplyInput): ReplyClass {
   if (input.tipo === "audio") {
@@ -90,6 +96,7 @@ export function classifyReply(input: ReplyInput): ReplyClass {
     reasons.push("texto idêntico a uma resposta anterior");
   }
   if (text.length > 220) score += 1;
+  if (/^(em que|como) (posso|podemos) (te |lhe )?ajudar\??$/.test(text)) score -= 1;
   // Resposta curta e com cara de pessoa pesa contra.
   if (text.length <= 60 && /\b(quem|qual|sim|pode|claro|oi|ola|bom dia|boa tarde|boa noite|tudo|obrigad|nao)\b/.test(text)) {
     score -= 1;

@@ -29,6 +29,7 @@ export async function POST(request: Request) {
       reason: c.reason,
       opt_out: c.optOut,
       asks_price: c.asksPrice,
+      external_id: r.message_id ?? null,
     },
   });
   if (error) return temporaryFailure();

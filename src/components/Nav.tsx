@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 // Cada aba tem um emoji e uma cor própria (dot = bolinha/ícone, on = fundo quando está aberta).
 const ITEMS = [
+  { href: "/comercial", emoji: "🚀", label: "Hermes V4", short: "Comercial", hint: "operação e oportunidades", mobile: false, on: "bg-violet-500/20", bar: "bg-violet-400" },
   { href: "/", emoji: "🏠", label: "Hoje", short: "Hoje", hint: "o que fazer agora", mobile: true, on: "bg-violet-500/20", bar: "bg-violet-400" },
   { href: "/leads", emoji: "👥", label: "Leads", short: "Leads", hint: "todos os contatos", mobile: true, on: "bg-sky-500/20", bar: "bg-sky-400" },
   { href: "/conversas", emoji: "💬", label: "Conversas", short: "Conversas", hint: "atendimento e memória do cliente", mobile: true, on: "bg-sky-500/20", bar: "bg-sky-400" },

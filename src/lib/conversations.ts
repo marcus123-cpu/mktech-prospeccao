@@ -22,6 +22,7 @@ export type ConversationFilter = "todas" | "minhas" | "aguardando" | "bot";
 export function conversationState(c: Conversation) {
   if (c.do_not_contact || ["fechado", "sem_interesse", "desqualificado"].includes(c.stage)) return "encerrada";
   if (c.secretary_handoff_at) return "minhas";
+  if (c.pending_status === "desconhecido") return "desconhecido";
   if (c.pending_status === "falhou") return "falhou";
   if (c.pending_status === "pronta" || c.pending_status === "enviando") return "bot";
   if (c.last_in_at && (!c.last_out_at || Date.parse(c.last_in_at) > Date.parse(c.last_out_at))) return "aguardando";
@@ -29,6 +30,7 @@ export function conversationState(c: Conversation) {
 }
 
 export const CONVERSATION_LABEL: Record<string, string> = {
+  desconhecido: "Envio aguardando verificação",
   encerrada: "Encerrada", minhas: "Com você", falhou: "Falha na resposta",
   bot: "Resposta do bot na fila", aguardando: "Cliente espera resposta", respondida: "Aguardando cliente",
 };

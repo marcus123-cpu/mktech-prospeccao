@@ -198,7 +198,7 @@ def cmd_identifiers(_: argparse.Namespace) -> int:
 
 def cmd_check(args: argparse.Namespace) -> int:
     cand = read_json(args.file)
-    keys = ("business_name", "city", "state", "unit_label", "phone", "instagram", "website_url", "source_name", "source_place_id")
+    keys = ("business_name", "city", "state", "unit_label", "phone", "instagram", "website_url", "source_name", "source_place_id", "address")
     body = {k: cand[k] for k in keys if cand.get(k) not in (None, "")}
     return emit(*request("POST", "/api/hermes/v1/duplicates/check", body))
 

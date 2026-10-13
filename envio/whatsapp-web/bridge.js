@@ -14,7 +14,21 @@
 
 const http = require("http");
 const qrcode = require("qrcode-terminal");
-const { Client, LocalAuth } = require("whatsapp-web.js");
+const { Client, LocalAuth, MessageMedia } = require("whatsapp-web.js");
+const path = require("node:path");
+const { Journal } = require("./journal");
+const { DemoLibrary } = require("./demo-library");
+// Somente configurações conhecidas, sem executar comandos contidos no .env.
+const envFile = path.join(__dirname, "..", ".env");
+if (require('node:fs').existsSync(envFile)) {
+  for (const line of require('node:fs').readFileSync(envFile,'utf8').split(/\r?\n/)) {
+    const match = /^\s*(BRIDGE_\w+|HERMES_DEMO_ROOT|ENVIO_SO_PARA)\s*=\s*(.*?)\s*$/.exec(line);
+    if (match && process.env[match[1]] === undefined) process.env[match[1]]=match[2].replace(/^['"]|['"]$/g,'');
+  }
+}
+const journal = new Journal(process.env.BRIDGE_JOURNAL_PATH || path.join(__dirname, ".bridge-journal.json"));
+const demos = new DemoLibrary();
+const chromePath = process.env.BRIDGE_CHROME_PATH || ['C:/Program Files/Google/Chrome/Application/chrome.exe','C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'].find(p=>require('node:fs').existsSync(p));
 
 const PORT = Number(process.env.BRIDGE_PORT || 3799);
 const TOKEN = process.env.BRIDGE_TOKEN || "";
@@ -27,14 +41,14 @@ let myNumber = null;
 let lastQr = null;
 let lastState = "iniciando";
 const setState = (st) => { lastState = st; console.log("[estado]", st); };
-const inbox = [];
-const minhas = []; // mensagens escritas no celular do chip
+const inbox = { push: (payload) => journal.push("recebidas", payload) };
+const minhas = { push: (payload) => journal.push("minhas", payload) };
 const enviadasPelaPonte = new Set();
 const enviosEmAndamento = new Set();
 
 const client = new Client({
   authStrategy: new LocalAuth({ dataPath: ".wwebjs_auth", clientId: "chip2" }),
-  puppeteer: { headless: true, args: ["--no-sandbox"] },
+  puppeteer: { headless: true, ...(chromePath ? {executablePath:chromePath} : {}), args: ["--no-sandbox"] },
   // Versão do WhatsApp Web servida pelo cache remoto: evita travar em "carregando conversas".
   webVersionCache: {
     type: "remote",
@@ -133,6 +147,7 @@ client.on("message", async (msg) => {
     const tipo = msg.type === "ptt" || msg.type === "audio" ? "audio" : msg.type === "image" ? "imagem" : msg.type === "chat" ? "texto" : "outro";
     console.log("[recebida]", tipo, "de", from, "->", numero);
     inbox.push({
+      message_id: msg.id && msg.id._serialized,
       telefone: "+" + numero.replace(/\D/g, ""),
       texto: tipo === "texto" ? msg.body : null,
       tipo,
@@ -181,31 +196,66 @@ const server = http.createServer(async (req, res) => {
   }
   if (TOKEN && req.headers["x-bridge-token"] !== TOKEN) return send(res, 401, { ok: false, erro: "token" });
   try {
-    if (req.method === "GET" && req.url === "/estado") return send(res, 200, { pronto: ready, numero: myNumber, estado: lastState });
-    if (req.method === "GET" && req.url === "/recebidas") return send(res, 200, inbox.splice(0, inbox.length));
-    if (req.method === "GET" && req.url === "/minhas") return send(res, 200, minhas.splice(0, minhas.length));
+    if (req.method === "GET" && req.url === "/estado") return send(res, 200, { pronto: ready, numero: myNumber, estado: lastState, demonstrations:demos.availability().map(d=>({...d,available:d.available && (demos.resolve(d.id).kind!=='video' || !!chromePath)})) });
+    if (req.method === "GET" && req.url === "/recebidas") return send(res, 200, journal.list("recebidas"));
+    if (req.method === "GET" && req.url === "/minhas") return send(res, 200, journal.list("minhas"));
+    if (req.method === "GET" && req.url === "/resultados") return send(res, 200, journal.pendingResults());
+    if (req.method === "POST" && req.url === "/resultados/ack") {
+      const body = await readJson(req);
+      journal.ackResult(body.item_id,body.status); return send(res,200,{ok:true});
+    }
+    if (req.method === "POST" && req.url === "/eventos/ack") {
+      const body = await readJson(req);
+      if (!Array.isArray(body.ids) || body.ids.length > 100 || !body.ids.every(x => typeof x === 'string')) return send(res, 400, { ok: false });
+      journal.ack(body.ids); return send(res, 200, { ok: true });
+    }
     if (req.method === "POST" && req.url === "/enviar") {
-      const { telefone, texto } = await readJson(req);
+      const { telefone, texto, item_id, media, asset } = await readJson(req);
       const digits = String(telefone || "").replace(/\D/g, "");
       if (!ready) return send(res, 503, { ok: false, erro: "WhatsApp não está conectado" });
       if (!digits || typeof texto !== "string" || !texto.trim()) return send(res, 400, { ok: false, erro: "dados inválidos" });
       if (ONLY_TO.size && !ONLY_TO.has(digits)) return send(res, 403, { ok: false, erro: "destino fora de ENVIO_SO_PARA" });
+      if (item_id && !/^[0-9a-f-]{36}$/i.test(item_id)) return send(res, 400, { ok: false, erro: "item inválido" });
+      let content = texto;
+      let options = {};
+      if (typeof asset === 'string' && asset.startsWith('DEMO_')) {
+        if (!item_id) return send(res,422,{ok:false,erro:'Demonstração exige item de envio'});
+        try { const prepared=await demos.prepare(asset,texto,MessageMedia);content=prepared.content;options=prepared.options; }
+        catch(e) { return send(res,422,{ok:false,erro:String(e.message).slice(0,200)}); }
+      } else if (media === "video") {
+        if (!item_id || asset !== "demo" || !process.env.BRIDGE_VIDEO_PATH || !/\.mp4$/i.test(process.env.BRIDGE_VIDEO_PATH)) return send(res, 422, { ok: false, erro: "vídeo não configurado" });
+        content = MessageMedia.fromFilePath(path.resolve(process.env.BRIDGE_VIDEO_PATH));
+        options = {caption:texto};
+      }
+      if (item_id) {
+        const existing = journal.begin(item_id, require('node:crypto').createHash('sha256').update(JSON.stringify([digits,texto,media,asset])).digest('hex'));
+        if (existing) return send(res, 200, { ok: existing.status === 'enviada' || existing.status === 'entregue', id: existing.provider_id, message_status: existing.status });
+      }
       const id = await client.getNumberId(digits);
-      if (!id) return send(res, 422, { ok: false, erro: "número não tem WhatsApp" });
-      const pending = { to: id._serialized, texto };
+      if (!id) { if (item_id) journal.result(item_id, 'falhou'); return send(res, 422, { ok: false, erro: "número não tem WhatsApp" }); }
+      const pending = { to: id._serialized, texto:typeof content === 'string' ? content : texto };
       enviosEmAndamento.add(pending);
       let sent;
-      try { sent = await client.sendMessage(id._serialized, texto); }
+      try { sent = await client.sendMessage(id._serialized, content, options); }
       finally { enviosEmAndamento.delete(pending); }
       if (sent && sent.id && sent.id._serialized) {
         enviadasPelaPonte.add(sent.id._serialized);
         if (enviadasPelaPonte.size > 500) enviadasPelaPonte.delete(enviadasPelaPonte.values().next().value);
       }
-      return send(res, 200, { ok: true, id: sent && sent.id ? sent.id._serialized : null });
+      const provider = sent && sent.id ? sent.id._serialized : null;
+      if (item_id) journal.result(item_id, provider ? 'enviada' : 'desconhecido', provider);
+      return send(res, 200, { ok: !!provider, id: provider, message_status: provider ? 'enviada' : 'desconhecido' });
     }
     return send(res, 404, { ok: false, erro: "não encontrado" });
   } catch (e) {
     return send(res, 500, { ok: false, erro: String(e.message || e).slice(0, 200) });
+  }
+});
+
+client.on('message_ack', (msg, ack) => {
+  const id = msg.id && msg.id._serialized;
+  for (const item of journal.results()) {
+    if (id && item.provider_id === id && ack >= 2) journal.result(item.item_id, 'entregue', id);
   }
 });
 

@@ -1,7 +1,7 @@
 ---
 name: mktech-prospeccao
-description: Pesquisa diária de clínicas e profissionais de estética sem site próprio no interior de SP e cadastro no CRM da MKTech (sem contatar ninguém).
-version: 1.9.0
+description: Pesquisa de oportunidades digitais verificáveis em clínicas de estética e cadastro no CRM MKTech; motor comercial V4 operado pelo servidor.
+version: 2.0.0
 platforms: [windows, linux, macos]
 metadata:
   hermes:
@@ -15,9 +15,27 @@ required_environment_variables:
 # Prospecção MKTech
 
 Você pesquisa leads para a MKTech Dev, que vende sites e landing pages. O
-público é clínica ou profissional de estética **sem site próprio** nas
-cidades configuradas no painel. Seu trabalho termina no cadastro do
-candidato no CRM. Quem decide e faz contato é o Marcos.
+público é clínica ou profissional de estética nas cidades configuradas no painel,
+com oportunidade digital verificável, inclusive clínicas com site existente.
+Seu trabalho de pesquisa termina no cadastro do candidato. O motor V4 decide
+e enfileira mensagens dentro das configurações; Marcos administra a estratégia.
+
+## Operação V4
+
+Com `commercial_v4.enabled` nas configurações, não use os modos legados de
+preparação de abordagem nem secretário. O worker `envio/comercial-loop.py`
+chama o motor do servidor, que registra interlocutor, estratégia, consentimento
+do vídeo, tabela oficial, funil e próximo passo. A ponte faz o envio autorizado.
+Não acione canais diretamente nem duplique ações do worker. Pesquisa continua
+pelo procedimento abaixo. Elegibilidade do contato é separada da pesquisa.
+
+O score V4 é recalculado no servidor: nicho 20, oportunidade verificável 25,
+atividade recente 15, benefício potencial 15, canal comercial 15 e dados de
+personalização 10. Confiança é separada; uma única fonte não recebe confiança
+máxima. Em `pains[].evidence`, cite trecho real presente em `evidences[].summary`.
+Quando houver data comprovada de atividade, registre no resumo, por exemplo
+`Publicação em 2026-10-13 ...`; a data de verificação não prova atividade recente.
+Não escreva uma data de publicação que não tenha visto.
 
 ## Regras que não mudam
 
@@ -155,9 +173,9 @@ na hora (conta em `discarded`, sem cadastrar) se:
 1. **Sem contato comercial:** não aparece telefone nem Instagram do negócio
    no resultado da descoberta ou em uma busca `<nome> <cidade>`. O CRM
    recusa candidato sem telefone ou Instagram, então não vale pesquisar.
-2. **Site próprio:** a busca `<nome> <cidade> site` mostra um domínio
-   próprio funcionando (Linktree, Instagram, Google Meu Negócio e
-   `sites.google.com` não contam).
+2. **Sem oportunidade verificável:** não descarte apenas por possuir site.
+   Pesquise se há informação desatualizada, procedimentos difíceis de localizar
+   ou contato pouco claro; registre somente o que realmente verificou.
 3. **Já está no CRM:** nome, telefone ou Instagram batem com a lista do
    `identifiers`.
 4. **Fora do escopo:** cidade fora das configuradas ou não é estética.
@@ -178,6 +196,8 @@ bairro, telefone, Instagram. Confirme em **pelo menos duas fontes**. Se
 endereço ou telefone divergirem entre fontes, use o que aparece na fonte
 mais recente ou oficial e escreva a divergência em `pending_items`.
 Diretório com categoria errada (ex.: "Restaurant") vale só como apoio.
+Inclua `address` com endereço comercial verificável e `booking_url` quando houver
+canal público de agendamento. Não inclua endereço residencial ou canal privado.
 
 **B. Está ativa?** Data do último post ou avaliação, número de avaliações e
 nota no Google, número de seguidores. Descarte só quando houver **prova**
@@ -197,8 +217,9 @@ quem aparece primeiro. Se concorrentes têm página própria e ela não, isso
 é evidência.
 
 **E. Tem site próprio?** Busque `<nome> <cidade> site`. Linktree, Instagram,
-Google Meu Negócio, `sites.google.com` e marketplaces não contam. Se achar
-um domínio próprio funcionando, descarte (não é o público da MKTech). O
+Google Meu Negócio e marketplaces são diretórios, não site próprio. Uma página
+institucional da própria clínica, inclusive em hospedagem gratuita, pode ser site.
+Se achar site próprio, registre `site_proprio_encontrado` e avalie oportunidades. O
 `site_status` tem que bater com as evidências: só use
 `apenas_redes_sociais` se você viu a rede social; se não achou nada,
 `site_nao_localizado`.
@@ -209,10 +230,10 @@ um domínio próprio funcionando, descarte (não é o público da MKTech). O
 - `digital_presence`: os números e canais que você viu.
 - `pains`: de 1 a 5 dores, **cada uma com a evidência que a sustenta**.
   Sem evidência, não é dor; não invente. Exemplos de sinal e dor:
-  - agenda só por DM ou WhatsApp: perde cliente fora do horário e gasta
-    tempo respondendo;
-  - concorrente aparece no Google e ela não: perde quem pesquisa pelo
-    procedimento;
+  - agenda por WhatsApp: registrar esse canal, sem afirmar perda de clientes
+    ou sobrecarga sem evidência;
+  - informação de procedimentos difícil de localizar: registrar o trecho
+    observado, sem deduzir resultados de busca ou perda de pacientes;
   - avaliações boas espalhadas em diretórios: credibilidade que não é
     aproveitada;
   - promoções só no Instagram: alcance limitado a quem já segue;

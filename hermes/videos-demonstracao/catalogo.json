@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "materials": [
+    {
+      "id": "DEMO_ROSANA_LANDING",
+      "name": "Landing page da Rosana",
+      "category": "landing_page_portfolio",
+      "kind": "video",
+      "description": "Vídeo de uma landing page real da MKTech Dev para Rosana, massoterapeuta, apresentada no computador.",
+      "path": "landing-pages/rosana-landing-page.mp4",
+      "format": "video/mp4",
+      "available": true,
+      "approved": true,
+      "last_verified_at": "2026-10-13",
+      "recommended_niches": ["estetica", "bem-estar", "servicos profissionais"],
+      "scopes": ["landing_page", "landing_page_whatsapp", "portfolio", "clinica", "landing_por_procedimento"],
+      "match_terms": ["landing page", "portfolio", "pagina de servicos", "procedimentos"],
+      "offer": "Tenho um exemplo real da MKTech Dev: a landing page da Rosana, uma profissional de bem-estar. O vídeo mostra a página no computador. Posso te enviar?",
+      "caption": "Este é o exemplo da landing page da Rosana. Ele mostra um trabalho já realizado; a proposta para sua empresa seria personalizada.",
+      "size_bytes": 16811191,
+      "duration_seconds": 49.233333,
+      "width": 1440,
+      "height": 900,
+      "video_codec": "h264",
+      "audio_codec": null,
+      "sha256": "8d835abcabc68280eb3fcf5316374be939ec45d752f96bcf39fcacff42d22ab7",
+      "verified_features": ["Apresentação da profissional", "Navegação por seções visível no vídeo", "Botões de contato WhatsApp visíveis"],
+      "verification": { "original_preserved": true, "copy_hash_matches": true, "full_decode_ok": true, "browser_playback": "Playwright: duração 49,233s, 1440x900, 42 quadros decodificados, sem erro" },
+      "send_history": "CRM: lead_demonstrations e commercial_outbox"
+    },
+    {
+      "id": "DEMO_POLPUJA_VITRINE",
+      "name": "Site da Polpujá",
+      "category": "site_vitrine_institucional",
+      "kind": "link",
+      "description": "Projeto real da MKTech Dev para apresentação da Polpujá e de seus produtos.",
+      "url": "https://www.xn--polpuj-uta.com.br/",
+      "format": "text/uri-list",
+      "available": true,
+      "approved": true,
+      "last_verified_at": "2026-10-13",
+      "recommended_niches": ["produtos", "comercio", "empresas"],
+      "scopes": ["site_vitrine", "site_institucional", "produtos"],
+      "match_terms": ["site vitrine", "site institucional", "apresentacao de produtos", "catalogo de produtos", "vitrine", "meus produtos", "apresentar produtos", "produtos"],
+      "offer": "Tenho um exemplo real da MKTech Dev: o site da Polpujá, que apresenta a empresa e seus produtos. Posso te enviar o link?",
+      "caption": "Este é o exemplo do site da Polpujá. É um trabalho já realizado; o escopo para sua empresa seria definido conforme suas necessidades.",
+      "verified_features": ["Apresentação da empresa observada no navegador", "Navegação para catálogo de produtos funcionando", "Página inicial e produtos sem transbordamento horizontal em viewport móvel"],
+      "verification": { "http_status": 200, "viewport_meta": true, "responsive_css": true, "visual_desktop_mobile": "verificado com Playwright: 998px e 390px", "public_product_navigation": true, "visitor_session_status": 401 },
+      "send_history": "CRM: lead_demonstrations e commercial_outbox"
+    }
+  ]
+}

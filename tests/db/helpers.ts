@@ -2,8 +2,12 @@ import { createHash, randomUUID } from "node:crypto";
 import pg from "pg";
 
 // Banco local isolado (tests/db/reset.sh). Nunca aponta para o Supabase real.
+const testHost=process.env.PGHOST ?? (process.platform==="win32" ? "127.0.0.1" : "/tmp");
+if (!["127.0.0.1","localhost","/tmp"].includes(testHost) || Number(process.env.PGPORT ?? 54329)!==54329 || !/^crm_test(?:_[a-z0-9]+)?$/.test(process.env.TEST_DB ?? "crm_test")) {
+  throw new Error("Testes destrutivos permitidos somente no banco crm_test local na porta 54329.");
+}
 export const pool = new pg.Pool({
-  host: process.env.PGHOST ?? "/tmp",
+  host: testHost,
   port: Number(process.env.PGPORT ?? 54329),
   user: process.env.PGUSER ?? "postgres",
   database: process.env.TEST_DB ?? "crm_test",
@@ -21,6 +25,9 @@ export async function resetData() {
     update public.prospecting_settings set daily_target = 20, max_run_minutes = 45, routine_enabled = false, restock_enabled = false, restock_min = 20, restock_batch = 20;
     delete from public.outreach_settings;
     insert into public.outreach_settings (id) values (1);
+    truncate public.commercial_products;
+    update public.commercial_settings set enabled=false,channel_authorized=false,test_mode=true,test_phones='{}',
+      video_configured=false,allowed_strategies=array['A','B','C'],experiment_enabled=true,max_messages=15,last_worker_at=null,last_sender_at=null,bridge_connected=null,bridge_state_changed_at=null;
   `);
   await pool.query(`insert into auth.users (id, email) values ($1, 'admin@teste.local'), ($2, 'outro@teste.local')`, [
     ADMIN_ID,

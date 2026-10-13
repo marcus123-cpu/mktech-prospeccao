@@ -24,3 +24,6 @@ envio/liberar-lista-de-hoje.bat
 envio/whatsapp-web/node_modules/
 envio/whatsapp-web/.wwebjs_auth/
 envio/whatsapp-web/.wwebjs_cache/
+envio/whatsapp-web/.bridge-journal.json*
+supabase/.temp/
+.playwright-mcp/

@@ -65,6 +65,8 @@ export const candidateSchema = z
     city: text(120).min(1),
     state: z.string().regex(/^[A-Z]{2}$/).optional(),
     neighborhood: optText(120),
+    address: optText(500),
+    booking_url: httpUrl.optional().nullable(),
     unit_label: optText(120),
     phone: optText(40),
     instagram: optText(200),
@@ -95,6 +97,7 @@ export const checkSchema = z
   .object({
     business_name: text(200).min(1),
     city: text(120).min(1),
+    address: optText(500),
     state: z.string().regex(/^[A-Z]{2}$/).optional(),
     unit_label: optText(120),
     phone: optText(40),
@@ -144,9 +147,11 @@ export const outreachSchema = z
 // Enviador: resultado de uma etapa.
 export const outreachResultSchema = z
   .object({
-    etapa: z.enum(["saudacao", "mensagem", "lembrete", "resposta"]),
+    etapa: z.enum(["saudacao", "mensagem", "lembrete", "resposta", "comercial"]),
     ok: z.boolean(),
     erro: optText(500),
+    message_status: z.enum(["enviada", "entregue", "falhou", "desconhecido"]).optional(),
+    provider_id: optText(200),
   })
   .strict();
 
@@ -176,6 +181,7 @@ export const outreachOutboundSchema = z
 export const outreachReplySchema = z
   .object({
     telefone: text(30).regex(/^\+?[0-9 ()-]{10,25}$/, "telefone inválido"),
+    message_id: optText(200),
     tipo: z.enum(["texto", "audio", "imagem", "outro"]).default("texto"),
     texto: text(4000).optional().nullable(),
     recebida_em: z.string().regex(/^\d{4}-\d{2}-\d{2}T/).optional().nullable(),

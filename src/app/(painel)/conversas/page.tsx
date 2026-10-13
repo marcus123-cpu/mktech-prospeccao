@@ -16,7 +16,7 @@ const FILTERS: { key: ConversationFilter; label: string }[] = [
   { key: "aguardando", label: "Esperando resposta" }, { key: "bot", label: "Bot na fila" },
 ];
 type Event = { id: string; occurred_at: string; direction: string; source: string; body: string | null; media: string };
-const SOURCE: Record<string, string> = { secretaria: "Secretário", secretario: "Secretário", saudacao: "Saudação", abordagem: "Abordagem", lembrete: "Lembrete", manual: "Você · celular", humana: "Cliente", automatica: "Resposta automática" };
+const SOURCE: Record<string, string> = { hermes_v4: "Hermes V4", secretaria: "Secretário", secretario: "Secretário", saudacao: "Saudação", abordagem: "Abordagem", lembrete: "Lembrete", manual: "Você · celular", humana: "Cliente", automatica: "Resposta automática" };
 
 export default async function Conversations({ searchParams }: { searchParams: Promise<{ lead?: string; filtro?: string; q?: string; pagina?: string }> }) {
   const sp = await searchParams;

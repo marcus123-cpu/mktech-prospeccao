@@ -1,6 +1,7 @@
 import { authenticate, fromDb, json, parseBody, temporaryFailure } from "@/lib/hermes/api";
 import { compact, registerSchema } from "@/lib/hermes/schemas";
 import { serviceClient } from "@/lib/supabase/admin";
+import { scoreResearch } from "@/lib/commercial/engine";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,7 @@ export async function POST(request: Request) {
   const { data, error } = await serviceClient().rpc("api_register_candidate", {
     p_token: auth.tokenId,
     p_key: key,
-    p: candidate,
+    p: { ...candidate, commercial_score: scoreResearch(body.data.candidate, new Date().toISOString()) },
     p_run: body.data.run_id ?? null,
   });
   if (error) return temporaryFailure();

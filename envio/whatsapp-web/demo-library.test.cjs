@@ -1,0 +1,13 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const os=require('node:os');
+const path=require('node:path');
+const {DemoLibrary}=require('./demo-library');
+const {Journal}=require('./journal');
+test('biblioteca contém ambos materiais e sobrevive a nova instância',()=>{for(const lib of [new DemoLibrary(),new DemoLibrary()]){assert.equal(lib.catalog().length,2);assert.ok(lib.availability().every(d=>d.available));assert.equal(lib.resolve('DEMO_ROSANA_LANDING').size_bytes,16811191);}});
+test('vídeo íntegro produz mídia para transporte de teste',async()=>{const p=await new DemoLibrary().prepare('DEMO_ROSANA_LANDING','Exemplo',{fromFilePath:file=>({mimetype:'video/mp4',size:fs.statSync(file).size})});assert.equal(p.content.size,16811191);assert.equal(p.options.caption,'Exemplo');});
+test('link usa URL cadastrada e verifica acesso',async()=>{let destination;const p=await new DemoLibrary().prepare('DEMO_POLPUJA_VITRINE','Exemplo',{},async url=>{destination=url;return {ok:true};});assert.equal(destination,'https://www.xn--polpuj-uta.com.br/');assert.equal(p.content,'Exemplo\n\n'+destination);});
+test('site inacessível não prepara envio',async()=>{await assert.rejects(new DemoLibrary().prepare('DEMO_POLPUJA_VITRINE','Exemplo',{},async()=>({ok:false})),/indisponível/);});
+test('material desconhecido e caminho adulterado bloqueados',()=>{assert.throws(()=>new DemoLibrary().resolve('desconhecido'));const root=fs.mkdtempSync(path.join(os.tmpdir(),'hermes-demo-test-'));try{fs.writeFileSync(path.join(root,'catalogo.json'),JSON.stringify({materials:[{id:'DEMO_X',approved:true,kind:'video',format:'video/mp4',path:'../outside.mp4'}]}));assert.throws(()=>new DemoLibrary(root).resolve('DEMO_X'));}finally{fs.rmSync(root,{recursive:true});}});
+test('resultado persistido impede duplicar envio após reinício',()=>{const root=fs.mkdtempSync(path.join(os.tmpdir(),'hermes-demo-journal-'));try{const file=path.join(root,'journal.json');const j=new Journal(file);j.begin('demo-item','fingerprint');j.result('demo-item','enviada','provider');assert.equal(new Journal(file).begin('demo-item','fingerprint').status,'enviada');}finally{fs.rmSync(root,{recursive:true});}});

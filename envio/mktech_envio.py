@@ -82,12 +82,15 @@ def load_env() -> None:
             continue
         key, value = line.split("=", 1)
         key, value = key.strip(), value.strip().strip('"').strip("'")
-        if key.startswith(("MKTECH_CRM_", "MKTECH_ENVIO_")) and key not in os.environ:
+        if (key.startswith(("MKTECH_CRM_", "MKTECH_ENVIO_", "MKTECH_COMMERCIAL_", "BRIDGE_")) or key == "ENVIO_SO_PARA") and key not in os.environ:
             os.environ[key] = value
 
 
 class ConfigError(Exception):
     pass
+
+class BridgeRejected(RuntimeError):
+    """Resposta explícita da ponte anterior ao envio; diferente de timeout ambíguo."""
 
 
 def config() -> tuple[str, str]:
@@ -160,6 +163,21 @@ class Transporte:
     def enviar(self, telefone: str, texto: str) -> None:  # levanta exceção se falhar
         raise NotImplementedError
 
+    def comercial(self, item: dict[str, Any]) -> dict[str, Any]:
+        raise BridgeRejected("transporte sem suporte V4; nada enviado")
+
+    def ack(self, msg: dict[str, Any]) -> None:
+        pass
+
+    def resultados(self) -> list[dict[str, Any]]:
+        return []
+
+    def ack_result(self, item: dict[str, Any]) -> None:
+        pass
+
+    def health(self, ready: bool) -> None:
+        pass
+
     def recebidas(self) -> list[dict[str, Any]]:
         """Mensagens novas recebidas: [{telefone, texto, tipo (texto/audio/imagem/outro), recebida_em}]."""
         return []
@@ -222,23 +240,47 @@ class WhatsAppWeb(Transporte):
             detail = ""
             with contextlib.suppress(Exception):
                 detail = json.loads(e.read()).get("erro", "")
-            raise RuntimeError(f"ponte recusou (HTTP {e.code}): {detail}"[:300]) from None
+            error_class = BridgeRejected if e.code in (400, 401, 403, 404, 422, 503) else RuntimeError
+            raise error_class(f"ponte recusou (HTTP {e.code}): {detail}"[:300]) from None
         except (urllib.error.URLError, OSError) as e:
             raise RuntimeError(f"ponte do WhatsApp fora do ar: {e}"[:300]) from None
 
     def enviar(self, telefone: str, texto: str) -> None:
         digits = re.sub(r"\D", "", telefone or "")
         if self.only_to and digits not in self.only_to:
-            raise RuntimeError("destino fora de ENVIO_SO_PARA; nada enviado")
+            raise BridgeRejected("destino fora de ENVIO_SO_PARA; nada enviado")
         out = self._call("POST", "/enviar", {"telefone": digits, "texto": texto})
         if not (isinstance(out, dict) and out.get("ok")):
             raise RuntimeError("a ponte não confirmou o envio")
+
+    def comercial(self, item: dict[str, Any]) -> dict[str, Any]:
+        digits = re.sub(r"\D", "", item["telefone"])
+        if self.only_to and digits not in self.only_to:
+            raise BridgeRejected("destino fora de ENVIO_SO_PARA; nada enviado")
+        return self._call("POST", "/enviar", {"telefone": digits, "texto": item["texto"], "item_id": item["id"], "media": item.get("media"), "asset": item.get("asset")})
+
+    def ack(self, msg: dict[str, Any]) -> None:
+        if msg.get("event_id"):
+            self._call("POST", "/eventos/ack", {"ids": [msg["event_id"]]})
+
+    def resultados(self) -> list[dict[str, Any]]:
+        try:
+            return self._call("GET", "/resultados") or []
+        except RuntimeError:
+            return []
+
+    def ack_result(self, item: dict[str, Any]) -> None:
+        self._call("POST", "/resultados/ack", {"item_id": item["item_id"], "status": item["status"]})
+
+    def health(self, ready: bool) -> None:
+        request("POST", "/api/hermes/v1/comercial/conexao", {"ready": ready, "demonstrations": getattr(self, "demonstrations", [])})
 
     def pronto(self) -> bool:
         try:
             out = self._call("GET", "/estado")
         except RuntimeError:
             return False
+        self.demonstrations = out.get("demonstrations", []) if isinstance(out, dict) else []
         return bool(isinstance(out, dict) and out.get("pronto"))
 
     def recebidas(self) -> list[dict[str, Any]]:
@@ -264,8 +306,8 @@ TRANSPORTES: dict[str, Callable[[], Transporte]] = {"simulacao": Simulacao, "wha
 # Laço ------------------------------------------------------------------------
 
 
-def report(item_id: str, etapa: str, ok: bool, erro: str | None = None) -> dict[str, Any]:
-    status, payload = request("POST", f"/api/hermes/v1/envio/{item_id}/resultado", {"etapa": etapa, "ok": ok, "erro": erro})
+def report(item_id: str, etapa: str, ok: bool, erro: str | None = None, **extra: Any) -> dict[str, Any]:
+    status, payload = request("POST", f"/api/hermes/v1/envio/{item_id}/resultado", {"etapa": etapa, "ok": ok, "erro": erro, **extra})
     if status == 0:
         log(f"não consegui confirmar {etapa} de {item_id}; o servidor marca como falhou e não reenvia")
     return payload
@@ -279,7 +321,11 @@ def forward_replies(transporte: Transporte) -> int:
             body["recebida_em"] = msg["recebida_em"]
         if msg.get("segundos_desde_envio") is not None:
             body["segundos_desde_envio"] = msg["segundos_desde_envio"]
+        if msg.get("message_id"):
+            body["message_id"] = msg["message_id"]
         status, payload = request("POST", "/api/hermes/v1/envio/respostas", body)
+        if status < 400 and status > 0 and payload.get("status") in ("registrada", "existente", "ignorada"):
+            transporte.ack(msg)
         if payload.get("status") == "registrada":
             quem = "PESSOA" if payload.get("conversa") else "automática"
             log(f"resposta de {msg['telefone']} registrada como {quem}" + (" (texto segurado)" if payload.get("segurada") else ""))
@@ -300,6 +346,8 @@ def forward_minhas(transporte: Transporte) -> int:
             if msg.get(key) is not None:
                 body[key] = msg[key]
         status, payload = request("POST", "/api/hermes/v1/envio/minhas", body)
+        if status < 400 and status > 0 and payload.get("status") in ("registrada", "existente", "ignorada"):
+            transporte.ack(msg)
         if payload.get("status") == "registrada":
             log(f"mensagem sua para {msg['telefone']} registrada (conta para os lembretes)")
         n += 1
@@ -310,7 +358,13 @@ def step(transporte: Transporte) -> tuple[str, float]:
     """Executa uma rodada. Devolve (status, segundos até a próxima)."""
     forward_replies(transporte)
     forward_minhas(transporte)
-    if not transporte.pronto():
+    for item in transporte.resultados():
+        confirmed = report(item["item_id"], "comercial", item["status"] in ("enviada", "entregue"), message_status=item["status"], provider_id=item.get("provider_id"))
+        if confirmed.get("status") in ("registrado", "existente"):
+            transporte.ack_result(item)
+    ready=transporte.pronto()
+    transporte.health(ready)
+    if not ready:
         return "ponte_desconectada", POLL_SECONDS
     status, nxt = request("POST", "/api/hermes/v1/envio/proximo", {})
     if status in (401, 403):
@@ -322,12 +376,26 @@ def step(transporte: Transporte) -> tuple[str, float]:
 
     item, etapa, telefone = nxt.get("id"), nxt.get("etapa"), nxt.get("telefone")
     texto = safe_text(nxt.get("texto"))
-    if not item or etapa not in ("saudacao", "mensagem", "lembrete", "resposta") or not telefone:
+    if not item or etapa not in ("saudacao", "mensagem", "lembrete", "resposta", "comercial") or not telefone:
         log(f"resposta inesperada do servidor; nada enviado: {nxt}")
         return "invalido", POLL_SECONDS
     if texto is None:
-        report(item, etapa, False, "texto recusado pelo enviador (parece erro ou texto técnico); nada enviado")
+        report(item, etapa, False, "texto recusado pelo enviador (parece erro ou texto técnico); nada enviado", **({"message_status": "falhou"} if etapa == "comercial" else {}))
         return "recusado", 5.0
+    if etapa == "comercial":
+        try:
+            out = transporte.comercial(nxt)
+            state = out.get("message_status", "desconhecido")
+            if state not in ("enviada", "entregue", "falhou", "desconhecido"):
+                state = "desconhecido"
+            report(item, etapa, state in ("enviada", "entregue"), provider_id=out.get("id"), message_status=state)
+            return state, 3.0
+        except BridgeRejected as e:
+            report(item, etapa, False, str(e)[:400], message_status="falhou")
+            return "falhou", POLL_SECONDS
+        except Exception as e:
+            report(item, etapa, False, str(e)[:400], message_status="desconhecido")
+            return "desconhecido", POLL_SECONDS
     try:
         transporte.enviar(telefone, texto)
     except Exception as e:  # noqa: BLE001 - qualquer falha do transporte vira "falhou"

@@ -15,6 +15,14 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   if (!UUID.test(id)) return json({ status: "invalido", errors: ["id inválido"] }, 422);
   const body = await parseBody(request, outreachResultSchema);
   if ("response" in body) return body.response;
+  if (body.data.etapa === "comercial") {
+    const status = body.data.message_status ?? (body.data.ok ? "enviada" : "desconhecido");
+    const { data, error } = await serviceClient().rpc("api_commercial_result", {
+      p_token: auth.tokenId, p_id: id, p_status: status, p_provider: body.data.provider_id ?? null, p_error: body.data.erro ?? null,
+    });
+    if (error) return temporaryFailure();
+    return fromDb(data);
+  }
   const { data, error } = await serviceClient().rpc("api_outreach_result", {
     p_token: auth.tokenId,
     p_id: id,
