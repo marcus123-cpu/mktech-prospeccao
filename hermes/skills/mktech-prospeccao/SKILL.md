@@ -360,6 +360,9 @@ respostas**, até o atendimento acabar. Segue os passos 3 e 4 de
    - Código 0: entrou na fila (sai no horário de atendimento).
    - Código 2: o CRM recusou e devolveu `errors`. Corrija e tente **uma**
      vez; se recusar de novo, grave só `passar_para_marcos` com o motivo.
+     O validador pode recusar até uma menção ao portfólio existente do lead
+     como "Não ofereça portfólio"; na correção, descreva a oportunidade sem
+     essa palavra, sem sugerir link ou material não disponível.
    - `desatualizada`: ela escreveu de novo ou o Marcos atualizou a memória; leia a conversa outra vez na
      próxima rodada.
 
