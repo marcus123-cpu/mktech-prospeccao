@@ -32,6 +32,8 @@ describe('V6: autorização e contexto (propostas simuladas, sem inferência rea
  it('proposta contextual válida',()=>{const c=context();expect(validateProposal(c,proposal(c))).toEqual([]);});
  it('não personifica Marcos',()=>{const c=context();const p=proposal(c);p.response='Me chamo Marcos';expect(validateProposal(c,p).length).toBeGreaterThan(0);});
  it('não garante ranking',()=>{const c=context();const p=proposal(c);p.response+=' Garantimos top 3.';expect(validateProposal(c,p)).toContain('Promessa sem respaldo');});
+ it('negação de garantia responde à pergunta sobre SEO',()=>{const c=context();const p=proposal(c);p.response+=' Não podemos garantir posição no Google nem ficar entre os três primeiros.';expect(validateProposal(c,p)).not.toContain('Promessa sem respaldo');});
+ it('negação em outra oração não encobre promessa positiva',()=>{const c=context();const p=proposal(c);p.response+=' Não garantimos clientes, mas garantimos top 3.';expect(validateProposal(c,p)).toContain('Promessa sem respaldo');});
  it('preço sem tabela rejeitado',()=>{const c=context();const p=proposal(c);p.response+=' R$ 1.000,00';expect(validateProposal(c,p)).toContain('Preço fora da tabela aprovada');});
  it('fonte de outro cliente rejeitada',()=>{const c=context();const p=proposal(c);p.source_ids=['https://outro.test'];expect(validateProposal(c,p).length).toBeGreaterThan(0);});
  it('UUID histórico e ID de timeline representam a mesma fonte deste lead',()=>{const c=context();const old='00000000-0000-4000-8000-000000000002';c.messages=[{id:old+':cliente',direction:'entrada',body:'Aqui é a recepcionista',kind:'humana'}];const p=proposal(c);p.confirmed_facts=[{key:'cargo',value:'Recepcionista',source_id:old,evidence:'a recepcionista'}];expect(validateProposal(c,p)).toEqual([]);});
@@ -42,6 +44,7 @@ describe('V6: autorização e contexto (propostas simuladas, sem inferência rea
  it('incerteza não libera resposta',()=>{const c=context();const p=proposal(c);p.interpretations[0].confidence=.4;expect(contextualDecision(c,p,'test').action).toBe('wait');});
  it('mensagem de outro contexto rejeitada',()=>{const c=context();const p=proposal(c);p.interpretations[0].message_id='00000000-0000-4000-8000-000000000002';expect(validateProposal(c,p).length).toBeGreaterThan(0);});
  it('mensagem duplicada rejeitada',()=>{const c=context();const p=proposal(c);p.interpretations.push(p.interpretations[0]);expect(validateProposal(c,p).length).toBeGreaterThan(0);});
+ it('reclassificar histórico não permite responder outra vez',()=>{const c=context();c.answered_reply_ids=[id];expect(validateProposal(c,proposal(c))).toContain('Mensagem anterior já recebeu resposta confirmada');});
  it('ordem das interpretações normalizada',()=>{const c=context();const p=proposal(c);expect(contextualDecision(c,p,'test').interpretations[0].message_id).toBe(id);});
  it('recusa de contato encerra',()=>{const c=context('Não me mande mais mensagens');const p=proposal(c);p.action='stop';p.interpretations[0].intentions[0].kind='OPT_OUT';expect(contextualDecision(c,p,'test').state.stage).toBe('NAO_CONTATAR');});
  it('retorno sem data/horário rejeitado',()=>{const c=context('Me chame depois');const p=proposal(c);p.followup_at='2026-10-14T14:00:00-03:00';p.followup_evidence='Me chame depois';expect(validateProposal(c,p).length).toBeGreaterThan(0);});

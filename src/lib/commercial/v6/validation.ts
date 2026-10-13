@@ -2,6 +2,19 @@ import { isOptOutText } from "@/lib/envio/respostas";
 import { verifiedEvidence } from "./research";
 import type { SemanticProposal, V6Context } from "./contracts";
 const norm=(text:string)=>text.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+function unsupportedPromise(text:string):boolean {
+  const claims=/garant\w*.{0,30}(pacient|cliente|fatur|receit|google|resultad)|primeir[oa]s?\s+(3|tres)|(3|tres)\s+primeir[oa]s?|top\s*3|posicao garantida|\d+\s*(novos )?(clientes|pacientes)/g;
+  for(const clause of text.split(/[.!?;,\n]|\b(?:mas|porem|entretanto)\b/)){
+    for(const match of clause.matchAll(claims)){
+      const before=clause.slice(0,match.index);
+      const near=clause.slice(Math.max(0,match.index!-80),match.index!+match[0].length);
+      const directDenial=/\b(?:nao\s+(?:(?:posso|podemos|pode|consigo|conseguimos|temos|como|e|possivel|ha|existe|vou|vamos)\s+){0,4}|nunca\s+|sem\s+)$/.test(before);
+      const contextualDenial=/\b(?:nao\s+(?:(?:posso|podemos|pode|consigo|conseguimos|temos|como|e|possivel|ha|existe|vou|vamos)\s+){0,4}(?:garant\w*|promet\w*|assegur\w*)|sem garantia|nenhuma garantia)\b/.test(near);
+      if(!directDenial&&!contextualDenial)return true;
+    }
+  }
+  return false;
+}
 export function sources(ctx:V6Context):Map<string,string>{
   const history=ctx.messages.filter(m=>m.direction==='entrada'&&m.id).flatMap(m=>{
     const rows:[string,string][]=[[m.id!,m.body??'']];
@@ -24,7 +37,7 @@ export function validateProposal(ctx:V6Context,p:SemanticProposal):string[]{
   if(p.followup_at){const date=Date.parse(p.followup_at);if(!Number.isFinite(date)||date<=Date.parse(ctx.now)||!ctx.pending_messages.some(m=>m.body.includes(p.followup_evidence)&&p.followup_evidence.length>3))errors.push('Retorno sem combinação válida');if(!/\d{1,2}(?::\d{2}|h)|\bas\s+\d{1,2}/.test(norm(p.followup_evidence)))errors.push('Horário de retorno não informado');if(!/\d{1,2}\/\d{1,2}|\d{4}-\d{2}-\d{2}|amanha|hoje|segunda|terca|quarta|quinta|sexta|sabado|domingo/.test(norm(p.followup_evidence)))errors.push('Data de retorno não informada');}
   const body=p.response??'';const text=norm(body);
   if(/sou (o |a )?marcos|me chamo marcos|sou (uma )?pessoa|sou humano/.test(text))errors.push('Identidade deve ser de assistente comercial');
-  if(/garant.{0,30}(pacient|cliente|fatur|receit|google|resultad)|primeir[oa]s? (3|tres)|top ?3|posicao garantida|\d+\s*(novos )?(clientes|pacientes)/.test(text))errors.push('Promessa sem respaldo');
+  if(unsupportedPromise(text))errors.push('Promessa sem respaldo');
   if(/https?:\/\/|www\./i.test(body))errors.push('Links só saem pelo catálogo de demonstrações');
   if(/mkt_[a-f0-9]{32}|service.role|api.key|token|prompt de sistema/i.test(body))errors.push('Conteúdo operacional não deve ser enviado');
   if(/\b(r\$|reais|valor de|investimento de)\b/.test(text)||/R\$/.test(body)){
@@ -43,6 +56,7 @@ export function validateProposal(ctx:V6Context,p:SemanticProposal):string[]{
   if(p.action==='respond'&&ctx.phase==='WAITING_FIRST_REPLY'&&!p.source_ids.some(id=>verifiedEvidence(ctx).some(e=>e.url===id))&& !p.interpretations.some(i=>i.intentions.some(t=>['PRICE_QUESTION','SEO_QUESTION','BUSINESS_QUESTION','WRONG_CHANNEL','CONTACT_REDIRECT','WAIT_REQUEST'].includes(t.kind))))errors.push('Apresentação inicial exige detalhe com fonte verificável');
   const latest=ctx.pending_messages.at(-1);
   const interpreted=p.interpretations.find(i=>i.message_id===latest?.id);
+  if(latest&&ctx.answered_reply_ids?.includes(latest.id)&&['respond','offer_demo','send_demo'].includes(p.action))errors.push('Mensagem anterior já recebeu resposta confirmada');
   const followup=ctx.followup_due&&ctx.pending_messages.length===0;
   if(!followup&&latest?.id!==ctx.reply_id&&p.action!=='wait')errors.push('Aguardar interpretação de todas as entradas acumuladas');
   if(latest?.media&&latest.media!=='texto'&&['respond','offer_demo','send_demo'].includes(p.action))errors.push('Anexo exige interpretação humana');

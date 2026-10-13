@@ -19,6 +19,7 @@ begin
   lid:=gen_random_uuid();
   ctx:=x||jsonb_build_object('lease_id',lid,'pending_messages',pending,'recipient_timezone',tz,'readiness',c.readiness,
    'followup_due',coalesce(c.followup_at<=now() and nullif(c.followup_reason,'') is not null,false),
+   'answered_reply_ids',coalesce((select jsonb_agg(distinct decisions.reply_id) from commercial_decisions decisions join commercial_outbox sent on sent.decision_id=decisions.id where decisions.lead_id=c.lead_id and decisions.reply_id is not null and sent.sent_at is not null),'[]'),
    'phase',case when c.conversation_phase='NEEDS_RESEARCH' and not (x->>'first_contact')::boolean then 'WAITING_FIRST_REPLY' else c.conversation_phase end,
    'commercial_memory',c.commercial_memory);
   ctx:=ctx||jsonb_build_object('messages',coalesce((select jsonb_agg(case when exists(select 1 from outreach_replies unresolved where unresolved.lead_id=c.lead_id and unresolved.semantic_interpretation is null and m->>'id' like unresolved.id::text||':%') then m||jsonb_build_object('kind','pendente_semantica','source','entrada_pendente') else m end) from jsonb_array_elements(ctx->'messages') m),'[]'));
@@ -27,7 +28,7 @@ begin
     'messages',coalesce((select jsonb_agg(m) from jsonb_array_elements(ctx->'messages') m where (m->>'occurred_at')::timestamptz>=(select started_at from commercial_test_runs where id=c.active_test_run)),'[]'),
     'demonstration_history',coalesce((select jsonb_agg(jsonb_build_object('demonstration_id',demonstration_id,'status',status,'sent_at',sent_at)) from commercial_outbox where lead_id=c.lead_id and kind='demo' and test_run_id=c.active_test_run),'[]'));
   end if;
-  update commercial_leads set lease_id=lid,lease_token=p_token,lease_until=now()+interval '3 minutes',lease_context=ctx,recipient_timezone=tz where lead_id=c.lead_id;
+  update commercial_leads set lease_id=lid,lease_token=p_token,lease_until=now()+interval '6 minutes',lease_context=ctx,recipient_timezone=tz where lead_id=c.lead_id;
   contexts:=contexts||jsonb_build_array(ctx);
  end loop;
  return r||jsonb_build_object('contexts',contexts);

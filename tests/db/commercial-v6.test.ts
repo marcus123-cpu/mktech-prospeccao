@@ -79,4 +79,16 @@ describe('V6: leases e persistência isolada',()=>{
   expect((await pool.query('select final_snapshot,ended_at from commercial_test_runs')).rows[0].ended_at).toBeTruthy();
   expect((await pool.query('select count(*) from commercial_outbox')).rows[0].count).toBe('1');
  });
+ it('21 entradas são classificadas em lotes sem perder a mais recente',async()=>{
+  await sentLead();for(let i=0;i<21;i++)await inbound('Pergunta '+i,'batch-'+i,new Date(Date.now()-60000+i*1000).toISOString());
+  const first=(await contexts()).contexts[0];expect(first.pending_messages).toHaveLength(20);
+  function proposed(ctx:any,action:string){return {interpretations:ctx.pending_messages.map((m:any)=>({message_id:m.id,type:'human',confidence:.99,intentions:[{kind:'BUSINESS_QUESTION',confidence:.99,evidence:m.body}]})),action,response:action==='respond'?'Sou o assistente comercial da MKTech Dev. Posso orientar sobre sites e sistemas.':null,reason:'Processar lote ordenado',phase:'WAITING_CHANNEL_CONFIRMATION',role:'UNKNOWN',role_evidence:'',solution:null,opportunity_index:null,demonstration_id:null,product_id:null,confirmed_facts:[],uncertain_facts:[],answered_questions:[],objections:[],summary:'Lote de mensagens recebido',next_action:'Responder à mensagem mais recente',followup_at:null,followup_evidence:'',source_ids:[]};}
+  let d=contextualDecision(first,proposed(first,'wait') as any,'mock-test');expect(d.validation_errors).toEqual([]);
+  expect((await svc('select api_commercial_v6_save($1,$2,$3::jsonb)',[token,first.lease_id,JSON.stringify(d)])).status).toBe('registrado');
+  const second=(await contexts()).contexts[0];expect(second.pending_messages).toHaveLength(1);expect(second.pending_messages[0].body).toBe('Pergunta 20');
+  d=contextualDecision(second,proposed(second,'respond') as any,'mock-test');expect(d.validation_errors).toEqual([]);
+  expect((await svc('select api_commercial_v6_save($1,$2,$3::jsonb)',[token,second.lease_id,JSON.stringify(d)])).status).toBe('registrado');
+  expect((await pool.query('select count(*) from outreach_replies where semantic_interpretation is not null')).rows[0].count).toBe('21');
+  expect((await pool.query("select count(*) from commercial_outbox where kind='reply'")).rows[0].count).toBe('1');
+ });
 });

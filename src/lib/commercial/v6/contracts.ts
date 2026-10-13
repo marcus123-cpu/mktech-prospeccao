@@ -29,6 +29,7 @@ export type V6Context=Context & {
   lead_id:string;revision:number;reply_id:string|null;lease_id:string;
   phase:typeof PHASES[number];recipient_timezone:string|null;readiness:Readiness;
   followup_due?:boolean;
+  answered_reply_ids?:string[];
   pending_messages:{id:string;body:string;media:string;received_at:string;kind:string}[];
   commercial_memory:{summary:string;confirmed_facts:z.infer<typeof factSchema>[];uncertain_facts:string[];answered_questions:string[];objections:string[];next_action:string;solution:string|null;introduced:boolean;channel_confirmed:boolean;wait_acknowledged:string[]};
 };
