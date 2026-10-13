@@ -24,7 +24,7 @@ describe("API comercial V4",()=>{
   });
   it("autentica preparação com escopo mensagens:escrever",async()=>{expect((await process(request())).status).toBe(200);expect(rpc).toHaveBeenCalledWith("api_token_check",expect.objectContaining({p_scope:"mensagens:escrever"}));});
   it("não processa sem token",async()=>{expect((await process(request({},null))).status).toBe(401);expect(rpc).not.toHaveBeenCalled();});
-  it("ignora mensagem/preço recebidos no corpo e decide no servidor",async()=>{await process(request({body:"Oferta inventada R$ 1",price:1}));const p=rpc.mock.calls.find(c=>c[0]==="api_commercial_save")![1].p;expect(p.body).not.toContain("R$ 1");expect(p.intent).toBe("primeiro_contato");});
+  it("ignora mensagem/preço recebidos no corpo e decide no servidor",async()=>{await process(request({body:"Oferta inventada R$ 1",price:1}));const p=rpc.mock.calls.find(c=>c[0]==="api_commercial_save")![1].p;expect(p.body).toBe("Olá, bom dia! Tudo bem?");expect(p.intent).toBe("quebra_gelo");});
   it("falha de um contexto não impede processar o próximo",async()=>{rpc.mockImplementation(async(fn:string)=>{
     if(fn==="api_token_check")return {data:"tok"};if(fn==="api_commercial_pending")return {data:{status:"ok",contexts:[{...ctx,state:null},ctx]}};if(fn==="api_commercial_save")return {data:{status:"registrado"}};
   });const r=await(await process(request())).json();expect(r.results.map((x:{status:string})=>x.status)).toEqual(["contexto_invalido","registrado"]);});

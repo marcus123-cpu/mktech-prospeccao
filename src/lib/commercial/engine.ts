@@ -76,6 +76,22 @@ export function initialMessage(strategy: Strategy, research: Research): string {
   return `${intro} Tenho um vídeo curto mostrando como uma página pode reunir tratamentos e canais de contato. Posso te enviar?`;
 }
 
+export function icebreaker(now: string): string {
+  const hour = Number(new Intl.DateTimeFormat("en-US", { timeZone: "America/Sao_Paulo", hour: "numeric", hourCycle: "h23" }).format(new Date(now)));
+  return `Olá, ${hour >= 5 && hour < 12 ? "bom dia" : hour >= 12 && hour < 18 ? "boa tarde" : "boa noite"}! Tudo bem?`;
+}
+
+/** O sinal vem de serviços realmente citados nas fontes, sem transformar diagnóstico em elogio. */
+export function contextualOpening(ctx: Context, response: string): string {
+  const evidence = (ctx.research.evidences ?? []).filter(e => e.url && e.observed_at && !e.limitation);
+  const services = (ctx.research.services ?? []).filter(service => evidence.some(e => norm(e.summary).includes(norm(service)))).slice(0, 2);
+  const source = evidence.find(e => services.some(service => norm(e.summary).includes(norm(service)))) ?? evidence[0];
+  const place = source?.kind === "site" ? "na página de vocês" : source?.kind === "instagram" ? "no perfil de vocês no Instagram" : "na ficha pública do negócio";
+  const signal = services.length ? `Vi ${place} que vocês trabalham com ${services.join(" e ")}.` : `Encontrei ${ctx.business_name.slice(0, 100)} ${place}.`;
+  const thanks = /\b(e voce|e vc|e contigo)\b/.test(norm(response)) ? "Tudo ótimo, obrigado!" : "Obrigado pelo retorno!";
+  return `${thanks} Me chamo Marcos. ${signal} Hoje, como os novos clientes costumam chegar até vocês?`;
+}
+
 export function decide(ctx: Context): Decision {
   const s: CommercialState = { ...ctx.state, facts: { ...ctx.state.facts } };
   let detectedNotification:string|null=null;
@@ -92,10 +108,11 @@ export function decide(ctx: Context): Decision {
   if (ctx.do_not_contact || ["PERDIDO", "NAO_CONTATAR", "VENDA_FECHADA"].includes(s.stage)) return done("encerrado", null, "stop");
   if (ctx.manual) return done("controle_manual", null, "wait");
   if (ctx.first_contact) {
-    if(s.strategy==="C" && ctx.demonstrations){s.stage="PRONTO_PARA_CONTATO";const offer=offerDemo(chooseDemo());return {...offer,body:offer.body ? `Sou o Marcos, da MKTech Dev. ${offer.body}` : null};}
-    if (s.strategy === "C" && !ctx.video_configured) return done("material_ausente", null, "handoff", "Configurar vídeo antes de usar estratégia C", "Material visual não configurado");
-    s.stage = "PRONTO_PARA_CONTATO"; s.video_offered = s.strategy === "C";
-    return done("primeiro_contato", initialMessage(s.strategy, ctx.research));
+    s.stage = "PRONTO_PARA_CONTATO";
+    s.facts.abertura = "saudacao";
+    s.video_offered = false;
+    delete s.facts.demo_offered;
+    return done("quebra_gelo", icebreaker(ctx.now));
   }
   const incoming = ctx.messages.filter((m) => m.direction === "entrada");
   const last = incoming.filter(m=>m.kind!=="automatica").at(-1) ?? incoming.at(-1);
@@ -160,6 +177,33 @@ export function decide(ctx: Context): Decision {
   if (/aceito|vamos fechar|quero contratar|como contrat/.test(n)) { s.stage = "NEGOCIACAO"; return done("contratacao", "Perfeito! Vou encaminhar os detalhes para confirmarmos a contratação com as condições combinadas.", "handoff", "Não confirmar contrato ou pagamento automaticamente", "Cliente demonstrou intenção de contratar"); }
   if (/ja (temos|tenho|tem|possui) (um )?site/.test(n)) return done("site_existente", "Perfeito! Vocês estão satisfeitos com a forma como o site apresenta os procedimentos e facilita o contato?");
   if (/ja temos (uma |um )?(pessoa|equipe|profissional)|alguem cuidando/.test(n)) return done("fornecedor_existente", "Entendi, obrigado por me contar. Se fizer sentido avaliar alguma melhoria no futuro, fico à disposição.");
+  // Pedido explícito do cliente tem precedência sobre o roteiro de investigação.
+  if (ctx.demonstrations && ["saudacao", "investigacao"].includes(s.facts.abertura) && !s.facts.demo_offered
+    && /exemplo|portfolio|video|demonstracao|site vitrine/.test(n)
+    && /quero|gostaria|manda|mande|envia|envie|ver|exemplo de/.test(n) && !/\bnao\b/.test(n)) {
+    s.facts.abertura = "material_solicitado";
+    return offerDemo(chooseDemo());
+  }
+  const afterGreeting = /^ola[,! ]*(bom dia|boa tarde|boa noite)[!,. ]*tudo bem\?$/i.test(norm(lastOut));
+  if (s.facts.abertura === "saudacao" || afterGreeting) {
+    s.facts.abertura = "investigacao";
+    s.stage = ["OWNER", "MANAGER", "MARKETING_RESPONSIBLE", "DECISION_MAKER"].includes(s.role) ? "CONTATO_COM_DECISOR" : "RESPOSTA_RECEBIDA";
+    s.video_offered = false;
+    return done("abordagem_contextual", contextualOpening(ctx, text), "text", "Sinal pesquisado e uma pergunta; aguardar resposta antes de oferecer solução");
+  }
+  if (s.facts.abertura === "investigacao" && !/retorn|me cham|amanha|semana que vem|vou pensar|vou analisar/.test(n)) {
+    if (/agenda (cheia|lotada)|tudo (funciona|certo)|nao precisamos|estamos satisfeitos/.test(n)) {
+      s.stage = "PERDIDO"; s.followup_at = null; s.followup_reason = null;
+      return done("sem_necessidade", "Entendi, obrigado por me contar! Fico à disposição caso surja alguma necessidade no futuro.", "stop", "Contato não indicou necessidade; encerrar sem insistência");
+    }
+    const channels = ["Instagram", "WhatsApp", "indicação", "Google", "Facebook"].filter(channel => norm(text).includes(norm(channel)));
+    if (!channels.length) return done("investigacao_sem_contexto", null, "handoff", "Resposta à investigação precisa de interpretação, sem presumir dificuldade", "Interpretar resposta do cliente à abordagem contextual");
+    s.facts.origem_clientes = text;
+    s.facts.abertura = "permissao";
+    const bridge = `Entendi, vocês recebem contatos por ${channels.join(" e ")}.`;
+    const idea = ctx.research.website_url ? "Uma página específica de procedimento pode complementar o site que vocês já têm." : "Uma página pode reunir os procedimentos e facilitar o contato de quem está conhecendo o negócio.";
+    return done("friccao_e_permissao", `${bridge} Eu trabalho com páginas e sistemas na MKTech Dev. ${idea} Posso te mostrar uma ideia para vocês?`, "text", "Usar somente canais declarados pelo cliente e pedir permissão antes da demonstração");
+  }
   // Autorização é contextual: um 'sim' só autoriza o vídeo se a última oferta foi de vídeo.
   if(ctx.demonstrations){
     const offered=ctx.demonstrations.find(d=>d.id===s.facts.demo_offered && d.approved);

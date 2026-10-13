@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { decide, type Context } from "@/lib/commercial/engine";
 import { as, asAdmin, asService, candidate, count, createToken, OUTSIDER_ID, pool, register, resetData, rpc } from "./helpers";
 const PHONE="+5517991234567";
@@ -46,7 +47,42 @@ describe("persistência e autonomia V4",()=>{
   it("nova entrada invalida resposta ainda na fila",async()=>{await conversation();await reply("Sou a proprietária");const old=(await pending()).contexts[0];await save(old);await reply("Quanto custa?","humana","in-2");expect(await count("commercial_outbox","status='cancelada'")).toBe(1);expect((await save(old)).status).toBe("desatualizada");});
   it("automática posterior mantém referência da pergunta humana",async()=>{await conversation();const human=await reply("Quanto custa?");await reply("Mensagem automática","automatica","in-auto");expect((await pending()).contexts[0].reply_id).toBe(human.reply_id);});
   it("devolver conversa retomada sem resposta permite continuar pergunta pendente",async()=>{const id=await conversation();await reply("Quero contratar");await save((await pending()).contexts[0]);expect((await pending()).contexts).toHaveLength(0);await asAdmin(c=>c.query("select admin_secretary_return($1)",[id]));expect((await pending()).contexts).toHaveLength(1);});
-  it("vídeo autorizado só marca enviado após confirmação",async()=>{const id=await conversation();await reply("Sou a proprietária");await save((await pending()).contexts[0]);let b=await next();await result(b.id);await reply("Pode mandar","humana","in-2");await save((await pending()).contexts[0]);b=await next();expect(b.media).toBe("video");expect((await pool.query("select video_sent_at from commercial_leads where lead_id=$1",[id])).rows[0].video_sent_at).toBeNull();await result(b.id);expect((await pool.query("select stage from commercial_leads where lead_id=$1",[id])).rows[0].stage).toBe("VIDEO_ENVIADO");});
+  it("vídeo autorizado só marca enviado após saudação, investigação e permissão",async()=>{
+    const id=await conversation();
+    for(const [i,text] of ["Sou a proprietária","As clientes chegam pelo Instagram","Pode mostrar"].entries()) {
+      await reply(text,"humana",`step-${i}`);await save((await pending()).contexts[0]);
+      const queued=await next();expect(queued.media).toBe("texto");await result(queued.id);
+    }
+    await reply("Pode mandar","humana","consent-video");await save((await pending()).contexts[0]);
+    const b=await next();expect(b.media).toBe("video");
+    expect((await pool.query("select video_sent_at from commercial_leads where lead_id=$1",[id])).rows[0].video_sent_at).toBeNull();
+    await result(b.id);expect((await pool.query("select stage from commercial_leads where lead_id=$1",[id])).rows[0].stage).toBe("VIDEO_ENVIADO");
+  });
+  it("saudação usa horário de envio e permanece igual no histórico confirmado",async()=>{
+    const {ctx}=await queueInitial();
+    await pool.query("update commercial_outbox set body='Olá, bom dia! Tudo bem?'");
+    const b=await next();
+    const hour=(await pool.query("select extract(hour from now() at time zone 'America/Sao_Paulo')::int as hour")).rows[0].hour;
+    expect(b.texto).toBe(`Olá, ${hour>=5&&hour<12 ? "bom dia" : hour>=12&&hour<18 ? "boa tarde" : "boa noite"}! Tudo bem?`);
+    await result(b.id);expect((await pool.query("select body from commercial_outbox where id=$1",[b.id])).rows[0].body).toBe(b.texto);
+    expect((await pending()).contexts).toHaveLength(0);
+    expect((await save(ctx)).status).toBe("desatualizada");
+  });
+  it("correção da fila remove oferta antiga sem alterar mensagem já enviada",async()=>{
+    const confirmed=await conversation();
+    await pool.query("update commercial_outbox set body='Oferta já enviada' where lead_id=$1",[confirmed]);
+    const unsent=await lead({business_name:"Estética Nova",phone:"(17) 99123-4568",instagram:"@nova"});
+    await pool.query("update commercial_settings set test_phones=array[$1,$2]",[PHONE,"+5517991234568"]);
+    const ctx=(await pending()).contexts[0];await save(ctx);
+    await pool.query("update commercial_outbox set body='Oferta antiga de vídeo',demonstration_id='DEMO_ROSANA_LANDING' where lead_id=$1",[unsent]);
+    await pool.query("update commercial_decisions set intent='demonstracao_oferecida' where lead_id=$1",[unsent]);
+    const sql=readFileSync('supabase/migrations/20261013181000_quebra_gelo_v4.sql','utf8').split('-- Corrige só primeiras abordagens')[1];
+    await pool.query(sql.slice(sql.indexOf('\n')));
+    const rows=(await pool.query("select lead_id,body,demonstration_id,status from commercial_outbox order by created_at")).rows;
+    expect(rows.find(r=>r.lead_id===confirmed)).toMatchObject({body:"Oferta já enviada",status:"enviada"});
+    expect(rows.find(r=>r.lead_id===unsent)).toMatchObject({body:"Olá, boa tarde! Tudo bem?",demonstration_id:null,status:"enfileirada"});
+    expect((await pool.query("select facts->>'abertura' as phase from commercial_leads where lead_id=$1",[unsent])).rows[0].phase).toBe("saudacao");
+  });
   it("sem autorização banco rejeita vídeo",async()=>{await conversation();await reply("Bom dia");const ctx=(await pending()).contexts[0];const d=decide(ctx);d.action="video";d.state.video_authorized=false;const r=await svc("select api_commercial_save($1,$2,$3,$4,$5::jsonb)",[token,ctx.lead_id,ctx.revision,ctx.reply_id,JSON.stringify(d)]);expect(r.status).toBe("invalido");});
   it("pedido de não contato cancela fila e acompanhamento",async()=>{const id=await conversation();await pool.query("update commercial_leads set followup_at=now()+interval '1 day',followup_reason='Pedido do contato' where lead_id=$1",[id]);await reply("Não tenho interesse","humana","in-1",true);expect((await pending()).contexts).toHaveLength(0);expect((await pool.query("select followup_at,stage from commercial_leads where lead_id=$1",[id])).rows[0]).toMatchObject({stage:"NAO_CONTATAR",followup_at:null});});
   it("Marcos assumir cancela mensagens não reservadas",async()=>{const {id}=await queueInitial();await asAdmin(c=>c.query("select admin_take_conversation($1)",[id]));expect(await count("commercial_outbox","status='cancelada'")).toBe(1);expect((await pending()).contexts).toHaveLength(0);});

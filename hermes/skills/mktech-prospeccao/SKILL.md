@@ -29,6 +29,14 @@ do vídeo, tabela oficial, funil e próximo passo. A ponte faz o envio autorizad
 Não acione canais diretamente nem duplique ações do worker. Pesquisa continua
 pelo procedimento abaixo. Elegibilidade do contato é separada da pesquisa.
 
+A abertura V4 segue o método em degraus de `references/metodo-abordagem.md`:
+primeiro somente a saudação conforme o horário de São Paulo; após resposta
+humana, agradecimento, primeiro nome, sinal verificável da pesquisa e uma pergunta
+sobre como chegam novos clientes. Depois da resposta, ligar a ideia ao contexto
+declarado e pedir permissão. Não oferecer solução ou demonstração na saudação.
+As estratégias A/B/C não eliminam esses passos. Mensagem automática não libera
+a investigação. Não repetir saudação para contato já iniciado.
+
 Biblioteca comercial: `hermes/videos-demonstracao/catalogo.json`. No modo V4,
 landing page ou portfólio usa `DEMO_ROSANA_LANDING`; vitrine, institucional ou
 produtos usa `DEMO_POLPUJA_VITRINE`. O motor oferece o material cadastrado,
