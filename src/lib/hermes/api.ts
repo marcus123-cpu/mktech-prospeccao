@@ -114,6 +114,8 @@ const STATUS_HTTP: Record<string, number> = {
   sem_pedido: 409,
   nenhum: 200,
   pendente: 200,
+  retomar: 200,
+  retomada: 200,
 };
 
 /** Converte o resultado jsonb de uma função api_* em resposta HTTP. */

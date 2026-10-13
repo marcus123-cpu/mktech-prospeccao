@@ -92,6 +92,43 @@ describe("pedido de busca pelo painel", () => {
     expect(await request(id)).toMatchObject({ status: "concluido", qualified_found: 0 });
   });
 
+  it("execução parada há 15 minutos é retomada: mesma execução, contando o que já veio", async () => {
+    const id = await ask(3);
+    const r = await start();
+    expect((await register(tk, cand(85), undefined, r.run_id)).status).toBe("criado");
+    // Cadastrou há pouco: ainda está trabalhando, nada de retomar.
+    await pool.query(`update hermes_runs set started_at = now() - interval '40 minutes' where id = $1`, [r.run_id]);
+    expect(await peek()).toEqual({ status: "nenhum" });
+    expect(await start()).toMatchObject({ status: "ja_em_andamento" });
+    // 20 minutos sem cadastrar nada: o PC chama de novo e a execução continua.
+    await pool.query(`update lead_evidences set created_at = now() - interval '20 minutes' where run_id = $1`, [r.run_id]);
+    expect(await peek()).toMatchObject({ status: "retomar", pedido_id: id, run_id: r.run_id, qualificados: 3, ja_vieram: 1 });
+    expect(await start()).toMatchObject({ status: "retomada", run_id: r.run_id, meta_qualificados: 3, ja_vieram: 1, faltam: 2, retomadas: 1 });
+    expect(await peek()).toEqual({ status: "nenhum" });
+    expect(await start()).toMatchObject({ status: "ja_em_andamento" });
+    expect((await register(tk, cand(90), undefined, r.run_id)).status).toBe("criado");
+    expect((await register(tk, cand(90), undefined, r.run_id)).status).toBe("criado");
+    expect((await register(tk, cand(90), undefined, r.run_id)).status).toBe("limite_atingido");
+    expect((await finish(r.run_id)).qualificados).toBe(3);
+    expect(await request(id)).toMatchObject({ status: "concluido", qualified_found: 3 });
+  });
+
+  it("depois de 3 retomadas parado, o pedido fecha com o que veio", async () => {
+    const id = await ask(5);
+    const r = await start();
+    for (let i = 1; i <= 3; i++) {
+      await pool.query(
+        `update hermes_runs set started_at = now() - interval '30 minutes',
+           config = config || jsonb_build_object('retomada_at', now() - interval '20 minutes') where id = $1`, [r.run_id]);
+      expect(await start()).toMatchObject({ status: "retomada", retomadas: i });
+    }
+    await pool.query(`update hermes_runs set config = config || jsonb_build_object('retomada_at', now() - interval '20 minutes') where id = $1`, [r.run_id]);
+    expect(await peek()).toEqual({ status: "nenhum" });
+    expect(await request(id)).toMatchObject({ status: "concluido", qualified_found: 0 });
+    expect((await request(id)).note).toMatch(/3 retomadas/);
+    expect((await pool.query(`select status from hermes_runs where id = $1`, [r.run_id])).rows[0].status).toBe("abandonada");
+  });
+
   it("a rotina diária continua igual", async () => {
     await ask(5);
     expect(await start("prospeccao-diaria")).toMatchObject({ status: "iniciada", restock: false, run_target: 20 });
