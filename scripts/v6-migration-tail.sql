@@ -9,7 +9,7 @@ begin
   select * into c from commercial_leads where lead_id=(x->>'lead_id')::uuid for update;
   if (x->>'first_contact')::boolean and not (select new_contacts_enabled from commercial_settings where id=1) then continue; end if;
   select coalesce(jsonb_agg(to_jsonb(t) order by received_at,id),'[]') into pending from
-   (select id,coalesce(nullif(body,''),'[Mídia recebida: '||media||']') as body,media,received_at,kind from outreach_replies where lead_id=c.lead_id and semantic_interpretation is null
+   (select id,coalesce(nullif(body,''),'[Mídia recebida: '||media||']') as body,media,received_at,'pendente_semantica'::text as kind,kind as transport_kind from outreach_replies where lead_id=c.lead_id and semantic_interpretation is null
     and (c.active_test_run is null or received_at>=(select started_at from commercial_test_runs where id=c.active_test_run)) order by received_at,id limit 20) t;
   -- Agrupa mensagens rápidas antes de decidir. Nunca responder entre eventos simultâneos.
   if exists(select 1 from outreach_replies where lead_id=c.lead_id and received_at>now()-interval '3 seconds') then continue; end if;
@@ -21,9 +21,10 @@ begin
    'followup_due',coalesce(c.followup_at<=now() and nullif(c.followup_reason,'') is not null,false),
    'phase',case when c.conversation_phase='NEEDS_RESEARCH' and not (x->>'first_contact')::boolean then 'WAITING_FIRST_REPLY' else c.conversation_phase end,
    'commercial_memory',c.commercial_memory);
+  ctx:=ctx||jsonb_build_object('messages',coalesce((select jsonb_agg(case when exists(select 1 from outreach_replies unresolved where unresolved.lead_id=c.lead_id and unresolved.semantic_interpretation is null and m->>'id' like unresolved.id::text||':%') then m||jsonb_build_object('kind','pendente_semantica','source','entrada_pendente') else m end) from jsonb_array_elements(ctx->'messages') m),'[]'));
   if c.active_test_run is not null then
    ctx:=ctx||jsonb_build_object('research',(select research from commercial_test_runs where id=c.active_test_run),'is_simulation',true,
-    'messages',coalesce((select jsonb_agg(m) from jsonb_array_elements(x->'messages') m where (m->>'occurred_at')::timestamptz>=(select started_at from commercial_test_runs where id=c.active_test_run)),'[]'),
+    'messages',coalesce((select jsonb_agg(m) from jsonb_array_elements(ctx->'messages') m where (m->>'occurred_at')::timestamptz>=(select started_at from commercial_test_runs where id=c.active_test_run)),'[]'),
     'demonstration_history',coalesce((select jsonb_agg(jsonb_build_object('demonstration_id',demonstration_id,'status',status,'sent_at',sent_at)) from commercial_outbox where lead_id=c.lead_id and kind='demo' and test_run_id=c.active_test_run),'[]'));
   end if;
   update commercial_leads set lease_id=lid,lease_token=p_token,lease_until=now()+interval '3 minutes',lease_context=ctx,recipient_timezone=tz where lead_id=c.lead_id;
@@ -131,7 +132,7 @@ begin
  else
   -- A classificação é válida apenas quando a decisão inteira foi aceita.
   for i in select value from jsonb_array_elements(p->'interpretations') loop
-   update outreach_replies set semantic_interpretation=null,kind=(select m->>'kind' from jsonb_array_elements(snapshot->'pending_messages') m where m->>'id'=i->>'message_id') where id=(i->>'message_id')::uuid;
+   update outreach_replies set semantic_interpretation=null,kind=(select coalesce(m->>'transport_kind',m->>'kind') from jsonb_array_elements(snapshot->'pending_messages') m where m->>'id'=i->>'message_id') where id=(i->>'message_id')::uuid;
   end loop;
  end if;
  return r;

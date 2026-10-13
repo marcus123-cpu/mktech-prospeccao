@@ -67,9 +67,22 @@ soluções/objeções). Typecheck e build passaram. Migração aplicada sob paus
 Esses números não substituem teste real de WhatsApp.
 
 ## 11. WhatsApp
-Participação do operador confirmada. Teste V6 ainda não iniciado. Envios anteriores
-do V4 não são apresentados como prova do novo motor. Ponte, enviador e banco
-restritos ao número autorizado; secretário preservado.
+Teste V6 iniciado em 13/10/2026 às 17:54 (São Paulo), sessão
+`28347d50-374b-4900-a24e-7018977fca1f`, lead interno
+`039520fa-aebc-4bc6-963a-f5d5f3f80500`. Saudação exclusivamente
+“Olá, boa tarde! Tudo bem?” entregue: outbox
+`b6ac08ab-a392-4752-bc8d-3a68ba1dc17e`, confirmação de envio às
+20:54:25 UTC e entrega às 20:54:29 UTC. Ainda aguardando resposta participativa;
+Primeira resposta participativa recebida às 20:54:50 UTC: UUID
+`5faff4be-3157-41a4-a368-aadbe00ca5b0`, “Olá boa tarde! Tudo bem sim aqui é a recepcionista”.
+O teste revelou indicação provisória de transporte confundida com automação;
+nenhuma resposta comercial foi enviada durante a recusa da validação. Contexto
+e prompt corrigidos para distinguir entrada pendente de interpretação confirmada.
+Conversa completa e demonstrações V6 **não validadas ainda**. Envios anteriores
+do V4 não substituem a prova do novo motor. Banco, ponte e enviador restritos ao
+número autorizado; secretário preservado. Publicação `bed2a03`, deployment
+`dpl_2ns8iZ3zuafJ9wAejTjU2jVoz2PA` READY; Playwright confirmou painel autenticado,
+motor V6, catálogo e botão de pausa das novas abordagens.
 
 ## 12. Problemas encontrados
 Modelo inicialmente omitiu identificação de fonte na proposta e produziu cargo

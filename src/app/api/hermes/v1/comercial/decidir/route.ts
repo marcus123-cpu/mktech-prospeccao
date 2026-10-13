@@ -23,6 +23,10 @@ export async function POST(request:Request){
  const ctx:V6Context={...snapshot.data,products:(snapshot.data.products??[]).map((p:{price:unknown})=>({...p,price:Number(p.price)}))};
  if(!ctx.first_contact&&(!input.proposal||!input.model))return json({status:'invalido',errors:['Interpretação e modelo obrigatórios']},422);
  const decision=ctx.first_contact?greetingDecision(ctx):contextualDecision(ctx,input.proposal!,input.model!);
+ if(decision.validation_errors.length){
+  const failed=await db.rpc('api_commercial_v6_failure',{p_token:auth.tokenId,p_lease:input.lease_id,p_reason:decision.validation_errors.join('; ').slice(0,300)});
+  return failed.error?temporaryFailure():json({status:'validacao_recusada',errors:decision.validation_errors});
+ }
  const {data,error}=await db.rpc('api_commercial_v6_save',{p_token:auth.tokenId,p_lease:input.lease_id,p:{...decision,score:scoreResearch(ctx.research,ctx.now)}});
  return error?temporaryFailure():json(data,data?.status==='desatualizada'?409:200);
 }

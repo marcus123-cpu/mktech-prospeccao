@@ -21,6 +21,9 @@ def step():
             except InferenceError as error:
                 payload['failure'] = str(error)
         code, saved = request('POST', '/api/hermes/v1/comercial/decidir', payload)
+        log(f"V6: decisão HTTP {code}; estado={saved.get('status')}")
+        if saved.get('status') == 'validacao_recusada':
+            log('V6: ' + '; '.join(saved.get('errors', [])[:8]))
         if code == 422:
             # JSON bem formado também pode violar o contrato do servidor.
             request('POST', '/api/hermes/v1/comercial/decidir', {'lease_id':context['lease_id'],'failure':'invalid_model_output'})
