@@ -1,7 +1,7 @@
 ---
 name: mktech-prospeccao
 description: Pesquisa diária de clínicas e profissionais de estética sem site próprio no interior de SP e cadastro no CRM da MKTech (sem contatar ninguém).
-version: 1.9.0
+version: 1.9.1
 platforms: [windows, linux, macos]
 metadata:
   hermes:
@@ -134,7 +134,11 @@ O Marcos pede na aba Pesquisas do Hermes "buscar N leads qualificados". O
 programa do PC só chama você quando há pedido. Então:
 
 1. `start-run --routine pedido-painel`. Código 3 (`sem_pedido` ou
-   `ja_em_andamento`): pare sem pesquisar.
+   `ja_em_andamento`): pare sem pesquisar. Status `retomada`: a execução
+   anterior deste pedido parou no meio e você continua **a mesma** (mesmo
+   `run_id`). `ja_vieram` diz quantos qualificados já entraram e `faltam`
+   quantos ainda precisa; `minutos_restantes` é o tempo que sobra. Não
+   recadastre quem já está no CRM: use `identifiers` e `check`.
 2. A resposta traz a meta e os limites **deste pedido**: `meta_qualificados`
    (= `run_target`), `max_searches` e `max_run_minutes`. Use esses números,
    não os do `selftest`.
@@ -144,6 +148,11 @@ programa do PC só chama você quando há pedido. Então:
    bater a meta de qualificados.
 4. O servidor recusa com código 4 quando a meta de qualificados é batida (ou
    quando já cadastrou 4 vezes a meta): pare e encerre com `finish`.
+   Não use `pedido-pendente` para decidir se continua: ele é só do programa
+   do PC e responde `nenhum` enquanto o seu pedido está em andamento. Quem
+   diz quando parar é o código 4 do `register` ou o fim das buscas/do tempo.
+   Só encerre o turno depois do `finish`: se você parar antes, o programa do
+   PC chama de novo depois de 15 minutos sem cadastro (até 3 vezes).
 5. Sem paralelismo: um lote de buscas por vez, conferindo o total antes do
    próximo, para nunca passar de `max_searches`.
 
