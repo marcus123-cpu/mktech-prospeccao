@@ -29,6 +29,15 @@ do vídeo, tabela oficial, funil e próximo passo. A ponte faz o envio autorizad
 Não acione canais diretamente nem duplique ações do worker. Pesquisa continua
 pelo procedimento abaixo. Elegibilidade do contato é separada da pesquisa.
 
+Biblioteca comercial: `hermes/videos-demonstracao/catalogo.json`. No modo V4,
+landing page ou portfólio usa `DEMO_ROSANA_LANDING`; vitrine, institucional ou
+produtos usa `DEMO_POLPUJA_VITRINE`. O motor oferece o material cadastrado,
+aguarda autorização contextual do cliente e envia pela ponte, sem aprovação
+manual de Marcos para cada envio. A oferta, autorização e confirmação ficam
+no CRM. Não ofereça material não aprovado nem repita uma demonstração enviada.
+As seções de mensagens, leitura e secretário abaixo descrevem o modo legado;
+com V4 habilitado, as regras comerciais são as do motor e catálogo.
+
 O score V4 é recalculado no servidor: nicho 20, oportunidade verificável 25,
 atividade recente 15, benefício potencial 15, canal comercial 15 e dados de
 personalização 10. Confiança é separada; uma única fonte não recebe confiança
