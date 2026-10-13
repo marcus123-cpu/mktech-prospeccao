@@ -1,7 +1,7 @@
 ---
 name: mktech-prospeccao
 description: Pesquisa diária de clínicas e profissionais de estética sem site próprio no interior de SP e cadastro no CRM da MKTech (sem contatar ninguém).
-version: 1.9.1
+version: 1.10.0
 platforms: [windows, linux, macos]
 metadata:
   hermes:
@@ -314,6 +314,50 @@ Exemplo de `mensagem.json`:
 
 Quando a pessoa responder a essa pergunta, quem continua é o **modo
 secretário** (abaixo), se o Marcos tiver ligado o secretário no painel.
+
+## Modo leitura da resposta (estilo "lendo a resposta")
+
+Com os estilos alternando no painel, metade dos leads não recebe o texto
+pronto: o CRM espera a pessoa responder a saudação e pede para você **ler o
+que ela escreveu** antes de escrever a mensagem. Você só escreve; quem envia
+é o enviador do PC, depois que o CRM aprovar.
+
+1. `envio-leitura-pendentes --count 5` traz, para cada mensagem:
+   `message_id`, `saudacao_enviada`, `respostas` (o que a pessoa escreveu),
+   `elogio`, `dor`, `melhoria`, `texto_preparado` (o texto do estilo
+   agradecimento, só como referência) e `lead` (dados, diagnóstico e
+   evidências).
+2. Escreva **uma** mensagem que responda ao que ela disse e siga o
+   **passo 2** do método:
+   - Se ela cumprimentou ("Olá, bom dia", "Oi, tudo bem?"), responda o
+     cumprimento de forma natural ("Bom dia! Tudo ótimo, e com você?").
+   - Se ela perguntou quem é ou como pode ajudar, apresente-se com o nome
+     ("Me chamo Marcos") e diga em uma frase por que escreveu, usando o
+     `elogio`.
+   - Termine com **uma** pergunta de investigação ligada à `dor`, como no
+     texto preparado.
+   - **Não** use o "Obrigado pelo retorno!" fixo: o texto tem que soar
+     como resposta ao que ela escreveu.
+   - Mesmas regras da mensagem preparada: 100 a 400 caracteres, "você",
+     só fatos do lead, sem site, página, preço, link, pressão ou menção a
+     IA/robô. Pode começar com "Bom dia"/"Oi", porque aqui é resposta.
+   - Se ela pediu para não receber mensagens, **não grave nada**.
+3. Grave com `envio-leitura-salvar --message <message_id> --file texto.json`
+   (`{"mensagem": "..."}`).
+   - Código 0: entrou na fila e sai no horário de atendimento.
+   - Código 2: o CRM recusou e devolveu `errors`. Corrija e tente **uma**
+     vez. Se recusar de novo, não grave: a mensagem fica parada e o Marcos
+     vê no painel.
+   - `desatualizada`: o texto já foi escrito ou a mensagem não espera mais;
+     siga para a próxima.
+
+Exemplo de `texto.json`, para a resposta "Olá, bom dia! Como posso ajudar?":
+
+```json
+{
+  "mensagem": "Bom dia! Me chamo Marcos, tudo bem? Vi as 87 avaliações de vocês no Google, muita gente elogiando o atendimento. Fiquei com uma dúvida: quando alguém pesquisa harmonização em Votuporanga e ainda não conhece vocês, como essa pessoa costuma chegar até vocês?"
+}
+```
 
 ## Modo secretário (responder a conversa)
 

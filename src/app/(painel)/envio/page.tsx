@@ -8,11 +8,13 @@ import {
   ReclassifyButton,
   RetryButton,
   SenderTokenForm,
+  StylesControl,
   SwitchControls,
   TodayTargetForm,
   ReturnToSecretaryButton,
   type OutreachSettings,
 } from "./Forms";
+import { STYLE_LABEL, styleNote, type OutreachStyle } from "@/lib/envio/estilos";
 
 export const metadata = { title: "Envio automático" };
 export const dynamic = "force-dynamic";
@@ -50,6 +52,8 @@ type Msg = {
   error: string | null;
   cancel_reason: string | null;
   created_at: string;
+  style: OutreachStyle;
+  reply_body_at: string | null;
   leads: { business_name: string; city: string } | null;
 };
 type Reply = {
@@ -97,7 +101,8 @@ function MsgItem({ m }: { m: Msg }) {
         <div>
           <Link href={`/leads/${m.lead_id}`} className="font-medium hover:underline">{m.leads?.business_name ?? "Lead"}</Link>
           <span className="text-xs text-muted"> · {m.leads?.city}</span>{" "}
-          <span className={`badge ${STATUS_COLOR[m.status] ?? ""}`}>{STATUS_LABEL[m.status] ?? m.status}</span>
+          <span className={`badge ${STATUS_COLOR[m.status] ?? ""}`}>{STATUS_LABEL[m.status] ?? m.status}</span>{" "}
+          <span className="badge">{STYLE_LABEL[m.style] ?? m.style}</span>
           <span className="text-xs text-muted">
             {m.sent_at ? ` · enviada ${fmtDateTime(m.sent_at)}` : m.greeting_sent_at ? ` · saudação ${fmtDateTime(m.greeting_sent_at)}` : ` · escrita ${fmtDateTime(m.created_at)}`}
           </span>
@@ -106,6 +111,7 @@ function MsgItem({ m }: { m: Msg }) {
       </div>
       <div className="mt-2 rounded-lg bg-panel-2 p-3">
         <p className="text-xs text-muted">{m.greeting ?? "Saudação (bom dia / boa tarde / boa noite) definida na hora do envio"}</p>
+        {styleNote(m.style, m.reply_body_at) && <p className="mt-1 text-xs text-amber-300">{styleNote(m.style, m.reply_body_at)}</p>}
         <p className="mt-1 whitespace-pre-wrap">{m.body}</p>
       </div>
       <p className="mt-1 text-xs text-muted">Elogio: {m.compliment} · Dor: {m.pain} · Melhoria: {m.improvement}</p>
@@ -121,7 +127,7 @@ export default async function EnvioPage() {
     supabase.from("outreach_settings").select("*").eq("id", 1).maybeSingle(),
     supabase
       .from("outreach_messages")
-      .select("id, lead_id, status, body, compliment, pain, improvement, greeting, greeting_sent_at, sent_at, error, cancel_reason, created_at, leads(business_name, city)")
+      .select("id, lead_id, status, body, compliment, pain, improvement, greeting, greeting_sent_at, sent_at, error, cancel_reason, created_at, style, reply_body_at, leads(business_name, city)")
       .order("created_at", { ascending: false })
       .limit(60),
     supabase
@@ -331,6 +337,10 @@ export default async function EnvioPage() {
               Um lead e um telefone recebem no máximo uma abordagem automática. Se o enviador não confirmar uma etapa, ela não é reenviada.
             </p>
             <OutreachSettingsForm s={s} />
+          </Fold>
+
+          <Fold title="✍️ Estilo da mensagem" hint={s.message_styles === "alternar" ? "alternando" : "só agradecimento"}>
+            <StylesControl s={s} />
           </Fold>
 
           <Fold title="🔑 Token do enviador">

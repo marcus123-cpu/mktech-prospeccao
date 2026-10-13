@@ -116,6 +116,7 @@ const STATUS_HTTP: Record<string, number> = {
   pendente: 200,
   retomar: 200,
   retomada: 200,
+  gravada: 201,
 };
 
 /** Converte o resultado jsonb de uma função api_* em resposta HTTP. */

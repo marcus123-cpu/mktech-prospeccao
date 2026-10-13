@@ -164,6 +164,20 @@ class ClientTest(unittest.TestCase):
         code, out, _ = self.run_cli("secretario-pendentes", "--count", "99")
         self.assertEqual(code, 0)
 
+    def test_reading_save_sends_only_the_text(self):
+        msg_id = "22222222-2222-4222-8222-222222222222"
+        FakeApi.responses[f"POST /api/hermes/v1/envio/leitura/{msg_id}"] = [(201, {"status": "gravada"}, {})]
+        path = Path(self.tmp.name) / "t.json"
+        path.write_text(json.dumps({"mensagem": "Bom dia! Me chamo Marcos.", "elogio": "x"}), encoding="utf-8")
+        code, out, _ = self.run_cli("envio-leitura-salvar", "--message", msg_id, "--file", str(path))
+        self.assertEqual(code, 0)
+        self.assertEqual(FakeApi.calls[-1]["body"], {"mensagem": "Bom dia! Me chamo Marcos."})
+
+    def test_reading_pending_caps_count(self):
+        FakeApi.responses["GET /api/hermes/v1/envio/leitura?limit=20"] = [(200, {"status": "ok", "mensagens": []}, {})]
+        code, out, _ = self.run_cli("envio-leitura-pendentes", "--count", "99")
+        self.assertEqual(code, 0)
+
     def test_retries_on_503_then_succeeds(self):
         FakeApi.responses["POST /api/hermes/v1/candidates"] = [
             (503, {"status": "falha_temporaria"}, {"Retry-After": "1"}),

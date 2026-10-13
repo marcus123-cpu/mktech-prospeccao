@@ -23,6 +23,8 @@ Comandos (saída sempre em JSON no stdout; logs no stderr):
           --errors N --end-reason "texto" [--error-detail "..."]
   envio-pendentes [--count N]      leads que precisam da mensagem do envio
   envio-salvar --lead ID --file m.json  grava a mensagem (validada pelo CRM)
+  envio-leitura-pendentes [--count N]  mensagens "lendo a resposta" esperando o texto
+  envio-leitura-salvar --message ID --file t.json  grava o texto escrito depois da resposta
   secretario-pendentes [--count N] conversas que esperam resposta do secretário
   secretario-salvar --lead ID --file r.json  grava a resposta e/ou passa para o Marcos
 
@@ -255,6 +257,18 @@ def cmd_outreach_save(args: argparse.Namespace) -> int:
     return emit(*request("POST", f"/api/hermes/v1/envio/mensagens/{args.lead}", body))
 
 
+def cmd_reading_pending(args: argparse.Namespace) -> int:
+    count = max(1, min(int(args.count), 20))
+    return emit(*request("GET", f"/api/hermes/v1/envio/leitura?limit={count}"))
+
+
+def cmd_reading_save(args: argparse.Namespace) -> int:
+    msg = read_json(args.file)
+    if not isinstance(msg, dict):
+        return fail(EXIT_INVALID, "o arquivo precisa ter um objeto com mensagem")
+    return emit(*request("POST", f"/api/hermes/v1/envio/leitura/{args.message}", {"mensagem": msg.get("mensagem")}))
+
+
 def cmd_secretary_pending(args: argparse.Namespace) -> int:
     count = max(1, min(int(args.count), 20))
     return emit(*request("GET", f"/api/hermes/v1/secretario/pendentes?limit={count}"))
@@ -303,6 +317,13 @@ def main(argv: list[str] | None = None) -> int:
     es.add_argument("--lead", required=True)
     es.add_argument("--file", required=True, help="JSON com elogio, dor, melhoria e mensagem, ou - para stdin")
     es.set_defaults(fn=cmd_outreach_save)
+    lp = sub.add_parser("envio-leitura-pendentes")
+    lp.add_argument("--count", type=int, default=5)
+    lp.set_defaults(fn=cmd_reading_pending)
+    ls_ = sub.add_parser("envio-leitura-salvar")
+    ls_.add_argument("--message", required=True)
+    ls_.add_argument("--file", required=True, help="JSON com mensagem, ou - para stdin")
+    ls_.set_defaults(fn=cmd_reading_save)
     sp = sub.add_parser("secretario-pendentes")
     sp.add_argument("--count", type=int, default=5)
     sp.set_defaults(fn=cmd_secretary_pending)

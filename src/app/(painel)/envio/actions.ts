@@ -127,6 +127,18 @@ export async function setFollowups(_: EnvioState, form: FormData): Promise<Envio
   return done(on ? "Lembretes LIGADOS." : "Lembretes desligados.");
 }
 
+export async function setStyles(_: EnvioState, form: FormData): Promise<EnvioState> {
+  const { supabase } = await requireAdmin();
+  const styles = form.get("styles") === "alternar" ? "alternar" : "agradecimento";
+  const { error } = await supabase.rpc("admin_outreach_styles", { p_styles: styles });
+  if (error) return { error: dbErrorMessage(error) };
+  return done(
+    styles === "alternar"
+      ? "Estilos alternando: um lead com agradecimento, o próximo lendo a resposta."
+      : "Todos os leads novos com o agradecimento.",
+  );
+}
+
 export async function setAfterNoon(_: EnvioState, form: FormData): Promise<EnvioState> {
   const { supabase } = await requireAdmin();
   const on = form.get("enabled") === "true";

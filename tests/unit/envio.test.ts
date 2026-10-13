@@ -48,6 +48,13 @@ describe("mensagem do envio automático", () => {
     expect(errors.join(" ")).toMatch(/saudação/);
   });
 
+  it("estilo lendo a resposta: pode começar com bom dia, mas segue as outras regras", () => {
+    const mensagem = `Bom dia, Ana! ${good.mensagem}`;
+    expect(validateOutreach(ctx, { ...good, mensagem }, { replying: true })).toEqual([]);
+    const errors = validateOutreach(ctx, { ...good, mensagem: `Bom dia! Posso te mostrar um site? ${good.mensagem}` }, { replying: true });
+    expect(errors.join(" ")).toMatch(/site/);
+  });
+
   it("recusa fatos inventados", () => {
     const m = good.mensagem.replace("87 avaliações", "300 avaliações").replace("harmonização", "botox");
     const errors = validateOutreach(ctx, { ...good, mensagem: m });

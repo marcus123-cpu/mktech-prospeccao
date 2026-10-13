@@ -136,7 +136,12 @@ function needsCaution(ctx: LeadContext): boolean {
 }
 
 /** Problemas da mensagem. Lista vazia = pode ir para a fila. */
-export function validateOutreach(ctx: LeadContext, p: OutreachPayload): string[] {
+export type OutreachOptions = {
+  /** Estilo "lendo a resposta": o texto responde ao que a pessoa escreveu, então pode começar com "Bom dia". */
+  replying?: boolean;
+};
+
+export function validateOutreach(ctx: LeadContext, p: OutreachPayload, opts: OutreachOptions = {}): string[] {
   const out: string[] = [];
   const text = (p.mensagem ?? "").trim();
   const n = norm(text);
@@ -145,7 +150,7 @@ export function validateOutreach(ctx: LeadContext, p: OutreachPayload): string[]
   if (!ctx.diagnosis) out.push("Lead sem diagnóstico: não dá para escrever a mensagem.");
   if (text.length < MIN_CHARS) out.push(`Mensagem curta demais (mínimo ${MIN_CHARS} caracteres).`);
   if (text.length > MAX_CHARS) out.push(`Passou de ${MAX_CHARS} caracteres (${text.length}).`);
-  if (GREETING_START.test(n)) out.push("Não comece com saudação: o bom dia/boa noite é enviado antes, separado.");
+  if (!opts.replying && GREETING_START.test(n)) out.push("Não comece com saudação: o bom dia/boa noite é enviado antes, separado.");
 
   const all = norm([p.elogio, p.dor, p.melhoria, text].join("\n"));
   if (TECHNICAL.some((r) => r.test(all))) out.push("Tem texto técnico ou de erro; a mensagem não pode ter isso.");

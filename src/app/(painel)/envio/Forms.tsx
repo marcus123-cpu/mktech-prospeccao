@@ -11,6 +11,7 @@ import {
   setEnabled,
   setAfterNoon,
   setFollowups,
+  setStyles,
   setPaused,
   setSecretary,
   setTodayTarget,
@@ -38,6 +39,7 @@ export type OutreachSettings = {
   reply_window_end?: number;
   prospect_after_noon?: boolean;
   secretary_enabled?: boolean;
+  message_styles?: "agradecimento" | "alternar";
 };
 
 const DAYS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
@@ -161,6 +163,33 @@ export function SwitchControls({ s }: { s: OutreachSettings }) {
             : `Liberar a prospecção (saudação e lembretes) até as ${s.reply_window_end ?? 18}h? Normalmente ela para às ${s.window_end}h; o bot continua respondendo clientes até ${s.reply_window_end ?? 18}h de qualquer forma.`
         }
       />
+    </div>
+  );
+}
+
+export function StylesControl({ s }: { s: OutreachSettings }) {
+  const alternating = s.message_styles === "alternar";
+  return (
+    <div className="space-y-2 text-sm">
+      <p>
+        Agora: <strong>{alternating ? "alternando (🙏 agradecimento e 👂 lendo a resposta)" : "só 🙏 agradecimento"}</strong>
+      </p>
+      <p className="text-xs text-muted">
+        🙏 Agradecimento: o texto fica pronto antes e sai quando a pessoa responde à saudação. 👂 Lendo a resposta: o Hermes
+        espera a pessoa responder, lê o que ela escreveu e só então escreve a mensagem. Vale para os leads que entrarem na
+        fila depois da troca.
+      </p>
+      {alternating ? (
+        <MiniAction action={setStyles} fields={{ styles: "agradecimento" }} label="Voltar a usar só o agradecimento" variant="btn-ghost" />
+      ) : (
+        <MiniAction
+          action={setStyles}
+          fields={{ styles: "alternar" }}
+          label="Alternar os dois estilos"
+          variant="btn-ghost"
+          confirmText="Alternar os estilos? Cada lead novo na fila pega o estilo contrário ao anterior: um com o agradecimento pronto, o próximo com o texto escrito pelo Hermes depois de ler a resposta da pessoa."
+        />
+      )}
     </div>
   );
 }
