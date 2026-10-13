@@ -132,6 +132,13 @@ export function compact<T extends Record<string, unknown>>(obj: T): Partial<T> {
 
 // Envio automático: mensagem que o Hermes escreve a partir do diagnóstico.
 // A saudação (bom dia / boa noite) não entra aqui: o servidor manda antes.
+// Estilo "lendo a resposta": só o texto; elogio, dor e melhoria já estão gravados.
+export const readingSchema = z
+  .object({
+    mensagem: text(700).min(1),
+  })
+  .strict();
+
 export const outreachSchema = z
   .object({
     elogio: text(300).min(1),

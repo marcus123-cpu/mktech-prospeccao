@@ -24,6 +24,7 @@ import {
   scheduleFollowUp,
   updateLead,
 } from "../actions";
+import { STYLE_LABEL, styleNote, type OutreachStyle } from "@/lib/envio/estilos";
 
 export const metadata = { title: "Lead" };
 
@@ -51,7 +52,7 @@ export default async function LeadDetail({
     supabase.from("lead_diagnoses").select("*").eq("lead_id", id).order("created_at", { ascending: false }).limit(20),
     supabase
       .from("outreach_messages")
-      .select("status, greeting, body, greeting_sent_at, sent_at")
+      .select("status, greeting, body, greeting_sent_at, sent_at, style, reply_body_at")
       .eq("lead_id", id)
       .neq("status", "cancelada")
       .maybeSingle(),
@@ -199,6 +200,20 @@ export default async function LeadDetail({
           )}
           <NextStep stage={l.stage as Stage} />
           <DiagnosisCard d={(diagnoses.data?.[0] as Diagnosis | undefined) ?? null} olderCount={Math.max((diagnoses.data?.length ?? 0) - 1, 0)} />
+          {outreach.data && (
+            <div className="card p-4 text-sm">
+              <h2 className="mb-2 text-sm font-semibold">
+                Mensagem do envio{" "}
+                <span className="badge">{STYLE_LABEL[outreach.data.style as OutreachStyle] ?? outreach.data.style}</span>
+              </h2>
+              <p className="text-xs text-muted">{outreach.data.greeting ?? "Saudação (bom dia / boa tarde / boa noite) definida na hora do envio"}</p>
+              {styleNote(outreach.data.style, outreach.data.reply_body_at) && (
+                <p className="mt-1 text-xs text-amber-300">{styleNote(outreach.data.style, outreach.data.reply_body_at)}</p>
+              )}
+              <p className="mt-1 whitespace-pre-wrap">{outreach.data.body}</p>
+              {outreach.data.sent_at && <p className="mt-1 text-xs text-muted">Enviada {fmtDateTime(outreach.data.sent_at)}</p>}
+            </div>
+          )}
           <div className="card grid gap-4 p-4 text-sm sm:grid-cols-2">
             <Info label="Telefone original" value={l.phone_raw} />
             <Info label="Telefone normalizado" value={l.phone_e164 ?? (l.phone_raw ? "não reconhecido" : null)} />
