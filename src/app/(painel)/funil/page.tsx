@@ -5,6 +5,7 @@ import { fmtDateTime, haQuanto } from "@/lib/time";
 import { SwitchControls, type OutreachSettings } from "../envio/Forms";
 import { ArchiveButton } from "./Archive";
 import { ClearPriceButton } from "./ClearPrice";
+import { AutoRefresh } from "@/components/AutoRefresh";
 
 export const metadata = { title: "Funil" };
 export const dynamic = "force-dynamic";
@@ -33,10 +34,11 @@ const COLUMNS = [
   { key: "sem_resposta", title: "😶 Sem resposta", hint: "2 dias úteis sem pessoa responder: nada é enviado sozinho", tone: "border-zinc-400 bg-zinc-500/10!" },
   { key: "lembrando", title: "🔔 Lembrete enviado", hint: "você falou por último e o cliente sumiu: o sistema já lembrou", tone: "border-teal-400 bg-teal-500/10!" },
   { key: "sem_retorno", title: "💤 Sem retorno", hint: "2 lembretes sem resposta: encerrado, nada mais é enviado", tone: "border-stone-400 bg-stone-500/10!" },
-  { key: "conversa", title: "💬 Em conversa", hint: "uma pessoa respondeu: é com você", tone: "border-sky-400 bg-sky-500/10!" },
+  { key: "conversa", title: "💬 Em conversa", hint: "uma pessoa respondeu; abra o histórico para acompanhar", tone: "border-sky-400 bg-sky-500/10!" },
   { key: "valor", title: "💰 Pergunta de valor", hint: "perguntou preço: responda você", tone: "border-amber-400 bg-amber-500/10!" },
-  { key: "fechando", title: "🤝 Fechando", hint: "proposta enviada", tone: "border-violet-400 bg-violet-500/10!" },
+  { key: "fechando", title: "🤝 Fechando", hint: "proposta ou negociação em andamento", tone: "border-violet-400 bg-violet-500/10!" },
   { key: "fechado", title: "🎉 Fechado", hint: "venda fechada", tone: "border-emerald-400 bg-emerald-500/10!" },
+  { key: "encerrado", title: "🚫 Encerrados", hint: "sem interesse, não contatar ou oportunidade encerrada", tone: "border-zinc-400 bg-zinc-500/10!" },
 ] as const;
 
 export default async function FunilPage() {
@@ -52,11 +54,12 @@ export default async function FunilPage() {
   const attention = cards.filter((c) => c.coluna === "atencao").length;
   // Quem respondeu e está esperando você, do mais antigo (mais urgente) ao mais novo.
   const waiting = cards
-    .filter((c) => (c.coluna === "conversa" || c.coluna === "valor") && c.last_reply_at)
+    .filter((c) => (c.coluna === "conversa" || c.coluna === "valor") && c.last_reply_at && (!c.sent_at || new Date(c.last_reply_at).getTime() > new Date(c.sent_at).getTime()))
     .sort((a, b) => new Date(a.last_reply_at as string).getTime() - new Date(b.last_reply_at as string).getTime());
 
   return (
     <>
+      <AutoRefresh />
       <PageHeader
         title="🎯 Funil"
         subtitle="Acompanhe as etapas da prospecção. Abra a central para ver o histórico e assumir o atendimento."
@@ -94,7 +97,7 @@ export default async function FunilPage() {
           )}
           {attention > 0 && (
             <p className="mb-4 rounded-lg border border-rose-900 bg-rose-950/40 p-3 text-sm text-rose-200">
-              {attention} envio(s) falharam.{" "}
+              {attention} envio(s) precisam de verificação.{" "}
               <Link href="/envio" className="underline">Ver em Envio automático</Link>
             </p>
           )}
@@ -131,7 +134,7 @@ export default async function FunilPage() {
                   <ul className="space-y-2">
                     {items.slice(0, 50).map((c) => (
                       <li key={c.id} className="rounded-lg bg-panel-2 p-3 text-sm">
-                        <Link href={`/leads/${c.id}`} className="font-medium hover:underline">{c.business_name}</Link>
+                        <Link href={`/conversas?lead=${c.id}`} className="font-medium hover:underline">{c.business_name}</Link>
                         <div className="text-xs text-muted">
                           {c.city}
                           {c.fit_score !== null && ` · nota ${c.fit_score}`}
