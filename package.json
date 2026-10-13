@@ -10,7 +10,7 @@
     "test": "vitest run tests/unit tests/api && python -m unittest discover -s hermes/tests && python -m unittest discover -s envio/tests",
     "test:db": "bash tests/db/reset.sh && vitest run tests/db",
     "test:unit": "vitest run tests/unit tests/api",
-    "test:bridge": "node --test envio/whatsapp-web/journal.test.cjs envio/whatsapp-web/demo-library.test.cjs",
+    "test:bridge": "node --test envio/whatsapp-web/journal.test.cjs envio/whatsapp-web/demo-library.test.cjs envio/whatsapp-web/compat-media.test.cjs envio/whatsapp-web/message-id.test.cjs",
     "test:db:windows": "powershell -NoProfile -File tests/db/reset.ps1 && vitest run tests/db",
     "check:secrets": "node scripts/verificar-segredos.mjs"
   },

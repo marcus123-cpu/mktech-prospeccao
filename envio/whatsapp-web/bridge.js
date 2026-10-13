@@ -14,10 +14,12 @@
 
 const http = require("http");
 const qrcode = require("qrcode-terminal");
+require('./compat-media').ensureMediaCompatibility();
 const { Client, LocalAuth, MessageMedia } = require("whatsapp-web.js");
 const path = require("node:path");
 const { Journal } = require("./journal");
 const { DemoLibrary } = require("./demo-library");
+const { messageId } = require('./message-id');
 // Somente configurações conhecidas, sem executar comandos contidos no .env.
 const envFile = path.join(__dirname, "..", ".env");
 if (require('node:fs').existsSync(envFile)) {
@@ -103,15 +105,16 @@ const ehConversaIndividual = (id) => id && !id.endsWith("@g.us") && !id.endsWith
 client.on("message_create", async (msg) => {
   try {
     if (!msg.fromMe || msg.isStatus) return;
-    const id = msg.id && msg.id._serialized;
-    if (id && enviadasPelaPonte.has(id)) return;
+    const id = messageId(msg);
+    if (id && (enviadasPelaPonte.has(id) || journal.results().some(item=>item.provider_id===id))) return;
     const to = msg.to || "";
     if (!ehConversaIndividual(to)) return;
     if (TIPOS_DE_SISTEMA.has(msg.type)) return;
     if ([...enviosEmAndamento].some((item) => item.to === to && item.texto === msg.body)) return;
     const numero = await numeroDe(to, msg);
     if (!numero) return;
-    if (id && enviadasPelaPonte.has(id)) return;
+    if (id && (enviadasPelaPonte.has(id) || journal.results().some(item=>item.provider_id===id))) return;
+    if ([...enviosEmAndamento].some(item=>item.phone===numero.replace(/\D/g,'') && item.texto===msg.body)) return;
     console.log("[minha]", to, "->", numero);
     minhas.push({
       telefone: "+" + numero.replace(/\D/g, ""),
@@ -147,7 +150,7 @@ client.on("message", async (msg) => {
     const tipo = msg.type === "ptt" || msg.type === "audio" ? "audio" : msg.type === "image" ? "imagem" : msg.type === "chat" ? "texto" : "outro";
     console.log("[recebida]", tipo, "de", from, "->", numero);
     inbox.push({
-      message_id: msg.id && msg.id._serialized,
+      message_id: messageId(msg),
       telefone: "+" + numero.replace(/\D/g, ""),
       texto: tipo === "texto" ? msg.body : null,
       tipo,
@@ -233,16 +236,16 @@ const server = http.createServer(async (req, res) => {
       }
       const id = await client.getNumberId(digits);
       if (!id) { if (item_id) journal.result(item_id, 'falhou'); return send(res, 422, { ok: false, erro: "número não tem WhatsApp" }); }
-      const pending = { to: id._serialized, texto:typeof content === 'string' ? content : texto };
+      const pending = { to: id._serialized, phone:digits, texto:typeof content === 'string' ? content : texto };
       enviosEmAndamento.add(pending);
       let sent;
       try { sent = await client.sendMessage(id._serialized, content, options); }
       finally { enviosEmAndamento.delete(pending); }
-      if (sent && sent.id && sent.id._serialized) {
-        enviadasPelaPonte.add(sent.id._serialized);
+      const provider = messageId(sent);
+      if (provider) {
+        enviadasPelaPonte.add(provider);
         if (enviadasPelaPonte.size > 500) enviadasPelaPonte.delete(enviadasPelaPonte.values().next().value);
       }
-      const provider = sent && sent.id ? sent.id._serialized : null;
       if (item_id) journal.result(item_id, provider ? 'enviada' : 'desconhecido', provider);
       return send(res, 200, { ok: !!provider, id: provider, message_status: provider ? 'enviada' : 'desconhecido' });
     }
@@ -253,7 +256,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 client.on('message_ack', (msg, ack) => {
-  const id = msg.id && msg.id._serialized;
+  const id = messageId(msg);
   for (const item of journal.results()) {
     if (id && item.provider_id === id && ack >= 2) journal.result(item.item_id, 'entregue', id);
   }

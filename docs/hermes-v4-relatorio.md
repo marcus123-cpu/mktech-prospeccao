@@ -154,35 +154,37 @@ respostas automáticas posteriores a perguntas humanas e controle de acesso.
 
 ## 13. Resultados
 
-Validação: 200 testes de unidade/API, 196 testes Postgres (incluindo biblioteca),
-20 testes Python da integração CRM, 26 do enviador e 10 da ponte. TypeScript,
+Validação final com a versão recente de produção incorporada: 201 testes de unidade/API,
+203 testes Postgres, 22 testes Python da integração CRM, 26 do enviador e 14 da ponte (466 no total). TypeScript,
 build Next e inspeção de segredos passaram. O detalhe da biblioteca está em
 `docs/hermes-demonstracoes.md`.
-Os testes usam dados sintéticos e servidores locais; nenhum contato real foi
-acionado. Durante a validação, um conflito de alias SQL na marcação de sem resposta
+As suítes usam dados sintéticos e servidores locais. Na validação de produção,
+somente o contato interno previamente cadastrado recebeu os dois materiais,
+ambos com entrega confirmada e sem duplicação após reiniciar. Durante a validação, um conflito de alias SQL na marcação de sem resposta
 foi identificado e corrigido; a suíte completa foi executada novamente.
 
 ## 14. Pendências e limites
 
-- Migração aplicada somente ao banco local de teste, sem alteração do Supabase de
-  produção. Publicação do painel e instalação da skill externa não foram feitas.
+- As três migrações foram aplicadas em produção, o painel foi publicado e a skill
+  instalada no Hermes foi atualizada, preservando seu `.env` e os candidatos.
 - O MP4 real foi copiado e validado. Tabela oficial e telefone de teste ainda
   precisam ser configurados; nenhum desses valores foi inventado.
-- Envio/entrega de vídeo, QR, reconexão e permissões no WhatsApp real ainda precisam
-  de teste controlado no canal configurado. Não há evidência de entrega real.
+- Vídeo e link foram entregues no telefone interno. A reconexão foi validada sem
+  novo QR, e resultados persistiram após reiniciar. O canal permanece em modo teste.
 - Pesquisa real depende do Hermes e de seu provedor de busca. Foi validado o
   contrato existente de cadastro/deduplicação, não uma rodada externa de pesquisa.
 - Motor determinístico encaminha situações sem interpretação confiável. Não faz
   contratos, confirmação bancária, proposta livre ou tratamento de áudio por IA.
 - Resultado desconhecido exige reconciliação na ponte; não há reenfileiramento
   automático. O journal contém dados comerciais locais e deve ser preservado.
-- Métricas e permissões foram testadas no Postgres; build valida a página, mas não
-  substitui uma revisão visual autenticada no ambiente de produção.
+- Playwright verificou acesso administrativo autenticado a `/comercial`,
+  `/conversas`, `/leads` e `/execucoes`, todos HTTP 200, com os dois materiais visíveis.
 
 ## 15. Como executar
 
 1. Faça backup do banco e aplique as migrações V4 e catálogo **depois** das anteriores:
    `20261013141307_hermes_v4.sql` e `20261013152458_catalogo_demonstracoes.sql`.
+   Aplicar também `20261013165000_demo_response_reconciliation.sql`.
    Não execute scripts de reset no Supabase.
 2. Atualize painel, ponte e transporte juntos. O protocolo da ponte passou a
    confirmar entradas com ACK; não misture ponte nova com enviador antigo.
