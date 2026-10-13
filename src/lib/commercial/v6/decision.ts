@@ -25,8 +25,15 @@ export function contextualDecision(ctx:V6Context,p:SemanticProposal,model:string
   if(p.opportunity_index!==null)state.facts.oportunidade_apresentada=String(p.opportunity_index);
   if(p.followup_at){state.followup_at=p.followup_at;state.followup_reason=p.followup_evidence;}
   const latest=p.interpretations.at(-1);
+  const interest=latest?.intentions.find(i=>i.kind==='INTERESTED'&&i.confidence>=.85);
+  if(interest&&p.action!=='stop'){state.facts.interesse_confirmado=interest.evidence;state.stage='INTERESSE_IDENTIFICADO';}
   if(p.action==='stop'){state.stage=latest?.intentions.some(i=>i.kind==='OPT_OUT')?'NAO_CONTATAR':'PERDIDO';state.followup_at=null;state.followup_reason=null;return {...result,action:'stop',phase:'CLOSED'};}
-  if(p.action==='handoff')return {...result,action:'handoff',body:p.response,phase:'HUMAN_HANDOFF',notification:'Intervenção comercial necessária'};
+  if(p.action==='handoff'){
+    state.followup_at=null;state.followup_reason=null;
+    if(p.interpretations.at(-1)?.intentions.some(i=>i.kind==='CONTRACT_REQUEST'))state.stage='PROPOSTA_SOLICITADA';
+    const human=p.interpretations.at(-1)?.type==='human'&&(p.interpretations.at(-1)?.confidence??0)>=.7;
+    return {...result,intent:human&&p.response?'handoff_v6_pending':result.intent,action:human&&p.response?'text':'handoff',body:human?p.response:null,phase:'HUMAN_HANDOFF',notification:'Intervenção comercial necessária'};
+  }
   if(p.action==='wait')return result;
   if(ctx.followup_due&&ctx.pending_messages.length===0){state.followup_at=null;state.followup_reason=null;return {...result,intent:'followup_v6',action:'text',body:p.response};}
   if(latest?.intentions.some(i=>i.kind==='WAIT_REQUEST')){
@@ -45,6 +52,6 @@ export function contextualDecision(ctx:V6Context,p:SemanticProposal,model:string
     return {...result,intent:'demonstracao_autorizada',action:'demonstration',body:demo.caption,demonstration_id:demo.id,phase:'DEMO_OFFERED'};
   }
   if(latest?.intentions.some(i=>i.kind==='CHANNEL_CONFIRMED'||i.kind==='DECISION_MAKER'))memory.channel_confirmed=true;
-  state.stage=p.phase==='NEGOTIATING'?'NEGOCIACAO':p.phase==='QUALIFYING'?'QUALIFICACAO_COMERCIAL':p.phase==='OPPORTUNITY_PRESENTED'?'INTERESSE_IDENTIFICADO':state.role==='OWNER'?'CONTATO_COM_DECISOR':'RESPOSTA_RECEBIDA';
+  state.stage=p.phase==='NEGOTIATING'?'NEGOCIACAO':p.phase==='QUALIFYING'?'QUALIFICACAO_COMERCIAL':interest?'INTERESSE_IDENTIFICADO':state.role==='OWNER'||state.role==='DECISION_MAKER'?'CONTATO_COM_DECISOR':'RESPOSTA_RECEBIDA';
   return {...result,action:'text',body:p.response};
 }

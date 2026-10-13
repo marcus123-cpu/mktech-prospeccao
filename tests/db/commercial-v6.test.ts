@@ -54,6 +54,17 @@ describe('V6: leases e persistência isolada',()=>{
   await asAdmin(c=>c.query('select admin_save_conversation_memory($1,$2::jsonb)',[lead,JSON.stringify({facts:'Correção factual do administrador'})]));
   expect((await pool.query('select status from commercial_outbox where id=$1',[r.id])).rows[0].status).toBe('cancelada');
  });
+ it('encaminhamento avisa uma vez e assume após confirmação do transporte',async()=>{
+  await sentLead();await pool.query("update commercial_leads set commercial_memory=jsonb_set(commercial_memory,'{introduced}','true')");await inbound('Quanto custa?');const ctx=(await contexts()).contexts[0];
+  const p:any={interpretations:[{message_id:ctx.reply_id,type:'human',confidence:.99,intentions:[{kind:'PRICE_QUESTION',confidence:.99,evidence:'Quanto custa?'}]}],action:'handoff',response:'Vou encaminhar seu pedido à equipe responsável para confirmar o orçamento.',reason:'Não há produto e preço aprovados',phase:'HUMAN_HANDOFF',role:'UNKNOWN',role_evidence:'',solution:null,opportunity_index:null,demonstration_id:null,product_id:null,confirmed_facts:[],uncertain_facts:[],answered_questions:[],objections:[],summary:'Cliente pediu preço; equipe deve confirmar orçamento',next_action:'Aguardar equipe responsável',followup_at:null,followup_evidence:'',source_ids:[]};
+  const d=contextualDecision(ctx,p,'mock-test');expect(d.validation_errors).toEqual([]);
+  const saved=await svc('select api_commercial_v6_save($1,$2,$3::jsonb)',[token,ctx.lease_id,JSON.stringify(d)]);expect(saved.status).toBe('registrado');
+  expect((await pool.query('select secretary_handoff_at from leads where id=$1',[lead])).rows[0].secretary_handoff_at).toBeNull();
+  const n=await svc('select api_outreach_next($1)',[token]);expect(n.id).toBe(saved.id);
+  await svc('select api_commercial_result($1,$2,$3,$4,$5)',[token,n.id,'enviada','mock-handoff-ack',null]);
+  expect((await pool.query('select secretary_handoff_at from leads where id=$1',[lead])).rows[0].secretary_handoff_at).toBeTruthy();
+  expect((await contexts()).contexts).toHaveLength(0);
+ });
  it('sessão real preserva histórico anterior e enfileira só saudação',async()=>{
   await pool.query("update leads set phone_raw='+5517992250729' where id=$1",[lead]);
   await pool.query("update commercial_settings set test_phones=array['+5517992250729']");

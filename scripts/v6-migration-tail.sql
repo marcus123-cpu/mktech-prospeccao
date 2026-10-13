@@ -215,6 +215,9 @@ begin
     where lead_id=b.lead_id and not (commercial_memory->'wait_acknowledged' @> jsonb_build_array((select lower(btrim(body)) from outreach_replies where id=d.reply_id)));
   end if;
  end if;
+ if r->>'status'='registrado' and d.intent='handoff_v6_pending' and b.status in ('enviada','entregue','falhou','desconhecido') then
+  update leads set secretary_handoff_at=now(),secretary_handoff_reason=left(d.reason,500) where id=b.lead_id and secretary_handoff_at is null;
+ end if;
  return r;
 end $$;
 revoke execute on function public.api_commercial_result_before_v6(uuid,uuid,text,text,text) from public,anon,authenticated,service_role;

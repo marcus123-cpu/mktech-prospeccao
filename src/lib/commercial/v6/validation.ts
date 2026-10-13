@@ -39,7 +39,7 @@ export function validateProposal(ctx:V6Context,p:SemanticProposal):string[]{
   }
   const waitRequested=p.interpretations.some(i=>i.intentions.some(t=>t.kind==='WAIT_REQUEST'));
   if(p.action==='respond'&&!body)errors.push('Resposta vazia');
-  if(p.action==='respond'&&!waitRequested&&!ctx.commercial_memory.introduced&&!text.includes('assistente comercial da mktech dev'))errors.push('Primeira resposta comercial deve identificar o assistente');
+  if(['respond','handoff'].includes(p.action)&&body&&!waitRequested&&!ctx.commercial_memory.introduced&&!text.includes('assistente comercial da mktech dev'))errors.push('Primeira resposta comercial deve identificar o assistente');
   if(p.action==='respond'&&ctx.phase==='WAITING_FIRST_REPLY'&&!p.source_ids.some(id=>verifiedEvidence(ctx).some(e=>e.url===id))&& !p.interpretations.some(i=>i.intentions.some(t=>['PRICE_QUESTION','SEO_QUESTION','BUSINESS_QUESTION','WRONG_CHANNEL','CONTACT_REDIRECT','WAIT_REQUEST'].includes(t.kind))))errors.push('Apresentação inicial exige detalhe com fonte verificável');
   const latest=ctx.pending_messages.at(-1);
   const interpreted=p.interpretations.find(i=>i.message_id===latest?.id);

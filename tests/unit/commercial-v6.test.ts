@@ -51,6 +51,9 @@ describe('V6: autorização e contexto (propostas simuladas, sem inferência rea
  it('demonstração sem permissão rejeitada',()=>{const c=context();const p=proposal(c);p.action='send_demo';p.demonstration_id='DEMO_ROSANA_LANDING';expect(validateProposal(c,p).length).toBeGreaterThan(0);});
  it('schema recusa ação inventada',()=>{const c=context();expect(proposalSchema.safeParse({...proposal(c),action:'execute_shell'}).success).toBe(false);});
  it('controle manual não envia',()=>{const c=context();c.manual=true;expect(contextualDecision(c,proposal(c),'test').action).toBe('wait');});
+ it('apresentar oportunidade não inventa interesse do cliente',()=>{const c=context();const p=proposal(c);p.phase='OPPORTUNITY_PRESENTED';const d=contextualDecision(c,p,'test');expect(d.state.stage).not.toBe('INTERESSE_IDENTIFICADO');expect(d.state.facts.interesse_confirmado).toBeUndefined();});
+ it('pedido de preço sem tabela pode avisar antes do encaminhamento',()=>{const c=context('Quanto custa?');c.commercial_memory.introduced=true;const p=proposal(c);p.interpretations[0].intentions[0].kind='PRICE_QUESTION';p.action='handoff';p.response='Vou encaminhar seu pedido à equipe responsável para confirmar o orçamento.';expect(contextualDecision(c,p,'test')).toMatchObject({action:'text',intent:'handoff_v6_pending',phase:'HUMAN_HANDOFF'});});
+ it('encaminhamento incerto não gera aviso ao cliente',()=>{const c=context();const p=proposal(c);p.interpretations[0].type='uncertain';p.interpretations[0].confidence=.4;p.action='handoff';p.response=null;p.role='UNKNOWN';expect(contextualDecision(c,p,'test')).toMatchObject({action:'handoff',body:null});});
  it('memória de outro contexto não alterada ao validar erro',()=>{const c=context();c.commercial_memory.summary='histórico anterior';const p=proposal(c);p.response='Sou Marcos';expect(contextualDecision(c,p,'test').memory.summary).toBe('histórico anterior');});
 });
 
