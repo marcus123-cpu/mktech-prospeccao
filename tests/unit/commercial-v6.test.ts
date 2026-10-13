@@ -33,6 +33,7 @@ describe('V6: autorização e contexto (propostas simuladas, sem inferência rea
  it('não personifica Marcos',()=>{const c=context();const p=proposal(c);p.response='Me chamo Marcos';expect(validateProposal(c,p).length).toBeGreaterThan(0);});
  it('não garante ranking',()=>{const c=context();const p=proposal(c);p.response+=' Garantimos top 3.';expect(validateProposal(c,p)).toContain('Promessa sem respaldo');});
  it('negação de garantia responde à pergunta sobre SEO',()=>{const c=context();const p=proposal(c);p.response+=' Não podemos garantir posição no Google nem ficar entre os três primeiros.';expect(validateProposal(c,p)).not.toContain('Promessa sem respaldo');});
+ it('negação natural usada no teste real de SEO é permitida',()=>{const c=context();const p=proposal(c);p.response+=' Não dá para garantir os três primeiros lugares no Google.';expect(validateProposal(c,p)).not.toContain('Promessa sem respaldo');});
  it('negação em outra oração não encobre promessa positiva',()=>{const c=context();const p=proposal(c);p.response+=' Não garantimos clientes, mas garantimos top 3.';expect(validateProposal(c,p)).toContain('Promessa sem respaldo');});
  it('preço sem tabela rejeitado',()=>{const c=context();const p=proposal(c);p.response+=' R$ 1.000,00';expect(validateProposal(c,p)).toContain('Preço fora da tabela aprovada');});
  it('fonte de outro cliente rejeitada',()=>{const c=context();const p=proposal(c);p.source_ids=['https://outro.test'];expect(validateProposal(c,p).length).toBeGreaterThan(0);});

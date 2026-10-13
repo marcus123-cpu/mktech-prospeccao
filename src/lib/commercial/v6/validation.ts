@@ -8,8 +8,8 @@ function unsupportedPromise(text:string):boolean {
     for(const match of clause.matchAll(claims)){
       const before=clause.slice(0,match.index);
       const near=clause.slice(Math.max(0,match.index!-80),match.index!+match[0].length);
-      const directDenial=/\b(?:nao\s+(?:(?:posso|podemos|pode|consigo|conseguimos|temos|como|e|possivel|ha|existe|vou|vamos)\s+){0,4}|nunca\s+|sem\s+)$/.test(before);
-      const contextualDenial=/\b(?:nao\s+(?:(?:posso|podemos|pode|consigo|conseguimos|temos|como|e|possivel|ha|existe|vou|vamos)\s+){0,4}(?:garant\w*|promet\w*|assegur\w*)|sem garantia|nenhuma garantia)\b/.test(near);
+      const directDenial=/\b(?:(?:nao|ninguem|nunca)\s+(?:(?:posso|podemos|pode|consigo|conseguimos|temos|como|e|possivel|ha|existe|vou|vamos|da|para)\s+){0,4}|sem\s+)$/.test(before);
+      const contextualDenial=/\b(?:(?:nao|ninguem|nunca)\s+(?:(?:posso|podemos|pode|consigo|conseguimos|temos|como|e|possivel|ha|existe|vou|vamos|da|para)\s+){0,4}(?:garant\w*|promet\w*|assegur\w*)|sem garantia|nenhuma garantia)\b/.test(near);
       if(!directDenial&&!contextualDenial)return true;
     }
   }

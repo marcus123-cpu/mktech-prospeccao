@@ -12,7 +12,8 @@ automação de agenda com atendimento humano. Identificação como Marcos era in
 Motor modular em `src/lib/commercial/v6/`; APIs `comercial/contextos` e
 `comercial/decidir`; adaptador `envio/modelo-hermes.py`, supervisor
 `envio/commercial_model.py`, worker `envio/comercial-loop.py`; painel comercial;
-migração `20261013210000_conversacao_v6.sql` e testes V6 em unidade/API/banco/Python.
+migrações V6 de `20261013210000` a `20261013225000` e testes de unidade,
+API, banco e Python.
 
 ## 3. Serviços
 Mantidos Next.js, Supabase, Hermes instalado e ponte WhatsApp existente.
@@ -60,10 +61,13 @@ O serviço confirma disponibilidade. Oferta, permissão, reserva, envio e entreg
 têm registros distintos. Não há reenvio automático de resultado desconhecido.
 
 ## 10. Testes automatizados
-Resultados executados: 247 unidade/API na regressão inicial e 8 testes adicionais
-das APIs V6 aprovados; 31 Python de envio; 14 da ponte; 238 na suíte completa
-de banco. Foram aprovadas 13 avaliações reais do modelo (6 de conversa e 7 de
-soluções/objeções). Typecheck e build passaram. Migração aplicada sob pausa.
+Resultados executados: 247 unidade/API na regressão inicial, 9 testes das APIs
+V6, 42 testes unitários V6 (14 avaliações opcionais ignoradas no comando),
+40 Python de envio, 14 da ponte e 71 testes focados de banco V4/V6 após a
+trava de produção. Antes, a suíte completa de banco passou em 238 casos.
+As avaliações reais do modelo tiveram aprovação inicial de 13 cenários;
+mudanças posteriores foram exercitadas em testes focados, sem reivindicar nova
+aprovação integral. Typecheck passou; build da primeira publicação passou.
 Esses números não substituem teste real de WhatsApp.
 
 ## 11. WhatsApp
@@ -72,7 +76,7 @@ Teste V6 iniciado em 13/10/2026 às 17:54 (São Paulo), sessão
 `039520fa-aebc-4bc6-963a-f5d5f3f80500`. Saudação exclusivamente
 “Olá, boa tarde! Tudo bem?” entregue: outbox
 `b6ac08ab-a392-4752-bc8d-3a68ba1dc17e`, confirmação de envio às
-20:54:25 UTC e entrega às 20:54:29 UTC. Ainda aguardando resposta participativa;
+20:54:25 UTC e entrega às 20:54:29 UTC.
 Primeira resposta participativa recebida às 20:54:50 UTC: UUID
 `5faff4be-3157-41a4-a368-aadbe00ca5b0`, “Olá boa tarde! Tudo bem sim aqui é a recepcionista”.
 O teste revelou indicação provisória de transporte confundida com automação;
@@ -87,13 +91,25 @@ page entregue às 21:19:26 UTC, outbox `005b171d-dd7b-41a8-bca4-3450e43341bb`.
 O teste também identificou cancelamento da fila por projeção automática de memória,
 bloqueio indevido da palavra diagnóstico pelo filtro legado e referência histórica
 UUID vs UUID:sufixo. Correções testadas; edições humanas continuam cancelando fila.
-67 testes focados V4/V6 passaram após a correção da memória, e 32 Python após
-ajuste do filtro (posteriormente acrescentados 2 testes de referências).
-Conversa completa e demonstrações V6 **não validadas ainda**. Envios anteriores
-do V4 não substituem a prova do novo motor. Banco, ponte e enviador restritos ao
-número autorizado; secretário preservado. Publicação `bed2a03`, deployment
-`dpl_2ns8iZ3zuafJ9wAejTjU2jVoz2PA` READY; Playwright confirmou painel autenticado,
-motor V6, catálogo e botão de pausa das novas abordagens.
+Depois, o cliente autorizou o vídeo Rosana e o link Polpujá separadamente.
+O vídeo foi entregue às 21:22:56 UTC, outbox
+`00211e5f-f226-4cfd-a7a2-7d456f7592b8`; o link às 21:29:07 UTC,
+outbox `d16467db-bc28-476d-baeb-52c5ec67de11`. O usuário confirmou que
+o vídeo reproduz e o site abre no celular. Cada material foi enviado uma vez
+na sessão. A pergunta real sobre os três primeiros lugares no Google recebeu
+resposta sem promessa, entregue às 21:40:39 UTC, outbox
+`af3697f8-388c-4b27-962e-1b9aae622a28`. A pergunta posterior sobre a
+agenda online existente recebeu resposta contextual entregue na sessão;
+o sistema encaminhou a conversa por excesso de cautela sobre SEO e integração.
+Essa decisão está em revisão, sem assumir que integração ou preço foram aprovados.
+Uma mensagem posterior `Ok` ficou sem interpretação enquanto o humano detinha
+o atendimento. Nenhum desses eventos foi simulado como mensagem recebida.
+Conversa completa **ainda não validada**: faltam mensagem automática,
+espera, objeção, pedido de proposta, encerramento e continuidade após reinício.
+Banco, ponte e enviador seguem restritos ao número autorizado; secretário
+preservado. Publicação `32632e7`, deployment
+`dpl_6hpyd4ZYcqm4KnM2EfjhPGEstNk5` READY; Playwright confirmou painel
+autenticado, motor V6, catálogo e pausa das novas abordagens.
 
 ## 12. Problemas encontrados
 Modelo inicialmente omitiu identificação de fonte na proposta e produziu cargo
@@ -103,9 +119,10 @@ Tabela comercial continua sem preços aprovados: o Hermes deve encaminhar,
 sem inventar orçamento. Ausência de preço não autoriza improvisação.
 
 ## 13. Pendências reais
-Confirmar publicação sob pausa e executar teste participativo
-(incluindo demonstrações, retomada e reinício),
-documentar evidências e somente então avaliar liberação de produção.
+Concluir os cenários participativos restantes e o reinício, verificar as
+respostas e encerrar a sessão. Registrar a validação somente após evidência
+completa. Revisar fluxos de pesquisa de novos leads e métricas adaptativas
+antes da liberação geral; a prontidão atual depende de pesquisa cadastrada.
 
 ## 14. Iniciar
 `envio/iniciar-tudo.bat` mantém ponte, enviador e workers. O runtime Hermes precisa
@@ -119,8 +136,10 @@ precisam concordar. Alteração da restrição local exige reiniciar ponte/envia
 Não liberar a restrição local enquanto a validação estiver pendente.
 
 ## 16. Produção
-Continua pausada. A ativação inicial do V6 exige modo teste. Só liberar após
-verificação completa, revisão das pendências e evidência participativa real.
+Continua pausada. A migração `20261013225000_validacao_producao_v6.sql` exige
+sessão participativa encerrada, dois materiais entregues, classificação de
+intenções principais, automação, agenda existente e encerramento, antes de
+permitir desligar o modo teste no painel. O registro de validação segue vazio.
 SEO segue [Google Search Central](https://developers.google.com/search/docs/fundamentals/seo-starter-guide):
 organizar conteúdo e melhorar acesso/indexação pode ajudar a presença na busca;
 não há garantia de indexação, posição, clientes ou receita.
