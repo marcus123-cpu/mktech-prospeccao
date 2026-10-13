@@ -148,6 +148,9 @@ programa do PC só chama você quando há pedido. Então:
    bater a meta de qualificados.
 4. O servidor recusa com código 4 quando a meta de qualificados é batida (ou
    quando já cadastrou 4 vezes a meta): pare e encerre com `finish`.
+   Não use `pedido-pendente` para decidir se continua: ele é só do programa
+   do PC e responde `nenhum` enquanto o seu pedido está em andamento. Quem
+   diz quando parar é o código 4 do `register` ou o fim das buscas/do tempo.
    Só encerre o turno depois do `finish`: se você parar antes, o programa do
    PC chama de novo depois de 15 minutos sem cadastro (até 3 vezes).
 5. Sem paralelismo: um lote de buscas por vez, conferindo o total antes do
