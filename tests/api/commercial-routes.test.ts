@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 const rpc=vi.fn();
-vi.mock("@/lib/supabase/admin",()=>({serviceClient:()=>({rpc})}));
+vi.mock("@/lib/supabase/admin",()=>({serviceClient:()=>({rpc,from:()=>({select:()=>({eq:()=>({single:async()=>({data:{engine_version:'v4'},error:null})})})})})}));
 const {POST:process}=await import("@/app/api/hermes/v1/comercial/processar/route");
 const {POST:result}=await import("@/app/api/hermes/v1/envio/[id]/resultado/route");
 const {POST:reply}=await import("@/app/api/hermes/v1/envio/respostas/route");

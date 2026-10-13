@@ -20,6 +20,7 @@ export async function saveCommercialSettings(_: State, form: FormData): Promise<
   const strategies = form.getAll("allowed_strategies");
   if (!z.array(z.enum(["A","B","C"])).min(1).safeParse(strategies).success) return { error: "Selecione pelo menos uma estratégia." };
   const { error } = await supabase.rpc("admin_commercial_settings", { p: {
+    engine_version:form.get('engine_version')==='v6'?'v6':'v4',new_contacts_enabled:form.get('new_contacts_enabled')==='on',
     enabled: form.get("enabled") === "on", channel_authorized: form.get("channel_authorized") === "on",
     test_mode: form.get("test_mode") === "on", video_configured: form.get("video_configured") === "on",
     experiment_enabled: form.get("experiment_enabled") === "on", test_phones: phones, allowed_strategies: strategies, max_messages: max.data,
@@ -33,6 +34,13 @@ export async function pauseCommercial(_: State, form: FormData): Promise<State> 
   const { error } = await supabase.rpc("admin_outreach_settings", { p: { paused: pause } });
   if (error) return { error: dbErrorMessage(error) };
   refresh(); revalidatePath("/envio"); return { ok: pause ? "Operação pausada." : "Operação retomada conforme as configurações." };
+}
+export async function pauseNewContacts(_:State,form:FormData):Promise<State>{
+ const {supabase}=await requireAdmin();
+ const enabled=form.get('enabled')==='true';
+ const {error}=await supabase.rpc('admin_commercial_settings',{p:{new_contacts_enabled:enabled}});
+ if(error)return {error:dbErrorMessage(error)};
+ refresh();return {ok:enabled?'Novas abordagens habilitadas.':'Novas abordagens pausadas; atendimento mantido.'};
 }
 export async function saveCommercialLead(_: State, form: FormData): Promise<State> {
   const { supabase } = await requireAdmin();

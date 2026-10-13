@@ -9,6 +9,9 @@ export async function POST(request: Request) {
   const auth = await authenticate(request, "mensagens:escrever");
   if ("response" in auth) return auth.response;
   const db = serviceClient();
+  const settings=await db.from('commercial_settings').select('engine_version').eq('id',1).single();
+  if(settings.error)return temporaryFailure();
+  if(settings.data.engine_version==='v6')return json({status:'v6',results:[]});
   const pending = await db.rpc("api_commercial_pending", { p_token: auth.tokenId, p_limit: 10 });
   if (pending.error || !pending.data) return temporaryFailure();
   const results: { lead_id: string; status: string }[] = [];
