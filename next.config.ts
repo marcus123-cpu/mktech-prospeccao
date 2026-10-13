@@ -9,6 +9,7 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  outputFileTracingRoot: import.meta.dirname,
   // Gera um servidor enxuto para rodar no Docker (Dockerfile).
   output: "standalone",
   serverExternalPackages: ["exceljs"],

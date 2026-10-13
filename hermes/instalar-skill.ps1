@@ -42,15 +42,18 @@ $envFile = Join-Path $target "scripts\.env"
 
 if (Test-Path $target) {
   if (-not $Force) { throw "A skill já existe em $target. Use -Force para atualizar (o .env existente é mantido)." }
-  $savedEnv = if (Test-Path $envFile) { Get-Content -Raw $envFile } else { $null }
-  Remove-Item -Recurse -Force $target
 }
 New-Item -ItemType Directory -Force -Path (Split-Path $target) | Out-Null
-Copy-Item -Recurse $source $target
-Get-ChildItem -Recurse -Force $target -Include "__pycache__", "*.log" | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+# Sobrescreve só os arquivos distribuídos pela skill. A pasta instalada também
+# guarda candidatos, rascunhos e outros artefatos gerados pelo Hermes.
+Get-ChildItem -LiteralPath $source -Recurse -File | ForEach-Object {
+  $relative = $_.FullName.Substring($source.Length).TrimStart([char]92)
+  $dest = Join-Path $target $relative
+  New-Item -ItemType Directory -Force -Path (Split-Path $dest) | Out-Null
+  Copy-Item -LiteralPath $_.FullName -Destination $dest -Force
+}
 
-if ($savedEnv) {
-  Set-Content -NoNewline -Encoding UTF8 -Path $envFile -Value $savedEnv
+if (Test-Path $envFile) {
   Write-Host ".env anterior mantido."
 } else {
   $url = Read-Host "URL do CRM [$CrmUrl]"

@@ -8,7 +8,7 @@
 //   GET  /estado     -> { pronto, numero }
 //   POST /enviar     -> { telefone, texto }  => { ok, id }
 //   GET  /recebidas  -> [ { telefone, texto, tipo, recebida_em } ]  (esvazia a fila)
-//   GET  /minhas     -> [ { telefone, enviada_em } ]  o que o Marcos escreveu à mão (sem texto)
+//   GET  /minhas     -> [ { telefone, texto, tipo, message_id, enviada_em } ]
 //
 // Variáveis: BRIDGE_PORT (3799), BRIDGE_TOKEN (opcional), ENVIO_SO_PARA (lista de números).
 
@@ -28,8 +28,9 @@ let lastQr = null;
 let lastState = "iniciando";
 const setState = (st) => { lastState = st; console.log("[estado]", st); };
 const inbox = [];
-const minhas = []; // o que o Marcos escreveu à mão (só telefone e horário; nunca o texto)
+const minhas = []; // mensagens escritas no celular do chip
 const enviadasPelaPonte = new Set();
+const enviosEmAndamento = new Set();
 
 const client = new Client({
   authStrategy: new LocalAuth({ dataPath: ".wwebjs_auth", clientId: "chip2" }),
@@ -83,19 +84,26 @@ async function numeroDe(id, msg) {
 
 const ehConversaIndividual = (id) => id && !id.endsWith("@g.us") && !id.endsWith("@newsletter") && !id.endsWith("@broadcast");
 
-// Mensagem escrita à mão no celular do chip: guarda só telefone e horário, para saber quem falou por último.
+// Mensagem escrita no celular do chip. Exclui as enviadas por esta ponte,
+// inclusive se o evento chegar antes de sendMessage devolver o ID.
 client.on("message_create", async (msg) => {
   try {
     if (!msg.fromMe || msg.isStatus) return;
     const id = msg.id && msg.id._serialized;
-    if (id && enviadasPelaPonte.has(id)) return; // foi a própria ponte (saudação, texto ou lembrete)
+    if (id && enviadasPelaPonte.has(id)) return;
     const to = msg.to || "";
     if (!ehConversaIndividual(to)) return;
+    if (TIPOS_DE_SISTEMA.has(msg.type)) return;
+    if ([...enviosEmAndamento].some((item) => item.to === to && item.texto === msg.body)) return;
     const numero = await numeroDe(to, msg);
     if (!numero) return;
+    if (id && enviadasPelaPonte.has(id)) return;
     console.log("[minha]", to, "->", numero);
     minhas.push({
       telefone: "+" + numero.replace(/\D/g, ""),
+      texto: typeof msg.body === "string" && msg.body.trim() ? msg.body.slice(0, 4000) : null,
+      tipo: msg.type === "chat" ? "texto" : msg.type === "ptt" || msg.type === "audio" ? "audio" : msg.type === "image" ? "imagem" : "outro",
+      message_id: id || null,
       enviada_em: new Date((msg.timestamp || Date.now() / 1000) * 1000).toISOString(),
     });
   } catch (e) {
@@ -184,7 +192,11 @@ const server = http.createServer(async (req, res) => {
       if (ONLY_TO.size && !ONLY_TO.has(digits)) return send(res, 403, { ok: false, erro: "destino fora de ENVIO_SO_PARA" });
       const id = await client.getNumberId(digits);
       if (!id) return send(res, 422, { ok: false, erro: "número não tem WhatsApp" });
-      const sent = await client.sendMessage(id._serialized, texto);
+      const pending = { to: id._serialized, texto };
+      enviosEmAndamento.add(pending);
+      let sent;
+      try { sent = await client.sendMessage(id._serialized, texto); }
+      finally { enviosEmAndamento.delete(pending); }
       if (sent && sent.id && sent.id._serialized) {
         enviadasPelaPonte.add(sent.id._serialized);
         if (enviadasPelaPonte.size > 500) enviadasPelaPonte.delete(enviadasPelaPonte.values().next().value);

@@ -14,7 +14,8 @@ export async function POST(request: Request) {
   if ("response" in body) return body.response;
   const { data, error } = await serviceClient().rpc("api_outreach_outbound", {
     p_token: auth.tokenId,
-    p: { phone_e164: body.data.telefone, sent_at: body.data.enviada_em ?? null },
+    p: { phone_e164: body.data.telefone, sent_at: body.data.enviada_em ?? null,
+      body: body.data.texto ?? null, media: body.data.tipo ?? "texto", external_id: body.data.message_id ?? null },
   });
   if (error) return temporaryFailure();
   return fromDb(data);

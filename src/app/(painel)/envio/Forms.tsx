@@ -13,6 +13,7 @@ import {
   setFollowups,
   setPaused,
   setSecretary,
+  setTodayTarget,
   type EnvioState,
 } from "./actions";
 
@@ -26,6 +27,8 @@ export type OutreachSettings = {
   greeting_gap_min_seconds: number;
   greeting_gap_max_seconds: number;
   daily_limit: number;
+  today_new_leads_target?: number | null;
+  today_new_leads_date?: string | null;
   window_start: number;
   window_end: number;
   send_days: number[];
@@ -45,6 +48,31 @@ function Feedback({ state }: { state: EnvioState }) {
       {state.error && <span role="alert" className="text-sm text-rose-300">{state.error}</span>}
       {state.ok && <span className="text-sm text-emerald-300">{state.ok}</span>}
     </>
+  );
+}
+
+export function TodayTargetForm({ target, sent, enabled, paused }: {
+  target: number; sent: number; enabled: boolean; paused: boolean;
+}) {
+  const [state, action, pending] = useActionState<EnvioState, FormData>(setTodayTarget, {});
+  const remaining = Math.max(0, target - sent);
+  const stateText = !enabled ? "Envio desligado" : paused ? "Envio pausado" :
+    remaining === 0 ? "Meta atingida; novos contatos parados" : `${remaining} novo(s) contato(s) ainda podem sair hoje`;
+  return (
+    <form action={action} className="card p-4" id="meta-do-dia">
+      <h2 className="font-semibold">Controle dos disparos de hoje</h2>
+      <p className="mt-1 text-sm text-muted">Você define o total de novos leads que podem receber a primeira saudação hoje. Já foram {sent} de {target}.</p>
+      <div className="mt-4 flex flex-wrap items-end gap-3">
+        <div>
+          <label className="label" htmlFor="target">Meta de novos contatos hoje</label>
+          <input className="input w-32" id="target" name="target" type="number" min="0" max="200" step="1" required defaultValue={target} />
+        </div>
+        <button className="btn-primary" disabled={pending}>{pending ? "Salvando…" : "Atualizar meta"}</button>
+      </div>
+      <p className="mt-3 text-sm font-medium">{stateText}</p>
+      <p className="mt-1 text-xs text-muted">Aumentar a meta libera o próximo lead da fila, respeitando o horário e o intervalo entre envios. Zero para novos contatos hoje. Mensagens já iniciadas, respostas a clientes e lembretes seguem suas próprias regras.</p>
+      <div className="mt-2"><Feedback state={state} /></div>
+    </form>
   );
 }
 
@@ -152,7 +180,7 @@ export function OutreachSettingsForm({ s }: { s: OutreachSettings }) {
       {num("max_delay_minutes", "Espera máxima entre um lead e outro (min)", s.max_delay_seconds / 60, 1, 1440, "O tempo é sorteado entre o mínimo e o máximo.", 0.5)}
       {num("greeting_gap_min_seconds", "Depois da saudação, esperar no mínimo (s)", s.greeting_gap_min_seconds, 10, 1800)}
       {num("greeting_gap_max_seconds", "Depois da saudação, esperar no máximo (s)", s.greeting_gap_max_seconds, 10, 1800)}
-      {num("daily_limit", "Leads abordados por dia (até)", s.daily_limit, 1, 200, "Começar baixo reduz o risco de bloqueio do WhatsApp.")}
+      {num("daily_limit", "Padrão diário de novos contatos", s.daily_limit, 1, 200, "Vale nos próximos dias; a meta de hoje é ajustada no quadro acima. Também limita os lembretes por dia.")}
       {num("min_fit_score", "Nota mínima do diagnóstico", s.min_fit_score, 0, 100)}
       {num("window_start", "Prospecção: começa às (h)", s.window_start, 0, 23)}
       {num("window_end", "Prospecção: para às (h)", s.window_end, 1, 24, "Saudação e lembretes. Horário de São Paulo.")}

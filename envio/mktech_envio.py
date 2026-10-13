@@ -165,7 +165,7 @@ class Transporte:
         return []
 
     def minhas(self) -> list[dict[str, Any]]:
-        """Mensagens que o Marcos escreveu à mão no celular do chip: [{telefone, enviada_em}]. Sem texto."""
+        """Mensagens escritas no celular do chip, incluindo texto e ID quando disponíveis."""
         return []
 
     def pronto(self) -> bool:
@@ -290,12 +290,15 @@ def forward_replies(transporte: Transporte) -> int:
 
 
 def forward_minhas(transporte: Transporte) -> int:
-    """Avisa o servidor (só o horário, nunca o texto) que o Marcos escreveu para um telefone."""
+    """Registra no servidor a mensagem escrita no celular do chip."""
     n = 0
     for msg in transporte.minhas():
         body = {"telefone": msg["telefone"]}
         if msg.get("enviada_em"):
             body["enviada_em"] = msg["enviada_em"]
+        for key in ("texto", "tipo", "message_id"):
+            if msg.get(key) is not None:
+                body[key] = msg[key]
         status, payload = request("POST", "/api/hermes/v1/envio/minhas", body)
         if payload.get("status") == "registrada":
             log(f"mensagem sua para {msg['telefone']} registrada (conta para os lembretes)")

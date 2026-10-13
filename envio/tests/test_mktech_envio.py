@@ -176,13 +176,13 @@ class SenderTest(unittest.TestCase):
         self.assertEqual(t.enviadas, [("+5517991234567", "Oi! Você gostou da minha proposta?")])
         self.assertEqual(self.results(), [{"etapa": "lembrete", "ok": True, "erro": None}])
 
-    def test_avisa_o_servidor_so_com_telefone_e_horario_do_que_o_marcos_escreveu(self):
+    def test_registra_texto_e_id_do_que_o_marcos_escreveu(self):
         self.next_is({"status": "fila_vazia"})
         FakeApi.responses["POST /api/hermes/v1/envio/minhas"] = [(201, {"status": "registrada"})]
-        t = Gravador(minhas=[{"telefone": "+5517991234567", "enviada_em": "2026-10-08T15:00:00Z", "texto": "NÃO DEVE SAIR"}])
+        t = Gravador(minhas=[{"telefone": "+5517991234567", "enviada_em": "2026-10-08T15:00:00Z", "texto": "Combinado!", "tipo": "texto", "message_id": "abc"}])
         mktech_envio.step(t)
         sent = [c["body"] for c in FakeApi.calls if c["path"].endswith("/minhas")]
-        self.assertEqual(sent, [{"telefone": "+5517991234567", "enviada_em": "2026-10-08T15:00:00Z"}])
+        self.assertEqual(sent, [{"telefone": "+5517991234567", "enviada_em": "2026-10-08T15:00:00Z", "texto": "Combinado!", "tipo": "texto", "message_id": "abc"}])
 
     def test_simulacao_nao_contata_ninguem_e_grava_log(self):
         with tempfile.TemporaryDirectory() as d:

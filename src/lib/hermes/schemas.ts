@@ -154,17 +154,21 @@ export const outreachResultSchema = z
 export const secretaryReplySchema = z
   .object({
     reply_ref: z.string().regex(/^\d{4}-\d{2}-\d{2}T/, "reply_ref inválido"),
+    memory_ref: z.iso.datetime({ offset: true }).optional().nullable(),
     resposta: text(700).optional().nullable(),
     passar_para_marcos: text(300).optional().nullable(),
   })
   .strict()
   .refine((r) => !!r.resposta || !!r.passar_para_marcos, { message: "mande resposta ou passar_para_marcos", path: ["resposta"] });
 
-// Enviador: mensagem que o Marcos escreveu à mão no celular do chip (só o horário é guardado).
+// Enviador: mensagem escrita no celular do chip.
 export const outreachOutboundSchema = z
   .object({
     telefone: text(30).regex(/^\+?[0-9 ()-]{10,25}$/, "telefone inválido"),
     enviada_em: z.string().regex(/^\d{4}-\d{2}-\d{2}T/).optional().nullable(),
+    texto: text(4000).optional().nullable(),
+    tipo: z.enum(["texto", "audio", "imagem", "outro"]).optional(),
+    message_id: text(200).optional().nullable(),
   })
   .strict();
 

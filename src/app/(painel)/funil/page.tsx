@@ -59,7 +59,8 @@ export default async function FunilPage() {
     <>
       <PageHeader
         title="🎯 Funil"
-        subtitle="Onde está cada lead do envio automático. O sistema nunca responde o cliente: quando alguém responde ou pergunta valor, a conversa é sua."
+        subtitle="Acompanhe as etapas da prospecção. Abra a central para ver o histórico e assumir o atendimento."
+        actions={<Link href="/conversas" className="btn-primary">Central de conversas</Link>}
       />
       {bot && (
         <div className="card mb-4 flex flex-wrap items-center justify-between gap-3 p-3">

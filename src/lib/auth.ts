@@ -1,9 +1,10 @@
 import "server-only";
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
 /** Garante usuário logado e cadastrado em app_admins. Retorna o cliente com a sessão dele. */
-export async function requireAdmin() {
+export const requireAdmin = cache(async function requireAdmin() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -12,7 +13,7 @@ export async function requireAdmin() {
   const { data: isAdmin, error } = await supabase.rpc("is_admin");
   if (error || !isAdmin) redirect("/login?erro=sem-permissao");
   return { supabase, user };
-}
+});
 
 /** Mensagem de erro do Postgres/Supabase em português, sem detalhes internos. */
 export function dbErrorMessage(error: { message?: string; code?: string } | null): string {
