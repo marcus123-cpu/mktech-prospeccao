@@ -108,7 +108,7 @@ export async function fillCommercialQueue(): Promise<EnvioState> {
   if (error) return { error: dbErrorMessage(error) };
   const result = data as { uncontacted: number; checked: number; added: number; already_ready: number };
   revalidatePath("/comercial");
-  return done(`${result.uncontacted} sem contato. ${result.added} novo(s) liberado(s) para preparação; ${result.already_ready} já apto(s). Os demais ainda precisam de dados verificados ou têm histórico/bloqueio. O Hermes colocará a saudação na fila depois de validar o contexto.`);
+  return done(`${result.uncontacted} sem contato no CRM; ${result.checked} avaliados pelo botão. ${result.added} novo(s) liberado(s); ${result.already_ready} já apto(s). ${result.added + result.already_ready === 0 ? "Nenhum avaliado cumpriu todos os critérios: confira WhatsApp comercial do mesmo número, duas fontes independentes, confiança do diagnóstico e evidências do serviço e da oportunidade. Diminuir só a nota não libera esses requisitos." : "O Hermes prepara as saudações dos liberados dentro do horário e limite configurados."}`);
 }
 
 export async function saveQueueCriteria(_: EnvioState, form: FormData): Promise<EnvioState> {
