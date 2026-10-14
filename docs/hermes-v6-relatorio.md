@@ -62,12 +62,14 @@ têm registros distintos. Não há reenvio automático de resultado desconhecido
 
 ## 10. Testes automatizados
 Resultados executados: 247 unidade/API na regressão inicial, 9 testes das APIs
-V6, 42 testes unitários V6 (14 avaliações opcionais ignoradas no comando),
-40 Python de envio, 14 da ponte e 71 testes focados de banco V4/V6 após a
+V6, 44 testes unitários V6 (14 avaliações opcionais ignoradas no comando),
+41 Python de envio, 14 da ponte e 71 testes focados de banco V4/V6 após a
 trava de produção. Antes, a suíte completa de banco passou em 238 casos.
-As avaliações reais do modelo tiveram aprovação inicial de 13 cenários;
-mudanças posteriores foram exercitadas em testes focados, sem reivindicar nova
-aprovação integral. Typecheck passou; build da primeira publicação passou.
+As avaliações reais do modelo tiveram aprovação inicial de 13 cenários. Uma
+comparação isolada posterior com `gpt-6-luna` aprovou 14 cenários (saudação,
+automação, recusa, injeção, serviços, agenda, SEO e preço) em dois grupos de
+aproximadamente 97 e 100 segundos; falta medir a latência desse modelo no
+contexto completo do WhatsApp. Typecheck passou; build da publicação passou.
 Esses números não substituem teste real de WhatsApp.
 
 ## 11. WhatsApp
@@ -104,12 +106,39 @@ o sistema encaminhou a conversa por excesso de cautela sobre SEO e integração.
 Essa decisão está em revisão, sem assumir que integração ou preço foram aprovados.
 Uma mensagem posterior `Ok` ficou sem interpretação enquanto o humano detinha
 o atendimento. Nenhum desses eventos foi simulado como mensagem recebida.
-Conversa completa **ainda não validada**: faltam mensagem automática,
-espera, objeção, pedido de proposta, encerramento e continuidade após reinício.
-Banco, ponte e enviador seguem restritos ao número autorizado; secretário
-preservado. Publicação `32632e7`, deployment
-`dpl_6hpyd4ZYcqm4KnM2EfjhPGEstNk5` READY; Playwright confirmou painel
-autenticado, motor V6, catálogo e pausa das novas abordagens.
+Depois, o cliente pediu retorno e proposta/preço em mensagem real às 01:12:33 UTC
+de 14/10. O Hermes respondeu sem inventar orçamento, com entrega às 02:14:22 UTC;
+o atraso incluiu indisponibilidade temporária do provedor de inferência. A pergunta
+real de reunião às 02:14:59 UTC teve resposta entregue às 02:24:18 UTC, deixando
+claro que a reunião dependia de confirmação da equipe. Esses dois encaminhamentos
+ativaram indevidamente o controle humano e impediram a resposta imediata à objeção
+real, recebida às 02:25:32 UTC. A regra foi corrigida: perguntas comerciais usuais
+podem receber resposta segura e notificação à equipe, mantendo o bot disponível;
+pedido explícito de humano ou assunto sensível ainda transfere o controle. Após
+devolver apenas o contato de teste ao bot, a objeção sobre custo e agenda online
+foi interpretada como `OBJECTION+BUSINESS_QUESTION` e respondida sem preço ou
+promessa; mensagem entregue às 02:33:10 UTC. Esse intervalo **não é medição de
+latência normal**, pois a mensagem ficou retida sob controle humano. A fase antiga
+`HUMAN_HANDOFF` após devolução foi corrigida e a implantação `1913d89` está READY.
+Uma nova pergunta humana sobre Instagram entrou às 02:35:14 UTC já com o bot ativo.
+Decisão às 02:35:53 UTC, envio às 02:35:56 UTC e entrega às 02:36:00 UTC:
+**43 segundos até envio e 46 segundos até entrega**. A resposta contextual foi
+correta e a fase ficou `QUALIFYING`. A meta de 20 segundos não passou.
+O polling local foi reduzido de 30 para 3 segundos e removida
+a espera fixa de 30 segundos no início do enviador. O modelo ainda pode levar
+mais de 20 segundos; o limite solicitado não foi demonstrado. Os workers locais
+comerciais foram reiniciados com a ponte e o secretário mantidos ativos. O cliente
+enviou uma recusa real às 02:40:14 UTC, classificada como `OPT_OUT` às 02:40:40
+UTC; o lead foi bloqueado e a conversa encerrada. Uma migração de auditoria
+marcou também `outreach_replies.opt_out=true`. Depois o titular reautorizou
+explicitamente, pelo Codex, continuar **somente o teste no próprio número**;
+o lead de teste voltou a `QUALIFYING`, e a recusa original segue auditada.
+
+Conversa completa **ainda não validada**: falta mensagem automática genuína e
+confirmar continuidade após o reinício com nova mensagem; a latência real medida
+com `gpt-6-sol` excede o limite solicitado. Banco, ponte e enviador seguem restritos ao
+número autorizado; secretário preservado. Playwright confirmou anteriormente
+painel autenticado, motor V6, catálogo e controle de novas abordagens.
 
 ## 12. Problemas encontrados
 Modelo inicialmente omitiu identificação de fonte na proposta e produziu cargo
@@ -119,8 +148,8 @@ Tabela comercial continua sem preços aprovados: o Hermes deve encaminhar,
 sem inventar orçamento. Ausência de preço não autoriza improvisação.
 
 ## 13. Pendências reais
-Concluir os cenários participativos restantes e o reinício, verificar as
-respostas e encerrar a sessão. Registrar a validação somente após evidência
+Concluir os cenários participativos restantes e o reinício, reduzir a latência
+real, verificar o resultado e encerrar a sessão. Registrar a validação somente após evidência
 completa. Revisar fluxos de pesquisa de novos leads e métricas adaptativas
 antes da liberação geral; a prontidão atual depende de pesquisa cadastrada.
 

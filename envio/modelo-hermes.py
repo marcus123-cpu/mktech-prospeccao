@@ -30,7 +30,7 @@ def main():
         from run_agent import AIAgent
         cfg = load_config()
         model_config = cfg.get('model') or {}
-        model = model_config if isinstance(model_config, str) else model_config.get('default') or model_config.get('model')
+        model = os.environ.get('MKTECH_COMMERCIAL_MODEL') or os.environ.get('HERMES_COMMERCIAL_MODEL') or (model_config if isinstance(model_config, str) else model_config.get('default') or model_config.get('model'))
         if not isinstance(model, str) or not model:
             raise RuntimeError('Modelo Hermes não configurado')
         runtime = resolve_runtime_provider(target_model=model)

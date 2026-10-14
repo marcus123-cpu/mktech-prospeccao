@@ -1,0 +1,1 @@
+-- Reserva de versão criada no histórico remoto; nenhuma alteração de esquema.
