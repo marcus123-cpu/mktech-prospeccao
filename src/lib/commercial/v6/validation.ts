@@ -4,7 +4,7 @@ import type { SemanticProposal, V6Context } from "./contracts";
 const norm=(text:string)=>text.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 function automatedGateQuestion(body:string):boolean {
   const text=norm(body);
-  return /\b(qual (e )?(o |a )?(seu |sua )?(nome|assunto|motivo)|seu nome|sua empresa|com quem (voce )?(quer|deseja|precisa) falar|o que (voce )?(quer|deseja|precisa)|em que (podemos|posso) ajudar|qual (e )?(o )?motivo do contato|sobre o que (voce )?(quer|deseja) falar|para falar com (atendente|responsavel))\b/.test(text);
+  return /\b(qual (e )?(o |a )?(seu |sua )?(nome|assunto|motivo)|seu nome|sua empresa|com quem (voce )?(quer|deseja|precisa) falar|o que (voce )?(quer|deseja|precisa)|(?:em que|como) (podemos|posso) (?:te |lhe |voce )?ajud\w*|qual (e )?(o )?motivo do contato|sobre o que (voce )?(quer|deseja) falar|para falar com (atendente|responsavel)|qual (?:ponto|servico|procedimento|duvida)|quais? (?:suas? )?duvidas?|me conta.{0,80}qual (?:ponto|servico|procedimento))\b/.test(text);
 }
 function unsupportedPromise(text:string):boolean {
   const claims=/garant\w*.{0,30}(pacient|cliente|fatur|receit|google|resultad)|primeir[oa]s?\s+(3|tres)|(3|tres)\s+primeir[oa]s?|top\s*3|posicao garantida|\d+\s*(novos )?(clientes|pacientes)/g;

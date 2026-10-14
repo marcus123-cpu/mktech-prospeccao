@@ -75,6 +75,13 @@ describe('V6: autorização e contexto (propostas simuladas, sem inferência rea
   p.opportunity_index=null;p.source_ids=[];
   expect(validateProposal(c,p)).toContain('Aguardar atendimento humano');
  });
+ it('triagem automática que pergunta como ajudar aceita motivo comercial honesto',()=>{
+  const c=context('Olá! Sou a assistente virtual. Como posso te ajudar hoje?');const p=proposal(c);
+  p.interpretations[0]={message_id:id,type:'automated',confidence:.96,intentions:[{kind:'AUTOMATED_GATE',confidence:.96,evidence:'Como posso te ajudar hoje?'}]};
+  p.response='Sou o Hermes, da MKTech Dev. Meu contato é sobre a apresentação digital da clínica. Gostaria de falar com a responsável por essa área.';
+  p.phase='WAITING_HUMAN';p.opportunity_index=null;p.source_ids=[];
+  expect(validateProposal(c,p)).toEqual([]);
+ });
  it('incerteza não libera resposta',()=>{const c=context();const p=proposal(c);p.interpretations[0].confidence=.4;expect(contextualDecision(c,p,'test').action).toBe('wait');});
  it('mensagem de outro contexto rejeitada',()=>{const c=context();const p=proposal(c);p.interpretations[0].message_id='00000000-0000-4000-8000-000000000002';expect(validateProposal(c,p).length).toBeGreaterThan(0);});
  it('mensagem duplicada rejeitada',()=>{const c=context();const p=proposal(c);p.interpretations.push(p.interpretations[0]);expect(validateProposal(c,p).length).toBeGreaterThan(0);});
@@ -100,6 +107,7 @@ describe('V6: autorização e contexto (propostas simuladas, sem inferência rea
 describe.skipIf(process.env.OPENROUTER_REAL_EVAL!=='1')('V6: triagem automática com OpenRouter, sem WhatsApp',()=>{
  it.each([
   ['Olá! Sou a assistente virtual da Clínica Simulada. Qual seu nome e qual o assunto?', 'respond'],
+  ['Olá! Sou a assistente virtual da Clínica Simulada. Como posso te ajudar hoje?', 'respond'],
   ['Olá, estamos ausentes e retornaremos em breve.', 'wait'],
  ])('interpreta %s',async(body,action)=>{
   const ctx=context(body);
