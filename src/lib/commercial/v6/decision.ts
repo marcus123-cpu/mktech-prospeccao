@@ -29,9 +29,14 @@ export function contextualDecision(ctx:V6Context,p:SemanticProposal,model:string
   if(interest&&p.action!=='stop'){state.facts.interesse_confirmado=interest.evidence;state.stage='INTERESSE_IDENTIFICADO';}
   if(p.action==='stop'){state.stage=latest?.intentions.some(i=>i.kind==='OPT_OUT')?'NAO_CONTATAR':'PERDIDO';state.followup_at=null;state.followup_reason=null;return {...result,action:'stop',phase:'CLOSED'};}
   if(p.action==='handoff'){
-    state.followup_at=null;state.followup_reason=null;
     if(p.interpretations.at(-1)?.intentions.some(i=>i.kind==='CONTRACT_REQUEST'))state.stage='PROPOSTA_SOLICITADA';
     const human=p.interpretations.at(-1)?.type==='human'&&(p.interpretations.at(-1)?.confidence??0)>=.7;
+    const routineReview=human&&!!p.response&&!!latest?.intentions.length
+      &&latest.intentions.every(i=>['PRICE_QUESTION','CONTRACT_REQUEST','BUSINESS_QUESTION','SEO_QUESTION','WAIT_REQUEST','INTERESTED'].includes(i.kind))
+      &&latest.intentions.some(i=>['PRICE_QUESTION','CONTRACT_REQUEST','BUSINESS_QUESTION','SEO_QUESTION'].includes(i.kind));
+    if(routineReview)return {...result,intent:'human_review_v6',action:'text',body:p.response,
+      phase:p.phase==='HUMAN_HANDOFF'?'QUALIFYING':p.phase,notification:'Equipe deve confirmar detalhe comercial'};
+    state.followup_at=null;state.followup_reason=null;
     return {...result,intent:human&&p.response?'handoff_v6_pending':result.intent,action:human&&p.response?'text':'handoff',body:human?p.response:null,phase:'HUMAN_HANDOFF',notification:'Intervenção comercial necessária'};
   }
   if(p.action==='wait')return result;
