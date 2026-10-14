@@ -24,6 +24,7 @@ export async function saveCommercialSettings(_: State, form: FormData): Promise<
     enabled: form.get("enabled") === "on", channel_authorized: form.get("channel_authorized") === "on",
     test_mode: form.get("test_mode") === "on", video_configured: form.get("video_configured") === "on",
     experiment_enabled: form.get("experiment_enabled") === "on", test_phones: phones, allowed_strategies: strategies, max_messages: max.data,
+    objection_recovery_enabled: form.get("objection_recovery_enabled") === "on",
   } });
   if (error) return { error: dbErrorMessage(error) };
   refresh(); return { ok: "Configuração salva. O envio também respeita a chave geral e os horários." };

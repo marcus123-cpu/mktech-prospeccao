@@ -88,6 +88,17 @@ describe('V6: autorização e contexto (propostas simuladas, sem inferência rea
  it('reclassificar histórico não permite responder outra vez',()=>{const c=context();c.answered_reply_ids=[id];expect(validateProposal(c,proposal(c))).toContain('Mensagem anterior já recebeu resposta confirmada');});
  it('ordem das interpretações normalizada',()=>{const c=context();const p=proposal(c);expect(contextualDecision(c,p,'test').interpretations[0].message_id).toBe(id);});
  it('recusa de contato encerra',()=>{const c=context('Não me mande mais mensagens');const p=proposal(c);p.action='stop';p.interpretations[0].intentions[0].kind='OPT_OUT';expect(contextualDecision(c,p,'test').state.stage).toBe('NAO_CONTATAR');});
+ it('objeção inicial permite uma apresentação curta sem envio de material',()=>{
+  const c=context('Não tenho interesse');c.objection_recovery_enabled=true;
+  const p=proposal(c);p.interpretations[0].intentions=[{kind:'NOT_INTERESTED',confidence:.95,evidence:'Não tenho interesse'}];
+  p.response='Sou o assistente comercial da MKTech Dev. Entendo. Uma página clara pode explicar a limpeza de pele e facilitar o contato. Posso mostrar um exemplo e explicar como funcionaria, sem compromisso?';
+  expect(validateProposal(c,p)).toEqual([]);
+  const d=contextualDecision(c,p,'test');expect(d).toMatchObject({action:'text',intent:'refusal_invitation_v6',phase:'WAITING_HUMAN'});
+  expect(d.state.facts.refusal_invitation_sent).toBe('true');
+  c.state=d.state;expect(validateProposal(c,p)).toContain('Recusa deve encerrar sem nova insistência');
+ });
+ it('configuração desligada encerra objeção sem convite',()=>{const c=context('Não tenho interesse');c.objection_recovery_enabled=false;const p=proposal(c);p.interpretations[0].intentions=[{kind:'NOT_INTERESTED',confidence:.95,evidence:'Não tenho interesse'}];p.action='stop';p.response=null;expect(contextualDecision(c,p,'test')).toMatchObject({action:'stop',phase:'CLOSED',state:{stage:'PERDIDO'}});});
+ it('pedido explícito para parar não permite convite',()=>{const c=context('Não tenho interesse. Não me mande mais mensagens');c.objection_recovery_enabled=true;const p=proposal(c);p.interpretations[0].intentions=[{kind:'OPT_OUT',confidence:.99,evidence:'Não me mande mais mensagens'}];expect(validateProposal(c,p)).toContain('Opt-out deve encerrar contato');});
  it('recusa histórica não encerra nova mensagem ambígua',()=>{const c=context('Ativada');c.commercial_memory.summary='Recusa anterior, depois titular reautorizou o teste';const p=proposal(c);p.action='stop';p.interpretations[0].type='uncertain';p.interpretations[0].confidence=.22;p.interpretations[0].intentions[0].kind='UNKNOWN';expect(validateProposal(c,p)).toContain('Encerramento exige recusa ou canal errado na mensagem atual');});
  it('retorno sem data/horário rejeitado',()=>{const c=context('Me chame depois');const p=proposal(c);p.followup_at='2026-10-14T14:00:00-03:00';p.followup_evidence='Me chame depois';expect(validateProposal(c,p).length).toBeGreaterThan(0);});
  it('link arbitrário rejeitado',()=>{const c=context();const p=proposal(c);p.response+=' https://outro.test';expect(validateProposal(c,p).length).toBeGreaterThan(0);});
@@ -162,6 +173,14 @@ describe.skipIf(process.env.HERMES_REAL_EVAL!=='1')('V6: inferência real isolad
 });
 
 describe.skipIf(process.env.HERMES_REAL_EVAL_EXTENDED!=='1')('V6: soluções e objeções com modelo real',()=>{
+ it('responde uma vez à recusa leve e não envia material',async()=>{
+  const ctx=context('Não tenho interesse');ctx.objection_recovery_enabled=true;
+  const p=await openRouterProposal(ctx);
+  expect(p.interpretations[0].intentions.some(i=>i.kind==='NOT_INTERESTED')).toBe(true);
+  expect(p.action).toBe('respond');
+  expect(validateProposal(ctx,p),JSON.stringify(p)).toEqual([]);
+  expect(contextualDecision(ctx,p,'openrouter')).toMatchObject({intent:'refusal_invitation_v6',action:'text'});
+ },120000);
  it.each([
   ['Quero só uma página para explicar a limpeza de pele e captar contatos, nada de agenda.','landing_page'],
   ['Preciso apresentar a clínica, equipe, história e serviços em um site completo.','site_institucional'],

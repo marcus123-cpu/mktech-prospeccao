@@ -26,6 +26,7 @@ export const proposalSchema = z.object({
 export type SemanticProposal=z.infer<typeof proposalSchema>;
 export type Readiness={status:"READY_FOR_OUTREACH"|"NEEDS_RESEARCH"|"LOW_CONFIDENCE"|"NOT_QUALIFIED"|"DO_NOT_CONTACT";reasons:string[];confidence:number};
 export type V6Context=Context & {
+  objection_recovery_enabled?:boolean;
   lead_id:string;revision:number;reply_id:string|null;lease_id:string;
   phase:typeof PHASES[number];recipient_timezone:string|null;readiness:Readiness;
   followup_due?:boolean;

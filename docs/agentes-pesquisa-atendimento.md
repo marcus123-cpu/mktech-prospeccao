@@ -49,3 +49,6 @@ Diagnóstico da falha observada: várias respostas chegaram ao CRM em 14/10/2026
 mas os respectivos leads acumularam `inference_failures` e notificações
 `Interpretação V6 indisponível`. O processamento sequencial agravava o atraso.
 Não há evidência de perda das mensagens recebidas.
+### Objeção inicial sem interesse
+
+Em Comercial → Configuração da operação, **Uma apresentação breve após “não tenho interesse”** controla a resposta V6 à primeira recusa comercial. Ligada por padrão, ela permite uma única mensagem curta que reconhece a recusa, explica uma oportunidade sustentada pelo diagnóstico e pede permissão para mostrar um exemplo existente e explicar seu funcionamento sem compromisso. A resposta não envia vídeo nem link; o catálogo só é usado depois de autorização específica. O lead fica aguardando a pessoa, sem retorno automático por essa objeção. Uma segunda recusa encerra a conversa. Pedidos explícitos para parar ou remover o número continuam bloqueando o contato imediatamente. Leads já bloqueados antes desta regra permanecem bloqueados.

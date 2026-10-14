@@ -45,15 +45,17 @@ const OPT_OUT = [
   /\b(pare|parem|para de|parar de) (de )?(me )?(mandar|enviar|chamar)/,
   /\bnao (me )?(mande|mandem|envie|enviem|chame|chamem) mais\b/,
   /\b(remova|remover|tira|tire|exclua|excluir) (meu|o meu|esse|este) (numero|contato)/,
-  /\bnao (tenho|temos) interesse\b/,
-  /\b(ela|ele|a proprietaria|a dona|a responsavel) nao tem interesse\b/,
-  /^nao (quero|queremos)[.!]*$/,
   /\bnao (quero|queremos) (mais )?(receber|conversar|continuar|contratar|comprar)\b/,
   /\bnao (quero|queremos) (mais )?(esse|este|seu|o seu|o) (servico|contato)\b/,
-  /^nao (quero|queremos|preciso|precisamos) (de )?(um |uma |o |a )?(site|pagina|landing page)[.!]*$/,
   /\b(descadastr|sair da lista)/,
   /^\s*(pare|parar|sair|stop)\s*[.!]*\s*$/,
   /\b(spam|denunciar|denuncia|bloquear|bloqueado)\b/,
+];
+const SOFT_REFUSAL = [
+  /\bnao (tenho|temos) interesse\b/,
+  /\b(ela|ele|a proprietaria|a dona|a responsavel) nao tem interesse\b/,
+  /^nao (quero|queremos)[.!]*$/,
+  /^nao (quero|queremos|preciso|precisamos) (de )?(um |uma |o |a )?(site|pagina|landing page)[.!]*$/,
 ];
 
 // Pessoa perguntando preço: o lead vai para "Pergunta de valor" no funil.
@@ -64,7 +66,8 @@ const PRICE = [
   /r\$/,
 ];
 
-export function isOptOutText(text:string):boolean { return OPT_OUT.some(r=>r.test(norm(text))); }
+export function isExplicitOptOutText(text:string):boolean { return OPT_OUT.some(r=>r.test(norm(text))); }
+export function isOptOutText(text:string):boolean { const normalized=norm(text);return OPT_OUT.some(r=>r.test(normalized))||SOFT_REFUSAL.some(r=>r.test(normalized)); }
 
 export function classifyReply(input: ReplyInput): ReplyClass {
   if (input.tipo === "audio") {

@@ -20,7 +20,9 @@ export async function POST(request:Request){
  const snapshot=await db.rpc('api_commercial_v6_snapshot',{p_token:auth.tokenId,p_lease:input.lease_id});
  if(snapshot.error)return temporaryFailure();
  if(!snapshot.data)return json({status:'desatualizada'},409);
- const ctx:V6Context={...snapshot.data,products:(snapshot.data.products??[]).map((p:{price:unknown})=>({...p,price:Number(p.price)}))};
+ const settings=await db.from('commercial_settings').select('objection_recovery_enabled').eq('id',1).single();
+ if(settings.error||!settings.data)return temporaryFailure();
+ const ctx:V6Context={...snapshot.data,objection_recovery_enabled:settings.data.objection_recovery_enabled,products:(snapshot.data.products??[]).map((p:{price:unknown})=>({...p,price:Number(p.price)}))};
  if(!ctx.first_contact&&(!input.proposal||!input.model))return json({status:'invalido',errors:['Interpretação e modelo obrigatórios']},422);
  const decision=ctx.first_contact?greetingDecision(ctx):contextualDecision(ctx,input.proposal!,input.model!);
  if(decision.validation_errors.length){
