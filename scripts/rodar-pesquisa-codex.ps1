@@ -5,18 +5,18 @@ $projeto = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $agoraSP = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([datetimeoffset]::UtcNow, 'E. South America Standard Time')
 if ($PSBoundParameters.ContainsKey('DataTeste') -and -not $DryRun) { throw 'DataTeste exige DryRun.' }
 $dataPesquisa = if ($PSBoundParameters.ContainsKey('DataTeste')) { $DataTeste.Date } else { $agoraSP.Date }
-$usarOpenRouter = $dataPesquisa -ge [datetime]'2026-10-15'
-if ($usarOpenRouter) {
-  $researcher = Join-Path $PSScriptRoot 'pesquisa-openrouter.py'
-  if (-not (Test-Path $researcher)) { throw 'Pesquisador OpenRouter não encontrado.' }
-  if ($DryRun) { Write-Output "OpenRouter programado; modo=$Modo; nenhuma execução iniciada."; exit 0 }
+$usarGemini = $dataPesquisa -ge [datetime]'2026-10-15'
+if ($usarGemini) {
+  $researcher = Join-Path $PSScriptRoot 'pesquisa-gemini.py'
+  if (-not (Test-Path $researcher)) { throw 'Pesquisador Gemini não encontrado.' }
+  if ($DryRun) { Write-Output "Gemini 3.1 programado; modo=$Modo; nenhuma execução iniciada."; exit 0 }
   $ready = & py $researcher --modo $Modo --ready
   if ($LASTEXITCODE -eq 0) {
     $env:PYTHONIOENCODING = 'utf-8'
     & py $researcher --modo $Modo
     exit $LASTEXITCODE
   }
-  Write-Output 'OpenRouter sem crédito suficiente ou indisponível; pesquisa segue pelo Codex.'
+  Write-Output 'Gemini sem cota ou indisponível; pesquisa segue pelo Codex.'
 }
 $codex = Get-Command codex -ErrorAction SilentlyContinue
 if (-not $codex) {

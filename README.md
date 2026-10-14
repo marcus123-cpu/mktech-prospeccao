@@ -228,16 +228,17 @@ Depois confira no painel, em **Execuções** e **Leads** (origem Hermes), se os
 cadastros têm evidências reais e se nada foi duplicado. Para testar só a
 conexão: `python "<pasta da skill>\scripts\mktech_crm.py" selftest`.
 
-### Pesquisa com OpenRouter a partir de 15/10/2026
+### Pesquisa com Gemini 3.1 a partir de 15/10/2026
 
-Desde 15/10/2026 (horário de São Paulo), os scripts de pesquisa do PC usam
-OpenRouter quando a chave em `envio/.env` tem pelo menos US$ 1 de crédito.
-`MKTECH_RESEARCH_MODEL` escolhe o modelo (padrão `openai/gpt-6-luna`), separado
-do modelo que responde aos leads. A pesquisa usa busca web e limita cada
-execução a US$ 5 por padrão (`MKTECH_RESEARCH_BUDGET_USD`). Se não houver
-crédito ou a verificação da conta falhar antes da execução, o script mantém
-o Codex como pesquisador para o pedido não parar. O pesquisador não envia
-mensagens: cadastro, duplicidade e evidências passam pelo CRM.
+Desde 15/10/2026 (horário de São Paulo), os scripts de pesquisa do PC tentam
+usar a API Google Gemini com a chave `GEMINI_API_KEY` em `envio/.env`.
+`MKTECH_RESEARCH_MODEL` escolhe o modelo (padrão `gemini-3.1-pro-preview`),
+separado do modelo que responde aos leads. A pesquisa usa Google Search e
+limita o custo estimado de cada execução a US$ 5 por padrão
+(`MKTECH_RESEARCH_BUDGET_USD`). Antes de abrir a execução no CRM, o script
+testa se o modelo consegue fazer uma busca. Se a cota da API estiver zerada
+ou o provedor indisponível, mantém o Codex como pesquisador. O pesquisador
+não envia mensagens: cadastro, duplicidade e evidências passam pelo CRM.
 
 ### 4.5a Reposição do estoque: segunda rodada às 13h
 

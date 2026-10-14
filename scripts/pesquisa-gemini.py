@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pesquisa comercial via OpenRouter; o CRM valida antes de qualquer cadastro.
+"""Pesquisa comercial via Gemini 3.1; o CRM valida antes de qualquer cadastro.
 
 Este processo nunca envia mensagens. Uma execução usa somente o provedor de
 pesquisa; o atendente V6 continua independente.
@@ -26,11 +26,11 @@ from zoneinfo import ZoneInfo
 ROOT = Path(__file__).resolve().parents[1]
 CRM = Path(os.environ.get("LOCALAPPDATA", "")) / "hermes/skills/mktech/mktech-prospeccao/scripts/mktech_crm.py"
 ENV = ROOT / "envio/.env"
-API = "https://openrouter.ai/api/v1/chat/completions"
+API_ROOT = "https://generativelanguage.googleapis.com/v1beta/models/"
 SP = ZoneInfo("America/Sao_Paulo")
 OFFERS = {"landing_page", "landing_por_procedimento", "site_institucional", "site_com_agendamento"}
 SYSTEM = """Você pesquisa oportunidades comerciais da MKTech Dev em clínicas e profissionais de estética.
-Use openrouter:web_search para pesquisar de fato. Não invente nomes, telefones, URLs, serviços, datas ou posições no Google.
+Use a busca do Google para pesquisar de fato. Não invente nomes, telefones, URLs, serviços, datas ou posições no Google.
 Foco: negócio sem site, landing page ou portfólio próprio. Quem já tem página própria só é elegível se uma busca concreta de procedimento+cidade mostrar oportunidade substancial de visibilidade no Google. Botão, endereço, link, contato, horário e pequenos ajustes em site alheio NÃO são oportunidade.
 Pesquise no máximo 4 vezes nesta chamada. Compare nome+cidade, procure página própria e verifique duas fontes independentes. Não conclua ausência de site por uma única busca. Se a fonte limitar a verificação, registre limitation e não afirme o que ela não mostra. Não presuma perdas, receita ou atividade recente.
 Retorne SOMENTE JSON: {"candidates":[...]} com no máximo 2 candidatos. Para cada candidato use exatamente campos da API: business_name, city, state, niche, services, phone, instagram, whatsapp_url, website_url, site_status, selection_reason, research_date, source_name, evidences, diagnosis. Evidência: kind (site|instagram|google|whatsapp|diretorio|busca|outro), url, summary, observed_at, limitation. Diagnóstico: fit_score (0-100), confidence (baixa|media|alta), summary, digital_presence, pains [{pain,evidence}], opportunities, offer (landing_page|landing_por_procedimento|site_institucional|site_com_agendamento|nao_recomendado), offer_reason, approach. Cada pains.evidence deve ser trecho literal do summary de uma fonte. Use null para campo opcional desconhecido. Se não houver candidato real suficientemente comprovado, retorne lista vazia."""
@@ -42,19 +42,30 @@ def load_env() -> None:
     for line in ENV.read_text(encoding="utf-8-sig").splitlines():
         if "=" in line and not line.lstrip().startswith("#"):
             name, value = line.split("=", 1)
-            if name.strip() in {"OPENROUTER_API_KEY", "MKTECH_RESEARCH_MODEL"}:
+            if name.strip() in {"GEMINI_API_KEY", "MKTECH_RESEARCH_MODEL", "MKTECH_RESEARCH_BUDGET_USD"}:
                 os.environ.setdefault(name.strip(), value.strip().strip('"').strip("'"))
 
 
-def available_credit(key: str) -> float:
-    request = urllib.request.Request("https://openrouter.ai/api/v1/credits",
-                                     headers={"Authorization": "Bearer " + key})
+def generate(key: str, model: str, prompt: str) -> dict:
+    body = {"contents": [{"parts": [{"text": prompt}]}], "tools": [{"google_search": {}}],
+            "generationConfig": {"thinkingConfig": {"thinkingLevel": "low"},
+                                 "maxOutputTokens": 5500}}
+    request = urllib.request.Request(API_ROOT + model + ":generateContent",
+                                     data=json.dumps(body, ensure_ascii=False).encode("utf-8"), method="POST",
+                                     headers={"x-goog-api-key": key, "Content-Type": "application/json"})
     try:
-        with urllib.request.urlopen(request, timeout=20) as response:
-            data = json.load(response)["data"]
-        return float(data["total_credits"]) - float(data["total_usage"])
-    except (urllib.error.URLError, ValueError, KeyError, TimeoutError):
-        raise RuntimeError("Não foi possível verificar crédito da OpenRouter") from None
+        with urllib.request.urlopen(request, timeout=120) as response:
+            return json.load(response)
+    except urllib.error.HTTPError as error:
+        raise RuntimeError(f"Gemini HTTP {error.code}") from None
+    except (urllib.error.URLError, ValueError, TimeoutError):
+        raise RuntimeError("Gemini indisponível ou resposta inválida") from None
+
+
+def probe_gemini(key: str, model: str) -> bool:
+    result = generate(key, model, "Pesquise na web o domínio oficial da Prefeitura de Campinas (SP). Responda em uma frase.")
+    metadata = result.get("candidates", [{}])[0].get("groundingMetadata") or {}
+    return bool(metadata.get("webSearchQueries") and metadata.get("groundingChunks"))
 
 
 def crm(*args: str) -> tuple[int, dict]:
@@ -119,37 +130,31 @@ def validate_candidate(candidate: object, city: str, today: str) -> bool:
     return status in {"apenas_redes_sociais", "site_nao_localizado"}
 
 
-def query_openrouter(city: str, niche: str, exclusions: list[str], model: str, key: str) -> tuple[list, int]:
+def query_gemini(city: str, niche: str, exclusions: list[str], model: str, key: str) -> tuple[list, int, float]:
     prompt = json.dumps({"cidade": city, "nicho": niche, "ja_cadastrados": exclusions[-50:],
                          "data_de_hoje": datetime.now(SP).date().isoformat(),
                          "tarefa": "Encontre até 2 negócios reais dentro do foco, com WhatsApp comercial público e fontes independentes."}, ensure_ascii=False)
-    body = json.dumps({"model": model, "messages": [{"role": "system", "content": SYSTEM},
-                                                   {"role": "user", "content": prompt}],
-                       "tools": [{"type": "openrouter:web_search", "parameters": {
-                           "engine": "exa", "max_results": 3, "max_total_results": 12, "max_uses": 4}}],
-                       "max_tool_calls": 4,
-                       "response_format": {"type": "json_object"},
-                       "usage": {"include": True}, "max_completion_tokens": 4200,
-                       "stream": False}, ensure_ascii=False).encode("utf-8")
-    request = urllib.request.Request(API, data=body, method="POST", headers={
-        "Authorization": "Bearer " + key, "Content-Type": "application/json",
-        "HTTP-Referer": "https://mktech-prospeccao.vercel.app", "X-Title": "MKTech Research"})
+    result = generate(key, model, SYSTEM + "\n\n" + prompt)
+    response = result.get("candidates", [{}])[0]
+    grounding = response.get("groundingMetadata") or {}
+    queries = grounding.get("webSearchQueries") or []
+    if not queries:
+        raise RuntimeError("Gemini não confirmou buscas web nesta chamada")
+    count = len(queries)
+    content = "".join(part.get("text", "") for part in response.get("content", {}).get("parts", []))
     try:
-        with urllib.request.urlopen(request, timeout=120) as response:
-            result = json.loads(response.read(262145))
-    except urllib.error.HTTPError as error:
-        raise RuntimeError(f"OpenRouter HTTP {error.code}") from None
-    except (urllib.error.URLError, TimeoutError, ValueError):
-        raise RuntimeError("OpenRouter indisponível ou resposta inválida") from None
-    usage = result.get("usage") or {}
-    count = (usage.get("server_tool_use") or {}).get("web_search_requests")
-    if not isinstance(count, int) or count < 1:
-        raise RuntimeError("OpenRouter não confirmou buscas web nesta chamada")
-    content = result["choices"][0]["message"]["content"]
-    candidates = json.loads(content).get("candidates", [])
+        candidates = json.loads(content).get("candidates", [])
+    except (ValueError, AttributeError):
+        raise RuntimeError("Gemini não retornou candidatos em JSON") from None
     if not isinstance(candidates, list):
         raise RuntimeError("Resposta de pesquisa sem lista de candidatos")
-    return candidates[:2], count
+    if not grounding.get("groundingChunks"):
+        candidates = []
+    usage = result.get("usageMetadata") or {}
+    # Estimativa conservadora: preço Pro <200k tokens + busca paga por consulta.
+    estimated_cost = (int(usage.get("promptTokenCount") or 0) * 2 +
+                      int(usage.get("candidatesTokenCount") or 0) * 12) / 1_000_000 + count * 0.014
+    return candidates[:2], count, estimated_cost
 
 
 def with_candidate(candidate: dict, action: str, *args: str) -> tuple[int, dict]:
@@ -164,19 +169,18 @@ def with_candidate(candidate: dict, action: str, *args: str) -> tuple[int, dict]
 
 def run(modo: str) -> int:
     load_env()
-    key = os.environ.get("OPENROUTER_API_KEY", "").strip()
-    model = os.environ.get("MKTECH_RESEARCH_MODEL", "openai/gpt-6-luna").strip()
+    key = os.environ.get("GEMINI_API_KEY", "").strip()
+    model = os.environ.get("MKTECH_RESEARCH_MODEL", "gemini-3.1-pro-preview").strip()
     budget = float(os.environ.get("MKTECH_RESEARCH_BUDGET_USD", "5"))
     if not key or not CRM.is_file():
-        print("Pesquisa OpenRouter não configurada; nenhum pedido foi iniciado.")
+        print("Pesquisa Gemini não configurada; nenhum pedido foi iniciado.")
         return 6
     try:
-        initial_credit = available_credit(key)
-        if initial_credit < 1:
-            print("OpenRouter sem saldo mínimo para pesquisa; nenhum pedido foi iniciado.")
+        if not probe_gemini(key, model):
+            print("Gemini sem busca fundamentada; nenhum pedido foi iniciado.")
             return 6
     except RuntimeError:
-        print("Não foi possível verificar crédito da OpenRouter; nenhum pedido foi iniciado.")
+        print("Gemini indisponível ou sem cota; nenhum pedido foi iniciado.")
         return 6
     code, settings_result = crm("selftest")
     if code or not isinstance(settings_result.get("settings"), dict):
@@ -196,6 +200,7 @@ def run(modo: str) -> int:
     cities = [city.rsplit(" - ", 1)[0] for city in settings.get("cities", [])]
     niches = settings.get("niches", [])
     searched = created = discarded = errors = 0
+    spent = 0.0
     reason = "Limite de tempo ou buscas atingido"
     try:
         if not cities or not niches:
@@ -209,18 +214,18 @@ def run(modo: str) -> int:
         for index in range(max_searches // 4):
             if time.monotonic() >= deadline or searched + 4 > max_searches:
                 break
-            current_credit = available_credit(key)
-            if current_credit < 1 or initial_credit - current_credit >= budget:
-                reason = "Limite de crédito da pesquisa OpenRouter atingido"
+            if spent >= budget:
+                reason = "Orçamento estimado da pesquisa Gemini atingido"
                 break
             if created + int(started.get("ja_vieram") or 0) >= target:
                 reason = "Meta de cadastros atingida"
                 break
             city, niche = cities[(index // len(niches)) % len(cities)], niches[index % len(niches)]
             try:
-                candidates, count = query_openrouter(city, niche, exclusions, model, key)
+                candidates, count, estimated_cost = query_gemini(city, niche, exclusions, model, key)
                 errors = 0
                 searched += count
+                spent += estimated_cost
                 if count > 4 or searched > max_searches:
                     reason = "Modelo excedeu reserva de buscas"
                     break
@@ -263,6 +268,7 @@ def run(modo: str) -> int:
                                   "--end-reason", reason)
         print(json.dumps({"run_id": run_id, "status": status, "searched": searched,
                           "created": created, "discarded": discarded, "errors": errors,
+                          "estimated_cost_usd": round(spent, 4),
                           "finish_status": finish.get("status"), "finish_code": finish_code}, ensure_ascii=False))
     return 0 if finish_code == 0 else finish_code
 
@@ -276,14 +282,14 @@ if __name__ == "__main__":
     if args.ready:
         load_env()
         try:
-            ready = CRM.is_file() and available_credit(os.environ["OPENROUTER_API_KEY"]) >= 1
+            ready = CRM.is_file() and probe_gemini(os.environ["GEMINI_API_KEY"], os.environ.get("MKTECH_RESEARCH_MODEL", "gemini-3.1-pro-preview"))
         except (KeyError, RuntimeError):
             ready = False
         print(json.dumps({"ready": ready}))
         raise SystemExit(0 if ready else 6)
     if args.dry_run:
         load_env()
-        print(json.dumps({"provider": "openrouter", "model": os.environ.get("MKTECH_RESEARCH_MODEL", "openai/gpt-6-luna"),
-                          "key_configured": bool(os.environ.get("OPENROUTER_API_KEY")), "crm_available": CRM.is_file()}))
+        print(json.dumps({"provider": "gemini", "model": os.environ.get("MKTECH_RESEARCH_MODEL", "gemini-3.1-pro-preview"),
+                          "key_configured": bool(os.environ.get("GEMINI_API_KEY")), "crm_available": CRM.is_file()}))
         raise SystemExit(0)
     raise SystemExit(run(args.modo))

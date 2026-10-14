@@ -5,8 +5,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-script = Path(__file__).resolve().parents[1] / "pesquisa-openrouter.py"
-spec = importlib.util.spec_from_file_location("pesquisa_openrouter", script)
+script = Path(__file__).resolve().parents[1] / "pesquisa-gemini.py"
+spec = importlib.util.spec_from_file_location("pesquisa_gemini", script)
 research = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(research)
 
@@ -47,22 +47,25 @@ class ResearchValidationTests(unittest.TestCase):
         self.assertFalse(research.public_url("http://127.0.0.1/secret"))
         self.assertFalse(research.public_url("http://localhost/"))
 
-    def test_openrouter_search_is_capped_and_counted(self):
-        response = {"usage": {"server_tool_use": {"web_search_requests": 2}},
-                    "choices": [{"message": {"content": '{"candidates":[]}'}}]}
+    def test_gemini_grounded_search_is_counted(self):
+        response = {"usageMetadata": {"promptTokenCount": 100, "candidatesTokenCount": 50},
+                    "candidates": [{"groundingMetadata": {"webSearchQueries": ["a", "b"],
+                                                        "groundingChunks": [{"web": {"uri": "https://example.com"}}]},
+                                    "content": {"parts": [{"text": '{"candidates":[]}'}]}}]}
         with patch.object(research.urllib.request, "urlopen", return_value=io.BytesIO(json.dumps(response).encode())) as call:
-            candidates, count = research.query_openrouter("Campinas", "estética", [], "test/model", "test-key")
+            candidates, count, cost = research.query_gemini("Campinas", "estética", [], "gemini-3.1-pro-preview", "test-key")
         self.assertEqual((candidates, count), ([], 2))
+        self.assertGreater(cost, 0)
         body = json.loads(call.call_args.args[0].data)
-        self.assertEqual(body["tools"][0]["parameters"]["max_uses"], 4)
-        self.assertEqual(body["max_tool_calls"], 4)
+        self.assertEqual(body["tools"], [{"google_search": {}}])
         self.assertNotIn("test-key", json.dumps(body))
 
     def test_no_recorded_web_search_cannot_create_lead(self):
-        response = {"usage": {}, "choices": [{"message": {"content": '{"candidates":[{}]}'}}]}
+        response = {"candidates": [{"groundingMetadata": {},
+                                    "content": {"parts": [{"text": '{"candidates":[{}]}'}]}}]}
         with patch.object(research.urllib.request, "urlopen", return_value=io.BytesIO(json.dumps(response).encode())):
             with self.assertRaisesRegex(RuntimeError, "não confirmou buscas"):
-                research.query_openrouter("Campinas", "estética", [], "test/model", "test-key")
+                research.query_gemini("Campinas", "estética", [], "gemini-3.1-pro-preview", "test-key")
 
 
 if __name__ == "__main__":
