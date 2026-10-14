@@ -12,7 +12,7 @@ const id='00000000-0000-4000-8000-000000000001';
 function context(body='Bom dia'):V6Context{return {
  lead_id:id,revision:1,reply_id:id,lease_id:id,business_name:'Clínica Simulada',city:'Bauru',recipient_timezone:'America/Sao_Paulo',phase:'WAITING_FIRST_REPLY',
  readiness:{status:'READY_FOR_OUTREACH',reasons:[],confidence:.9},now:'2026-10-13T15:00:00Z',first_contact:false,manual:false,do_not_contact:false,video_configured:true,products:[],demonstrations:[],demonstration_history:[],messages:[],
- research:{services:['limpeza de pele'],evidences:[{kind:'site',url:'https://clinica.test',observed_at:'2026-10-13',summary:'limpeza de pele sem descrição do procedimento'},{kind:'social',url:'https://social.test',observed_at:'2026-10-13',summary:'Clínica Simulada Bauru limpeza de pele'}],diagnosis:{confidence:'alta',offer:'landing_page',pains:[{pain:'Conteúdo insuficiente',evidence:'sem descrição do procedimento'}]}},
+ research:{site_status:'apenas_redes_sociais',services:['limpeza de pele'],evidences:[{kind:'instagram',url:'https://clinica.test',observed_at:'2026-10-13',summary:'Clínica Simulada Bauru limpeza de pele, sem página própria'},{kind:'google',url:'https://social.test',observed_at:'2026-10-13',summary:'Clínica Simulada Bauru limpeza de pele, apenas Instagram'}],diagnosis:{confidence:'alta',offer:'landing_page',pains:[{pain:'Sem apresentação própria',evidence:'sem página própria'}]}},
  state:{stage:'CONTATO_ENVIADO',role:'UNKNOWN',role_confidence:0,role_evidence:'',strategy:'A',video_offered:false,video_authorized:false,video_sent_at:null,facts:{},followup_at:null,followup_reason:null},
  pending_messages:[{id,body,received_at:'2026-10-13T14:59:00Z',media:'texto',kind:'pendente_semantica'}],
  commercial_memory:{summary:'',confirmed_facts:[],uncertain_facts:[],answered_questions:[],objections:[],next_action:'',solution:null,introduced:false,channel_confirmed:false,wait_acknowledged:[]},
@@ -36,6 +36,7 @@ describe('V6: autorização e contexto (propostas simuladas, sem inferência rea
  it('fuso desconhecido exige pesquisa',()=>expect(recipientTimezone(null,'XX')).toBeNull());
  it('fuso inválido rejeitado',()=>expect(()=>greetingAt('2026-10-13','inventado')).toThrow());
  it('diagnóstico completo permite contato',()=>expect(evaluateReadiness(context()).status).toBe('READY_FOR_OUTREACH'));
+ it('site existente com ajuste de botão fica fora da prospecção',()=>{const c=context();c.research.site_status='site_proprio_encontrado';c.research.website_url='https://clinica.test';c.research.diagnosis!.pains=[{pain:'Botão de endereço incorreto',evidence:'botão de endereço'}];expect(evaluateReadiness(c).status).toBe('NOT_QUALIFIED');});
  it('diagnóstico ausente bloqueia',()=>{const c=context();c.research.diagnosis=null;expect(greetingDecision(c).action).toBe('wait');});
  it('serviço inventado bloqueia',()=>{const c=context();c.research.services=['botox'];expect(evaluateReadiness(c).status).toBe('NEEDS_RESEARCH');});
  it('baixa confiança bloqueia',()=>{const c=context();c.research.diagnosis!.confidence='baixa';expect(evaluateReadiness(c).status).toBe('LOW_CONFIDENCE');});

@@ -2,6 +2,7 @@
 import { isOptOutText } from "@/lib/envio/respostas";
 import { todaySP } from "@/lib/time";
 import { selectDemonstration, type Demonstration, type DemoHistory } from "./demonstrations";
+import { researchFocus } from "./research-focus";
 export const STAGES = ["NOVO", "PESQUISADO", "QUALIFICADO", "PRONTO_PARA_CONTATO", "CONTATO_ENVIADO", "RESPOSTA_RECEBIDA", "TRIAGEM_RECEPCAO", "AGUARDANDO_RESPONSAVEL", "CONTATO_COM_DECISOR", "APRESENTACAO_AUTORIZADA", "VIDEO_ENVIADO", "INTERESSE_IDENTIFICADO", "QUALIFICACAO_COMERCIAL", "PROPOSTA_SOLICITADA", "PROPOSTA_ENVIADA", "NEGOCIACAO", "VENDA_FECHADA", "PERDIDO", "SEM_RESPOSTA", "NAO_CONTATAR"] as const;
 export const ROLES = ["UNKNOWN", "AUTOMATED_ATTENDANT", "RECEPTIONIST", "SECRETARY", "MANAGER", "MARKETING_RESPONSIBLE", "OWNER", "DECISION_MAKER", "AUTHORIZED_INTERMEDIARY"] as const;
 export type Stage = typeof STAGES[number];
@@ -50,7 +51,7 @@ export function scoreResearch(research: Research, now: string) {
   const evidence = (research.evidences ?? []).filter((e) => e.url && e.observed_at && !e.limitation);
   const source = norm(evidence.map((e) => e.summary).join(" "));
   const niche = /estetica|harmonizacao|biomedic.*estet/.test(source) ? 20 : 0;
-  const opportunity = (research.diagnosis?.pains ?? []).some((p) => evidence.some((e) => norm(e.summary).includes(norm(p.evidence)))) ? 25 : 0;
+  const opportunity = researchFocus(research).qualified && (research.diagnosis?.pains ?? []).some((p) => evidence.some((e) => norm(e.summary).includes(norm(p.evidence)))) ? 25 : 0;
   const recent = evidence.some((e) => {
     const activityDate=/\b(?:publicacao|atividade|atendimento) (?:em|de|no dia) (\d{4}-\d{2}-\d{2})/.exec(norm(e.summary))?.[1];
     const age=activityDate ? Date.parse(now)-Date.parse(activityDate) : NaN;

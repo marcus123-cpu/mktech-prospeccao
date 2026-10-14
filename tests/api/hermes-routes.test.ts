@@ -83,6 +83,17 @@ describe("rotas da API do Hermes", () => {
     expect(call[1]).toMatchObject({ p_token: "token-1", p_key: "chave-123456" });
   });
 
+  it("recusa candidato de pesquisa com site e somente ajuste pequeno", async () => {
+    const res = await registerCandidate(req("/api/hermes/v1/candidates", {
+      body: { run_id: "00000000-0000-4000-8000-000000000001", candidate: {
+        ...candidate, site_status: "site_proprio_encontrado", website_url: "https://clinica.test",
+        selection_reason: "Corrigir botão de endereço",
+      } }, key: "chave-123456",
+    }));
+    expect(res.status).toBe(422);
+    expect(rpc).not.toHaveBeenCalledWith("api_register_candidate", expect.anything());
+  });
+
   it("limite atingido vira 409 e falha do banco vira 503", async () => {
     rpc.mockImplementation(async (fn: string) =>
       fn === "api_token_check" ? { data: "token-1", error: null } : { data: { status: "limite_atingido" }, error: null },

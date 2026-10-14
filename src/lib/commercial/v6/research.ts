@@ -1,4 +1,5 @@
 import type { Readiness, V6Context } from "./contracts";
+import { researchFocus } from "../research-focus";
 const norm=(text:string)=>text.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 export function verifiedEvidence(ctx:Pick<V6Context,'research'>){return (ctx.research.evidences??[]).filter(e=>e.url&&e.observed_at&&!e.limitation);}
 export function evaluateReadiness(ctx:Pick<V6Context,'research'|'business_name'|'city'|'do_not_contact'|'recipient_timezone'>):Readiness {
@@ -13,6 +14,8 @@ export function evaluateReadiness(ctx:Pick<V6Context,'research'|'business_name'|
   const services=(ctx.research.services??[]).filter(s=>evidence.some(e=>norm(e.summary).includes(norm(s))));
   if(!services.length)missing.push('Serviços sem evidência suficiente');
   if(missing.length)return {status:'NEEDS_RESEARCH',reasons:missing,confidence:0};
+  const focus=researchFocus(ctx.research);
+  if(!focus.qualified)return {status:'NOT_QUALIFIED',reasons:[focus.reason],confidence:0};
   if(ctx.research.diagnosis?.offer==='nao_recomendado')return {status:'NOT_QUALIFIED',reasons:['Solução não recomendada pelo diagnóstico'],confidence:0};
   if(domains.size<2||ctx.research.diagnosis?.confidence==='baixa')return {status:'LOW_CONFIDENCE',reasons:['Confirmar identidade e diagnóstico em fontes independentes'],confidence:domains.size<2?0.5:0.65};
   const supported=(ctx.research.diagnosis?.pains??[]).some(p=>p.evidence.length>3&&evidence.some(e=>norm(e.summary).includes(norm(p.evidence))));

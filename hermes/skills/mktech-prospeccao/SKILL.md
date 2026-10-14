@@ -1,7 +1,7 @@
 ---
 name: mktech-prospeccao
 description: Pesquisa de oportunidades digitais verificáveis em clínicas de estética e cadastro no CRM MKTech; motor comercial V6 operado pelo servidor.
-version: 2.1.0
+version: 2.2.0
 platforms: [windows, linux, macos]
 metadata:
   hermes:
@@ -15,8 +15,13 @@ required_environment_variables:
 # Prospecção MKTech
 
 Você pesquisa leads para a MKTech Dev, que vende sites e landing pages. O
-público é clínica ou profissional de estética nas cidades configuradas no painel,
-com oportunidade digital verificável, inclusive clínicas com site existente.
+público é clínica ou profissional de estética nas cidades configuradas no painel
+que ainda não tem site, landing page ou portfólio próprio para se apresentar.
+Exceção: quem já tem site só entra com uma lacuna relevante de visibilidade no
+Google, comprovada por uma busca de serviço e cidade e registrada no diagnóstico.
+Não prospecte manutenção de site alheio: botão de endereço, link do Instagram,
+telefone, email, horário, texto ou ajuste visual isolado não são oportunidade
+para esta campanha. Não transforme essas falhas em oferta de landing page.
 Seu trabalho de pesquisa termina no cadastro do candidato. O motor V6 decide
 e enfileira mensagens dentro das configurações; Marcos administra a estratégia.
 
@@ -222,9 +227,14 @@ na hora (conta em `discarded`, sem cadastrar) se:
 1. **Sem contato comercial:** não aparece telefone nem Instagram do negócio
    no resultado da descoberta ou em uma busca `<nome> <cidade>`. O CRM
    recusa candidato sem telefone ou Instagram, então não vale pesquisar.
-2. **Sem oportunidade verificável:** não descarte apenas por possuir site.
-   Pesquise se há informação desatualizada, procedimentos difíceis de localizar
-   ou contato pouco claro; registre somente o que realmente verificou.
+2. **Fora do foco comercial:** se encontrou site, landing page ou portfólio
+   próprio, descarte, salvo quando uma busca concreta de procedimento + cidade
+   mostra uma lacuna relevante de visibilidade no Google. Para essa exceção,
+   registre o termo pesquisado, resultado observado e URL/data da busca; a dor
+   do diagnóstico deve citar literalmente essa evidência. Divergência de
+   endereço, botão, link, contato, horário ou informação do site não justifica
+   cadastrar. Se a presença própria ficou incerta, continue verificando antes
+   do cadastro; não marque `verificacao_pendente` como qualificado.
 3. **Já está no CRM:** nome, telefone ou Instagram batem com a lista do
    `identifiers`.
 4. **Fora do escopo:** cidade fora das configuradas ou não é estética.
@@ -268,7 +278,8 @@ quem aparece primeiro. Se concorrentes têm página própria e ela não, isso
 **E. Tem site próprio?** Busque `<nome> <cidade> site`. Linktree, Instagram,
 Google Meu Negócio e marketplaces são diretórios, não site próprio. Uma página
 institucional da própria clínica, inclusive em hospedagem gratuita, pode ser site.
-Se achar site próprio, registre `site_proprio_encontrado` e avalie oportunidades. O
+Se achar site próprio, registre `site_proprio_encontrado` e descarte, exceto
+pela lacuna de visibilidade no Google documentada acima. O
 `site_status` tem que bater com as evidências: só use
 `apenas_redes_sociais` se você viu a rede social; se não achou nada,
 `site_nao_localizado`.
@@ -279,14 +290,11 @@ Se achar site próprio, registre `site_proprio_encontrado` e avalie oportunidade
 - `digital_presence`: os números e canais que você viu.
 - `pains`: de 1 a 5 dores, **cada uma com a evidência que a sustenta**.
   Sem evidência, não é dor; não invente. Exemplos de sinal e dor:
-  - agenda por WhatsApp: registrar esse canal, sem afirmar perda de clientes
-    ou sobrecarga sem evidência;
-  - informação de procedimentos difícil de localizar: registrar o trecho
-    observado, sem deduzir resultados de busca ou perda de pacientes;
-  - avaliações boas espalhadas em diretórios: credibilidade que não é
-    aproveitada;
-  - promoções só no Instagram: alcance limitado a quem já segue;
-  - perfil novo ou com poucas avaliações: precisa passar confiança.
+  - profissional ativo só com Instagram/WhatsApp, sem página própria para
+    apresentar formação, procedimentos e portfólio;
+  - clínica sem site ou landing page para explicar serviços e reunir contato;
+  - site existente com baixa visibilidade em busca concreta de serviço+cidade,
+    sem afirmar perda de clientes ou posição universal no Google.
 - `opportunities`: como a MKTech resolve cada dor, de forma concreta.
 - `offer` (uma só) e `offer_reason`:
   - `site_com_agendamento`: muitos procedimentos e agenda manual pesada;
