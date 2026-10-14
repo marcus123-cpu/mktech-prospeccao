@@ -43,10 +43,11 @@ site, agenda, Instagram, conversão ou desempenho só porque a busca não achou.
 Confirme que o link público do WhatsApp leva ao mesmo telefone do candidato.
 Não inclua números particulares ou de terceiros sem vínculo verificado.
 
-Se faltar telefone, fonte independente ou diagnóstico firme, cadastre o que foi
-pesquisado com as limitações e `pending_items` claros. O Hermes mantém esse
-perfil em pesquisa, sem saudação, até haver dados suficientes. Nunca aumente
-nota/confiança ou remova `limitation` só para entrar na fila.
+Se faltar telefone, fonte independente, confirmação da presença digital ou
+diagnóstico firme, continue a pesquisa ou descarte o candidato. O CRM recusa
+presença digital não verificada; não gaste uma tentativa de `register` com
+`site_status: "verificacao_pendente"`. Nunca aumente nota/confiança ou remova
+`limitation` só para entrar na fila.
 
 ## Operação V4
 
@@ -241,7 +242,9 @@ na hora (conta em `discarded`, sem cadastrar) se:
 
 Prefira buscas de descoberta que tragam vários negócios com telefone de uma
 vez (Google Maps, diretórios, "clínica de estética <cidade>") e faça a
-triagem de todos antes de aprofundar em qualquer um.
+triagem de todos antes de aprofundar em qualquer um. Se os resultados de uma
+consulta ou cidade repetirem negócios com site próprio, mude de nicho, bairro
+ou cidade; não consuma o restante do limite em variações da mesma consulta.
 
 ## Pesquisa do lead
 
@@ -262,9 +265,8 @@ canal público de agendamento. Não inclua endereço residencial ou canal privad
 nota no Google, número de seguidores. Descarte só quando houver **prova**
 de inatividade (último sinal com mais de 6 meses, perfil apagado, "fechado
 permanentemente"). Se não deu para ver datas (Instagram exige login, página
-não abre), **não descarte por isso**: cadastre com `site_status:
-"verificacao_pendente"`, `confidence: "baixa"`, `priority: "baixa"` e diga
-em `pending_items` o que falta confirmar. O Marcos confere no painel.
+não abre), tente outra fonte antes de cadastrar. Se não conseguir confirmar
+atividade e a oportunidade digital, descarte por evidência insuficiente.
 
 **C. O que vende.** Procedimentos principais (harmonização, botox, limpeza
 de pele, depilação a laser, drenagem...), se há procedimentos de ticket
