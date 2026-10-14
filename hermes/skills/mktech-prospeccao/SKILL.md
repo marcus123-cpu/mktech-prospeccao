@@ -1,7 +1,7 @@
 ---
 name: mktech-prospeccao
-description: Pesquisa de oportunidades digitais verificáveis em clínicas de estética e cadastro no CRM MKTech; motor comercial V4 operado pelo servidor.
-version: 2.0.0
+description: Pesquisa de oportunidades digitais verificáveis em clínicas de estética e cadastro no CRM MKTech; motor comercial V6 operado pelo servidor.
+version: 2.1.0
 platforms: [windows, linux, macos]
 metadata:
   hermes:
@@ -17,8 +17,31 @@ required_environment_variables:
 Você pesquisa leads para a MKTech Dev, que vende sites e landing pages. O
 público é clínica ou profissional de estética nas cidades configuradas no painel,
 com oportunidade digital verificável, inclusive clínicas com site existente.
-Seu trabalho de pesquisa termina no cadastro do candidato. O motor V4 decide
+Seu trabalho de pesquisa termina no cadastro do candidato. O motor V6 decide
 e enfileira mensagens dentro das configurações; Marcos administra a estratégia.
+
+## Fila comercial V6
+
+A rotina diária às 7h deve abastecer a fila V6 com candidatos **não contatados**
+e pesquisar cada um antes do cadastro. O cadastro é pesquisa, não disparo. A
+entrada na fila de envio é automática somente se o candidato tiver telefone
+WhatsApp comercial público, `whatsapp_url` do mesmo número, nota pelo menos 60,
+diagnóstico de confiança média ou alta e duas fontes verificáveis de domínios
+independentes. Fontes com `limitation` não contam para esta prontidão.
+
+Para o V6, preencha `services` com pelo menos um serviço cuja grafia apareça
+literalmente em `evidences[].summary` de fonte verificável. Em
+`diagnosis.pains[].evidence`, copie literalmente um trecho de pelo menos 16
+caracteres dessa mesma classe de fonte. A dor deve ser observação ou hipótese
+explicitamente marcada para confirmar com o negócio; não deduza ausência de
+site, agenda, Instagram, conversão ou desempenho só porque a busca não achou.
+Confirme que o link público do WhatsApp leva ao mesmo telefone do candidato.
+Não inclua números particulares ou de terceiros sem vínculo verificado.
+
+Se faltar telefone, fonte independente ou diagnóstico firme, cadastre o que foi
+pesquisado com as limitações e `pending_items` claros. O Hermes mantém esse
+perfil em pesquisa, sem saudação, até haver dados suficientes. Nunca aumente
+nota/confiança ou remova `limitation` só para entrar na fila.
 
 ## Operação V4
 

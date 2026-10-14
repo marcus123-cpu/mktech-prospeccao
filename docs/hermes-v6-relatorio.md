@@ -179,6 +179,18 @@ antes de abordagem.
 Monitorar a fila após o início da janela e reabastecer com perfis verificáveis.
 O tempo de resposta depende do provedor de inferência e não é um SLA garantido.
 
+Às 05:38 de 14/10 (São Paulo), a pesquisa diária estava agendada para as 7h e o `selftest` do CRM
+confirmou `routine_enabled=true`, reposição necessária e meta de quatro novos
+cadastros para a próxima execução. A passagem de pesquisa para a fila V6 foi
+ligada à inserção de diagnóstico: exige telefone com link público de WhatsApp
+do mesmo número, duas fontes independentes sem limitação, serviço documentado,
+nota pelo menos 60 e oportunidade apoiada em trecho literal de evidência.
+Atualizamos a skill de pesquisa instalada com esses requisitos. Dos 36 perfis
+não contatados então cadastrados, dois tinham elegibilidade comercial; um foi
+reavaliado com fontes já verificadas e passou a `READY_FOR_OUTREACH`. Sua
+saudação V6 ficou `enfileirada` para a janela permitida. Os outros continuam
+visíveis no funil em pesquisa; nenhum envio inicial ocorreu fora do horário.
+
 ## 14. Iniciar
 `envio/iniciar-tudo.bat` mantém ponte, enviador e workers. O runtime Hermes precisa
 permanecer instalado e autenticado. Falha de inferência aplica espera e notificação.
