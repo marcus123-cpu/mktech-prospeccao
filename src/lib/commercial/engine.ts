@@ -51,7 +51,8 @@ export function scoreResearch(research: Research, now: string) {
   const evidence = (research.evidences ?? []).filter((e) => e.url && e.observed_at && !e.limitation);
   const source = norm(evidence.map((e) => e.summary).join(" "));
   const niche = /estetica|harmonizacao|biomedic.*estet/.test(source) ? 20 : 0;
-  const opportunity = researchFocus(research).qualified && (research.diagnosis?.pains ?? []).some((p) => evidence.some((e) => norm(e.summary).includes(norm(p.evidence)))) ? 25 : 0;
+  const focus = researchFocus(research).qualified;
+  const opportunity = focus && (research.diagnosis?.pains ?? []).some((p) => evidence.some((e) => norm(e.summary).includes(norm(p.evidence)))) ? 25 : 0;
   const recent = evidence.some((e) => {
     const activityDate=/\b(?:publicacao|atividade|atendimento) (?:em|de|no dia) (\d{4}-\d{2}-\d{2})/.exec(norm(e.summary))?.[1];
     const age=activityDate ? Date.parse(now)-Date.parse(activityDate) : NaN;
@@ -60,7 +61,8 @@ export function scoreResearch(research: Research, now: string) {
   const benefit = opportunity > 0 && /procedimento|tratamento|agendamento|whatsapp/.test(source) ? 15 : 0;
   const channel = evidence.some((e) => e.kind !== "diretorio" && /whatsapp comercial|telefone comercial|canal comercial/.test(norm(e.summary))) ? 15 : 0;
   const personal = evidence.length >= 2 && (research.services ?? []).some((s) => source.includes(norm(s))) ? 10 : 0;
-  const components = { nicho: niche, oportunidade: opportunity, atividade: recent, beneficio: benefit, canal: channel, personalizacao: personal };
+  const components = focus ? { nicho: niche, oportunidade: opportunity, atividade: recent, beneficio: benefit, canal: channel, personalizacao: personal }
+    : { nicho: 0, oportunidade: 0, atividade: 0, beneficio: 0, canal: 0, personalizacao: 0 };
   const score = Object.values(components).reduce((a, b) => a + b, 0);
   const domains=new Set(evidence.map(e=>{try{return new URL(e.url!).hostname;}catch{return "";}}).filter(Boolean));
   const coverage=(research.evidences?.length ?? 0) ? Math.round(100*evidence.length/research.evidences!.length) : 0;
