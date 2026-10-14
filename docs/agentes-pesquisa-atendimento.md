@@ -6,6 +6,8 @@ skill `hermes/skills/mktech-prospeccao/SKILL.md`, consulta o CRM, pesquisa fonte
 e registra candidatos e diagnósticos. Não usa comandos de mensagens nem acessa
 diretamente o WhatsApp. O cadastro continua sujeito à deduplicação e às regras
 de prontidão do CRM.
+O executor Codex usa `workspace-write` com rede liberada; um selftest de leitura
+do CRM e uma busca web foram verificados nessa configuração.
 
 O agente de atendimento V6 pode usar a OpenRouter. Cada conversa recebe apenas
 o contexto daquele lead, incluindo diagnóstico, evidências e histórico. O modelo

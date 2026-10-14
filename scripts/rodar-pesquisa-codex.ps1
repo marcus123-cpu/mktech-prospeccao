@@ -29,5 +29,5 @@ Você é o agente de PESQUISA da MKTech Dev. Leia $skill e siga somente as seç�
 Pesquise na web e registre cada candidato com fonte verificável e diagnóstico honesto. Não execute modos de envio, leitura, secretário nem chamadas diretas ao WhatsApp. Não escreva mensagens comerciais; o motor V6 separado decide isso. Encerre a execução no CRM e informe números reais de buscas, cadastrados, descartados e erros.
 "@
 
-& $codexPath exec --approve-for-me -C $projeto $prompt
+& $codexPath exec --approve-for-me -c sandbox_workspace_write.network_access=true -C $projeto $prompt
 exit $LASTEXITCODE
