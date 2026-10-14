@@ -55,7 +55,7 @@ def main():
         log(f"Comercial: HTTP {status}; estado={result.get('status')}; processados={len(result.get('results', []))}")
         if args.uma_vez or status in (401, 403):
             return
-        time.sleep(30)
+        time.sleep(3)
 
 if __name__ == '__main__':
     main()

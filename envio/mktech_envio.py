@@ -50,7 +50,7 @@ from typing import Any, Callable
 
 TIMEOUT_SECONDS = 20
 MAX_ATTEMPTS = 4
-POLL_SECONDS = 30
+POLL_SECONDS = 3
 MAX_TEXT = 700
 
 EXIT_OK, EXIT_INVALID, EXIT_TEMPORARY, EXIT_CONFIG = 0, 2, 5, 6
@@ -372,7 +372,7 @@ def step(transporte: Transporte) -> tuple[str, float]:
     s = nxt.get("status", "falha_temporaria")
     if s != "enviar":
         wait = float(nxt.get("segundos") or POLL_SECONDS) if s == "aguardar" else POLL_SECONDS
-        return s, max(1.0, min(wait, POLL_SECONDS))
+        return s, max(1.0, wait)
 
     item, etapa, telefone = nxt.get("id"), nxt.get("etapa"), nxt.get("telefone")
     texto = safe_text(nxt.get("texto"))
