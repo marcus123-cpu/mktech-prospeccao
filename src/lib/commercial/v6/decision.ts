@@ -17,7 +17,8 @@ export function contextualDecision(ctx:V6Context,p:SemanticProposal,model:string
   const readiness=evaluateReadiness(ctx);const errors=validateProposal(ctx,p);
   const memory={...ctx.commercial_memory,summary:p.summary,confirmed_facts:[...ctx.commercial_memory.confirmed_facts,...p.confirmed_facts].filter((f,i,arr)=>arr.findIndex(x=>x.key===f.key&&x.value===f.value)===i).slice(-50),uncertain_facts:[...new Set([...ctx.commercial_memory.uncertain_facts,...p.uncertain_facts])].slice(-25),answered_questions:[...new Set([...ctx.commercial_memory.answered_questions,...p.answered_questions])].slice(-30),objections:[...new Set([...ctx.commercial_memory.objections,...p.objections])].slice(-20),next_action:p.next_action,solution:p.solution??ctx.commercial_memory.solution};
   const state:CommercialState={...ctx.state,facts:{...ctx.state.facts}};
-  const result:V6Decision={intent:p.interpretations.at(-1)?.intentions.map(i=>i.kind).join('+')??'UNKNOWN',objective:p.next_action,reason:p.reason,action:'wait',body:null,state,notification:null,phase:p.phase,memory,interpretations:p.interpretations,readiness,model,validation_errors:errors};
+  const activePhase=!ctx.manual&&ctx.phase==='HUMAN_HANDOFF'&&p.phase==='HUMAN_HANDOFF'?'QUALIFYING':p.phase;
+  const result:V6Decision={intent:p.interpretations.at(-1)?.intentions.map(i=>i.kind).join('+')??'UNKNOWN',objective:p.next_action,reason:p.reason,action:'wait',body:null,state,notification:null,phase:activePhase,memory,interpretations:p.interpretations,readiness,model,validation_errors:errors};
   if(errors.length){return {...result,intent:'validation_failed',reason:errors.join('; '),phase:ctx.phase,memory:ctx.commercial_memory,notification:'Revisar interpretação comercial',interpretations:[]};}
   if(ctx.manual||ctx.do_not_contact)return {...result,intent:'operation_blocked',memory:ctx.commercial_memory};
   if(p.role!=='UNKNOWN'){state.role=p.role;state.role_evidence=p.role_evidence;state.role_confidence=p.interpretations.length?Math.min(...p.interpretations.map(i=>i.confidence)):ctx.state.role_confidence;}
@@ -57,6 +58,6 @@ export function contextualDecision(ctx:V6Context,p:SemanticProposal,model:string
     return {...result,intent:'demonstracao_autorizada',action:'demonstration',body:demo.caption,demonstration_id:demo.id,phase:'DEMO_OFFERED'};
   }
   if(latest?.intentions.some(i=>i.kind==='CHANNEL_CONFIRMED'||i.kind==='DECISION_MAKER'))memory.channel_confirmed=true;
-  state.stage=p.phase==='NEGOTIATING'?'NEGOCIACAO':p.phase==='QUALIFYING'?'QUALIFICACAO_COMERCIAL':interest?'INTERESSE_IDENTIFICADO':state.role==='OWNER'||state.role==='DECISION_MAKER'?'CONTATO_COM_DECISOR':'RESPOSTA_RECEBIDA';
+  state.stage=activePhase==='NEGOTIATING'?'NEGOCIACAO':activePhase==='QUALIFYING'?'QUALIFICACAO_COMERCIAL':interest?'INTERESSE_IDENTIFICADO':state.role==='OWNER'||state.role==='DECISION_MAKER'?'CONTATO_COM_DECISOR':'RESPOSTA_RECEBIDA';
   return {...result,action:'text',body:p.response};
 }
