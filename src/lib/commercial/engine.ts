@@ -50,7 +50,7 @@ export function identifyRole(text: string, automated = false): { role: Role; con
 export function scoreResearch(research: Research, now: string) {
   const evidence = (research.evidences ?? []).filter((e) => e.url && e.observed_at && !e.limitation);
   const source = norm(evidence.map((e) => e.summary).join(" "));
-  const niche = /estetica|harmonizacao|biomedic.*estet/.test(source) ? 20 : 0;
+  const niche = /estetica|harmonizacao|biomedic.*estet|academia|musculacao|massoterap|massagista/.test(source) ? 20 : 0;
   const focus = researchFocus(research).qualified;
   const opportunity = focus && (research.diagnosis?.pains ?? []).some((p) => evidence.some((e) => norm(e.summary).includes(norm(p.evidence)))) ? 25 : 0;
   const recent = evidence.some((e) => {
@@ -58,7 +58,7 @@ export function scoreResearch(research: Research, now: string) {
     const age=activityDate ? Date.parse(now)-Date.parse(activityDate) : NaN;
     return age>=0 && age<=30*86400000;
   }) ? 15 : 0;
-  const benefit = opportunity > 0 && /procedimento|tratamento|agendamento|whatsapp/.test(source) ? 15 : 0;
+  const benefit = opportunity > 0 && /procedimento|tratamento|agendamento|whatsapp|treino|aula|massagem|sessao/.test(source) ? 15 : 0;
   const channel = evidence.some((e) => e.kind !== "diretorio" && /whatsapp comercial|telefone comercial|canal comercial/.test(norm(e.summary))) ? 15 : 0;
   const personal = evidence.length >= 2 && (research.services ?? []).some((s) => source.includes(norm(s))) ? 10 : 0;
   const components = focus ? { nicho: niche, oportunidade: opportunity, atividade: recent, beneficio: benefit, canal: channel, personalizacao: personal }

@@ -1,6 +1,6 @@
 ---
 name: mktech-prospeccao
-description: Pesquisa de oportunidades digitais verificáveis em clínicas de estética e cadastro no CRM MKTech; motor comercial V6 operado pelo servidor.
+description: Pesquisa de oportunidades digitais verificáveis nos nichos configurados no CRM MKTech; motor comercial V6 operado pelo servidor.
 version: 2.2.0
 platforms: [windows, linux, macos]
 metadata:
@@ -15,7 +15,7 @@ required_environment_variables:
 # Prospecção MKTech
 
 Você pesquisa leads para a MKTech Dev, que vende sites e landing pages. O
-público é clínica ou profissional de estética nas cidades configuradas no painel
+público são negócios dos nichos e cidades configurados no painel
 que ainda não tem site, landing page ou portfólio próprio para se apresentar.
 Exceção: quem já tem site só entra com uma lacuna relevante de visibilidade no
 Google, comprovada por uma busca de serviço e cidade e registrada no diagnóstico.
@@ -140,9 +140,10 @@ andamento (pare), `4` limite atingido (pare de cadastrar e encerre),
 4. **Baixe o que já existe:** `identifiers`. Use a lista para não perder
    tempo com quem já está no CRM.
 5. **Encontre candidatos** com a busca web, cidade por cidade, nos nichos
-   configurados. Exemplos: `clínica de estética Votuporanga`, `esteticista
-   Bauru instagram`, `harmonização facial Marília`, `limpeza de pele São José
-   do Rio Preto`. Conte cada busca e não passe de `max_searches`.
+   retornados pelo CRM. Monte consultas a partir do nicho atual, serviço real
+   e cidade; para Academia, procure academia, musculação e treino; para
+   Massoterapeutas, massoterapia, massagista e serviços de massagem. Conte
+   cada busca e não passe de `max_searches`.
 6. **Faça a triagem rápida** (seção "Triagem rápida" abaixo) antes de
    gastar buscas com o candidato. Só quem passa nela segue.
 7. **Pesquise cada candidato a fundo** (seção "Pesquisa do lead" abaixo) e
@@ -172,9 +173,8 @@ andamento (pare), `4` limite atingido (pare de cadastrar e encerre),
     da meta por achar os candidatos fracos** enquanto sobrarem buscas e
     tempo: quando uma cidade ou nicho esgotar, passe para a próxima
     combinação de cidade × nicho das configurações, depois para bairros
-    (`limpeza de pele <bairro> <cidade>`) e variações (`esteticista
-    <cidade>`, `biomédica esteta <cidade>`, `harmonização <cidade>
-    instagram`). Só encerre abaixo da meta com menos de 90% das buscas
+    (`<serviço do nicho> <bairro> <cidade>`) e variações do nicho atual.
+    Só encerre abaixo da meta com menos de 90% das buscas
     usadas se já tiver tentado todas as cidades e nichos configurados, e
     diga isso em `--end-reason`.
 12. **Encerre a execução sempre**, mesmo em erro:
@@ -238,10 +238,11 @@ na hora (conta em `discarded`, sem cadastrar) se:
    do cadastro; não marque `verificacao_pendente` como qualificado.
 3. **Já está no CRM:** nome, telefone ou Instagram batem com a lista do
    `identifiers`.
-4. **Fora do escopo:** cidade fora das configuradas ou não é estética.
+4. **Fora do escopo:** cidade fora das configuradas ou negócio fora dos nichos
+   retornados pelo CRM nesta execução.
 
 Prefira buscas de descoberta que tragam vários negócios com telefone de uma
-vez (Google Maps, diretórios, "clínica de estética <cidade>") e faça a
+vez (Google Maps, diretórios, "<nicho> <cidade>") e faça a
 triagem de todos antes de aprofundar em qualquer um. Se os resultados de uma
 consulta ou cidade repetirem negócios com site próprio, mude de nicho, bairro
 ou cidade; não consuma o restante do limite em variações da mesma consulta.
@@ -268,18 +269,18 @@ permanentemente"). Se não deu para ver datas (Instagram exige login, página
 não abre), tente outra fonte antes de cadastrar. Se não conseguir confirmar
 atividade e a oportunidade digital, descarte por evidência insuficiente.
 
-**C. O que vende.** Procedimentos principais (harmonização, botox, limpeza
-de pele, depilação a laser, drenagem...), se há procedimentos de ticket
-alto e se divulga preço ou promoções.
+**C. O que vende.** Serviços principais do nicho atual, como modalidades e
+planos de treino de uma academia ou tipos de atendimento de massoterapia.
+Registre preços ou promoções somente se publicados na fonte.
 
 **D. Como o cliente chega e agenda.** Bio do Instagram, Linktree, link de
-WhatsApp, app de agenda. Busque `<procedimento principal> <cidade>` e veja
+WhatsApp, app de agenda. Busque `<serviço principal> <cidade>` e veja
 quem aparece primeiro. Se concorrentes têm página própria e ela não, isso
 é evidência.
 
 **E. Tem site próprio?** Busque `<nome> <cidade> site`. Linktree, Instagram,
 Google Meu Negócio e marketplaces são diretórios, não site próprio. Uma página
-institucional da própria clínica, inclusive em hospedagem gratuita, pode ser site.
+institucional do próprio negócio, inclusive em hospedagem gratuita, pode ser site.
 Se achar site próprio, registre `site_proprio_encontrado` e descarte, exceto
 pela lacuna de visibilidade no Google documentada acima. O
 `site_status` tem que bater com as evidências: só use
@@ -293,18 +294,18 @@ pela lacuna de visibilidade no Google documentada acima. O
 - `pains`: de 1 a 5 dores, **cada uma com a evidência que a sustenta**.
   Sem evidência, não é dor; não invente. Exemplos de sinal e dor:
   - profissional ativo só com Instagram/WhatsApp, sem página própria para
-    apresentar formação, procedimentos e portfólio;
-  - clínica sem site ou landing page para explicar serviços e reunir contato;
+    apresentar formação, serviços e portfólio;
+  - negócio sem site ou landing page para explicar serviços e reunir contato;
   - site existente com baixa visibilidade em busca concreta de serviço+cidade,
     sem afirmar perda de clientes ou posição universal no Google.
 - `opportunities`: como a MKTech resolve cada dor, de forma concreta.
 - `offer` (uma só) e `offer_reason`:
-  - `site_com_agendamento`: muitos procedimentos e agenda manual pesada;
-  - `landing_por_procedimento`: 1 ou 2 procedimentos carro-chefe com
-    divulgação ativa (ex.: harmonização, botox);
+  - `site_com_agendamento`: muitos serviços e agenda manual pesada comprovada;
+  - `landing_por_procedimento`: 1 ou 2 serviços carro-chefe com
+    divulgação ativa;
   - `landing_page`: profissional começando ou que precisa de uma página
     simples de credibilidade e contato;
-  - `site_institucional`: clínica com equipe, estrutura e vários serviços;
+  - `site_institucional`: negócio com equipe, estrutura e vários serviços;
   - `nao_recomendado`: não é o perfil; nesse caso, normalmente descarte.
 - `approach`: o **ângulo** para o Marcos abrir a conversa (o que elogiar,
   qual dor tocar, qual exemplo mostrar). Não é uma mensagem pronta e você
@@ -315,7 +316,7 @@ pela lacuna de visibilidade no Google documentada acima. O
   - atividade recente: até 25;
   - demanda (avaliações, seguidores, frequência de posts): até 25;
   - lacuna digital que a MKTech resolve: até 30;
-  - potencial de ticket dos procedimentos: até 20.
+  - potencial comercial dos serviços: até 20.
 - `confidence`: `alta` com 3 ou mais fontes que batem, `media` com 2,
   `baixa` com 1 ou com divergências.
 - `priority` do candidato: `alta` se a nota for 70 ou mais, `media` de 40
