@@ -134,8 +134,9 @@ marcou também `outreach_replies.opt_out=true`. Depois o titular reautorizou
 explicitamente, pelo Codex, continuar **somente o teste no próprio número**;
 o lead de teste voltou a `QUALIFYING`, e a recusa original segue auditada.
 
-Conversa completa **ainda não validada**: falta mensagem automática genuína e
-confirmar continuidade após o reinício com nova mensagem; a latência real medida
+Conversa completa **ainda não validada**: a automação foi confirmada depois do
+envio único descrito abaixo; falta medir uma nova resposta humana após reinício
+com o modelo rápido. A latência real medida
 com `gpt-6-sol` excede o limite solicitado. `gpt-6-luna` foi configurado apenas
 no worker local de teste após passar os 14 cenários isolados; uma inferência
 isolada com contexto comercial anterior levou 10,05 segundos, sem WhatsApp.
@@ -152,8 +153,12 @@ errado na **mensagem atual** antes de encerrar; `941352a` está publicado. O
 contato de teste foi restaurado com a reautorização explícita registrada na
 memória, sem apagar o opt-out anterior. Um único teste de resposta automática
 foi enviado às 02:54:37 UTC e entregue às 02:54:41 UTC. Até a última checagem,
-nenhuma resposta automática chegou; depende de verificar a configuração de
-mensagem de ausência no aparelho. Não foi feito segundo envio.
+nenhuma resposta automática havia chegado; não houve segundo envio. A mensagem
+de ausência genuína chegou às 02:58:03 UTC, foi interpretada como `automated`
+com `AUTOMATED_GREETING+WAIT_REQUEST` e decisão `wait` às 02:58:33 UTC.
+Nenhuma resposta saiu para a automação e nenhum retorno às 8h foi agendado.
+Resta medir uma nova pergunta humana com o modelo mais rápido; só então encerrar
+a sessão e avaliar o registro de validação para produção.
 
 ## 12. Problemas encontrados
 Modelo inicialmente omitiu identificação de fonte na proposta e produziu cargo
