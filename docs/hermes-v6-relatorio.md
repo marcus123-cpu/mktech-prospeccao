@@ -1,7 +1,9 @@
 # Hermes V6 — implementação e validação
 
-Estado: **em validação; produção pausada**. Teste participativo autorizado somente
-em +55 17 99225-0729. Não declarar conclusão enquanto faltar evidência real.
+Estado em 14/10/2026: **V6 validado e produção habilitada**. O teste
+participativo em +55 17 99225-0729 foi encerrado; novas abordagens reais foram
+habilitadas. A prontidão individual de pesquisa e a janela de envio ainda
+controlam cada contato.
 
 ## 1. Diagnóstico anterior
 Auditoria em `hermes-v6-auditoria.md`. O V4 utilizava regras e textos fixos,
@@ -68,8 +70,7 @@ trava de produção. Antes, a suíte completa de banco passou em 238 casos.
 As avaliações reais do modelo tiveram aprovação inicial de 13 cenários. Uma
 comparação isolada posterior com `gpt-6-luna` aprovou 14 cenários (saudação,
 automação, recusa, injeção, serviços, agenda, SEO e preço) em dois grupos de
-aproximadamente 97 e 100 segundos; falta medir a latência desse modelo no
-contexto completo do WhatsApp. Typecheck passou; build da publicação passou.
+aproximadamente 97 e 100 segundos. Typecheck passou; build da publicação passou.
 Esses números não substituem teste real de WhatsApp.
 
 ## 11. WhatsApp
@@ -134,17 +135,10 @@ marcou também `outreach_replies.opt_out=true`. Depois o titular reautorizou
 explicitamente, pelo Codex, continuar **somente o teste no próprio número**;
 o lead de teste voltou a `QUALIFYING`, e a recusa original segue auditada.
 
-Conversa completa **ainda não validada**: a automação foi confirmada depois do
-envio único descrito abaixo; falta medir uma nova resposta humana após reinício
-com o modelo rápido. A latência real medida
-com `gpt-6-sol` excede o limite solicitado. `gpt-6-luna` foi configurado apenas
-no worker local de teste após passar os 14 cenários isolados; uma inferência
-isolada com contexto comercial anterior levou 10,05 segundos, sem WhatsApp.
-Um ajuste de raciocínio ainda mais leve falhou em 2 dos 14 cenários e foi
-descartado. O limite de 20 segundos ainda precisa de medição real com esse modelo.
-Banco, ponte e enviador seguem restritos ao
-número autorizado; secretário preservado. Playwright confirmou anteriormente
-painel autenticado, motor V6, catálogo e controle de novas abordagens.
+`gpt-6-luna` foi configurado no worker comercial após passar os 14 cenários
+isolados. Um ajuste de raciocínio mais leve falhou em 2 cenários e foi descartado.
+Playwright confirmou anteriormente painel autenticado, motor V6, catálogo e
+controle de novas abordagens.
 
 Às 02:46:21 UTC o titular escreveu “Ativada” no WhatsApp. A entrada foi
 corretamente interpretada como incerta, mas o modelo encerrou a conversa por
@@ -157,8 +151,16 @@ nenhuma resposta automática havia chegado; não houve segundo envio. A mensagem
 de ausência genuína chegou às 02:58:03 UTC, foi interpretada como `automated`
 com `AUTOMATED_GREETING+WAIT_REQUEST` e decisão `wait` às 02:58:33 UTC.
 Nenhuma resposta saiu para a automação e nenhum retorno às 8h foi agendado.
-Resta medir uma nova pergunta humana com o modelo mais rápido; só então encerrar
-a sessão e avaliar o registro de validação para produção.
+A pergunta humana final entrou às 03:01:33 UTC: “Tenho Instagram e agenda online.
+Qual seria o primeiro passo para criar um site vitrine?”. Foi classificada como
+`BUSINESS_QUESTION+INTERESTED`, recebeu resposta contextual e segura, enviada
+às 03:02:06 UTC e entregue às 03:02:10 UTC. Foram **33 segundos até envio**
+e 37 segundos até entrega. O titular aceitou expressamente os 33 segundos.
+A sessão foi encerrada às 03:04:05 UTC, e a validação participativa foi registrada
+no banco. `test_mode=false` e `new_contacts_enabled=true`; a restrição local
+`ENVIO_SO_PARA` foi removida e a ponte e o enviador reiniciados. A ponte voltou
+conectada ao número +55 17 99209-6353, com Rosana e Polpujá disponíveis;
+o secretário permaneceu ativo.
 
 ## 12. Problemas encontrados
 Modelo inicialmente omitiu identificação de fonte na proposta e produziu cargo
@@ -168,10 +170,14 @@ Tabela comercial continua sem preços aprovados: o Hermes deve encaminhar,
 sem inventar orçamento. Ausência de preço não autoriza improvisação.
 
 ## 13. Pendências reais
-Concluir os cenários participativos restantes e o reinício, reduzir a latência
-real, verificar o resultado e encerrar a sessão. Registrar a validação somente após evidência
-completa. Revisar fluxos de pesquisa de novos leads e métricas adaptativas
-antes da liberação geral; a prontidão atual depende de pesquisa cadastrada.
+Não havia novo contato com prontidão V6 confirmada na fila às 00:07 de 14/10
+(São Paulo). Dos 87 perfis, 31 eram prospectos ainda não contatados, 26 com
+pontuação pelo menos 60. Apenas um desses 31 tinha elegibilidade comercial
+registrada, mas precisava de evidência adicional sobre serviços; os demais
+exigem base individual de elegibilidade, pesquisa e diagnóstico sustentados
+antes de abordagem.
+Monitorar a fila após o início da janela e reabastecer com perfis verificáveis.
+O tempo de resposta depende do provedor de inferência e não é um SLA garantido.
 
 ## 14. Iniciar
 `envio/iniciar-tudo.bat` mantém ponte, enviador e workers. O runtime Hermes precisa
@@ -180,15 +186,16 @@ Em `/comercial`, **Pausar novas abordagens** preserva atendimento; **Pausar oper
 suspende a reserva geral. Não usar `parar-tudo.bat` para pausar só prospecção.
 
 ## 15. Modo de teste
-Motor V6 e restrição de telefones em `/comercial`. Banco e `ENVIO_SO_PARA`
-precisam concordar. Alteração da restrição local exige reiniciar ponte/enviador.
-Não liberar a restrição local enquanto a validação estiver pendente.
+O teste participativo terminou e foi arquivado. Para uma nova sessão controlada,
+configurar juntos `/comercial` e `ENVIO_SO_PARA`; alterar a restrição local exige
+reiniciar ponte e enviador.
 
 ## 16. Produção
-Continua pausada. A migração `20261013225000_validacao_producao_v6.sql` exige
+Habilitada. A migração `20261013225000_validacao_producao_v6.sql` exige
 sessão participativa encerrada, dois materiais entregues, classificação de
 intenções principais, automação, agenda existente e encerramento, antes de
-permitir desligar o modo teste no painel. O registro de validação segue vazio.
+permitir desligar o modo teste no painel. A sessão participativa passou pela
+validação; janela, limite diário, pesquisa suficiente e recusa continuam obrigatórios.
 SEO segue [Google Search Central](https://developers.google.com/search/docs/fundamentals/seo-starter-guide):
 organizar conteúdo e melhorar acesso/indexação pode ajudar a presença na busca;
 não há garantia de indexação, posição, clientes ou receita.
