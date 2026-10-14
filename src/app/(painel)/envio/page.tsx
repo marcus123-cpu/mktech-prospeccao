@@ -148,7 +148,7 @@ function MsgItem({ m }: { m: Msg }) {
 
 export default async function EnvioPage() {
   const { supabase } = await requireAdmin();
-  const [settings, queue, replies, flagged, activity, handoffs, secretary, commercial, commercialQueue, commercialRecent, commercialPending, commercialSent, uncontacted] = await Promise.all([
+  const [settings, queue, replies, flagged, activity, handoffs, secretary, commercial, commercialQueue, commercialRecent, commercialPending, commercialSent, uncontacted, researchRequests] = await Promise.all([
     supabase.from("outreach_settings").select("*").eq("id", 1).maybeSingle(),
     supabase
       .from("outreach_messages")
@@ -184,6 +184,7 @@ export default async function EnvioPage() {
     supabase.from("commercial_outbox").select("id", { count: "exact", head: true }).eq("status", "enfileirada"),
     supabase.from("commercial_outbox").select("id", { count: "exact", head: true }).eq("kind", "initial").gte("sent_at", `${todaySP()}T03:00:00Z`),
     supabase.from("leads").select("id", { count: "exact", head: true }).eq("stage", "novo").eq("contacted", false).eq("do_not_contact", false),
+    supabase.from("hermes_requests").select("id,status,qualified_target,qualified_found,max_searches,created_at").order("created_at", { ascending: false }).limit(1),
   ]);
 
   const s = settings.data as (OutreachSettings & { next_send_at: string | null }) | null;
@@ -196,6 +197,7 @@ export default async function EnvioPage() {
   const recent = (commercialRecent.data ?? []) as unknown as CommercialMessage[];
   const todayTarget = s?.today_new_leads_date === todaySP() && s.today_new_leads_target != null
     ? s.today_new_leads_target : s?.daily_limit ?? 0;
+  const researchRequest = researchRequests.data?.[0];
 
   const state = !s ? "—" : !s.enabled ? "Desligado" : s.paused ? "Pausado" : "Ligado";
   const stateColor = !s?.enabled ? "text-slate-300" : s.paused ? "text-amber-300" : "text-emerald-300";
@@ -232,6 +234,25 @@ export default async function EnvioPage() {
             <Stat label="Respostas humanas hoje" value={counts.human_today} />
             <Stat label="Ponte WhatsApp" value={<span className={c.bridge_connected ? "text-emerald-300" : "text-amber-300"}>{c.bridge_connected ? "Conectada" : "Verificar"}</span>} />
           </div>
+
+          <section className="card p-5" aria-label="Capacidade da pesquisa">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div><h2 className="text-lg font-semibold">Pesquisa de novos leads</h2><p className="mt-1 text-sm text-muted">O Codex pesquisa; o orçamento de buscas é definido para cada pedido.</p></div>
+              <Link className="btn-ghost" href="/execucoes">Ver pedidos e buscar leads</Link>
+            </div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-xl border border-line bg-panel-2 p-3">
+                <p className="text-xs text-muted">Uso disponível do Codex</p>
+                <p className="mt-1 font-medium">Consulte seu painel de uso</p>
+                <p className="mt-1 text-xs text-muted">O Hermes não recebe um saldo de tokens da sua conta. O limite do Codex é separado do limite de buscas.</p>
+                <a className="mt-2 inline-block text-sm text-violet-300 underline" href="https://chatgpt.com/codex/cloud/settings/usage" target="_blank" rel="noopener noreferrer">Abrir uso do Codex ↗</a>
+              </div>
+              <div className="rounded-xl border border-line bg-panel-2 p-3">
+                <p className="text-xs text-muted">Último pedido de pesquisa</p>
+                {researchRequests.error ? <p className="mt-1 text-sm text-amber-300">Não foi possível consultar os pedidos.</p> : researchRequest ? <><p className="mt-1 font-medium">{researchRequest.qualified_target} leads · até {researchRequest.max_searches} buscas</p><p className="mt-1 text-xs text-muted">{researchRequest.status === "pendente" ? "Esperando o PC iniciar" : researchRequest.status === "em_andamento" ? "Pesquisa em andamento; buscas consumidas aparecem após o encerramento" : researchRequest.status === "concluido" ? `Concluído · ${researchRequest.qualified_found ?? 0} qualificados` : "Cancelado"} · pedido {fmtDateTime(researchRequest.created_at)}</p></> : <p className="mt-1 text-sm">Nenhum pedido registrado.</p>}
+              </div>
+            </div>
+          </section>
 
           <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(300px,1fr)]">
             <section className="card p-5" aria-label="Controles de prospecção">
