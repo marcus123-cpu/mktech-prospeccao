@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ActionForm } from "@/components/ActionForm";
 import { ErrorBox, Fold, PageHeader, Stat } from "@/components/ui";
 import { dbErrorMessage, requireAdmin } from "@/lib/auth";
 import { fmtDateTime, todaySP } from "@/lib/time";
@@ -12,11 +13,13 @@ import {
   SwitchControls,
   TodayTargetForm,
   ReturnToSecretaryButton,
+  RemoveCommercialLeadButton,
   type OutreachSettings,
 } from "./Forms";
 import { STYLE_LABEL, styleNote, type OutreachStyle } from "@/lib/envio/estilos";
+import { pauseNewContacts } from "../comercial/actions";
 
-export const metadata = { title: "Envio automático" };
+export const metadata = { title: "Central de disparos" };
 export const dynamic = "force-dynamic";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -79,6 +82,26 @@ type SecretaryMsg = {
   cancel_reason: string | null;
   leads: { business_name: string } | null;
 };
+type CommercialMessage = {
+  id: string;
+  lead_id: string;
+  kind: string;
+  status: string;
+  body: string;
+  due_at: string;
+  sent_at: string | null;
+  created_at: string;
+  error: string | null;
+  leads: { business_name: string; city: string } | null;
+};
+const COMMERCIAL_STATUS: Record<string, string> = {
+  enfileirada: "Na fila", enviando: "Enviando", enviada: "Enviada", entregue: "Entregue",
+  falhou: "Falhou", desconhecido: "Verificar envio", cancelada: "Cancelada", criada: "Preparando",
+};
+const COMMERCIAL_KIND: Record<string, string> = {
+  initial: "Primeiro contato", reply: "Resposta", followup: "Retorno", demo: "Demonstração",
+  video: "Vídeo", proposal: "Proposta",
+};
 const SECRETARY_STATUS: Record<string, string> = {
   pronta: "esperando a vez",
   enviando: "saindo",
@@ -123,7 +146,7 @@ function MsgItem({ m }: { m: Msg }) {
 
 export default async function EnvioPage() {
   const { supabase } = await requireAdmin();
-  const [settings, queue, replies, flagged, activity, handoffs, secretary] = await Promise.all([
+  const [settings, queue, replies, flagged, activity, handoffs, secretary, commercial, commercialQueue, commercialRecent, commercialPending, commercialSent] = await Promise.all([
     supabase.from("outreach_settings").select("*").eq("id", 1).maybeSingle(),
     supabase
       .from("outreach_messages")
@@ -153,12 +176,21 @@ export default async function EnvioPage() {
       .select("id, lead_id, status, body, sent_at, created_at, error, cancel_reason, leads(business_name)")
       .order("created_at", { ascending: false })
       .limit(30),
+    supabase.from("commercial_settings").select("enabled,channel_authorized,test_mode,new_contacts_enabled,bridge_connected,last_worker_at,last_sender_at,engine_version").eq("id", 1).maybeSingle(),
+    supabase.from("commercial_outbox").select("id,lead_id,kind,status,body,due_at,sent_at,created_at,error,leads(business_name,city)").eq("status", "enfileirada").order("due_at").limit(100),
+    supabase.from("commercial_outbox").select("id,lead_id,kind,status,body,due_at,sent_at,created_at,error,leads(business_name,city)").neq("status", "enfileirada").order("created_at", { ascending: false }).limit(12),
+    supabase.from("commercial_outbox").select("id", { count: "exact", head: true }).eq("status", "enfileirada"),
+    supabase.from("commercial_outbox").select("id", { count: "exact", head: true }).eq("kind", "initial").gte("sent_at", `${todaySP()}T03:00:00Z`),
   ]);
 
   const s = settings.data as (OutreachSettings & { next_send_at: string | null }) | null;
   const msgs = (queue.data ?? []) as unknown as Msg[];
   const reps = (replies.data ?? []) as unknown as Reply[];
   const counts = activity.data as { sent_today: number; ready_count: number; human_today: number } | null;
+  const c = commercial.data;
+  const commercialMsgs = (commercialQueue.data ?? []) as unknown as CommercialMessage[];
+  const queued = commercialMsgs;
+  const recent = (commercialRecent.data ?? []) as unknown as CommercialMessage[];
   const todayTarget = s?.today_new_leads_date === todaySP() && s.today_new_leads_target != null
     ? s.today_new_leads_target : s?.daily_limit ?? 0;
 
@@ -168,45 +200,57 @@ export default async function EnvioPage() {
   return (
     <>
       <PageHeader
-        title="💬 Envio automático"
-        subtitle="Saudação, mensagem personalizada e secretário. Clique numa seção para abrir."
+        title="Central de disparos"
+        subtitle="Fila real do Hermes, horário, limites e atendimento em um só lugar. Horários de São Paulo."
       />
-      {settings.error || activity.error || !s || !counts ? (
-        <ErrorBox message={dbErrorMessage(settings.error ?? activity.error) || "Configuração do envio não encontrada."} />
+      {settings.error || activity.error || commercial.error || commercialQueue.error || commercialRecent.error || commercialPending.error || commercialSent.error || !s || !counts || !c ? (
+        <ErrorBox message={dbErrorMessage(settings.error ?? activity.error ?? commercial.error ?? commercialQueue.error ?? commercialRecent.error ?? commercialPending.error ?? commercialSent.error) || "Configuração do envio não encontrada."} />
       ) : (
         <div className="space-y-6">
-          <div className="grid gap-3 sm:grid-cols-4">
-            <Stat label="Chave global" value={<span className={stateColor}>{state}</span>} hint={s.next_send_at ? `próximo lead a partir de ${fmtDateTime(s.next_send_at)}` : undefined} />
-            <Stat label="Novos contatos hoje" value={`${counts.sent_today} / ${todayTarget}`} />
-            <Stat label="Na fila" value={counts.ready_count} />
-            <Stat label="Respostas de pessoas hoje" value={counts.human_today} />
+          <section className="card overflow-hidden border-accent/35 bg-gradient-to-br from-panel via-panel to-accent/10 p-5 md:p-6" aria-label="Estado da operação">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-300">Operação agora</p>
+                <h2 className="mt-2 text-xl font-semibold md:text-2xl">{!s.enabled || s.paused || !c.enabled || !c.channel_authorized ? "Envios suspensos" : c.bridge_connected === false ? "WhatsApp desconectado" : !c.new_contacts_enabled ? "Novas abordagens pausadas" : "Hermes pronto para prospectar"}</h2>
+                <p className="mt-2 text-sm text-muted">{c.test_mode ? "Modo teste" : "Contatos reais"} · WhatsApp {c.bridge_connected === true ? "conectado" : c.bridge_connected === false ? "desconectado" : "sem confirmação"} · Motor {c.engine_version?.toUpperCase() ?? "comercial"}</p>
+              </div>
+              <span className={`rounded-full px-3 py-1.5 text-xs font-semibold ${s.enabled && !s.paused && c.enabled && c.channel_authorized && c.new_contacts_enabled && c.bridge_connected !== false ? "bg-emerald-500/15 text-emerald-300" : "bg-amber-500/15 text-amber-300"}`}>{s.enabled && !s.paused && c.enabled && c.channel_authorized && c.new_contacts_enabled && c.bridge_connected !== false ? "Novos contatos liberados" : "Novos contatos retidos"}</span>
+            </div>
+            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              <div className="rounded-xl border border-line bg-bg/35 p-3"><p className="text-xs text-muted">Próximo horário permitido</p><p className="mt-1 font-medium">{s.window_start}h–{s.window_end}h · {s.send_days.map((d) => ["", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"][d]).join(", ")}</p></div>
+              <div className="rounded-xl border border-line bg-bg/35 p-3"><p className="text-xs text-muted">Próximo envio / último sinal</p><p className="mt-1 text-sm font-medium">{s.next_send_at ? fmtDateTime(s.next_send_at) : "Sem horário agendado"}</p><p className="mt-1 text-xs text-muted">Ponte: {fmtDateTime(c.last_sender_at)}</p></div>
+              <div className="rounded-xl border border-line bg-bg/35 p-3"><p className="text-xs text-muted">Atendimento de clientes</p><p className="mt-1 font-medium">{s.secretary_enabled && s.enabled && !s.paused ? "Ligado" : "Pausado"} · {s.reply_window_start ?? 8}h–{s.reply_window_end ?? 18}h</p></div>
+            </div>
+          </section>
+
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <Stat label="Na fila do V6" value={commercialPending.count ?? 0} hint="Mensagens pendentes reais" />
+            <Stat label="Primeiros contatos hoje" value={`${commercialSent.count ?? 0} / ${todayTarget}`} />
+            <Stat label="Respostas humanas hoje" value={counts.human_today} />
+            <Stat label="Ponte WhatsApp" value={<span className={c.bridge_connected ? "text-emerald-300" : "text-amber-300"}>{c.bridge_connected ? "Conectada" : "Verificar"}</span>} />
           </div>
 
-          {counts.ready_count === 0 && (
-            <section className="card p-4" aria-label="Preparação da fila">
-              <h2 className="text-sm font-semibold">Aguardando mensagens preparadas</h2>
-              <p className="mt-2 text-sm text-muted">
-                A fila é preenchida pelo Hermes no seu PC, com mensagens dos leads aptos.
-                Mantenha o PC ligado e aguarde a preparação. A chave de envio libera as mensagens
-                prontas dentro dos horários configurados.
-              </p>
-              <p className="mt-2 text-sm text-muted">
-                Se a fila continuar vazia, abra o atalho “Ativar fila MKTech” na área de trabalho do PC
-                e atualize esta página após alguns minutos. Se não houver leads aptos, solicite
-                mais leads em <Link href="/execucoes" className="text-primary hover:underline">Pesquisas do Hermes</Link>.
-              </p>
+          <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(300px,1fr)]">
+            <section className="card p-5" aria-label="Controles de prospecção">
+              <div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="text-lg font-semibold">Novas abordagens</h2><p className="mt-1 text-sm text-muted">Pare ou retome o primeiro contato. O secretário continua atendendo as conversas existentes.</p></div><span className={`badge ${c.new_contacts_enabled ? "bg-emerald-900/70 text-emerald-200" : "bg-amber-900/70 text-amber-200"}`}>{c.new_contacts_enabled ? "Liberadas" : "Pausadas"}</span></div>
+              <div className="mt-4"><ActionForm action={pauseNewContacts} submit={c.new_contacts_enabled ? "Pausar novas abordagens" : "Retomar novas abordagens"} variant={c.new_contacts_enabled ? "btn-danger" : "btn-primary"} confirmText={c.new_contacts_enabled ? undefined : "Retomar novas abordagens para os contatos elegíveis dentro do horário e limite diário?"}><input type="hidden" name="enabled" value={String(!c.new_contacts_enabled)} /></ActionForm></div>
+              <div className="mt-5 border-t border-line pt-4"><TodayTargetForm key={`${todaySP()}-${todayTarget}`} target={todayTarget} sent={commercialSent.count ?? 0} enabled={s.enabled} paused={s.paused} /></div>
             </section>
-          )}
+            <section className="card p-5" aria-label="Como funciona o primeiro contato"><h2 className="text-lg font-semibold">Primeiro contato sem pressão</h2><ol className="mt-4 space-y-3 text-sm"><li className="rounded-lg bg-panel-2 p-3"><span className="mr-2 text-violet-300">01</span> Hermes envia apenas “Olá, bom dia/boa tarde! Tudo bem?”</li><li className="rounded-lg bg-panel-2 p-3"><span className="mr-2 text-sky-300">02</span> Aguarda uma resposta da pessoa.</li><li className="rounded-lg bg-panel-2 p-3"><span className="mr-2 text-emerald-300">03</span> Continua com contexto, respeitando recusa e horário.</li></ol><Link href="/conversas" className="mt-4 inline-flex text-sm font-medium text-violet-300 hover:underline">Ver conversas →</Link></section>
+          </div>
 
-          <TodayTargetForm key={`${todaySP()}-${todayTarget}`} target={todayTarget} sent={counts.sent_today} enabled={s.enabled} paused={s.paused} />
-
-          <section className="card p-4">
-            <h2 className="mb-1 text-sm font-semibold">Chave do envio</h2>
-            <p className="mb-4 text-xs text-muted">
-              Desligado ou pausado, o enviador não manda nada, nem a mensagem de quem já recebeu a saudação. A pausa vale na hora.
-            </p>
-            <SwitchControls s={s} />
+          <section className="card p-5" aria-label="Fila real de disparos"><div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-lg font-semibold">Fila do Hermes V6</h2><p className="mt-1 text-sm text-muted">{commercialPending.count ?? 0} pendente(s) no total · mostrando {queued.length} por ordem de envio</p></div><Link href="/comercial" className="btn-ghost">Ver funil comercial</Link></div>
+            {queued.length === 0 ? <p className="mt-4 rounded-lg bg-panel-2 p-4 text-sm text-muted">Nenhuma mensagem aguardando envio. O Hermes adiciona contatos elegíveis conforme a pesquisa e as regras configuradas.</p> : <ul className="mt-4 divide-y divide-line">{queued.map((m) => <li key={m.id} className="flex flex-wrap items-start justify-between gap-3 py-3"><div className="min-w-0 flex-1"><Link href={`/comercial?lead=${m.lead_id}`} className="font-medium hover:underline">{m.leads?.business_name ?? "Lead"}</Link><p className="mt-1 text-xs text-muted">{m.leads?.city} · {COMMERCIAL_KIND[m.kind] ?? m.kind} · previsto {fmtDateTime(m.due_at)}</p><p className="mt-2 max-w-3xl whitespace-pre-wrap rounded-lg bg-panel-2 p-3 text-sm">{m.kind === "initial" ? "Saudação breve; texto definido pelo horário no momento do envio." : m.body}</p></div><RemoveCommercialLeadButton id={m.lead_id} /></li>)}</ul>}
           </section>
+
+          <section className="card p-5" aria-label="Atividade recente"><h2 className="text-lg font-semibold">Atividade recente do V6</h2><p className="mt-1 text-sm text-muted">Confirme aqui o que saiu, falhou ou precisa de conferência.</p>{recent.length === 0 ? <p className="mt-4 text-sm text-muted">Ainda não há atividade.</p> : <ul className="mt-3 divide-y divide-line">{recent.map((m) => <li key={m.id} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm"><div><Link href={`/conversas?lead=${m.lead_id}`} className="font-medium hover:underline">{m.leads?.business_name ?? "Lead"}</Link><p className="mt-1 text-xs text-muted">{COMMERCIAL_KIND[m.kind] ?? m.kind} · {fmtDateTime(m.sent_at ?? m.created_at)}{m.error ? ` · ${m.error}` : ""}</p></div><span className={`badge ${["enviada", "entregue"].includes(m.status) ? "bg-emerald-900/70 text-emerald-200" : ["falhou", "desconhecido"].includes(m.status) ? "bg-amber-900/70 text-amber-200" : "bg-panel-2"}`}>{COMMERCIAL_STATUS[m.status] ?? m.status}</span></li>)}</ul>}</section>
+
+          <Fold title="Controles gerais e atendimento" hint="pausa total, secretário e lembretes"><p className="mb-4 text-sm text-muted">A chave geral afeta os disparos e o atendimento automático. Use a pausa de novas abordagens acima para manter o secretário ativo. Estado geral: <span className={stateColor}>{state}</span>.</p><SwitchControls s={s} /></Fold>
+
+          <Fold title="Horários, dias e limites" hint="ajustar a agenda de disparos">
+            <p className="mb-4 text-sm text-muted">Defina quando o Hermes pode iniciar contatos e atender respostas. O fuso usado é São Paulo.</p>
+            <OutreachSettingsForm s={s} />
+          </Fold>
 
           {(flagged.data?.length ?? 0) > 0 && (
             <Fold title="⚠️ Precisa de atenção" count={flagged.data!.length} open tone="border border-rose-900">
@@ -307,10 +351,11 @@ export default async function EnvioPage() {
             )}
           </Fold>
 
+          <div className="border-t border-line pt-5"><h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted">Histórico do enviador anterior</h2>
           {queue.error ? (
             <ErrorBox message={dbErrorMessage(queue.error)} />
           ) : msgs.length === 0 ? (
-            <p className="card p-4 text-sm text-muted">Nenhuma mensagem escrita ainda. O Hermes escreve para os leads com diagnóstico e telefone.</p>
+            <p className="card p-4 text-sm text-muted">Nenhum registro no enviador anterior.</p>
           ) : (
             <>
               {FILA_GRUPOS.map((g) => {
@@ -330,14 +375,7 @@ export default async function EnvioPage() {
                 );
               })}
             </>
-          )}
-
-          <Fold title="⚙️ Regras do envio" hint="horários, intervalos e limites">
-            <p className="mb-4 text-xs text-muted">
-              Um lead e um telefone recebem no máximo uma abordagem automática. Se o enviador não confirmar uma etapa, ela não é reenviada.
-            </p>
-            <OutreachSettingsForm s={s} />
-          </Fold>
+          )}</div>
 
           <Fold title="✍️ Estilo da mensagem" hint={s.message_styles === "alternar" ? "alternando" : "só agradecimento"}>
             <StylesControl s={s} />

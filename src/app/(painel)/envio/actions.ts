@@ -91,6 +91,19 @@ export async function cancelMessage(_: EnvioState, form: FormData): Promise<Envi
   return done("Cancelada.");
 }
 
+export async function removeCommercialLead(_: EnvioState, form: FormData): Promise<EnvioState> {
+  const { supabase } = await requireAdmin();
+  const id = z.uuid().safeParse(form.get("id"));
+  if (!id.success) return { error: "Lead inválido." };
+  const { error } = await supabase.rpc("admin_commercial_lead", {
+    p_lead: id.data,
+    p: { eligible: false, eligibility_reason: "Retirado da fila pelo administrador", reason: "Retirado da fila no painel" },
+  });
+  if (error) return { error: dbErrorMessage(error) };
+  revalidatePath("/comercial");
+  return done("Contato retirado da fila. A abordagem pendente foi cancelada.");
+}
+
 export async function reclassifyReply(_: EnvioState, form: FormData): Promise<EnvioState> {
   const { supabase } = await requireAdmin();
   const id = z.uuid().safeParse(form.get("id"));

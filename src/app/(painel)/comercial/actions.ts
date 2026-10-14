@@ -5,7 +5,7 @@ import { requireAdmin, dbErrorMessage } from "@/lib/auth";
 import { ROLES, STAGES } from "@/lib/commercial/engine";
 
 type State = { error?: string; ok?: string };
-const refresh = () => { revalidatePath("/comercial"); revalidatePath("/conversas"); };
+const refresh = () => { revalidatePath("/comercial"); revalidatePath("/conversas"); revalidatePath("/envio"); };
 export async function activateCommercial(_:State):Promise<State> {
   const {supabase}=await requireAdmin();
   const {error}=await supabase.rpc("admin_commercial_activate");

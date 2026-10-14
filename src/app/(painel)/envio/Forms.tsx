@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import {
   cancelMessage,
+  removeCommercialLead,
   createSenderToken,
   reclassifyReply,
   retryLead,
@@ -236,6 +237,10 @@ export function OutreachSettingsForm({ s }: { s: OutreachSettings }) {
 
 export function CancelButton({ id }: { id: string }) {
   return <MiniAction action={cancelMessage} fields={{ id }} label="Cancelar" variant="btn-danger" confirmText="Cancelar esta mensagem? Ela não será enviada." />;
+}
+
+export function RemoveCommercialLeadButton({ id }: { id: string }) {
+  return <MiniAction action={removeCommercialLead} fields={{ id }} label="Retirar da fila" variant="btn-danger" confirmText="Retirar este contato da fila do Hermes? A mensagem pendente será cancelada e o lead precisará ser reabilitado manualmente para uma nova abordagem." />;
 }
 
 export function ReclassifyButton({ id, to }: { id: string; to: "automatica" | "humana" }) {

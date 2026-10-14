@@ -96,12 +96,15 @@ export default async function Hoje({
   const { start, end } = periodRange(key, new Date(), { start: sp.inicio, end: sp.fim });
   const { supabase } = await requireAdmin();
 
-  const [metrics, settings, hermes, activity, stock] = await Promise.all([
+  const [metrics, settings, hermes, activity, stock, commercial, commercialQueue, commercialSent] = await Promise.all([
     supabase.rpc("dashboard_metrics", { p_start: start, p_end: end }),
     supabase.from("outreach_settings").select("*").eq("id", 1).maybeSingle(),
     supabase.from("prospecting_settings").select("*").eq("id", 1).maybeSingle(),
     supabase.rpc("dashboard_activity"),
     supabase.rpc("prospecting_stock"),
+    supabase.from("commercial_settings").select("enabled,new_contacts_enabled,bridge_connected").eq("id", 1).maybeSingle(),
+    supabase.from("commercial_outbox").select("id", { count: "exact", head: true }).eq("status", "enfileirada"),
+    supabase.from("commercial_outbox").select("id", { count: "exact", head: true }).eq("kind", "initial").gte("sent_at", `${todaySP()}T03:00:00Z`),
   ]);
   const m = metrics.data as Metrics | null;
   const a = activity.data as Activity | null;
@@ -120,14 +123,12 @@ export default async function Hoje({
     respostas: d.respostas,
   }));
   const pediramParar = a?.optouts_today ?? 0;
-  const textosHoje = a?.texts_today ?? 0;
 
   const agora = agoraSP();
   const diaOk = !!env?.send_days.includes(agora.dow);
   const prospFim = env ? (env.prospect_after_noon ? Math.max(env.window_end, env.reply_window_end ?? 18) : env.window_end) : 0;
   const prospAberta = diaOk && !!env && agora.hour >= env.window_start && agora.hour < prospFim;
   const atendAberto = diaOk && !!env && agora.hour >= (env.reply_window_start ?? 8) && agora.hour < (env.reply_window_end ?? 18);
-  const estado = !env ? "—" : !env.enabled ? "Desligado" : env.paused ? "Pausado" : "Ligado";
   const estadoCor = !env?.enabled ? "text-slate-300" : env.paused ? "text-amber-300" : "text-emerald-300";
   const janela = !env
     ? ""
@@ -137,34 +138,34 @@ export default async function Hoje({
 
   return (
     <>
-      <PageHeader title="🏠 Hoje" subtitle={`${fmtDate(`${today}T12:00:00Z`)} · o robô trabalha sozinho; aqui você acompanha e vê o que precisa de você`} />
+      <PageHeader title="Visão geral" subtitle={`${fmtDate(`${today}T12:00:00Z`)} · acompanhe prospecção, conversas e oportunidades`} actions={<Link href="/envio" className="btn-primary">Controlar disparos</Link>} />
 
-      {metrics.error || activity.error || !m || !a ? (
-        <ErrorBox message={dbErrorMessage(metrics.error ?? activity.error) || "Não foi possível carregar o painel."} />
+      {metrics.error || activity.error || commercial.error || commercialQueue.error || commercialSent.error || !m || !a || !commercial.data ? (
+        <ErrorBox message={dbErrorMessage(metrics.error ?? activity.error ?? commercial.error ?? commercialQueue.error ?? commercialSent.error) || "Não foi possível carregar o painel."} />
       ) : (
         <div className="space-y-8">
           {/* 1. Robô agora */}
           {env && (
-            <section className="card p-4">
+            <section className="card p-5 md:p-6">
               <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-                <h2 className="text-sm font-semibold">🤖 Robô agora</h2>
-                <Link href="/envio" className="text-xs text-muted hover:text-slate-200">abrir envio automático</Link>
+                <h2 className="text-lg font-semibold">Operação agora</h2>
+                <Link href="/envio" className="text-sm text-violet-300 hover:underline">Abrir central de disparos →</Link>
               </div>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <Stat label="Envio" value={<span className={estadoCor}>{estado}</span>} hint={janela} />
+                <Stat label="Novas abordagens" value={<span className={estadoCor}>{!env.enabled || env.paused || !commercial.data?.enabled ? "Suspensas" : commercial.data?.new_contacts_enabled ? "Liberadas" : "Pausadas"}</span>} hint={janela} />
                 <Stat
                   label="Novos contatos hoje"
-                  value={`${a.sent_today} / ${todayTarget}`}
+                  value={`${commercialSent.count ?? 0} / ${todayTarget}`}
                   hint={env.next_send_at && env.enabled ? `próximo lead a partir de ${fmtDateTime(env.next_send_at)}` : "meta definida por você"}
                 />
-                <Stat label="Textos enviados hoje" value={textosHoje} hint="mensagem personalizada, depois que uma pessoa respondeu" />
+                <Stat label="Fila real do Hermes" value={commercialQueue.count ?? 0} hint="Mensagens aguardando envio" />
                 <Stat
                   label="Respostas de pessoas hoje"
                   value={a.human_today}
                   hint={pediramParar ? `${pediramParar} pediram para parar` : "ninguém pediu para parar"}
                 />
               </div>
-              <Link href="/envio#meta-do-dia" className="mt-3 inline-block text-sm text-accent hover:underline">Ajustar meta de disparos de hoje</Link>
+              <Link href="/envio#meta-do-dia" className="mt-4 inline-block text-sm text-accent hover:underline">Ajustar meta de disparos de hoje</Link>
             </section>
           )}
 
