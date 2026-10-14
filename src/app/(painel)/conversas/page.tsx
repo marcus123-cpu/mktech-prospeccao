@@ -5,7 +5,7 @@ import { Empty, ErrorBox, PageHeader } from "@/components/ui";
 import { requireAdmin } from "@/lib/auth";
 import { CONVERSATION_LABEL, conversationState, type Conversation, type ConversationFilter } from "@/lib/conversations";
 import { fmtDateTime, haQuanto } from "@/lib/time";
-import { setConversationOwner } from "./actions";
+import { reactivateCommercialBot, setConversationOwner } from "./actions";
 import { MemoryForm, type Memory } from "./MemoryForm";
 import { ReplyAssistant } from "./ReplyAssistant";
 
@@ -37,14 +37,19 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
   if (inbox.error) return <><PageHeader title="Conversas" /><ErrorBox message="Não foi possível carregar a central. Confira se a atualização do banco foi aplicada." /></>;
   const rows = (inbox.data ?? []) as Conversation[];
   const selectedId = sp.lead && /^[0-9a-f-]{36}$/i.test(sp.lead) ? sp.lead : rows[0]?.id;
-  const [selected, history, memory, diagnosis] = selectedId ? await Promise.all([
+  const [selected, history, memory, diagnosis, selectedCommercial] = selectedId ? await Promise.all([
     supabase.from("conversation_inbox").select("*").eq("id", selectedId).maybeSingle(),
     supabase.from("conversation_timeline").select("*").eq("lead_id", selectedId).order("occurred_at", { ascending: false }).order("id").limit(100),
     supabase.from("lead_conversation_memory").select("summary, facts, objections, next_action, updated_at").eq("lead_id", selectedId).maybeSingle(),
     supabase.from("lead_diagnoses").select("*").eq("lead_id", selectedId).order("created_at", { ascending: false }).limit(1),
-  ]) : [null, null, null, null];
+    supabase.from("commercial_leads").select("stage,conversation_phase,eligible").eq("lead_id",selectedId).maybeSingle(),
+  ]) : [null, null, null, null, null];
   const current = selected?.data as Conversation | null;
-  const detailError = selected?.error || history?.error || memory?.error || diagnosis?.error;
+  const detailError = selected?.error || history?.error || memory?.error || diagnosis?.error || selectedCommercial?.error;
+  const commercial = selectedCommercial?.data;
+  const canReactivate = !!current && !current.do_not_contact && !["fechado","desqualificado"].includes(current.stage)
+    && commercial?.eligible && commercial.stage !== "NAO_CONTATAR"
+    && (commercial.stage === "PERDIDO" || commercial.conversation_phase === "CLOSED" || current.stage === "sem_interesse");
   const events = [...(history?.data ?? []) as Event[]].reverse();
   const botActive = settings.data?.enabled && !settings.data.paused && settings.data.secretary_enabled;
   const href = (changes: Record<string, string>) => {
@@ -96,7 +101,9 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
                     submit={current.secretary_handoff_at ? "Devolver ao secretário" : "Assumir atendimento"} variant="btn-ghost">
                     <input type="hidden" name="lead_id" value={current.id} /><input type="hidden" name="owner" value={current.secretary_handoff_at ? "secretario" : "marcos"} />
                   </ActionForm>}
+                  {canReactivate && <ActionForm action={reactivateCommercialBot} submit="Reativar bot nesta conversa" variant="btn-ghost"><input type="hidden" name="lead_id" value={current.id} /></ActionForm>}
                 </div>
+                {canReactivate && <p className="text-xs text-muted">Reativa o atendimento para a próxima mensagem do lead. Não envia mensagem agora nem repete a última resposta.</p>}
               </header>
               <ol className="max-h-[65vh] space-y-3 overflow-y-auto p-4" aria-label="Histórico da conversa">
                 {events.map((e) => <li key={e.id} className={`flex ${e.direction === "saida" ? "justify-end" : "justify-start"}`}>

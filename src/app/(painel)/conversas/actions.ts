@@ -41,6 +41,16 @@ export async function setConversationOwner(_: ConversationState, form: FormData)
   return { ok: owner.data === "marcos" ? "Você assumiu o atendimento. Respostas do bot na fila foram canceladas." : "Conversa devolvida. O bot respeita a chave e o horário de atendimento." };
 }
 
+export async function reactivateCommercialBot(_: ConversationState, form: FormData): Promise<ConversationState> {
+  const { supabase } = await requireAdmin();
+  const id = z.uuid().safeParse(form.get('lead_id'));
+  if (!id.success) return { error: 'Conversa inválida.' };
+  const { error } = await supabase.rpc('admin_commercial_reopen_conversation', { p_lead: id.data });
+  if (error) return { error: dbErrorMessage(error) };
+  refresh(id.data);
+  return { ok: 'Bot reativado. Ele aguarda uma nova mensagem do lead; nenhuma mensagem antiga foi reenviada.' };
+}
+
 export async function suggestReply(leadId: string): Promise<{ draft: ReplyDraft } | { error: string }> {
   const { supabase } = await requireAdmin();
   const parsed = z.uuid().safeParse(leadId);
