@@ -82,7 +82,7 @@ def load_env() -> None:
             continue
         key, value = line.split("=", 1)
         key, value = key.strip(), value.strip().strip('"').strip("'")
-        if (key.startswith(("MKTECH_CRM_", "MKTECH_ENVIO_", "MKTECH_COMMERCIAL_", "BRIDGE_")) or key == "ENVIO_SO_PARA") and key not in os.environ:
+        if (key.startswith(("MKTECH_CRM_", "MKTECH_ENVIO_", "MKTECH_COMMERCIAL_", "BRIDGE_")) or key in ("ENVIO_SO_PARA", "OPENROUTER_API_KEY")) and key not in os.environ:
             os.environ[key] = value
 
 

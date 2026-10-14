@@ -2,6 +2,8 @@ import json
 import subprocess
 import sys
 import unittest
+import io
+import urllib.error
 from pathlib import Path
 from unittest.mock import patch
 
@@ -60,6 +62,35 @@ class ModelIsolationTests(unittest.TestCase):
     def test_timeout_has_no_fallback(self):
         with patch('commercial_model.Path.is_file', return_value=True), patch('commercial_model.subprocess.run', side_effect=subprocess.TimeoutExpired('adapter', 115)):
             with self.assertRaisesRegex(InferenceError, '^inference_timeout$'):
+                infer('policy', {})
+
+    def test_openrouter_uses_separate_key_and_lead_context_without_tools(self):
+        response = {'choices':[{'message':{'content':json.dumps({'action':'wait','source_ids':[]})}}]}
+        class FakeResponse:
+            def __enter__(self): return self
+            def __exit__(self, *args): return False
+            def read(self, limit): return json.dumps(response).encode()
+        env = {'MKTECH_COMMERCIAL_PROVIDER':'openrouter', 'MKTECH_COMMERCIAL_MODEL':'openai/gpt-6-luna', 'OPENROUTER_API_KEY':'private-test-key'}
+        with patch.dict('os.environ', env), patch('commercial_model.urllib.request.urlopen', return_value=FakeResponse()) as urlopen:
+            result = infer('policy', {'lead_id':'only-one'})
+        request = urlopen.call_args.args[0]
+        payload = json.loads(request.data)
+        self.assertEqual(result['model'], 'openai/gpt-6-luna')
+        self.assertEqual(payload['messages'][1]['content'], '{"lead_id": "only-one"}')
+        self.assertNotIn('tools', payload)
+        self.assertEqual(request.headers['Authorization'], 'Bearer private-test-key')
+
+    def test_openrouter_without_key_fails_closed(self):
+        env = {'MKTECH_COMMERCIAL_PROVIDER':'openrouter','MKTECH_COMMERCIAL_MODEL':'openai/gpt-6-luna','OPENROUTER_API_KEY':''}
+        with patch.dict('os.environ', env):
+            with self.assertRaisesRegex(InferenceError, '^runtime_unavailable$'):
+                infer('policy', {})
+
+    def test_openrouter_http_error_keeps_private_response_out_of_log(self):
+        env = {'MKTECH_COMMERCIAL_PROVIDER':'openrouter','MKTECH_COMMERCIAL_MODEL':'openai/gpt-6-luna','OPENROUTER_API_KEY':'private-test-key'}
+        error = urllib.error.HTTPError('https://openrouter.ai/api/v1/chat/completions', 402, 'private billing detail', {}, io.BytesIO(b'private response'))
+        with patch.dict('os.environ', env), patch('commercial_model.urllib.request.urlopen', side_effect=error):
+            with self.assertRaisesRegex(InferenceError, '^inference_failed:HTTP402$'):
                 infer('policy', {})
 
 

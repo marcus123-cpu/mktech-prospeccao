@@ -5,6 +5,10 @@ MKTECH_CRM_URL=https://mktech-prospeccao.vercel.app
 MKTECH_ENVIO_TOKEN=
 # Token de preparação: escopo mensagens:escrever (não reutilize token envio:operar).
 MKTECH_COMMERCIAL_TOKEN=
+# Agente de atendimento V6: chave privada só neste PC, nunca no Git ou no painel.
+MKTECH_COMMERCIAL_PROVIDER=openrouter
+OPENROUTER_API_KEY=
+MKTECH_COMMERCIAL_MODEL=openai/gpt-6-luna
 
 # --- WhatsApp Web (transporte "whatsappweb"), chip novo só para prospecção ---
 BRIDGE_URL=http://127.0.0.1:3799

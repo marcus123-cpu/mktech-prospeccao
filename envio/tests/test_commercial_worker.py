@@ -49,4 +49,14 @@ class WorkerRepairTests(unittest.TestCase):
             self.assertEqual(worker.step()[0],404)
             self.assertEqual(request.call_count,1)
 
+    def test_multiple_leads_are_leased_and_processed_independently(self):
+        batches=[(200,{'status':'ok','system':'policy','contexts':[{'lease_id':'a'}]}),
+                 (200,{'status':'ok','contexts':[{'lease_id':'b'}]}),
+                 (200,{'status':'ok','contexts':[]})]
+        with patch.object(worker,'request',side_effect=batches), patch.object(worker,'process_context',side_effect=lambda system,ctx: {'status':ctx['lease_id']}) as process:
+            status,result=worker.step()
+        self.assertEqual(status,200)
+        self.assertEqual({item['status'] for item in result['results']},{'a','b'})
+        self.assertEqual(process.call_count,2)
+
 if __name__=='__main__':unittest.main()

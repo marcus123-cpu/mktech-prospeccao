@@ -2,6 +2,8 @@
 import json
 import os
 import subprocess
+import urllib.error
+import urllib.request
 from copy import deepcopy
 from pathlib import Path
 
@@ -30,6 +32,8 @@ def normalize_sources(proposal, context):
 
 
 def infer(system, context, timeout=115):
+    if os.environ.get('MKTECH_COMMERCIAL_PROVIDER', '').lower() == 'openrouter':
+        return infer_openrouter(system, context, timeout)
     root = Path(os.environ.get('HERMES_RUNTIME_ROOT', str(Path(os.environ.get('LOCALAPPDATA', '')) / 'hermes' / 'hermes-agent')))
     python = root / '.venv' / 'Scripts' / 'python.exe'
     if not python.is_file():
@@ -65,4 +69,50 @@ def infer(system, context, timeout=115):
             raise ValueError()
         return {'proposal': normalize_sources(payload['result'],context), 'model': payload['model']}
     except (ValueError, TypeError, AttributeError):
+        raise InferenceError('invalid_model_output') from None
+
+
+def infer_openrouter(system, context, timeout=70):
+    """Inferência comercial direta, isolada por requisição e sem ferramentas."""
+    key = os.environ.get('OPENROUTER_API_KEY', '').strip()
+    model = os.environ.get('MKTECH_COMMERCIAL_MODEL', '').strip()
+    if not key or not model:
+        raise InferenceError('runtime_unavailable')
+    body = json.dumps({
+        'model': model,
+        'messages': [
+            {'role': 'system', 'content': system},
+            {'role': 'user', 'content': json.dumps(context, ensure_ascii=False)},
+        ],
+        'response_format': {'type': 'json_object'},
+        'max_completion_tokens': 3500,
+        'stream': False,
+    }, ensure_ascii=False).encode('utf-8')
+    req = urllib.request.Request(
+        'https://openrouter.ai/api/v1/chat/completions', data=body, method='POST',
+        headers={'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json',
+                 'HTTP-Referer': 'https://mktech-prospeccao.vercel.app',
+                 'X-Title': 'MKTech Hermes Prospector'},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=min(timeout, 70)) as response:
+            raw = response.read(131073)
+    except urllib.error.HTTPError as error:
+        # Apenas o código HTTP vai ao log; o corpo pode conter dados privados.
+        raise InferenceError(f'inference_failed:HTTP{error.code}') from None
+    except (urllib.error.URLError, TimeoutError, OSError):
+        raise InferenceError('inference_failed:network') from None
+    if len(raw) > 131072:
+        raise InferenceError('invalid_model_output')
+    try:
+        result = json.loads(raw)
+        message = result['choices'][0]['message']
+        content = message['content']
+        if not isinstance(content, str):
+            raise ValueError()
+        proposal = json.loads(content)
+        if not isinstance(proposal, dict):
+            raise ValueError()
+        return {'proposal': normalize_sources(proposal, context), 'model': model}
+    except (KeyError, IndexError, ValueError, TypeError, UnicodeError):
         raise InferenceError('invalid_model_output') from None

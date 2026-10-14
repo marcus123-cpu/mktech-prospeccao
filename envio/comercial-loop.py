@@ -2,6 +2,7 @@
 import argparse
 import time
 import os
+from concurrent.futures import ThreadPoolExecutor
 from mktech_envio import load_env, request, log
 from commercial_model import infer, InferenceError
 
@@ -36,9 +37,19 @@ def step():
         return request('POST', '/api/hermes/v1/comercial/processar', {})
     if status != 200:
         return status, result
-    results = []
-    for context in result.get('contexts', []):
-        results.append(process_context(result.get('system',''),context))
+    contexts = list(result.get('contexts', []))
+    # Cada chamada reserva um lead distinto. Uma inferência lenta não bloqueia
+    # o atendimento de outros clientes que já responderam.
+    for _ in range(2):
+        code, batch = request('POST', '/api/hermes/v1/comercial/contextos', {})
+        if code != 200 or batch.get('status') != 'ok' or not batch.get('contexts'):
+            break
+        contexts.extend(batch['contexts'])
+    if len(contexts) > 1:
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            results = list(executor.map(lambda ctx: process_context(result.get('system',''), ctx), contexts))
+    else:
+        results = [process_context(result.get('system',''), ctx) for ctx in contexts]
     return status, {'status': result.get('status'), 'results': results}
 
 def main():
