@@ -14,6 +14,7 @@ import {
   TodayTargetForm,
   ReturnToSecretaryButton,
   RemoveCommercialLeadButton,
+  FillCommercialQueueButton,
   type OutreachSettings,
 } from "./Forms";
 import { STYLE_LABEL, styleNote, type OutreachStyle } from "@/lib/envio/estilos";
@@ -146,7 +147,7 @@ function MsgItem({ m }: { m: Msg }) {
 
 export default async function EnvioPage() {
   const { supabase } = await requireAdmin();
-  const [settings, queue, replies, flagged, activity, handoffs, secretary, commercial, commercialQueue, commercialRecent, commercialPending, commercialSent] = await Promise.all([
+  const [settings, queue, replies, flagged, activity, handoffs, secretary, commercial, commercialQueue, commercialRecent, commercialPending, commercialSent, uncontacted] = await Promise.all([
     supabase.from("outreach_settings").select("*").eq("id", 1).maybeSingle(),
     supabase
       .from("outreach_messages")
@@ -181,6 +182,7 @@ export default async function EnvioPage() {
     supabase.from("commercial_outbox").select("id,lead_id,kind,status,body,due_at,sent_at,created_at,error,leads(business_name,city)").neq("status", "enfileirada").order("created_at", { ascending: false }).limit(12),
     supabase.from("commercial_outbox").select("id", { count: "exact", head: true }).eq("status", "enfileirada"),
     supabase.from("commercial_outbox").select("id", { count: "exact", head: true }).eq("kind", "initial").gte("sent_at", `${todaySP()}T03:00:00Z`),
+    supabase.from("leads").select("id", { count: "exact", head: true }).eq("stage", "novo").eq("contacted", false).eq("do_not_contact", false),
   ]);
 
   const s = settings.data as (OutreachSettings & { next_send_at: string | null }) | null;
@@ -203,8 +205,8 @@ export default async function EnvioPage() {
         title="Central de disparos"
         subtitle="Fila real do Hermes, horário, limites e atendimento em um só lugar. Horários de São Paulo."
       />
-      {settings.error || activity.error || commercial.error || commercialQueue.error || commercialRecent.error || commercialPending.error || commercialSent.error || !s || !counts || !c ? (
-        <ErrorBox message={dbErrorMessage(settings.error ?? activity.error ?? commercial.error ?? commercialQueue.error ?? commercialRecent.error ?? commercialPending.error ?? commercialSent.error) || "Configuração do envio não encontrada."} />
+      {settings.error || activity.error || commercial.error || commercialQueue.error || commercialRecent.error || commercialPending.error || commercialSent.error || uncontacted.error || !s || !counts || !c ? (
+        <ErrorBox message={dbErrorMessage(settings.error ?? activity.error ?? commercial.error ?? commercialQueue.error ?? commercialRecent.error ?? commercialPending.error ?? commercialSent.error ?? uncontacted.error) || "Configuração do envio não encontrada."} />
       ) : (
         <div className="space-y-6">
           <section className="card overflow-hidden border-accent/35 bg-gradient-to-br from-panel via-panel to-accent/10 p-5 md:p-6" aria-label="Estado da operação">
@@ -239,7 +241,8 @@ export default async function EnvioPage() {
             <section className="card p-5" aria-label="Como funciona o primeiro contato"><h2 className="text-lg font-semibold">Primeiro contato sem pressão</h2><ol className="mt-4 space-y-3 text-sm"><li className="rounded-lg bg-panel-2 p-3"><span className="mr-2 text-violet-300">01</span> Hermes envia apenas “Olá, bom dia/boa tarde! Tudo bem?”</li><li className="rounded-lg bg-panel-2 p-3"><span className="mr-2 text-sky-300">02</span> Aguarda uma resposta da pessoa.</li><li className="rounded-lg bg-panel-2 p-3"><span className="mr-2 text-emerald-300">03</span> Continua com contexto, respeitando recusa e horário.</li></ol><Link href="/conversas" className="mt-4 inline-flex text-sm font-medium text-violet-300 hover:underline">Ver conversas →</Link></section>
           </div>
 
-          <section className="card p-5" aria-label="Fila real de disparos"><div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-lg font-semibold">Fila do Hermes V6</h2><p className="mt-1 text-sm text-muted">{commercialPending.count ?? 0} pendente(s) no total · mostrando {queued.length} por ordem de envio</p></div><Link href="/comercial" className="btn-ghost">Ver funil comercial</Link></div>
+          <section className="card p-5" aria-label="Fila real de disparos"><div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-lg font-semibold">Fila do Hermes V6</h2><p className="mt-1 text-sm text-muted">{commercialPending.count ?? 0} pendente(s) no total · {uncontacted.count ?? 0} sem contato no CRM · mostrando {queued.length} por ordem de envio</p></div><div className="flex flex-wrap gap-2"><FillCommercialQueueButton /><Link href="/comercial" className="btn-ghost">Ver funil comercial</Link></div></div>
+            <p className="mt-3 text-xs text-muted">O botão verifica contatos não abordados e libera apenas os que têm WhatsApp comercial conferido, diagnóstico e fontes suficientes. O Hermes prepara a saudação; o envio respeita a pausa, o horário e a meta.</p>
             {queued.length === 0 ? <p className="mt-4 rounded-lg bg-panel-2 p-4 text-sm text-muted">Nenhuma mensagem aguardando envio. O Hermes adiciona contatos elegíveis conforme a pesquisa e as regras configuradas.</p> : <ul className="mt-4 divide-y divide-line">{queued.map((m) => <li key={m.id} className="flex flex-wrap items-start justify-between gap-3 py-3"><div className="min-w-0 flex-1"><Link href={`/comercial?lead=${m.lead_id}`} className="font-medium hover:underline">{m.leads?.business_name ?? "Lead"}</Link><p className="mt-1 text-xs text-muted">{m.leads?.city} · {COMMERCIAL_KIND[m.kind] ?? m.kind} · previsto {fmtDateTime(m.due_at)}</p><p className="mt-2 max-w-3xl whitespace-pre-wrap rounded-lg bg-panel-2 p-3 text-sm">{m.kind === "initial" ? "Saudação breve; texto definido pelo horário no momento do envio." : m.body}</p></div><RemoveCommercialLeadButton id={m.lead_id} /></li>)}</ul>}
           </section>
 

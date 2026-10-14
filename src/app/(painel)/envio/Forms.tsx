@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import {
   cancelMessage,
+  fillCommercialQueue,
   removeCommercialLead,
   createSenderToken,
   reclassifyReply,
@@ -241,6 +242,10 @@ export function CancelButton({ id }: { id: string }) {
 
 export function RemoveCommercialLeadButton({ id }: { id: string }) {
   return <MiniAction action={removeCommercialLead} fields={{ id }} label="Retirar da fila" variant="btn-danger" confirmText="Retirar este contato da fila do Hermes? A mensagem pendente será cancelada e o lead precisará ser reabilitado manualmente para uma nova abordagem." />;
+}
+
+export function FillCommercialQueueButton() {
+  return <MiniAction action={fillCommercialQueue} fields={{}} label="Abastecer com não contatados" variant="btn-primary" confirmText="Verificar os contatos ainda não contatados e liberar para preparação somente os que cumprem as regras do V6? O Hermes poderá enviar a saudação dentro do horário e limite configurados." />;
 }
 
 export function ReclassifyButton({ id, to }: { id: string; to: "automatica" | "humana" }) {

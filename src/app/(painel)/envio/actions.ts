@@ -104,6 +104,15 @@ export async function removeCommercialLead(_: EnvioState, form: FormData): Promi
   return done("Contato retirado da fila. A abordagem pendente foi cancelada.");
 }
 
+export async function fillCommercialQueue(): Promise<EnvioState> {
+  const { supabase } = await requireAdmin();
+  const { data, error } = await supabase.rpc("admin_commercial_fill_queue");
+  if (error) return { error: dbErrorMessage(error) };
+  const result = data as { uncontacted: number; checked: number; added: number; already_ready: number };
+  revalidatePath("/comercial");
+  return done(`${result.uncontacted} sem contato. ${result.added} novo(s) liberado(s) para preparação; ${result.already_ready} já apto(s). Os demais ainda precisam de dados verificados ou têm histórico/bloqueio. O Hermes colocará a saudação na fila depois de validar o contexto.`);
+}
+
 export async function reclassifyReply(_: EnvioState, form: FormData): Promise<EnvioState> {
   const { supabase } = await requireAdmin();
   const id = z.uuid().safeParse(form.get("id"));
