@@ -48,6 +48,11 @@ class ModelIsolationTests(unittest.TestCase):
         with self.assertRaisesRegex(InferenceError, '^inference_failed$'):
             self.call(result)
 
+    def test_failure_can_keep_a_sanitized_adapter_stage(self):
+        result = subprocess.CompletedProcess([], 1, json.dumps({'error_type': 'RuntimeError'}), 'secret')
+        with self.assertRaisesRegex(InferenceError, '^inference_failed:RuntimeError$'):
+            self.call(result)
+
     def test_invalid_json_rejected(self):
         with self.assertRaisesRegex(InferenceError, 'invalid_model_output'):
             self.call(subprocess.CompletedProcess([], 0, 'not json', ''))

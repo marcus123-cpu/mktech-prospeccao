@@ -49,7 +49,14 @@ def infer(system, context, timeout=115):
     except OSError:
         raise InferenceError('runtime_unavailable') from None
     if result.returncode != 0 or len(result.stdout) > 131072:
-        raise InferenceError('inference_failed')
+        # O adaptador só devolve um código de classe, nunca a resposta, prompt ou
+        # detalhes de autenticação. Isso permite diagnosticar indisponibilidade
+        # sem expor conteúdo comercial no log do worker.
+        try:
+            failure = json.loads(result.stdout).get('error_type')
+        except (ValueError, TypeError, AttributeError):
+            failure = None
+        raise InferenceError(f'inference_failed:{failure}' if isinstance(failure, str) else 'inference_failed')
     try:
         payload = json.loads(result.stdout)
         if not isinstance(payload.get('result'), dict) or payload.get('tools_enabled') != 0:

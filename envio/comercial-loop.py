@@ -13,7 +13,10 @@ def process_context(system, context):
             try:
                 payload.update(infer(system, model_context))
             except InferenceError as error:
-                payload['failure'] = str(error)
+                # Registra apenas o tipo sanitizado de falha local. A API recebe
+                # o código enumerado que ela aceita e aplica o backoff normal.
+                log(f'V6: inferência indisponível ({error})')
+                payload['failure'] = str(error).split(':', 1)[0]
         code, saved = request('POST', '/api/hermes/v1/comercial/decidir', payload)
         log(f"V6: decisão HTTP {code}; estado={saved.get('status')}")
         invalid = saved.get('status') == 'validacao_recusada' or code == 422

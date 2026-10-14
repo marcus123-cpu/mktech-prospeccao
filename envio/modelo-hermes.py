@@ -51,7 +51,9 @@ def main():
                 system_message=payload['system'], conversation_history=[],
             )
             if result.get('failed') or result.get('partial'):
-                raise RuntimeError('Inferência não concluída')
+                # Código estável para diagnóstico local; não propaga o texto do
+                # provedor, que pode conter detalhes operacionais.
+                raise RuntimeError('agent_run_failed')
             response = result.get('final_response') or ''
             if response.startswith('```'):
                 response = response.split('\n', 1)[1].rsplit('```', 1)[0].strip()
@@ -69,5 +71,6 @@ if __name__ == '__main__':
         main()
     except Exception as exc:
         # Não ecoar prompts, respostas, detalhes HTTP ou credenciais em logs.
-        print(json.dumps({'error': 'inference_failed', 'error_type': type(exc).__name__}))
+        stage = str(exc) if str(exc) in {'agent_run_failed'} else None
+        print(json.dumps({'error': 'inference_failed', 'error_type': type(exc).__name__, 'stage': stage}))
         sys.exit(1)
