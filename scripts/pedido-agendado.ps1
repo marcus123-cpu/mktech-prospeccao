@@ -11,7 +11,7 @@ try {
   $request = ($response | Out-String | ConvertFrom-Json)
   if ($request.status -notin @('pendente', 'retomar')) { exit 0 }
   Add-Content -LiteralPath $log -Value "===== $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') · pedido $($request.pedido_id) ====="
-  & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $runner -Modo pedido *>> $log
+  & pwsh.exe -NoProfile -File $runner -Modo pedido *>> $log
   exit $LASTEXITCODE
 } catch {
   Add-Content -LiteralPath $log -Value "===== $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') · falha no acionamento: $($_.Exception.Message) ====="
