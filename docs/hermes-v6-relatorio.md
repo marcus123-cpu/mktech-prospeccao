@@ -145,6 +145,16 @@ Banco, ponte e enviador seguem restritos ao
 número autorizado; secretário preservado. Playwright confirmou anteriormente
 painel autenticado, motor V6, catálogo e controle de novas abordagens.
 
+Às 02:46:21 UTC o titular escreveu “Ativada” no WhatsApp. A entrada foi
+corretamente interpretada como incerta, mas o modelo encerrou a conversa por
+reaplicar a recusa histórica. Corrigimos a validação para exigir recusa ou canal
+errado na **mensagem atual** antes de encerrar; `941352a` está publicado. O
+contato de teste foi restaurado com a reautorização explícita registrada na
+memória, sem apagar o opt-out anterior. Um único teste de resposta automática
+foi enviado às 02:54:37 UTC e entregue às 02:54:41 UTC. Até a última checagem,
+nenhuma resposta automática chegou; depende de verificar a configuração de
+mensagem de ausência no aparelho. Não foi feito segundo envio.
+
 ## 12. Problemas encontrados
 Modelo inicialmente omitiu identificação de fonte na proposta e produziu cargo
 fora da lista; validação bloqueou. Prompt corrigido e avaliações repetidas.
