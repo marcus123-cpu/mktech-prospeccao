@@ -10,6 +10,7 @@ import {
   retryLead,
   returnToSecretary,
   saveOutreachSettings,
+  saveQueueCriteria,
   setEnabled,
   setAfterNoon,
   setFollowups,
@@ -212,7 +213,6 @@ export function OutreachSettingsForm({ s }: { s: OutreachSettings }) {
       {num("greeting_gap_min_seconds", "Depois da saudação, esperar no mínimo (s)", s.greeting_gap_min_seconds, 10, 1800)}
       {num("greeting_gap_max_seconds", "Depois da saudação, esperar no máximo (s)", s.greeting_gap_max_seconds, 10, 1800)}
       {num("daily_limit", "Padrão diário de novos contatos", s.daily_limit, 1, 200, "Vale nos próximos dias; a meta de hoje é ajustada no quadro acima. Também limita os lembretes por dia.")}
-      {num("min_fit_score", "Nota mínima do diagnóstico", s.min_fit_score, 0, 100)}
       {num("window_start", "Prospecção: começa às (h)", s.window_start, 0, 23)}
       {num("window_end", "Prospecção: para às (h)", s.window_end, 1, 24, "Saudação e lembretes. Horário de São Paulo.")}
       {num("reply_window_start", "Atendimento: começa às (h)", s.reply_window_start ?? 8, 0, 23)}
@@ -246,6 +246,41 @@ export function RemoveCommercialLeadButton({ id }: { id: string }) {
 
 export function FillCommercialQueueButton() {
   return <MiniAction action={fillCommercialQueue} fields={{}} label="Abastecer com não contatados" variant="btn-primary" confirmText="Verificar os contatos ainda não contatados e liberar para preparação somente os que cumprem as regras do V6? O Hermes poderá enviar a saudação dentro do horário e limite configurados." />;
+}
+
+export function QueueCriteriaForm({ score, sources, confidence }: { score: number; sources: number; confidence: "media" | "alta" }) {
+  const [state, action, pending] = useActionState<EnvioState, FormData>(saveQueueCriteria, {});
+  return (
+    <form action={action} className="mt-4 space-y-4">
+      <div className="grid gap-4 sm:grid-cols-3">
+        <div>
+          <label className="label" htmlFor="queue-score">Nota mínima do diagnóstico</label>
+          <input className="input" id="queue-score" name="score" type="number" min="0" max="100" step="1" required defaultValue={score} />
+          <p className="mt-1 text-xs text-muted">Também vale para a liberação do primeiro envio.</p>
+        </div>
+        <div>
+          <label className="label" htmlFor="queue-sources">Fontes independentes</label>
+          <select className="input" id="queue-sources" name="sources" defaultValue={sources}>
+            {[2, 3, 4, 5].map((count) => <option key={count} value={count}>{count} fontes</option>)}
+          </select>
+          <p className="mt-1 text-xs text-muted">Fontes verificáveis de domínios diferentes.</p>
+        </div>
+        <div>
+          <label className="label" htmlFor="queue-confidence">Confiança mínima</label>
+          <select className="input" id="queue-confidence" name="confidence" defaultValue={confidence}>
+            <option value="media">Média ou alta</option>
+            <option value="alta">Somente alta</option>
+          </select>
+          <p className="mt-1 text-xs text-muted">Do diagnóstico cadastrado.</p>
+        </div>
+      </div>
+      <p className="rounded-lg border border-line bg-panel-2 p-3 text-xs text-muted">A verificação de WhatsApp comercial, telefone correspondente, evidências do serviço e da oportunidade, bloqueios e histórico de contato continua obrigatória. Ao apertar “Salvar”, saudações pendentes que deixarem de atender aos critérios são retiradas da fila.</p>
+      <div className="flex flex-wrap items-center gap-3">
+        <button className="btn-primary" disabled={pending}>{pending ? "Salvando…" : "Salvar critérios da fila"}</button>
+        <Feedback state={state} />
+      </div>
+    </form>
+  );
 }
 
 export function ReclassifyButton({ id, to }: { id: string; to: "automatica" | "humana" }) {

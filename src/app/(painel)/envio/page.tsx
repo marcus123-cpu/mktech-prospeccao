@@ -15,6 +15,7 @@ import {
   ReturnToSecretaryButton,
   RemoveCommercialLeadButton,
   FillCommercialQueueButton,
+  QueueCriteriaForm,
   type OutreachSettings,
 } from "./Forms";
 import { STYLE_LABEL, styleNote, type OutreachStyle } from "@/lib/envio/estilos";
@@ -177,7 +178,7 @@ export default async function EnvioPage() {
       .select("id, lead_id, status, body, sent_at, created_at, error, cancel_reason, leads(business_name)")
       .order("created_at", { ascending: false })
       .limit(30),
-    supabase.from("commercial_settings").select("enabled,channel_authorized,test_mode,new_contacts_enabled,bridge_connected,last_worker_at,last_sender_at,engine_version").eq("id", 1).maybeSingle(),
+    supabase.from("commercial_settings").select("enabled,channel_authorized,test_mode,new_contacts_enabled,bridge_connected,last_worker_at,last_sender_at,engine_version,queue_min_score,queue_min_sources,queue_min_confidence").eq("id", 1).maybeSingle(),
     supabase.from("commercial_outbox").select("id,lead_id,kind,status,body,due_at,sent_at,created_at,error,leads(business_name,city)").eq("status", "enfileirada").order("due_at").limit(100),
     supabase.from("commercial_outbox").select("id,lead_id,kind,status,body,due_at,sent_at,created_at,error,leads(business_name,city)").neq("status", "enfileirada").order("created_at", { ascending: false }).limit(12),
     supabase.from("commercial_outbox").select("id", { count: "exact", head: true }).eq("status", "enfileirada"),
@@ -244,6 +245,12 @@ export default async function EnvioPage() {
           <section className="card p-5" aria-label="Fila real de disparos"><div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-lg font-semibold">Fila do Hermes V6</h2><p className="mt-1 text-sm text-muted">{commercialPending.count ?? 0} pendente(s) no total · {uncontacted.count ?? 0} sem contato no CRM · mostrando {queued.length} por ordem de envio</p></div><div className="flex flex-wrap gap-2"><FillCommercialQueueButton /><Link href="/comercial" className="btn-ghost">Ver funil comercial</Link></div></div>
             <p className="mt-3 text-xs text-muted">O botão verifica contatos não abordados e libera apenas os que têm WhatsApp comercial conferido, diagnóstico e fontes suficientes. O Hermes prepara a saudação; o envio respeita a pausa, o horário e a meta.</p>
             {queued.length === 0 ? <p className="mt-4 rounded-lg bg-panel-2 p-4 text-sm text-muted">Nenhuma mensagem aguardando envio. O Hermes adiciona contatos elegíveis conforme a pesquisa e as regras configuradas.</p> : <ul className="mt-4 divide-y divide-line">{queued.map((m) => <li key={m.id} className="flex flex-wrap items-start justify-between gap-3 py-3"><div className="min-w-0 flex-1"><Link href={`/comercial?lead=${m.lead_id}`} className="font-medium hover:underline">{m.leads?.business_name ?? "Lead"}</Link><p className="mt-1 text-xs text-muted">{m.leads?.city} · {COMMERCIAL_KIND[m.kind] ?? m.kind} · previsto {fmtDateTime(m.due_at)}</p><p className="mt-2 max-w-3xl whitespace-pre-wrap rounded-lg bg-panel-2 p-3 text-sm">{m.kind === "initial" ? "Saudação breve; texto definido pelo horário no momento do envio." : m.body}</p></div><RemoveCommercialLeadButton id={m.lead_id} /></li>)}</ul>}
+          </section>
+
+          <section className="card p-5" aria-label="Critérios da fila">
+            <h2 className="text-lg font-semibold">Critérios para entrar na fila</h2>
+            <p className="mt-1 text-sm text-muted">Ajuste os limites usados pelo botão e pela pesquisa automática. Depois de salvar, clique em “Abastecer com não contatados” para verificar os contatos antigos.</p>
+            <QueueCriteriaForm score={c.queue_min_score} sources={c.queue_min_sources} confidence={c.queue_min_confidence as "media" | "alta"} />
           </section>
 
           <section className="card p-5" aria-label="Atividade recente"><h2 className="text-lg font-semibold">Atividade recente do V6</h2><p className="mt-1 text-sm text-muted">Confirme aqui o que saiu, falhou ou precisa de conferência.</p>{recent.length === 0 ? <p className="mt-4 text-sm text-muted">Ainda não há atividade.</p> : <ul className="mt-3 divide-y divide-line">{recent.map((m) => <li key={m.id} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm"><div><Link href={`/conversas?lead=${m.lead_id}`} className="font-medium hover:underline">{m.leads?.business_name ?? "Lead"}</Link><p className="mt-1 text-xs text-muted">{COMMERCIAL_KIND[m.kind] ?? m.kind} · {fmtDateTime(m.sent_at ?? m.created_at)}{m.error ? ` · ${m.error}` : ""}</p></div><span className={`badge ${["enviada", "entregue"].includes(m.status) ? "bg-emerald-900/70 text-emerald-200" : ["falhou", "desconhecido"].includes(m.status) ? "bg-amber-900/70 text-amber-200" : "bg-panel-2"}`}>{COMMERCIAL_STATUS[m.status] ?? m.status}</span></li>)}</ul>}</section>

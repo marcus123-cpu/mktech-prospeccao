@@ -17,7 +17,6 @@ const settingsSchema = z
     window_end: z.coerce.number().int().min(1).max(24),
     reply_window_start: z.coerce.number().int().min(0).max(23),
     reply_window_end: z.coerce.number().int().min(1).max(24),
-    min_fit_score: z.coerce.number().int().min(0).max(100),
   })
   .refine((v) => v.max_delay_minutes >= v.min_delay_minutes, "A espera máxima precisa ser maior ou igual à mínima.")
   .refine((v) => v.greeting_gap_max_seconds >= v.greeting_gap_min_seconds, "O intervalo máximo depois da saudação precisa ser maior ou igual ao mínimo.")
@@ -58,7 +57,6 @@ export async function saveOutreachSettings(_: EnvioState, form: FormData): Promi
       window_end: v.window_end,
       reply_window_start: v.reply_window_start,
       reply_window_end: v.reply_window_end,
-      min_fit_score: v.min_fit_score,
       send_days: days,
     },
   });
@@ -111,6 +109,20 @@ export async function fillCommercialQueue(): Promise<EnvioState> {
   const result = data as { uncontacted: number; checked: number; added: number; already_ready: number };
   revalidatePath("/comercial");
   return done(`${result.uncontacted} sem contato. ${result.added} novo(s) liberado(s) para preparação; ${result.already_ready} já apto(s). Os demais ainda precisam de dados verificados ou têm histórico/bloqueio. O Hermes colocará a saudação na fila depois de validar o contexto.`);
+}
+
+export async function saveQueueCriteria(_: EnvioState, form: FormData): Promise<EnvioState> {
+  const { supabase } = await requireAdmin();
+  const score = z.coerce.number().int().min(0).max(100).safeParse(form.get("score"));
+  const sources = z.coerce.number().int().min(2).max(5).safeParse(form.get("sources"));
+  const confidence = z.enum(["media", "alta"]).safeParse(form.get("confidence"));
+  if (!score.success || !sources.success || !confidence.success) return { error: "Confira a nota, as fontes e a confiança." };
+  const { data, error } = await supabase.rpc("admin_commercial_queue_criteria", {
+    p_score: score.data, p_sources: sources.data, p_confidence: confidence.data,
+  });
+  if (error) return { error: dbErrorMessage(error) };
+  revalidatePath("/comercial");
+  return done(`Critérios salvos. ${(data as { revoked: number }).revoked} contato(s) pendente(s) deixaram de atender às regras. Use “Abastecer com não contatados” para aplicar os critérios aos demais.`);
 }
 
 export async function reclassifyReply(_: EnvioState, form: FormData): Promise<EnvioState> {
