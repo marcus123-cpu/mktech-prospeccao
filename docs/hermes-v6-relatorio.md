@@ -136,7 +136,12 @@ o lead de teste voltou a `QUALIFYING`, e a recusa original segue auditada.
 
 Conversa completa **ainda não validada**: falta mensagem automática genuína e
 confirmar continuidade após o reinício com nova mensagem; a latência real medida
-com `gpt-6-sol` excede o limite solicitado. Banco, ponte e enviador seguem restritos ao
+com `gpt-6-sol` excede o limite solicitado. `gpt-6-luna` foi configurado apenas
+no worker local de teste após passar os 14 cenários isolados; uma inferência
+isolada com contexto comercial anterior levou 10,05 segundos, sem WhatsApp.
+Um ajuste de raciocínio ainda mais leve falhou em 2 dos 14 cenários e foi
+descartado. O limite de 20 segundos ainda precisa de medição real com esse modelo.
+Banco, ponte e enviador seguem restritos ao
 número autorizado; secretário preservado. Playwright confirmou anteriormente
 painel autenticado, motor V6, catálogo e controle de novas abordagens.
 
