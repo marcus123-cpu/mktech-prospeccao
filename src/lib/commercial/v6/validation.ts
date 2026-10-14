@@ -2,6 +2,10 @@ import { isOptOutText } from "@/lib/envio/respostas";
 import { verifiedEvidence } from "./research";
 import type { SemanticProposal, V6Context } from "./contracts";
 const norm=(text:string)=>text.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+function automatedGateQuestion(body:string):boolean {
+  const text=norm(body);
+  return /\b(qual (e )?(o |a )?(seu |sua )?(nome|assunto|motivo)|seu nome|sua empresa|com quem (voce )?(quer|deseja|precisa) falar|o que (voce )?(quer|deseja|precisa)|em que (podemos|posso) ajudar|qual (e )?(o )?motivo do contato|sobre o que (voce )?(quer|deseja) falar|para falar com (atendente|responsavel))\b/.test(text);
+}
 function unsupportedPromise(text:string):boolean {
   const claims=/garant\w*.{0,30}(pacient|cliente|fatur|receit|google|resultad)|primeir[oa]s?\s+(3|tres)|(3|tres)\s+primeir[oa]s?|top\s*3|posicao garantida|\d+\s*(novos )?(clientes|pacientes)/g;
   for(const clause of text.split(/[.!?;,\n]|\b(?:mas|porem|entretanto)\b/)){
@@ -51,18 +55,24 @@ export function validateProposal(ctx:V6Context,p:SemanticProposal):string[]{
     }
   }
   const waitRequested=p.interpretations.some(i=>i.intentions.some(t=>t.kind==='WAIT_REQUEST'));
-  if(p.action==='respond'&&!body)errors.push('Resposta vazia');
-  if(['respond','handoff'].includes(p.action)&&body&&!waitRequested&&!ctx.commercial_memory.introduced&&!text.includes('assistente comercial da mktech dev'))errors.push('Primeira resposta comercial deve identificar o assistente');
-  if(p.action==='respond'&&ctx.phase==='WAITING_FIRST_REPLY'&&!p.source_ids.some(id=>verifiedEvidence(ctx).some(e=>e.url===id))&& !p.interpretations.some(i=>i.intentions.some(t=>['PRICE_QUESTION','SEO_QUESTION','BUSINESS_QUESTION','WRONG_CHANNEL','CONTACT_REDIRECT','WAIT_REQUEST'].includes(t.kind))))errors.push('Apresentação inicial exige detalhe com fonte verificável');
   const latest=ctx.pending_messages.at(-1);
   const interpreted=p.interpretations.find(i=>i.message_id===latest?.id);
+  const automatedGate=interpreted?.type==='automated'&&interpreted.confidence>=.85
+    &&interpreted.intentions.some(i=>i.kind==='AUTOMATED_GATE'&&i.confidence>=.85)
+    &&!!latest&&automatedGateQuestion(latest.body);
+  if(p.action==='respond'&&!body)errors.push('Resposta vazia');
+  if(['respond','handoff'].includes(p.action)&&body&&!automatedGate&&!waitRequested&&!ctx.commercial_memory.introduced&&!text.includes('assistente comercial da mktech dev'))errors.push('Primeira resposta comercial deve identificar o assistente');
+  if(p.action==='respond'&&ctx.phase==='WAITING_FIRST_REPLY'&&!automatedGate&&!p.source_ids.some(id=>verifiedEvidence(ctx).some(e=>e.url===id))&& !p.interpretations.some(i=>i.intentions.some(t=>['PRICE_QUESTION','SEO_QUESTION','BUSINESS_QUESTION','WRONG_CHANNEL','CONTACT_REDIRECT','WAIT_REQUEST'].includes(t.kind))))errors.push('Apresentação inicial exige detalhe com fonte verificável');
   if(latest&&ctx.answered_reply_ids?.includes(latest.id)&&['respond','offer_demo','send_demo'].includes(p.action))errors.push('Mensagem anterior já recebeu resposta confirmada');
   const followup=ctx.followup_due&&ctx.pending_messages.length===0;
   if(!followup&&latest?.id!==ctx.reply_id&&p.action!=='wait')errors.push('Aguardar interpretação de todas as entradas acumuladas');
   if(latest?.media&&latest.media!=='texto'&&['respond','offer_demo','send_demo'].includes(p.action))errors.push('Anexo exige interpretação humana');
   if(!followup&&(!interpreted||interpreted.type==='uncertain'||interpreted.confidence<0.7)&&['respond','offer_demo','send_demo'].includes(p.action))errors.push('Não enviar com interpretação incerta');
   if(followup&&!['respond','wait','handoff'].includes(p.action))errors.push('Retorno combinado não concede autorização de material');
-  if(interpreted?.type==='automated'&&['respond','offer_demo','send_demo'].includes(p.action))errors.push('Aguardar atendimento humano');
+  if(interpreted?.type==='automated'&&['respond','offer_demo','send_demo'].includes(p.action)){
+    if(p.action!=='respond'||!automatedGate||ctx.state.facts.auto_gate_replied==='true')errors.push('Aguardar atendimento humano');
+    else if(!body||body.length>350||!text.includes('hermes')||!text.includes('mktech dev')||!text.includes('responsavel'))errors.push('Resposta à triagem automática deve identificar Hermes, MKTech Dev e a responsável em até 350 caracteres');
+  }
   if(latest&&isOptOutText(latest.body)&&p.action!=='stop')errors.push('Opt-out deve encerrar contato');
   if(latest&&p.action==='stop'&&!isOptOutText(latest.body)&&!interpreted?.intentions.some(i=>['OPT_OUT','NOT_INTERESTED','WRONG_CHANNEL'].includes(i.kind)&&i.confidence>=.7))errors.push('Encerramento exige recusa ou canal errado na mensagem atual');
   if(p.action==='send_demo'){

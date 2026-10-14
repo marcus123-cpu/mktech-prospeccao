@@ -57,6 +57,11 @@ export function contextualDecision(ctx:V6Context,p:SemanticProposal,model:string
     state.facts.demo_authorized=demo.id;state.video_authorized=demo.kind==='video';state.stage='APRESENTACAO_AUTORIZADA';
     return {...result,intent:'demonstracao_autorizada',action:'demonstration',body:demo.caption,demonstration_id:demo.id,phase:'DEMO_OFFERED'};
   }
+  if(latest?.type==='automated'){
+    state.facts.auto_gate_replied='true';
+    state.role='UNKNOWN';state.role_confidence=0;state.role_evidence='';
+    return {...result,intent:'automated_gate_v6',action:'text',body:p.response,phase:'WAITING_HUMAN'};
+  }
   if(latest?.intentions.some(i=>i.kind==='CHANNEL_CONFIRMED'||i.kind==='DECISION_MAKER'))memory.channel_confirmed=true;
   state.stage=activePhase==='NEGOTIATING'?'NEGOCIACAO':activePhase==='QUALIFYING'?'QUALIFICACAO_COMERCIAL':interest?'INTERESSE_IDENTIFICADO':state.role==='OWNER'||state.role==='DECISION_MAKER'?'CONTATO_COM_DECISOR':'RESPOSTA_RECEBIDA';
   return {...result,action:'text',body:p.response};

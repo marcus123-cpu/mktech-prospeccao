@@ -18,6 +18,18 @@ function context(body='Bom dia'):V6Context{return {
  commercial_memory:{summary:'',confirmed_facts:[],uncertain_facts:[],answered_questions:[],objections:[],next_action:'',solution:null,introduced:false,channel_confirmed:false,wait_acknowledged:[]},
 };}
 function proposal(ctx:V6Context):SemanticProposal{return {interpretations:[{message_id:id,type:'human',confidence:.95,intentions:[{kind:'HUMAN_GREETING',confidence:.95,evidence:ctx.pending_messages[0].body}]}],action:'respond',response:'Sou o assistente comercial da MKTech Dev. Vi a limpeza de pele na página de vocês. Posso falar sobre a apresentação desse procedimento por aqui?',reason:'Resposta humana; verificar canal comercial',phase:'WAITING_CHANNEL_CONFIRMATION',role:'UNKNOWN',role_evidence:'',solution:'landing_page',opportunity_index:0,demonstration_id:null,product_id:null,confirmed_facts:[],uncertain_facts:[],answered_questions:[],objections:[],summary:'Cliente respondeu à saudação',next_action:'Confirmar canal',followup_at:null,followup_evidence:'',source_ids:['https://clinica.test']};}
+async function openRouterProposal(ctx:V6Context):Promise<SemanticProposal>{
+ const python='import json,sys; from mktech_envio import load_env; from commercial_model import infer; load_env(); p=json.load(sys.stdin); print(json.dumps(infer(p["system"],p["context"])["proposal"],ensure_ascii=False))';
+ const output=await new Promise<string>((resolve,reject)=>{
+  const child=spawn('py',['-c',python],{cwd:join(process.cwd(),'envio'),windowsHide:true,env:{...process.env,PYTHONIOENCODING:'utf-8'},stdio:['pipe','pipe','pipe']});
+  let stdout='';child.stdout.on('data',part=>{stdout+=part;if(stdout.length>131072)child.kill();});
+  child.stderr.resume();const timer=setTimeout(()=>child.kill(),90000);
+  child.on('error',error=>{clearTimeout(timer);reject(error);});
+  child.on('close',code=>{clearTimeout(timer);code===0?resolve(stdout):reject(new Error('OpenRouter indisponível'));});
+  child.stdin.end(JSON.stringify({system:COMMERCIAL_SYSTEM,context:ctx}));
+ });
+ return proposalSchema.parse(JSON.parse(output));
+}
 describe('V6: autorização e contexto (propostas simuladas, sem inferência real)',()=>{
  it.each([['2026-10-13T11:00:00Z','bom dia'],['2026-10-13T18:00:00Z','boa tarde'],['2026-10-14T01:00:00Z','boa noite']])('saudação %s', (now,expected)=>expect(greetingAt(now,'America/Sao_Paulo')).toContain(expected));
  it('usa fuso do destinatário',()=>expect(greetingAt('2026-10-13T15:00:00Z','America/Manaus')).toContain('bom dia'));
@@ -42,6 +54,27 @@ describe('V6: autorização e contexto (propostas simuladas, sem inferência rea
  it('fato sem citação rejeitado',()=>{const c=context();const p=proposal(c);p.confirmed_facts=[{key:'site',value:'tem site',source_id:id,evidence:'tem site'}];expect(validateProposal(c,p).length).toBeGreaterThan(0);});
  it('cargo sem declaração rejeitado',()=>{const c=context();const p=proposal(c);p.role='OWNER';p.role_evidence='sou dona';expect(validateProposal(c,p).length).toBeGreaterThan(0);});
  it('automação não libera resposta',()=>{const c=context();const p=proposal(c);p.interpretations[0].type='automated';expect(contextualDecision(c,p,'test').action).toBe('wait');});
+ it('pergunta automática de identificação recebe uma resposta curta e mantém espera por pessoa',()=>{
+  const c=context('Qual seu nome e assunto?');const p=proposal(c);
+  p.interpretations[0]={message_id:id,type:'automated',confidence:.96,intentions:[{kind:'AUTOMATED_GATE',confidence:.96,evidence:'Qual seu nome e assunto?'}]};
+  p.action='respond';p.response='Sou o Hermes, da MKTech Dev. Gostaria de falar com a responsável pela clínica sobre a apresentação dos serviços no site. Pode encaminhar?';
+  p.phase='WAITING_HUMAN';p.role='AUTOMATED_ATTENDANT';p.opportunity_index=null;p.source_ids=[];
+  expect(validateProposal(c,p)).toEqual([]);
+  const d=contextualDecision(c,p,'test');
+  expect(d).toMatchObject({action:'text',intent:'automated_gate_v6',phase:'WAITING_HUMAN'});
+  expect(d.state.facts.auto_gate_replied).toBe('true');
+  expect(d.state.stage).toBe('CONTATO_ENVIADO');
+  expect(d.state.role).toBe('UNKNOWN');
+  c.state=d.state;
+  expect(validateProposal(c,p)).toContain('Aguardar atendimento humano');
+ });
+ it('ausência automática sem pergunta não recebe resposta nem com intenção de triagem inventada',()=>{
+  const c=context('Estamos ausentes. Retornaremos assim que possível.');const p=proposal(c);
+  p.interpretations[0]={message_id:id,type:'automated',confidence:.98,intentions:[{kind:'AUTOMATED_GATE',confidence:.98,evidence:c.pending_messages[0].body}]};
+  p.response='Sou o Hermes, da MKTech Dev. Quero falar com a responsável pela clínica.';
+  p.opportunity_index=null;p.source_ids=[];
+  expect(validateProposal(c,p)).toContain('Aguardar atendimento humano');
+ });
  it('incerteza não libera resposta',()=>{const c=context();const p=proposal(c);p.interpretations[0].confidence=.4;expect(contextualDecision(c,p,'test').action).toBe('wait');});
  it('mensagem de outro contexto rejeitada',()=>{const c=context();const p=proposal(c);p.interpretations[0].message_id='00000000-0000-4000-8000-000000000002';expect(validateProposal(c,p).length).toBeGreaterThan(0);});
  it('mensagem duplicada rejeitada',()=>{const c=context();const p=proposal(c);p.interpretations.push(p.interpretations[0]);expect(validateProposal(c,p).length).toBeGreaterThan(0);});
@@ -62,6 +95,30 @@ describe('V6: autorização e contexto (propostas simuladas, sem inferência rea
  it('retorno do controle humano normaliza fase ao responder',()=>{const c=context('Qual o benefício do site?');c.phase='HUMAN_HANDOFF';c.manual=false;const p=proposal(c);p.phase='HUMAN_HANDOFF';const d=contextualDecision(c,p,'test');expect(d).toMatchObject({action:'text',phase:'QUALIFYING'});expect(d.state.stage).toBe('QUALIFICACAO_COMERCIAL');});
  it('encaminhamento incerto não gera aviso ao cliente',()=>{const c=context();const p=proposal(c);p.interpretations[0].type='uncertain';p.interpretations[0].confidence=.4;p.action='handoff';p.response=null;p.role='UNKNOWN';expect(contextualDecision(c,p,'test')).toMatchObject({action:'handoff',body:null});});
  it('memória de outro contexto não alterada ao validar erro',()=>{const c=context();c.commercial_memory.summary='histórico anterior';const p=proposal(c);p.response='Sou Marcos';expect(contextualDecision(c,p,'test').memory.summary).toBe('histórico anterior');});
+});
+
+describe.skipIf(process.env.OPENROUTER_REAL_EVAL!=='1')('V6: triagem automática com OpenRouter, sem WhatsApp',()=>{
+ it.each([
+  ['Olá! Sou a assistente virtual da Clínica Simulada. Qual seu nome e qual o assunto?', 'respond'],
+  ['Olá, estamos ausentes e retornaremos em breve.', 'wait'],
+ ])('interpreta %s',async(body,action)=>{
+  const ctx=context(body);
+  const p=await openRouterProposal(ctx);
+  expect(p.interpretations[0].type).toBe('automated');
+  expect(p.action).toBe(action);
+  expect(validateProposal(ctx,p),JSON.stringify(p)).toEqual([]);
+  expect(contextualDecision(ctx,p,'openai/gpt-6-luna').action).toBe(action==='respond'?'text':'wait');
+ },90000);
+ it('retoma conversa normal quando uma pessoa responde depois da triagem automática',async()=>{
+  const ctx=context('Sou a responsável pela clínica. Sobre o que gostaria de falar?');
+  ctx.phase='WAITING_HUMAN';ctx.state.facts.auto_gate_replied='true';
+  ctx.messages=[{direction:'saida',body:'Sou o Hermes, da MKTech Dev. Gostaria de falar com a responsável pela clínica sobre o site.'}];
+  const p=await openRouterProposal(ctx);
+  expect(p.interpretations[0].type).toBe('human');
+  expect(p.action).toBe('respond');
+  expect(validateProposal(ctx,p),JSON.stringify(p)).toEqual([]);
+  expect(contextualDecision(ctx,p,'openai/gpt-6-luna').action).toBe('text');
+ },90000);
 });
 
 describe.skipIf(process.env.HERMES_REAL_EVAL!=='1')('V6: inferência real isolada, sem WhatsApp',()=>{

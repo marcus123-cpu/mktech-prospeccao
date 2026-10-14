@@ -17,6 +17,15 @@ três conversas podem ser interpretadas em paralelo para uma falha lenta não
 bloquear as outras. O transporte e o catálogo de demonstrações permanecem os
 mesmos.
 
+Em 14/10/2026, a triagem automática passou a admitir uma resposta curta quando
+o bot do negócio pergunta nome, assunto ou com quem desejamos falar. Hermes se
+identifica como Hermes, da MKTech Dev, pede a responsável e explica o motivo
+geral do contato. O CRM permite apenas uma resposta a automação por lead; uma
+mensagem de ausência sem pergunta continua em espera. A primeira pessoa que
+responder recebe apresentação comercial normal, pois pode não ter lido a
+triagem anterior. Demonstração, preço e consentimento continuam bloqueados
+nessa etapa automática.
+
 Para ativar, adicione as linhas abaixo a `envio/.env`, que é ignorado pelo Git:
 
 ```
