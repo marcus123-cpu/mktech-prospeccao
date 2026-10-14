@@ -44,6 +44,8 @@ const AUTO_PATTERNS: [RegExp, string][] = [
 const OPT_OUT = [
   /\b(pare|parem|para de|parar de) (de )?(me )?(mandar|enviar|chamar)/,
   /\bnao (me )?(mande|mandem|envie|enviem|chame|chamem) mais\b/,
+  /\bnao (me )?contate(m)? mais\b/,
+  /\bnao (entre|entrem) (mais )?em contato\b/,
   /\b(remova|remover|tira|tire|exclua|excluir) (meu|o meu|esse|este) (numero|contato)/,
   /\bnao (quero|queremos) (mais )?(receber|conversar|continuar|contratar|comprar)\b/,
   /\bnao (quero|queremos) (mais )?(esse|este|seu|o seu|o) (servico|contato)\b/,

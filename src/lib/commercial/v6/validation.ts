@@ -86,7 +86,7 @@ export function validateProposal(ctx:V6Context,p:SemanticProposal):string[]{
     else if(!body||body.length>350||!text.includes('hermes')||!text.includes('mktech dev')||!text.includes('responsavel'))errors.push('Resposta à triagem automática deve identificar Hermes, MKTech Dev e a responsável em até 350 caracteres');
   }
   if(latest&&isExplicitOptOutText(latest.body)&&p.action!=='stop')errors.push('Opt-out deve encerrar contato');
-  if(latest&&p.action==='stop'&&!isExplicitOptOutText(latest.body)&&!interpreted?.intentions.some(i=>['NOT_INTERESTED','WRONG_CHANNEL'].includes(i.kind)&&i.confidence>=.7))errors.push('Encerramento exige recusa ou canal errado na mensagem atual');
+  if(latest&&p.action==='stop'&&!isExplicitOptOutText(latest.body)&&!interpreted?.intentions.some(i=>['OPT_OUT','NOT_INTERESTED','WRONG_CHANNEL'].includes(i.kind)&&i.confidence>=.7))errors.push('Encerramento exige recusa ou canal errado na mensagem atual');
   if(p.action==='send_demo'){
     const demo=ctx.demonstrations?.find(d=>d.id===p.demonstration_id&&d.approved&&d.available);
     if(!demo||ctx.state.facts.demo_offered!==demo.id)errors.push('Material não aprovado/disponível ou não oferecido');

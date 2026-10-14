@@ -137,7 +137,7 @@ describe("classificação de respostas", () => {
     expect(classifyReply({ texto: "Oi, quem é?" }).asksPrice).toBe(false);
   });
 
-  it.each(["pare", "Não me mande mais mensagens", "remova meu número"])("pedido para parar: %s", (texto) => {
+  it.each(["pare", "Não me mande mais mensagens", "Não me contate mais", "remova meu número"])("pedido para parar: %s", (texto) => {
     expect(classifyReply({ texto })).toMatchObject({ kind: "humana", optOut: true });
   });
   it.each(["Não tenho interesse", "Não quero uma landing page", "A proprietária não tem interesse"])("objeção comercial não é descadastro: %s", (texto) => {
