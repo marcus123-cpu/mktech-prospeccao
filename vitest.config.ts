@@ -9,6 +9,8 @@ export default defineConfig({
       "server-only": path.resolve(import.meta.dirname, "tests/stubs/empty.ts"),
     },
   },
+  // O tsconfig deixa o JSX para o Next; nos testes de componentes o Vite transforma.
+  oxc: { jsx: { runtime: "automatic" } },
   test: {
     fileParallelism: false,
     testTimeout: 30000,

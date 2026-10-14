@@ -9,8 +9,9 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 // POST /api/hermes/v1/envio/leitura/{messageId} — grava o texto do estilo
 // "lendo a resposta", escrito depois que a pessoa respondeu. Vale a mesma
-// regra da mensagem preparada (fatos do lead, sem site, sem preço, uma pergunta
-// no final), menos a proibição de começar com "bom dia": aqui é uma resposta.
+// regra da mensagem preparada (fatos do lead, a estratégia A/B/C da mensagem,
+// sem preço, uma pergunta no final), menos a proibição de começar com
+// "bom dia": aqui é uma resposta.
 export async function POST(request: Request, { params }: { params: Promise<{ messageId: string }> }) {
   const auth = await authenticate(request, "mensagens:escrever");
   if ("response" in auth) return auth.response;
@@ -22,7 +23,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ mes
   const db = serviceClient();
   const msg = await db
     .from("outreach_messages")
-    .select("lead_id, compliment, pain, improvement")
+    .select("lead_id, compliment, pain, improvement, strategy")
     .eq("id", messageId)
     .maybeSingle();
   if (msg.error) return temporaryFailure();
@@ -39,6 +40,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ mes
       dor: msg.data.pain ?? "",
       melhoria: msg.data.improvement ?? "",
       mensagem: body.data.mensagem,
+      estrategia: msg.data.strategy ?? null,
     },
     { replying: true },
   );

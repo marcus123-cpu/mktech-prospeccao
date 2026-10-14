@@ -1,155 +1,161 @@
-# Método de abordagem MKTech (conversa em degraus)
+# Método de abordagem MKTech (estratégias A/B/C e fluxo em estados)
 
-Baseado no "Método de Simula" (vídeo da Sussuka com o Primos, out/2026),
-adaptado às regras da MKTech. Ideia central: **um passo por resposta**.
-Nunca despeje o diagnóstico inteiro numa mensagem; cada mensagem tem um
-único objetivo e termina esperando a pessoa responder.
+Reformulado a pedido do Marcos em 13/10/2026. O que muda em relação ao
+método anterior: **a pessoa sabe logo quem está falando e por quê**. A
+abordagem antiga perguntava "como os clientes chegam até vocês?" antes de
+dizer quem era, e soava como pesquisa de mercado.
 
-> **Quem faz cada passo:** os passos 3 e 4 são do **modo secretário** da
-> skill (só quando o Marcos liga o secretário no painel). O secretário
-> responde sem limite de mensagens, até o atendimento acabar, e passa a
-> conversa para o Marcos em dúvida que não sabe, preço ou hora de fechar.
-> Nunca manda link de portfólio; quando ela quiser ver um trabalho, o Marcos
-> manda o vídeo da Rosana (só a parte do PC).
+O que continua valendo: **um passo por resposta**. Cada mensagem tem um único
+objetivo, é curta e termina esperando a pessoa responder.
 
-## Os passos
+> **Quem faz cada passo:** o CRM manda a saudação; o Hermes escreve a
+> mensagem da estratégia; o **modo secretário** continua a conversa (só
+> quando o Marcos liga o secretário no painel, e com a trava de aprovação
+> ligada cada resposta espera o clique dele). O vídeo e a proposta são do
+> Marcos: o Hermes pede licença e passa a conversa.
 
-| Passo | Quem faz | Objetivo | Termina com |
-|---|---|---|---|
-| 1. Saudação | CRM | Ela responder achando que é um contato comum | "Boa tarde, tudo bem?" |
-| 2. Sinal percebido + investigação | Hermes (mensagem personalizada) | Mostrar que olhou o negócio de verdade e fazer **ela** contar como vende | Uma pergunta sobre como o cliente chega até ela |
-| 3. Fricção + permissão | Hermes (resposta) | Ligar a resposta dela a uma dor do diagnóstico, dizer quem é e o que faz | "Posso te mostrar uma ideia?" |
-| 4. Prova | Hermes (resposta) | Mostrar algo visual | Pedido de opinião |
-| 5. Fechamento | Marcos, no próprio WhatsApp | Proposta, valor e fechamento | Sem reunião: tudo pelo WhatsApp |
+## 1. Primeira mensagem: escolha a estratégia
 
-### Passo 2 — sinal percebido + pergunta de investigação
-- Abra agradecendo o retorno ("Obrigado pelo retorno!"; se ela perguntou
-  "tudo bem e você?", responda "Tudo ótimo!"). Não repita bom dia.
-- Diga só o primeiro nome: "Me chamo Marcos." Ainda não fale o que vende.
-- **Sinal percebido:** um detalhe concreto das evidências que prove que
-  você olhou (nota e número de avaliações, um procedimento que ela posta,
-  o espaço, a frequência de posts). Cite onde viu: "olhando o Instagram de
-  vocês" / "encontrei vocês no Google Maps".
-- **Pergunta de investigação** (antes de tocar na dor, descubra se ela
-  existe): uma pergunta aberta sobre como o cliente novo chega ou agenda,
-  ligada à dor principal do diagnóstico. Modelos:
-  - "Quando alguém pesquisa <procedimento> em <cidade> e ainda não conhece
-    vocês, como essa pessoa costuma chegar até vocês?"
-  - "Hoje o agendamento de vocês é todo pelo WhatsApp e direct, ou vocês
-    usam alguma agenda?"
-  - "A maioria das clientes novas chega pelo Instagram ou por indicação?"
-- Não fale de site, página, dor, solução, Polpuja, preço nem link.
+A saudação ("Boa tarde, tudo bem?") sai antes, separada, e o texto da
+estratégia só sai depois que **uma pessoa** responder. Por isso a mensagem
+da estratégia **não** começa com "Olá, boa tarde".
 
-Exemplo (280 caracteres):
-> Obrigado pelo retorno! Me chamo Marcos. Tava olhando o Instagram de vocês e vi as 87 avaliações no Google, muita gente elogiando o atendimento. Fiquei com uma dúvida: quando alguém pesquisa harmonização em Votuporanga e ainda não conhece vocês, como essa pessoa costuma chegar até vocês?
+O `envio-pendentes` traz em cada lead a `estrategia` sugerida (`letra`,
+`objetivo`, `referencia`, `motivo`, `modo` e `nao_usar`). Use essa letra:
+nos 30 primeiros contatos (`modo: "teste"`) o CRM distribui 10 leads para
+cada estratégia, equilibrando leads parecidos, e trocar a letra estraga a
+comparação. Fora do teste (`modo: "recomendada"`), a sugestão segue o perfil
+do lead.
 
-### Passo 3 — fricção + permissão (quando ela responder a pergunta)
-- Use a resposta **dela** como ponte: "Entendi, então quase tudo chega
-  pelo Instagram e o agendamento é pelo WhatsApp."
-- Diga quem é e o que faz em uma frase: "Eu trabalho com páginas e
-  sistemas para clínicas; fiz recentemente o sistema da Polpuja."
-- Dor no **condicional** e em forma de oportunidade, nunca "você está
-  perdendo dinheiro": "quem pesquisa no Google pode acabar chegando em
-  quem tem página primeiro" / "dá para receber agendamentos até fora do
-  horário".
-- Peça permissão: "Posso te mostrar uma ideia de como ficaria para vocês?"
-- Se a resposta dela mostrar que **não há dor** (ex.: agenda cheia, tudo
-  funciona pelo Instagram), não force: agradeça, diga que fica à
-  disposição e encerre.
+As referências mostram o tom. **Não copie**: cada mensagem sai dos fatos
+verificados do lead.
 
-### Passo 4 — prova (só depois do "pode mostrar")
-Ordem de preferência, conforme o que existir para o lead:
-1. **Prévia personalizada** (quando o Marcos tiver gerado e anexado ao
-   lead): "Fiz uma prévia de como poderia ficar a página de vocês. As fotos
-   são ilustrativas, só para ter uma ideia. Queria sua opinião sincera."
-2. **Vídeo** de um trabalho real (o da Rosana, landing pages, só a parte
-   do PC): "Posso te mandar um vídeo curto de uma página que fiz?" Se ela
-   quiser, passe para o Marcos mandar o vídeo.
-3. **Print da página inteira** de um trabalho real (Polpuja) no lugar de
-   link solto.
-Peça opinião, não compra. Se ela gostar → passe para o Marcos (passo 5).
+### Estratégia A — direta e profissional
+Diz quem é, por que escreveu e pede licença para mostrar uma ideia. Serve
+para leads com poucos dados, sem site identificado ou contato comercial geral.
 
-### Passo 5 — fechamento (Marcos, pelo WhatsApp)
-O Marcos fecha tudo pelo próprio WhatsApp; **não há reunião nem call**.
-Quando ela gostar da prova ou perguntar "como funciona / quanto fica",
-o Hermes não negocia: avise o Marcos (escalada) com o resumo da conversa
-(o que ela respondeu na investigação, qual dor apareceu, o que foi
-mostrado e a reação dela) para ele assumir a conversa no mesmo chat.
-Nunca sugira reunião, call ou horário.
+> Sou o Marcos, da MKTech Dev. Conheci a clínica de vocês pelo Instagram e trabalho com soluções digitais para clínicas de estética. Tive uma ideia que pode ajudar a apresentar melhor os tratamentos de vocês na internet. Posso te mostrar rapidinho?
 
-Se ela pedir um tempo ("vou ver com meu marido/sócio", "semana que vem"),
-responda que fica à disposição e registre; o Marcos decide o retorno
-(um único retorno curto em 6–7 dias costuma funcionar).
+Sem Instagram consultado, tire a frase do Instagram e fique só com o que é
+verdade ("Trabalho com soluções digitais para clínicas de estética aqui da
+região").
 
-## Saídas educadas (encerre sem insistir)
-- "Não tenho interesse" / "agora não" → agradeça, deixe a porta aberta,
-  encerre e registre.
-- Ela pergunta preço → "Depende do que fizer sentido para vocês, já te
-  explico certinho" e escale. Você fala **como o Marcos** (primeira pessoa):
-  nunca diga "o Marcos vai te explicar".
-- Ela pergunta se é robô/IA → não minta; escale para o Marcos.
+### Estratégia B — consultiva e personalizada
+Diz quem é e abre conversa sobre a presença digital com **uma** pergunta
+simples. Só para leads com Instagram ou Google consultados e dados
+suficientes (o CRM recusa B para lead sem dados).
+
+> Me chamo Marcos, sou desenvolvedor. Estava conhecendo o Instagram de vocês e vi o trabalho que realizam com estética. Queria saber uma coisa: hoje vocês têm alguma página própria para apresentar os procedimentos ou utilizam mais o Instagram e o WhatsApp?
+
+**Nunca pergunte se a clínica tem site quando a pesquisa já confirmou**
+(`site_proprio_encontrado`, ou `apenas_redes_sociais` com confiança média ou
+alta). Nesse caso, pergunte como trabalham hoje (agendamento, como o cliente
+novo chega).
+
+### Estratégia C — curiosidade e vídeo
+Oferece o vídeo curto que já existe e pede licença para enviar. Não serve
+para quem tem site próprio.
+
+> Sou o Marcos, da MKTech Dev. Trabalho criando páginas profissionais para clínicas de estética. Preparei um vídeo curtinho mostrando como uma clínica pode organizar seus tratamentos e facilitar o contato com novos clientes, sem depender apenas do Instagram. Posso te enviar para dar uma olhada?
+
+### O que o CRM confere em toda estratégia
+- Diz o nome ("Marcos"), de onde fala ("MKTech Dev" ou "sou desenvolvedor")
+  e com o que trabalha (páginas, sites, soluções digitais).
+- 100 a 400 caracteres, uma pergunta só, no final.
+- A pede licença para mostrar; C fala do vídeo e pede licença para enviar;
+  B termina com pergunta simples sobre como a clínica trabalha.
+- Só diz que viu o Instagram ou o Google quando a pesquisa consultou.
+- Nunca afirma que a clínica não tem site sem confirmação.
+- Sem preço, link, case, portfólio, promessa de resultado, pressão, elogio
+  genérico ou menção a IA/robô.
+
+## 2. Personalização: só fatos verificados
+
+Antes de escrever, leia nome, cidade, procedimentos, Instagram, site,
+Google, canais de agendamento, observações do Marcos e o histórico. Use um
+fato **que aparece nas evidências**. É proibido:
+- inventar serviço, número, avaliação, problema ou concorrente;
+- dizer que analisou um Instagram que não foi consultado;
+- afirmar que não tem site sem confirmação;
+- elogiar resultado ou espaço sem evidência;
+- prometer aumento de faturamento ou de pacientes.
+
+Sem dados suficientes, a mensagem é transparente e objetiva (estratégia A
+sem o fato).
+
+## 3. Quem está respondendo
+
+Muitas respostas vêm da recepção. O objetivo com a recepção é **chegar a
+quem decide**, sem desrespeitar quem faz a triagem.
+
+| Quem | Como seguir |
+|---|---|
+| Recepcionista / secretária | Sem apresentação longa. Diga em uma frase o que faz e pergunte, com educação, quem cuida dessa parte. |
+| Proprietária / responsável | Conversa direta: uma frase do que faz e pedido de licença para mostrar o exemplo visual. |
+| Gerente | Como a responsável; confirme se ela decide ou leva para alguém. |
+| Marketing | Fale de como a página soma ao que já fazem (Instagram, agendamento) e ofereça a demonstração. |
+| Atendimento automático | Não é interesse. Espere uma pessoa. |
+
+Referências para a recepção:
+- Respondeu o cumprimento: "Obrigado pelo retorno! Sou o Marcos, da MKTech
+  Dev. Trabalho com soluções digitais para clínicas de estética. Gostaria de
+  apresentar uma ideia para a clínica. Você saberia me dizer se é a
+  proprietária quem cuida dessa parte ou se existe outra pessoa responsável?"
+- Perguntou o que deseja: "Claro! Trabalho desenvolvendo páginas
+  profissionais para clínicas de estética e queria apresentar uma sugestão
+  para vocês. Seria possível conversar com a proprietária ou com quem cuida
+  dessa parte digital?"
+- Disse que vai encaminhar: "Perfeito, muito obrigado! Posso te enviar uma
+  apresentação curtinha para encaminhar à responsável?"
+
+Regras: não presuma que a recepcionista não decide; nunca pressione; se a
+responsável não estiver, pergunte o melhor canal ou momento; **nunca peça
+contato pessoal** nem contorne uma recusa. Quando a proprietária assumir,
+mude para a conversa direta.
+
+## 4. Fluxo em estados
+
+| Estado | O que acontece | Próxima mensagem |
+|---|---|---|
+| 1. Primeiro contato | Saudação enviada | Mensagem da estratégia, depois que uma pessoa responder |
+| 2. Resposta recebida | Classifique: positiva, neutra, negativa, automática, esclarecimento ou encaminhamento | Responder a intenção dela |
+| 3. Qualificação | Descobrir se há oportunidade, sem interrogatório | No máximo uma pergunta |
+| 4. Vídeo | Pedir licença antes; nunca repetir a oferta | Ela autorizou: passe para o Marcos mandar |
+| 5. Depois do vídeo | Não presuma que ela assistiu | "Essa é a ideia! [...] Você acha que faria sentido algo assim para vocês?" |
+| 6. Interesse | Proposta de valor para a clínica, sem preço | Passe para o Marcos |
+| 7. Negociação | Dúvidas, orçamento, quem decide | É do Marcos |
+| 8. Oportunidade qualificada | O Marcos assume | — |
+| 9. Encerrado | Recusa ou pedido para parar, registrado | Nada mais é enviado |
+
+O CRM marca o estado 1 sozinho, classifica cada resposta e só avança o
+estado (nunca volta sozinho). O secretário registra o que percebeu pelo
+campo `comercial` (veja a skill).
+
+## 5. Objeções
+
+- **"Já temos site."** Reconheça e, se houver oportunidade real, pergunte se
+  estão satisfeitos com a apresentação dos procedimentos e com os contatos.
+  Nunca critique o site sem análise concreta. Se estiverem satisfeitos,
+  agradeça e encerre.
+- **"Não temos interesse."** Agradeça e encerre. Não insista.
+- **"Quanto custa?"** O valor depende do escopo: "Depende do que fizer
+  sentido para vocês, já te explico certinho" e passe para o Marcos. Nunca
+  diga valor (não há tabela aprovada; preço é com o Marcos).
+- **"Manda por aqui."** Explicação de duas frases e o pedido para mandar o
+  vídeo, sem textão. Se ela já autorizou, passe para o Marcos mandar.
+- **"Vou falar com a responsável."** Agradeça, ofereça o material curto
+  para encaminhar e combine um único retorno, sem pressão.
+- **"Não sou eu que cuido disso."** Peça com educação o melhor canal ou
+  momento, sem exigir contato pessoal.
+- **Pedido para parar.** Confirme em uma frase que não vai mais mandar
+  mensagens. O CRM bloqueia o número.
 
 ## Proibido (mesmo que funcione para outros)
 - Áudio mudo "com problema", áudio enviado e apagado.
-- Dizer que fechou com o concorrente, inventar indicação ("um cliente
-  seu me indicou"), inventar persona ou história.
+- Inventar indicação, cliente, case, persona ou história; fingir ser outra
+  pessoa.
 - Promoção falsa, "só hoje", desconto, qualquer valor.
 - Mais de uma mensagem seguida sem resposta dela (exceto o retorno único
-  do passo 5).
-- Textão, lista, link no passo 2, emojis em excesso.
-
-## Exemplos de referência (3 conversas)
-
-Negócios e números **fictícios**, só para mostrar o tom, o tamanho e a
-ordem. **Não copie as frases**: cada mensagem real sai das evidências e do
-diagnóstico do lead. Repare que a mensagem do passo 2 não fala de site,
-dor nem solução: só o detalhe concreto e a pergunta.
-
-### Exemplo 1 — boas avaliações no Google, sem página própria
-Diagnóstico: 4,9 no Google (64 avaliações); concorrentes com página
-aparecem antes na busca "limpeza de pele Bauru".
-
-**Passo 2 (mensagem personalizada):**
-> Obrigado pelo retorno! Me chamo Marcos. Encontrei o Studio Lírio no Google Maps e vi as 64 avaliações com nota 4,9, várias falando da limpeza de pele. Fiquei com uma dúvida: quando alguém pesquisa limpeza de pele em Bauru e ainda não conhece vocês, como essa pessoa costuma chegar até vocês?
-
-Ela: "A maioria vem pelo Instagram ou indicação mesmo."
-
-**Passo 3:**
-> Entendi, então quase tudo chega pelo Instagram e por indicação. Eu trabalho com páginas e sistemas para clínicas. Quem pesquisa no Google pode acabar encontrando primeiro quem tem uma página própria, e com essas avaliações vocês teriam muito a mostrar. Posso te mostrar uma ideia de como ficaria para vocês?
-
-Ela: "Pode sim."
-
-**Passo 4:**
-> Fiz uma prévia de como poderia ficar a página de vocês. As fotos são ilustrativas, só para ter uma ideia. Queria sua opinião sincera.
-
-### Exemplo 2 — posta muito antes e depois, agenda só pelo direct
-Diagnóstico: posts de harmonização 3 vezes por semana; bio "agende pelo
-direct"; nenhuma agenda online.
-
-**Passo 2 (mensagem personalizada):**
-> Tudo ótimo, obrigado! Me chamo Marcos. Tava olhando o Instagram da Ana Paula Estética e vi os antes e depois de harmonização que vocês postam toda semana, resultado muito natural. Fiquei curioso: hoje o agendamento de vocês é todo pelo direct e WhatsApp, ou vocês usam alguma agenda?
-
-Ela: "É tudo pelo WhatsApp, às vezes demoro pra responder porque tô atendendo."
-
-**Passo 3:**
-> Imagino, atendendo não dá para ficar no celular. Eu crio páginas com agendamento online para clínicas, fiz recentemente um sistema para a Polpuja. A cliente escolhe o horário sozinha, até fora do expediente, e você só confirma. Posso te mostrar como ficaria para vocês?
-
-Ela: "Mostra."
-
-**Passo 4:**
-> Vou te mandar um vídeo curto mostrando como funciona, é bem rápido. Depois me conta o que achou.
-
-### Exemplo 3 — perfil novo, poucas avaliações, site não verificado
-Diagnóstico: perfil com 8 meses, 12 avaliações; não foi possível
-confirmar se tem site (`verificacao_pendente`).
-
-**Passo 2 (mensagem personalizada):**
-> Obrigado pelo retorno! Me chamo Marcos. Vi a Clínica Aurora no Instagram e gostei muito do espaço novo de vocês, a recepção ficou linda. Fiquei com uma dúvida: a maioria das clientes novas chega até vocês pelo Instagram ou por indicação?
-
-Ela: "Por indicação, o Instagram ainda tá crescendo."
-
-**Passo 3 (condicional, porque o site não foi confirmado):**
-> Faz sentido, no começo a indicação é o que mais traz cliente. Eu trabalho com páginas para clínicas. Se vocês ainda não têm uma página própria, ela ajuda quem recebe a indicação a confiar antes de chamar, com os procedimentos e as avaliações num lugar só. Posso te mostrar uma ideia?
-
-Se ela tivesse respondido "já temos site e a agenda está cheia": agradeça,
-diga que fica à disposição e encerre. Não force.
+  combinado).
+- Textão, lista, link, emojis em excesso, reunião ou ligação.
+- Repetir pergunta já respondida ou insistir depois de recusa.

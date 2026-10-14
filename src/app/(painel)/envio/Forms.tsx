@@ -2,7 +2,10 @@
 
 import { useActionState } from "react";
 import {
+  approveItem,
   cancelMessage,
+  rejectItem,
+  setApproval,
   createSenderToken,
   reclassifyReply,
   retryLead,
@@ -40,6 +43,7 @@ export type OutreachSettings = {
   prospect_after_noon?: boolean;
   secretary_enabled?: boolean;
   message_styles?: "agradecimento" | "alternar";
+  require_approval?: boolean;
 };
 
 const DAYS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
@@ -276,4 +280,45 @@ export function SenderTokenForm() {
 
 export function ReturnToSecretaryButton({ id }: { id: string }) {
   return <MiniAction action={returnToSecretary} fields={{ id }} label="Devolver ao secretário" variant="btn-ghost" />;
+}
+
+export function ApprovalControl({ s }: { s: OutreachSettings }) {
+  const on = !!s.require_approval;
+  return (
+    <div className="space-y-2 text-sm">
+      <p>
+        Agora: <strong>{on ? "ligada (nada sai sem o seu clique)" : "desligada (o texto aprovado pelo CRM sai sozinho)"}</strong>
+      </p>
+      <p className="text-xs text-muted">
+        Com a trava ligada, a primeira mensagem de cada lead (saudação e texto da estratégia) e cada resposta do secretário
+        esperam você clicar em Aprovar. Lembretes automáticos seguem a chave própria deles.
+      </p>
+      {on ? (
+        <MiniAction
+          action={setApproval}
+          fields={{ enabled: "false" }}
+          label="Desligar a trava"
+          variant="btn-ghost"
+          confirmText="Desligar a trava? As mensagens aprovadas pelo CRM voltam a sair sozinhas quando a chave estiver ligada."
+        />
+      ) : (
+        <MiniAction action={setApproval} fields={{ enabled: "true" }} label="Ligar a trava de aprovação" variant="btn-ghost" />
+      )}
+    </div>
+  );
+}
+
+export function ApproveButtons({ kind, id }: { kind: "mensagem" | "texto" | "resposta"; id: string }) {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <MiniAction action={approveItem} fields={{ kind, id }} label="Aprovar" variant="btn-primary" />
+      <MiniAction
+        action={rejectItem}
+        fields={{ kind, id }}
+        label="Recusar"
+        variant="btn-ghost"
+        confirmText="Recusar este texto? Nada é enviado e o Hermes escreve outro."
+      />
+    </div>
+  );
 }

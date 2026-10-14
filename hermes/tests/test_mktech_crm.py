@@ -142,6 +142,29 @@ class ClientTest(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertEqual(FakeApi.calls[-1]["body"], {"elogio": "a", "dor": "b", "melhoria": "c", "mensagem": "d"})
 
+    def test_outreach_save_sends_strategy_when_present(self):
+        lead = "11111111-1111-4111-8111-111111111111"
+        FakeApi.responses[f"POST /api/hermes/v1/envio/mensagens/{lead}"] = [(201, {"status": "criado"}, {})]
+        path = Path(self.tmp.name) / "m.json"
+        msg = {"estrategia": "C", "motivo_estrategia": "teste", "elogio": "a", "dor": "b", "melhoria": "c", "mensagem": "d", "extra": 1}
+        path.write_text(json.dumps(msg), encoding="utf-8")
+        code, out, _ = self.run_cli("envio-salvar", "--lead", lead, "--file", str(path))
+        self.assertEqual(code, 0)
+        self.assertEqual(
+            FakeApi.calls[-1]["body"],
+            {"elogio": "a", "dor": "b", "melhoria": "c", "mensagem": "d", "estrategia": "C", "motivo_estrategia": "teste"},
+        )
+
+    def test_secretary_save_sends_commercial_fields(self):
+        lead = "11111111-1111-4111-8111-111111111111"
+        FakeApi.responses[f"POST /api/hermes/v1/secretario/{lead}"] = [(201, {"status": "criada"}, {})]
+        path = Path(self.tmp.name) / "r.json"
+        comercial = {"papel_contato": "recepcionista", "estado": "resposta_recebida"}
+        path.write_text(json.dumps({"reply_ref": "2026-10-12T15:00:00Z", "resposta": "Claro!", "comercial": comercial}), encoding="utf-8")
+        code, out, _ = self.run_cli("secretario-salvar", "--lead", lead, "--file", str(path))
+        self.assertEqual(code, 0)
+        self.assertEqual(FakeApi.calls[-1]["body"]["comercial"], comercial)
+
     def test_outreach_save_rejected_returns_invalid(self):
         lead = "11111111-1111-4111-8111-111111111111"
         FakeApi.responses[f"POST /api/hermes/v1/envio/mensagens/{lead}"] = [(422, {"status": "invalido", "errors": ["x"]}, {})]

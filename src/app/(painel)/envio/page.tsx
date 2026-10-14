@@ -3,6 +3,8 @@ import { ErrorBox, Fold, PageHeader, Stat } from "@/components/ui";
 import { dbErrorMessage, requireAdmin } from "@/lib/auth";
 import { fmtDateTime, todaySP } from "@/lib/time";
 import {
+  ApprovalControl,
+  ApproveButtons,
   CancelButton,
   OutreachSettingsForm,
   ReclassifyButton,
@@ -15,6 +17,7 @@ import {
   type OutreachSettings,
 } from "./Forms";
 import { STYLE_LABEL, styleNote, type OutreachStyle } from "@/lib/envio/estilos";
+import { ESTRATEGIAS, type Estrategia } from "@/lib/prospeccao/estrategias";
 
 export const metadata = { title: "Envio automático" };
 export const dynamic = "force-dynamic";
@@ -54,6 +57,10 @@ type Msg = {
   created_at: string;
   style: OutreachStyle;
   reply_body_at: string | null;
+  strategy: Estrategia | null;
+  strategy_reason: string | null;
+  approved_at: string | null;
+  body_approved_at: string | null;
   leads: { business_name: string; city: string } | null;
 };
 type Reply = {
@@ -77,6 +84,7 @@ type SecretaryMsg = {
   created_at: string;
   error: string | null;
   cancel_reason: string | null;
+  approved_at: string | null;
   leads: { business_name: string } | null;
 };
 const SECRETARY_STATUS: Record<string, string> = {
@@ -102,7 +110,8 @@ function MsgItem({ m }: { m: Msg }) {
           <Link href={`/leads/${m.lead_id}`} className="font-medium hover:underline">{m.leads?.business_name ?? "Lead"}</Link>
           <span className="text-xs text-muted"> · {m.leads?.city}</span>{" "}
           <span className={`badge ${STATUS_COLOR[m.status] ?? ""}`}>{STATUS_LABEL[m.status] ?? m.status}</span>{" "}
-          <span className="badge">{STYLE_LABEL[m.style] ?? m.style}</span>
+          <span className="badge">{STYLE_LABEL[m.style] ?? m.style}</span>{" "}
+          <StrategyBadge e={m.strategy} />
           <span className="text-xs text-muted">
             {m.sent_at ? ` · enviada ${fmtDateTime(m.sent_at)}` : m.greeting_sent_at ? ` · saudação ${fmtDateTime(m.greeting_sent_at)}` : ` · escrita ${fmtDateTime(m.created_at)}`}
           </span>
@@ -114,11 +123,24 @@ function MsgItem({ m }: { m: Msg }) {
         {styleNote(m.style, m.reply_body_at) && <p className="mt-1 text-xs text-amber-300">{styleNote(m.style, m.reply_body_at)}</p>}
         <p className="mt-1 whitespace-pre-wrap">{m.body}</p>
       </div>
-      <p className="mt-1 text-xs text-muted">Elogio: {m.compliment} · Dor: {m.pain} · Melhoria: {m.improvement}</p>
+      <p className="mt-1 text-xs text-muted">Fato usado: {m.compliment} · Dor: {m.pain} · Melhoria: {m.improvement}</p>
+      {m.strategy_reason && <p className="mt-1 text-xs text-muted">Por que {m.strategy}: {m.strategy_reason}</p>}
       {m.error && <p className="mt-1 text-xs text-rose-300">{m.error}</p>}
       {m.cancel_reason && m.status === "cancelada" && <p className="mt-1 text-xs text-muted">{m.cancel_reason}</p>}
     </li>
   );
+}
+
+function StrategyBadge({ e }: { e: Estrategia | null }) {
+  if (!e) return <span className="badge bg-zinc-800 text-zinc-400">abordagem antiga</span>;
+  return <span className="badge bg-violet-900/70 text-violet-200">{e} · {ESTRATEGIAS[e].nome}</span>;
+}
+
+/** Itens parados na trava de aprovação. */
+function precisaAprovar(m: Msg): "mensagem" | "texto" | null {
+  if (m.status === "pronta" && !m.approved_at) return "mensagem";
+  if (m.status === "saudacao_enviada" && !m.sent_at && !m.body_approved_at && (m.style === "agradecimento" || m.reply_body_at)) return "texto";
+  return null;
 }
 
 export default async function EnvioPage() {
@@ -127,7 +149,7 @@ export default async function EnvioPage() {
     supabase.from("outreach_settings").select("*").eq("id", 1).maybeSingle(),
     supabase
       .from("outreach_messages")
-      .select("id, lead_id, status, body, compliment, pain, improvement, greeting, greeting_sent_at, sent_at, error, cancel_reason, created_at, style, reply_body_at, leads(business_name, city)")
+      .select("id, lead_id, status, body, compliment, pain, improvement, greeting, greeting_sent_at, sent_at, error, cancel_reason, created_at, style, reply_body_at, strategy, strategy_reason, approved_at, body_approved_at, leads(business_name, city)")
       .order("created_at", { ascending: false })
       .limit(60),
     supabase
@@ -150,7 +172,7 @@ export default async function EnvioPage() {
       .limit(30),
     supabase
       .from("outreach_secretary")
-      .select("id, lead_id, status, body, sent_at, created_at, error, cancel_reason, leads(business_name)")
+      .select("id, lead_id, status, body, sent_at, created_at, error, cancel_reason, approved_at, leads(business_name)")
       .order("created_at", { ascending: false })
       .limit(30),
   ]);
@@ -163,6 +185,8 @@ export default async function EnvioPage() {
     ? s.today_new_leads_target : s?.daily_limit ?? 0;
 
   const state = !s ? "—" : !s.enabled ? "Desligado" : s.paused ? "Pausado" : "Ligado";
+  const toApprove = msgs.map((m) => ({ m, kind: precisaAprovar(m) })).filter((x) => x.kind);
+  const repliesToApprove = ((secretary.data ?? []) as unknown as SecretaryMsg[]).filter((m) => m.status === "pronta" && !m.approved_at);
   const stateColor = !s?.enabled ? "text-slate-300" : s.paused ? "text-amber-300" : "text-emerald-300";
 
   return (
@@ -207,6 +231,52 @@ export default async function EnvioPage() {
             </p>
             <SwitchControls s={s} />
           </section>
+
+          {s.require_approval && (
+            <Fold
+              title="✅ Aguardando sua aprovação"
+              count={toApprove.length + repliesToApprove.length}
+              hint="nada destes sai antes do seu clique"
+              open
+              tone="border border-violet-900"
+            >
+              {toApprove.length + repliesToApprove.length === 0 ? (
+                <p className="text-sm text-muted">Nada esperando aprovação.</p>
+              ) : (
+                <ul className="divide-y divide-line">
+                  {toApprove.map(({ m, kind }) => (
+                    <li key={m.id} className="space-y-2 py-3 text-sm">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <Link href={`/leads/${m.lead_id}`} className="font-medium hover:underline">{m.leads?.business_name ?? "Lead"}</Link>
+                          <span className="text-xs text-muted"> · {kind === "mensagem" ? "primeira mensagem" : "texto depois da saudação"}</span>{" "}
+                          <StrategyBadge e={m.strategy} />
+                        </div>
+                        <ApproveButtons kind={kind!} id={m.id} />
+                      </div>
+                      <div className="rounded-lg bg-panel-2 p-3">
+                        {kind === "mensagem" && <p className="text-xs text-muted">Antes vai a saudação (bom dia / boa tarde / boa noite); o texto abaixo só sai depois que uma pessoa responder.</p>}
+                        <p className="mt-1 whitespace-pre-wrap">{m.body}</p>
+                      </div>
+                      {m.strategy_reason && <p className="text-xs text-muted">Por que {m.strategy}: {m.strategy_reason}</p>}
+                    </li>
+                  ))}
+                  {repliesToApprove.map((m) => (
+                    <li key={m.id} className="space-y-2 py-3 text-sm">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <Link href={`/conversas?lead=${m.lead_id}`} className="font-medium hover:underline">{m.leads?.business_name ?? "Lead"}</Link>
+                          <span className="text-xs text-muted"> · resposta do secretário</span>
+                        </div>
+                        <ApproveButtons kind="resposta" id={m.id} />
+                      </div>
+                      <p className="whitespace-pre-wrap rounded-lg bg-panel-2 p-3">{m.body}</p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Fold>
+          )}
 
           {(flagged.data?.length ?? 0) > 0 && (
             <Fold title="⚠️ Precisa de atenção" count={flagged.data!.length} open tone="border border-rose-900">
@@ -337,6 +407,10 @@ export default async function EnvioPage() {
               Um lead e um telefone recebem no máximo uma abordagem automática. Se o enviador não confirmar uma etapa, ela não é reenviada.
             </p>
             <OutreachSettingsForm s={s} />
+          </Fold>
+
+          <Fold title="🛡️ Trava de aprovação" hint={s.require_approval ? "ligada" : "desligada"}>
+            <ApprovalControl s={s} />
           </Fold>
 
           <Fold title="✍️ Estilo da mensagem" hint={s.message_styles === "alternar" ? "alternando" : "só agradecimento"}>

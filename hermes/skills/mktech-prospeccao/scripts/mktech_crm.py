@@ -254,6 +254,8 @@ def cmd_outreach_save(args: argparse.Namespace) -> int:
     if not isinstance(msg, dict):
         return fail(EXIT_INVALID, "o arquivo precisa ter um objeto com elogio, dor, melhoria e mensagem")
     body = {k: msg.get(k) for k in ("elogio", "dor", "melhoria", "mensagem")}
+    # Estratégia A/B/C e o motivo, quando vierem (sem elas vale a regra antiga).
+    body.update({k: msg[k] for k in ("estrategia", "motivo_estrategia") if msg.get(k) is not None})
     return emit(*request("POST", f"/api/hermes/v1/envio/mensagens/{args.lead}", body))
 
 
@@ -278,7 +280,7 @@ def cmd_secretary_save(args: argparse.Namespace) -> int:
     msg = read_json(args.file)
     if not isinstance(msg, dict):
         return fail(EXIT_INVALID, "o arquivo precisa ter um objeto com reply_ref e resposta e/ou passar_para_marcos")
-    body = {k: msg.get(k) for k in ("reply_ref", "memory_ref", "resposta", "passar_para_marcos") if msg.get(k) is not None}
+    body = {k: msg.get(k) for k in ("reply_ref", "memory_ref", "resposta", "passar_para_marcos", "comercial") if msg.get(k) is not None}
     return emit(*request("POST", f"/api/hermes/v1/secretario/{args.lead}", body))
 
 

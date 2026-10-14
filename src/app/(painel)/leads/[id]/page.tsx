@@ -4,6 +4,7 @@ import { SugestoesResposta } from "@/components/leads/SugestoesResposta";
 import { sugestoesResposta } from "@/lib/envio/sugestoes";
 import { DiagnosisCard, type Diagnosis } from "@/components/leads/DiagnosisCard";
 import { NextStep } from "@/components/leads/NextStep";
+import { ComercialCard, type ComercialEvent, type ComercialLead } from "@/components/leads/ComercialCard";
 import { notFound } from "next/navigation";
 import { ActionForm } from "@/components/ActionForm";
 import { LeadFields } from "@/components/leads/LeadForm";
@@ -42,7 +43,7 @@ export default async function LeadDetail({
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
   const { supabase } = await requireAdmin();
 
-  const [lead, contacts, stages, notes, proposals, evidences, diagnoses, outreach, replies] = await Promise.all([
+  const [lead, contacts, stages, notes, proposals, evidences, diagnoses, outreach, replies, commercial] = await Promise.all([
     supabase.from("leads").select("*").eq("id", id).maybeSingle(),
     supabase.from("contact_events").select("*").eq("lead_id", id).order("created_at", { ascending: false }),
     supabase.from("stage_events").select("*").eq("lead_id", id).order("changed_at", { ascending: false }),
@@ -57,6 +58,7 @@ export default async function LeadDetail({
       .neq("status", "cancelada")
       .maybeSingle(),
     supabase.from("outreach_replies").select("body, kind, received_at").eq("lead_id", id).order("received_at", { ascending: true }),
+    supabase.from("lead_commercial_events").select("field, old_value, new_value, source, note, created_at").eq("lead_id", id).order("created_at", { ascending: false }).limit(50),
   ]);
   if (!lead.data) notFound();
   const l = lead.data;
@@ -199,6 +201,11 @@ export default async function LeadDetail({
             <SugestoesResposta items={sugestoesResposta({ nome: l.responsible_name, negocio: l.business_name })} />
           )}
           <NextStep stage={l.stage as Stage} />
+          <ComercialCard
+            l={l as ComercialLead}
+            events={(commercial.data ?? []) as ComercialEvent[]}
+            lastReply={[...(replies.data ?? [])].reverse().find((r) => r.kind === "humana")?.body ?? null}
+          />
           <DiagnosisCard d={(diagnoses.data?.[0] as Diagnosis | undefined) ?? null} olderCount={Math.max((diagnoses.data?.length ?? 0) - 1, 0)} />
           {outreach.data && (
             <div className="card p-4 text-sm">

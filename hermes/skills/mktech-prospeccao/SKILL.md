@@ -1,7 +1,7 @@
 ---
 name: mktech-prospeccao
 description: Pesquisa diária de clínicas e profissionais de estética sem site próprio no interior de SP e cadastro no CRM da MKTech (sem contatar ninguém).
-version: 1.10.0
+version: 1.11.0
 platforms: [windows, linux, macos]
 metadata:
   hermes:
@@ -253,67 +253,75 @@ um domínio próprio funcionando, descarte (não é o público da MKTech). O
 ## Mensagem para o envio automático
 
 Quando o Marcos pedir (ou a rotina de mensagens rodar), escreva a mensagem
-personalizada dos leads que já têm diagnóstico. **Você só escreve. Quem
-envia é o enviador do PC**, e só depois que o CRM aprovar o texto. O bom
-dia / boa tarde / boa noite é enviado antes pelo CRM, e a mensagem
-personalizada só sai **depois que uma pessoa de verdade responder** a
-saudação: **não comece com saudação**.
+dos leads que já têm diagnóstico. **Você só escreve. Quem envia é o enviador
+do PC**, e só depois que o CRM aprovar o texto (e, com a trava de aprovação
+ligada no painel, depois do clique do Marcos). O bom dia / boa tarde / boa
+noite é enviado antes pelo CRM, e a mensagem só sai **depois que uma pessoa
+de verdade responder** a saudação: **não comece com saudação**.
 
-A abordagem segue o **método em degraus** de
-`references/metodo-abordagem.md` (leia antes de escrever). Esta mensagem é
-o **passo 2**: mostrar que você olhou o negócio de verdade e fazer uma
-pergunta para ela contar como vende. **Não despeje o diagnóstico**: a dor e
-a solução ficam guardadas para o passo 3, depois que ela responder.
+A abordagem segue as **estratégias A/B/C** de
+`references/metodo-abordagem.md` (leia antes de escrever). A pessoa precisa
+saber logo **quem é você e por que escreveu**: nada de pergunta antes da
+apresentação.
 
 1. `envio-pendentes --count 5` traz os leads com dados, diagnóstico,
-   evidências e observações do Marcos.
-2. Para cada lead, monte um JSON com quatro campos:
-   - `elogio`: o **sinal percebido**, algo **concreto** que aparece nas
-     evidências (as avaliações no Google, o antes e depois de um
-     procedimento, a frequência de posts). Nada de "seu trabalho é
-     incrível".
-   - `dor`: a dor principal do diagnóstico, com a evidência que a sustenta.
-     **Não vai na mensagem**; fica guardada para o passo 3.
-   - `melhoria`: o que a MKTech faria para resolver (sistemas, landing
-     pages, loja com vitrine e ERP, automações; para clínica, normalmente
-     landing page ou página com agendamento). **Não vai na mensagem**; fica
-     para o passo 3.
-   - `mensagem`: o texto que o cliente vai ler, **de 100 a 400
-     caracteres**, nesta ordem:
-     1. agradecimento curto pelo retorno ("Obrigado pelo retorno!");
-     2. apresentação só com o nome ("Me chamo Marcos.");
-     3. o elogio, dizendo onde viu ("Tava olhando o Instagram de vocês e
-        vi...");
-     4. **uma** pergunta de investigação ligada à dor, sem afirmar a dor
-        ("Fiquei com uma dúvida: quando alguém pesquisa <procedimento> em
-        <cidade> e ainda não conhece vocês, como essa pessoa costuma chegar
-        até vocês?").
-     Tom **formal e amigável**: trate por "você", sem gíria e sem
-     formalidade exagerada. **Não fale** de site, página, solução, Polpuja,
-     valor, preço ou desconto nesta mensagem. Sem links, pressão, emojis em
-     excesso ou menção a IA/robô/sistema automático.
-3. Grave com `envio-salvar --lead <id> --file mensagem.json`.
+   evidências, observações do Marcos e a `estrategia` sugerida: `letra`
+   (A, B ou C), `objetivo`, `referencia` (tom, não texto para copiar),
+   `motivo`, `modo` e `nao_usar` (estratégias que não servem e por quê).
+   **Use a letra sugerida**: no `modo: "teste"` o CRM equilibra os 30
+   primeiros contatos entre A, B e C.
+2. Antes de escrever, confira o que é fato: Instagram e Google só entram se
+   a pesquisa consultou (evidência ou presença digital do diagnóstico); site
+   só é "não tem" se a pesquisa confirmou. Sem dados suficientes, seja
+   transparente e objetivo.
+3. Para cada lead, monte um JSON com:
+   - `estrategia`: a letra (A, B ou C).
+   - `motivo_estrategia`: uma frase curta de por que ela serve para o lead.
+   - `elogio`: o **fato verificado** que você usou ou usaria (as avaliações,
+     um procedimento que ela posta). Nada de "seu trabalho é incrível". Na
+     estratégia B ele precisa aparecer na mensagem; em A e C é opcional no
+     texto.
+   - `dor`: a dor principal do diagnóstico, com a evidência. **Não vai na
+     mensagem**; fica para a conversa.
+   - `melhoria`: o que a MKTech faria (para clínica, normalmente landing page
+     ou página com agendamento). **Não vai na mensagem**.
+   - `mensagem`: o texto que ela vai ler, **de 100 a 400 caracteres**:
+     1. quem é: "Sou o Marcos, da MKTech Dev" ou "Me chamo Marcos, sou
+        desenvolvedor";
+     2. com o que trabalha, em uma frase (páginas, sites ou soluções
+        digitais para clínicas de estética), com o fato verificado quando
+        houver;
+     3. **uma** pergunta no fim, conforme a estratégia: A pede licença para
+        mostrar a ideia, B pergunta como a clínica trabalha hoje (sem
+        perguntar se tem site quando a pesquisa já confirmou), C oferece o
+        vídeo curto e pede licença para enviar.
+     Tom humano e profissional, "você", sem gíria. **Não** cite preço,
+     desconto, link, Polpuja, portfólio, promessa de resultado ("aumentar o
+     faturamento", "garanto"), pressão, emojis em excesso ou IA/robô.
+4. Grave com `envio-salvar --lead <id> --file mensagem.json`.
    - Código 0: entrou na fila.
    - Código 2: o CRM recusou e devolveu `errors`. Corrija e tente **uma**
      vez. Se recusar de novo, pule o lead: ele aparece para o Marcos no
      painel e **nada é enviado**.
-4. **Nunca** coloque no JSON mensagem de erro, explicação sua, rascunho,
+5. **Nunca** coloque no JSON mensagem de erro, explicação sua, rascunho,
    marcação (`**`, `#`, listas) ou texto em inglês. Se não conseguir
    escrever uma boa mensagem para o lead, não grave nada para ele.
 
-Exemplo de `mensagem.json`:
+Exemplo de `mensagem.json` (estratégia A):
 
 ```json
 {
-  "elogio": "4,9 no Google com 87 avaliações elogiando o atendimento",
-  "dor": "agendamento só pelo direct e WhatsApp, sem página para quem pesquisa harmonização em Votuporanga",
-  "melhoria": "uma página de harmonização com agendamento online",
-  "mensagem": "Obrigado pelo retorno! Me chamo Marcos. Tava olhando o Instagram de vocês e vi as 87 avaliações no Google, muita gente elogiando o atendimento. Fiquei com uma dúvida: quando alguém pesquisa harmonização em Votuporanga e ainda não conhece vocês, como essa pessoa costuma chegar até vocês?"
+  "estrategia": "A",
+  "motivo_estrategia": "teste A/B/C; Instagram consultado, sem site identificado",
+  "elogio": "posts semanais de limpeza de pele no Instagram",
+  "dor": "agendamento só pelo WhatsApp, sem página para quem pesquisa limpeza de pele em Bauru",
+  "melhoria": "uma página de limpeza de pele com agendamento online",
+  "mensagem": "Sou o Marcos, da MKTech Dev. Conheci o Studio Lírio pelo Instagram e trabalho com soluções digitais para clínicas de estética. Tive uma ideia que pode ajudar a apresentar melhor os tratamentos de vocês na internet. Posso te mostrar rapidinho?"
 }
 ```
 
-Quando a pessoa responder a essa pergunta, quem continua é o **modo
-secretário** (abaixo), se o Marcos tiver ligado o secretário no painel.
+Quando a pessoa responder, quem continua é o **modo secretário** (abaixo),
+se o Marcos tiver ligado o secretário no painel.
 
 ## Modo leitura da resposta (estilo "lendo a resposta")
 
@@ -324,23 +332,24 @@ que ela escreveu** antes de escrever a mensagem. Você só escreve; quem envia
 
 1. `envio-leitura-pendentes --count 5` traz, para cada mensagem:
    `message_id`, `saudacao_enviada`, `respostas` (o que a pessoa escreveu),
-   `elogio`, `dor`, `melhoria`, `texto_preparado` (o texto do estilo
-   agradecimento, só como referência) e `lead` (dados, diagnóstico e
-   evidências).
-2. Escreva **uma** mensagem que responda ao que ela disse e siga o
-   **passo 2** do método:
+   `elogio`, `dor`, `melhoria`, `texto_preparado` (o texto da estratégia
+   escrito antes, só como referência) e `lead` (dados, diagnóstico e
+   evidências). A estratégia é a mesma do texto preparado.
+2. Escreva **uma** mensagem que responda ao que ela disse e siga a
+   estratégia:
    - Se ela cumprimentou ("Olá, bom dia", "Oi, tudo bem?"), responda o
-     cumprimento de forma natural ("Bom dia! Tudo ótimo, e com você?").
-   - Se ela perguntou quem é ou como pode ajudar, apresente-se com o nome
-     ("Me chamo Marcos") e diga em uma frase por que escreveu, usando o
-     `elogio`.
-   - Termine com **uma** pergunta de investigação ligada à `dor`, como no
-     texto preparado.
-   - **Não** use o "Obrigado pelo retorno!" fixo: o texto tem que soar
-     como resposta ao que ela escreveu.
-   - Mesmas regras da mensagem preparada: 100 a 400 caracteres, "você",
-     só fatos do lead, sem site, página, preço, link, pressão ou menção a
-     IA/robô. Pode começar com "Bom dia"/"Oi", porque aqui é resposta.
+     cumprimento de forma natural e apresente-se ("Bom dia! Tudo ótimo. Sou
+     o Marcos, da MKTech Dev...").
+   - Se ela perguntou quem é ou do que se trata, diga quem é e o motivo em
+     uma frase.
+   - **Se for a recepção** (ela disse que é recepcionista, que a doutora
+     está atendendo, ou perguntou "quem gostaria?"), não faça a
+     apresentação comercial: diga em uma frase o que faz e pergunte se dá
+     para falar com a proprietária ou com quem cuida dessa parte.
+   - Mesmas regras da mensagem preparada: 100 a 400 caracteres, "você", só
+     fatos do lead, nome e com o que trabalha, uma pergunta no fim, sem
+     preço, link, pressão ou menção a IA/robô. Pode começar com "Bom
+     dia"/"Oi", porque aqui é resposta.
    - Se ela pediu para não receber mensagens, **não grave nada**.
 3. Grave com `envio-leitura-salvar --message <message_id> --file texto.json`
    (`{"mensagem": "..."}`).
@@ -351,11 +360,11 @@ que ela escreveu** antes de escrever a mensagem. Você só escreve; quem envia
    - `desatualizada`: o texto já foi escrito ou a mensagem não espera mais;
      siga para a próxima.
 
-Exemplo de `texto.json`, para a resposta "Olá, bom dia! Como posso ajudar?":
+Exemplo de `texto.json`, para a resposta "Oi, aqui é da recepção. Do que se trata?":
 
 ```json
 {
-  "mensagem": "Bom dia! Me chamo Marcos, tudo bem? Vi as 87 avaliações de vocês no Google, muita gente elogiando o atendimento. Fiquei com uma dúvida: quando alguém pesquisa harmonização em Votuporanga e ainda não conhece vocês, como essa pessoa costuma chegar até vocês?"
+  "mensagem": "Oi, tudo bem? Sou o Marcos, da MKTech Dev. Trabalho desenvolvendo páginas profissionais para clínicas de estética e queria apresentar uma sugestão para vocês. Seria possível conversar com a proprietária ou com quem cuida dessa parte digital?"
 }
 ```
 
@@ -392,6 +401,12 @@ respostas**, até o atendimento acabar. Segue os passos 3 e 4 de
    Se `next_action` estiver preenchido, siga essa orientação desde que ainda
    faça sentido diante da última mensagem. Não transforme toda resposta em
    convite para ver uma ideia: perguntas objetivas pedem resposta objetiva.
+   **Veja quem está escrevendo** (seção 3 do método): com a recepção, não
+   faça apresentação longa, descubra com educação quem cuida da parte
+   digital e peça para encaminhar; com a proprietária, gerente ou marketing,
+   converse direto e ofereça o exemplo visual. Siga o **fluxo em estados** e
+   as **objeções** do método (seções 4 e 5): vídeo só com licença e uma vez
+   só; depois do vídeo, pergunte a opinião sem presumir que ela assistiu.
    Escreva uma mensagem curta de WhatsApp (até 600 caracteres, sem lista,
    sem `**`). Antes de gravar, confira que nenhum detalhe da resposta depende
    de suposição ou contradiz a memória. Monte um JSON:
@@ -400,6 +415,15 @@ respostas**, até o atendimento acabar. Segue os passos 3 e 4 de
    - `resposta`: o texto que ela vai ler.
    - `passar_para_marcos` (opcional): o motivo, quando a conversa precisa
      dele (veja abaixo).
+   - `comercial` (opcional): o que você percebeu, para o painel e o teste
+     A/B/C. Campos: `papel_contato` (`recepcionista`, `proprietaria`,
+     `gerente`, `marketing`, `automatico`, `desconhecido`), `estado`
+     (`resposta_recebida`, `qualificacao`, `video`, `pos_video`,
+     `interesse`, `negociacao`, `oportunidade`, `encerrado`), `interesse`
+     (`nenhum`, `baixo`, `medio`, `alto`) e `video` (`oferecido` quando você
+     ofereceu, `autorizado` quando ela aceitou receber). Só registre o que
+     a conversa mostra; na dúvida, deixe de fora. Quem marca "vídeo
+     enviado" é o Marcos.
 3. Grave com `secretario-salvar --lead <lead_id> --file resposta.json`.
    - Código 0: entrou na fila (sai no horário de atendimento).
    - Código 2: o CRM recusou e devolveu `errors`. Corrija e tente **uma**
@@ -415,9 +439,9 @@ respostas**, até o atendimento acabar. Segue os passos 3 e 4 de
   funciona o pagamento?"): responda "Depende do que fizer sentido para
   vocês, já te explico certinho" e passe ("perguntou o valor");
 - ela gostar da ideia/prova ou quiser fechar: passe ("quer fechar");
-- ela pedir para ver um trabalho ou o vídeo: diga que já manda e passe
-  ("pediu o vídeo"). O Marcos manda o vídeo da Rosana (landing pages),
-  mostrando só a parte do PC. **Nunca mande link de portfólio**;
+- ela pedir para ver um trabalho ou **autorizar o vídeo**: diga que já manda
+  e passe ("autorizou o vídeo"), com `comercial.video: "autorizado"`. O
+  Marcos manda o vídeo explicativo. **Nunca mande link de portfólio**;
 - ela perguntar algo que você **não sabe** pelos dados do lead e por esta
   skill (detalhes técnicos, garantia, contrato, prazos): passe ("dúvida: ...");
 - ela perguntar se é robô, IA ou mensagem automática: **não minta**; passe
@@ -441,7 +465,8 @@ Exemplo de `resposta.json`:
 {
   "reply_ref": "2026-10-12T15:04:10.123+00:00",
   "memory_ref": null,
-  "resposta": "Entendi, então quase tudo chega pelo Instagram e o agendamento é pelo WhatsApp. Eu trabalho com páginas e sistemas para clínicas, fiz recentemente o sistema da Polpuja. Quem pesquisa limpeza de pele no Google pode acabar chegando em quem tem página primeiro. Posso te mostrar uma ideia de como ficaria para vocês?"
+  "resposta": "Prazer! Trabalho desenvolvendo páginas que ajudam clínicas a apresentar seus procedimentos de forma mais organizada. Tenho um exemplo visual bem rápido. Posso te mostrar?",
+  "comercial": { "papel_contato": "proprietaria", "estado": "qualificacao", "video": "oferecido" }
 }
 ```
 

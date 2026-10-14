@@ -4,6 +4,8 @@ import { dbErrorMessage, requireAdmin } from "@/lib/auth";
 import { fmtDateTime, haQuanto } from "@/lib/time";
 import { SwitchControls, type OutreachSettings } from "../envio/Forms";
 import { ArchiveButton } from "./Archive";
+import { TesteABC } from "@/components/dashboard/TesteABC";
+import type { LinhaMetricas } from "@/lib/prospeccao/metricas";
 import { ClearPriceButton } from "./ClearPrice";
 
 export const metadata = { title: "Funil" };
@@ -47,6 +49,7 @@ export default async function FunilPage() {
     .order("movido_em", { ascending: false })
     .limit(600);
   const { data: bot } = await supabase.from("outreach_settings").select("*").eq("id", 1).maybeSingle();
+  const metrics = await supabase.from("strategy_metrics").select("*");
   const cards = (data ?? []) as Card[];
   const archived = cards.filter((c) => c.coluna === "arquivado");
   const attention = cards.filter((c) => c.coluna === "atencao").length;
@@ -92,6 +95,11 @@ export default async function FunilPage() {
               </ul>
             </div>
           )}
+          <div className="mb-4">
+            <Fold title="🧪 Teste A/B/C" hint="qual abordagem gera oportunidades">
+              {metrics.error ? <ErrorBox message={dbErrorMessage(metrics.error)} /> : <TesteABC rows={(metrics.data ?? []) as LinhaMetricas[]} />}
+            </Fold>
+          </div>
           {attention > 0 && (
             <p className="mb-4 rounded-lg border border-rose-900 bg-rose-950/40 p-3 text-sm text-rose-200">
               {attention} envio(s) falharam.{" "}

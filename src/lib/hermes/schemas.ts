@@ -145,6 +145,22 @@ export const outreachSchema = z
     dor: text(300).min(1),
     melhoria: text(300).min(1),
     mensagem: text(700).min(1),
+    // Estratégia A/B/C (a que veio em envio-pendentes) e o motivo em uma frase.
+    estrategia: z.enum(["A", "B", "C"]).optional().nullable(),
+    motivo_estrategia: optText(300),
+  })
+  .strict();
+
+// O que o secretário percebeu na conversa (vai para o histórico comercial).
+export const commercialSchema = z
+  .object({
+    papel_contato: z.enum(["recepcionista", "proprietaria", "gerente", "marketing", "automatico", "desconhecido"]).optional().nullable(),
+    estado: z
+      .enum(["primeiro_contato", "resposta_recebida", "qualificacao", "video", "pos_video", "interesse", "negociacao", "oportunidade", "encerrado"])
+      .optional()
+      .nullable(),
+    interesse: z.enum(["desconhecido", "nenhum", "baixo", "medio", "alto"]).optional().nullable(),
+    video: z.enum(["oferecido", "autorizado"]).optional().nullable(),
   })
   .strict();
 
@@ -164,6 +180,7 @@ export const secretaryReplySchema = z
     memory_ref: z.iso.datetime({ offset: true }).optional().nullable(),
     resposta: text(700).optional().nullable(),
     passar_para_marcos: text(300).optional().nullable(),
+    comercial: commercialSchema.optional().nullable(),
   })
   .strict()
   .refine((r) => !!r.resposta || !!r.passar_para_marcos, { message: "mande resposta ou passar_para_marcos", path: ["resposta"] });

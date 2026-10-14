@@ -7,6 +7,8 @@
 // sinal de saída técnica do agente (erro, JSON, código, recusa do modelo)
 // derruba a mensagem inteira.
 
+import { googleConsultado, instagramConsultado, siteConhecido, type Estrategia } from "@/lib/prospeccao/estrategias";
+
 // Mensagens curtas e claras, a pedido do Marcos.
 export const MIN_CHARS = 100;
 export const MAX_CHARS = 400;
@@ -38,7 +40,14 @@ export type LeadContext = {
   notes?: string[] | null;
 };
 
-export type OutreachPayload = { elogio: string; dor: string; melhoria: string; mensagem: string };
+export type OutreachPayload = {
+  elogio: string;
+  dor: string;
+  melhoria: string;
+  mensagem: string;
+  /** Estratégia A/B/C. Sem ela, vale a regra antiga do passo 2 (pergunta sem falar do serviço). */
+  estrategia?: Estrategia | null;
+};
 
 /** Minúsculas e sem acento, para comparar texto do Hermes com as fontes. */
 export function norm(s: string): string {
@@ -109,6 +118,11 @@ const AI = [
   /inteligencia artificial/, /\brobo\b/, /\bbot\b/, /\balgoritmo/, /chatgpt/, /\bgpt\b/, /\bhermes\b/, /\bcrm\b/,
   /(mensagem|resposta|envio) automatic/, /(gerad|enviad|escrit)[ao] automaticamente/, /\bagente\b/,
 ];
+// Promessa de resultado que ninguém pode garantir.
+const PROMISE = [
+  /garant(o|imos|ido|ida|ia)/, /aumentar (o |seu |sua |os |as )?(faturamento|vendas|lucro)/, /dobrar|triplicar/,
+  /(mais|novos) (clientes|pacientes) (todo|toda|por) (dia|semana|mes)/, /resultado (certo|garantido)/,
+];
 const GENERIC_PRAISE = [
   /trabalho (e |eh )?(incrivel|lindo|maravilhoso|sensacional|perfeito|top)/, /perfil (e |eh )?(incrivel|lindo|maravilhoso|sensacional)/,
   /amei (seu|o seu|teu)/, /adorei (seu|o seu|teu)/, /sou (muito )?(fa|sua fa)/,
@@ -146,6 +160,7 @@ export function validateOutreach(ctx: LeadContext, p: OutreachPayload, opts: Out
   const text = (p.mensagem ?? "").trim();
   const n = norm(text);
   const src = sourceText(ctx);
+  const estrategia = p.estrategia ?? null;
 
   if (!ctx.diagnosis) out.push("Lead sem diagnóstico: não dá para escrever a mensagem.");
   if (text.length < MIN_CHARS) out.push(`Mensagem curta demais (mínimo ${MIN_CHARS} caracteres).`);
@@ -155,26 +170,40 @@ export function validateOutreach(ctx: LeadContext, p: OutreachPayload, opts: Out
   const all = norm([p.elogio, p.dor, p.melhoria, text].join("\n"));
   if (TECHNICAL.some((r) => r.test(all))) out.push("Tem texto técnico ou de erro; a mensagem não pode ter isso.");
   if (PRESSURE.some((r) => r.test(n))) out.push("Tem frase de pressão; tire.");
+  if (PROMISE.some((r) => r.test(n))) out.push("Não prometa resultado (faturamento, clientes, garantia).");
   if (AI.some((r) => r.test(n)) || /\bI\.?A\b/.test(text)) out.push("Não mencione IA, sistema ou automação.");
   if (GENERIC_PRAISE.some((r) => r.test(n))) out.push("Elogio genérico; elogie algo concreto que aparece nas evidências.");
   if (/\b(prezad[ao]|vossa|\btu\b|\bteu\b|\btua\b)/.test(n)) out.push('Trate por "você".');
   if (/https?:|www\.|\.com\b|\.br\b/.test(n)) out.push("Não coloque links na primeira mensagem.");
   if (/r\$|\breais\b/.test(n)) out.push("Não cite preço.");
   if ((text.match(/\?/g) ?? []).length > 1) out.push("Use no máximo uma pergunta, no final.");
-  if (!/\?\s*\p{Extended_Pictographic}?\s*$/u.test(text)) out.push("Termine com uma pergunta de investigação (como o cliente chega ou agenda).");
-  // Método em degraus: nesta mensagem ainda não se fala do que a MKTech faz.
-  if (/\b(site|pagina|landing|polpuja|sistema|solucao)\b/.test(n)) {
-    out.push("Não fale de site, página, sistema ou solução nesta mensagem: isso fica para depois que a pessoa responder.");
-  }
   if (/\?/.test(text) && /[a-zà-ú]{3,}/i.test(text.slice(text.lastIndexOf("?") + 1))) out.push("A pergunta precisa ficar no final.");
   if ((text.match(/\p{Extended_Pictographic}/gu) ?? []).length > 2) out.push("No máximo 2 emojis.");
   if (/[A-ZÀ-Ú]{6,}/.test(text)) out.push("Não escreva palavras em CAIXA ALTA.");
 
-  if (needsCaution(ctx)) {
+  // Só diz que viu o Instagram ou o Google quando a pesquisa consultou.
+  if (/instagram|\binsta\b/.test(n) && !instagramConsultado(ctx)) {
+    out.push("Não diga que viu o Instagram: a pesquisa não consultou o Instagram deste lead.");
+  }
+  if (/\bgoogle\b|\bmaps\b/.test(n) && !googleConsultado(ctx)) {
+    out.push("Não diga que encontrou no Google: a pesquisa não tem evidência do Google para este lead.");
+  }
+
+  if (estrategia) out.push(...strategyRules(ctx, estrategia, text, n, !!opts.replying));
+  else {
+    if (!/\?\s*\p{Extended_Pictographic}?\s*$/u.test(text)) out.push("Termine com uma pergunta de investigação (como o cliente chega ou agenda).");
+    // Método em degraus antigo: nesta mensagem ainda não se fala do que a MKTech faz.
+    if (/\b(site|pagina|landing|polpuja|sistema|solucao)\b/.test(n)) {
+      out.push("Não fale de site, página, sistema ou solução nesta mensagem: isso fica para depois que a pessoa responder.");
+    }
+  }
+
+  // Sem site confirmado ausente, nunca afirme que a clínica não tem site.
+  if (needsCaution(ctx) || siteConhecido(ctx) !== "nao_tem") {
     for (const r of ASSERTIVE) {
       const m = r.exec(n);
       if (m && !CONDITIONAL.test(n.slice(Math.max(0, m.index - 40), m.index))) {
-        out.push(`Site ainda não verificado: não afirme "${m[0]}"; use forma condicional.`);
+        out.push(`Site não confirmado: não afirme "${m[0]}"; use forma condicional.`);
       }
     }
   }
@@ -193,12 +222,13 @@ export function validateOutreach(ctx: LeadContext, p: OutreachPayload, opts: Out
     if (r.test(n) && !src.includes(stem) && !r.test(src)) out.push(`Procedimento "${stem}" não aparece nos dados do lead.`);
   }
 
-  // As três partes precisam vir dos dados. Só o elogio aparece na mensagem:
-  // a dor e a melhoria ficam guardadas para o passo seguinte da conversa.
+  // As três partes precisam vir dos dados. A dor e a melhoria ficam guardadas
+  // para o passo seguinte; o fato verificado (elogio) aparece na mensagem na
+  // regra antiga e na estratégia B (as estratégias A e C podem ser só transparentes).
   const names = words(`${ctx.business_name} ${ctx.responsible_name ?? ""} ${ctx.city ?? ""}`);
   const srcWords = words(src);
   const msgWords = words(text);
-  const parts: [keyof OutreachPayload, string][] = [
+  const parts: [keyof Pick<OutreachPayload, "elogio" | "dor" | "melhoria">, string][] = [
     ["elogio", "o elogio"],
     ["dor", "a dor"],
     ["melhoria", "o ponto de melhoria"],
@@ -210,9 +240,47 @@ export function validateOutreach(ctx: LeadContext, p: OutreachPayload, opts: Out
       continue;
     }
     if (key !== "melhoria" && overlap(w, srcWords, names) < 2) out.push(`${label[0].toUpperCase()}${label.slice(1)} precisa vir das evidências ou do diagnóstico.`);
-    if (key === "elogio" && overlap(w, msgWords) < 1) out.push(`A mensagem não usa ${label}.`);
+    if (key === "elogio" && (!estrategia || estrategia === "B") && overlap(w, msgWords) < 1) out.push(`A mensagem não usa ${label}.`);
   }
   return [...new Set(out)];
+}
+
+/** Última frase (a pergunta do fim). */
+function lastSentence(n: string): string {
+  const parts = n.split(/(?<=[.!])\s+/);
+  return parts[parts.length - 1] ?? n;
+}
+
+/** Regras próprias das estratégias A/B/C (a regra comum já rodou antes). */
+function strategyRules(ctx: LeadContext, e: Estrategia, text: string, n: string, replying: boolean): string[] {
+  const out: string[] = [];
+  const ask = lastSentence(n);
+  // Lendo a resposta: se quem respondeu é a recepção, a pergunta pode ser por
+  // quem cuida dessa parte (chegar a quem decide vem antes da ideia).
+  const askForOwner = replying && /\b(proprietaria|responsavel|quem cuida|dona|doutora|dra)\b/.test(ask);
+  if (!/\?\s*\p{Extended_Pictographic}?\s*$/u.test(text)) out.push("Termine com uma pergunta curta.");
+  // O problema da abordagem antiga: perguntar antes de dizer quem é e por quê.
+  if (!/\bmarcos\b/.test(n)) out.push('Diga quem está falando ("Sou o Marcos").');
+  if (!/mktech|desenvolv/.test(n)) out.push('Diga de onde fala ("da MKTech Dev" ou "sou desenvolvedor").');
+  const motivo = /\b(site|sites|pagina|paginas|landing|solucoes digitais|desenvolv\w*|agendamento)\b/;
+  if (!motivo.test(n)) out.push("Explique em uma frase com o que trabalha (páginas, sites, soluções digitais para clínicas).");
+  if (/polpuja|portfolio/.test(n)) out.push("Não cite casos nem portfólio na primeira mensagem.");
+
+  if (e === "A" && !askForOwner && !/\b(posso|poderia|pode|podemos)\b.*\b(mostrar|apresentar|explicar|contar)\b/.test(ask)) {
+    out.push('Estratégia A termina pedindo licença para mostrar a ideia ("Posso te mostrar rapidinho?").');
+  }
+  if (e === "B") {
+    if (!askForOwner && !/\b(hoje|voces|como)\b/.test(ask)) out.push("Estratégia B termina com uma pergunta simples sobre como a clínica trabalha hoje.");
+    if (siteConhecido(ctx) !== "incerto" && /\b(tem|tem alguma|possuem|possui|usam|utilizam)\b.{0,40}\b(site|pagina)/.test(ask)) {
+      out.push("A pesquisa já confirmou a situação do site: não pergunte se a clínica tem site ou página.");
+    }
+  }
+  if (e === "C") {
+    if (!askForOwner && !/\bvideo\b/.test(n)) out.push("Estratégia C oferece o vídeo curto.");
+    if (!askForOwner && !/\b(posso|poderia|pode)\b.*\b(enviar|mandar)\b/.test(ask)) out.push('Estratégia C pede licença para enviar o vídeo ("Posso te enviar?").');
+    if (/(assist|veja|olha) (o|este|esse) video/.test(n) && !/\?/.test(n)) out.push("Peça licença antes de mandar o vídeo.");
+  }
+  return out;
 }
 
 // Secretário: respostas da conversa depois da mensagem personalizada.

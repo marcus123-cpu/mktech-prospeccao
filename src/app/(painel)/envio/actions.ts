@@ -163,3 +163,34 @@ export async function returnToSecretary(_: EnvioState, form: FormData): Promise<
   if (error) return { error: dbErrorMessage(error) };
   return done("Conversa devolvida ao secretário.");
 }
+
+export async function setApproval(_: EnvioState, form: FormData): Promise<EnvioState> {
+  const { supabase } = await requireAdmin();
+  const on = form.get("enabled") === "true";
+  const { error } = await supabase.rpc("admin_outreach_require_approval", { p_on: on });
+  if (error) return { error: dbErrorMessage(error) };
+  return done(on ? "Trava LIGADA: nada sai sem a sua aprovação." : "Trava desligada: o texto aprovado pelo CRM sai sozinho, como antes.");
+}
+
+const approvalKind = z.enum(["mensagem", "texto", "resposta"]);
+
+export async function approveItem(_: EnvioState, form: FormData): Promise<EnvioState> {
+  const { supabase } = await requireAdmin();
+  const kind = approvalKind.safeParse(form.get("kind"));
+  const id = z.uuid().safeParse(form.get("id"));
+  if (!kind.success || !id.success) return { error: "Item inválido." };
+  const { error } = await supabase.rpc("admin_outreach_approve", { p_kind: kind.data, p_id: id.data });
+  if (error) return { error: dbErrorMessage(error) };
+  return done("Aprovada: sai no próximo horário permitido.");
+}
+
+export async function rejectItem(_: EnvioState, form: FormData): Promise<EnvioState> {
+  const { supabase } = await requireAdmin();
+  const kind = approvalKind.safeParse(form.get("kind"));
+  const id = z.uuid().safeParse(form.get("id"));
+  if (!kind.success || !id.success) return { error: "Item inválido." };
+  const reason = String(form.get("reason") ?? "").trim().slice(0, 300);
+  const { error } = await supabase.rpc("admin_outreach_reject", { p_kind: kind.data, p_id: id.data, p_reason: reason || null });
+  if (error) return { error: dbErrorMessage(error) };
+  return done("Recusada: nada foi enviado e o Hermes escreve de novo.");
+}

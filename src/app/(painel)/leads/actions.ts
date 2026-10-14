@@ -289,3 +289,27 @@ export async function deleteLead(_: ActionState, form: FormData): Promise<Action
   refresh();
   redirect("/leads?excluido=1");
 }
+
+const commercialSchema = z.object({
+  estado: z.enum(["primeiro_contato", "resposta_recebida", "qualificacao", "video", "pos_video", "interesse", "negociacao", "oportunidade", "encerrado"]).optional(),
+  papel_contato: z.enum(["recepcionista", "proprietaria", "gerente", "marketing", "automatico", "desconhecido"]).optional(),
+  interesse: z.enum(["desconhecido", "nenhum", "baixo", "medio", "alto"]).optional(),
+  video: z.enum(["oferecido", "autorizado", "enviado"]).optional(),
+  estrategia: z.enum(["A", "B", "C"]).optional(),
+  motivo_perda: z.string().max(500).optional(),
+  nota: z.string().max(500).optional(),
+});
+
+/** Campos comerciais (estado, quem respondeu, interesse, vídeo...). Cada mudança fica no histórico. */
+export async function updateCommercial(_: ActionState, form: FormData): Promise<ActionState> {
+  const { supabase } = await requireAdmin();
+  const lead = uuid.parse(str(form, "lead_id"));
+  const raw = Object.fromEntries(
+    ["estado", "papel_contato", "interesse", "video", "estrategia", "motivo_perda", "nota"]
+      .map((k) => [k, str(form, k)])
+      .filter(([, v]) => v),
+  );
+  const parsed = commercialSchema.safeParse(raw);
+  if (!parsed.success) return { error: "Valor inválido." };
+  return run(() => supabase.rpc("admin_update_commercial", { p_lead: lead, p: parsed.data }), "Registro comercial salvo.", lead);
+}
