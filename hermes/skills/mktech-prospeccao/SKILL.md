@@ -320,6 +320,25 @@ pela lacuna de visibilidade no Google documentada acima. O
 `apenas_redes_sociais` se você viu a rede social; se não achou nada,
 `site_nao_localizado`.
 
+**Inspeção real com Playwright (obrigatória para cada candidato).** Depois da
+triagem, rode para cada candidato, com o Python do sistema:
+
+    python scripts/inspecionar_presenca.py --nome "<nome>" --cidade "<cidade>"         --instagram <handle> [--facebook <url>] [--site <url>] --telefone <tel> --servicos <n>
+
+O script abre de verdade o Instagram e o Facebook públicos (sem login, sem
+seguir, curtir ou comentar), abre o link da bio, procura site próprio na web e
+devolve `evidencias` (cole em `evidences`), `site_status_sugerido`,
+`nota_sugerida`, `componentes`, `confianca` e `avisos`. Regras:
+- Use as evidências e a nota do script; complemente com o que você leu na web.
+- `situacao` = `site_proprio` → trate como site existente (descarte, salvo a
+  lacuna de visibilidade no Google já documentada). `sem_site` e
+  `so_agregador` (Linktree) → é o lead que queremos: cadastre.
+- Se o Instagram vier `indisponivel` ou `bloqueado_login`, confira o @ por
+  busca antes de cadastrar; sem nenhuma rede confirmada, a confiança é baixa.
+- Se o aviso disser que a busca na web não respondeu, **não afirme que não há
+  site**: tente de novo ou pesquise manualmente.
+- Sem Playwright: `pip install playwright` e `python -m playwright install chromium`.
+
 **F. Diagnóstico.** Preencha `diagnosis` assim:
 - `summary`: 2 ou 3 frases sobre quem é o negócio e o momento dele.
 - `audience`: para quem ela vende, se der para inferir.
@@ -345,11 +364,13 @@ pela lacuna de visibilidade no Google documentada acima. O
   **não envia nada**.
 - `objections`: objeções prováveis ("já tenho Instagram", "preço", "não
   tenho tempo").
-- `fit_score` (0 a 100), somando:
-  - atividade recente: até 25;
-  - demanda (avaliações, seguidores, frequência de posts): até 25;
-  - lacuna digital que a MKTech resolve: até 30;
-  - potencial comercial dos serviços: até 20.
+- `fit_score` (0 a 100): **use a `nota_sugerida` do script de inspeção** (abaixo),
+  que prioriza a dor. Lead ativo **sem site nem landing page** é o alvo e
+  deve sair com nota alta (80+), não baixa. Pesos: lacuna digital até 50
+  (sem site 50; só Linktree/agregador 45; site fraco ou fora do ar 25; site
+  próprio bom 0), atividade até 20, demanda (seguidores) até 15, potencial
+  comercial (contato e serviços) até 15. Nunca reduza a nota só porque o
+  Instagram não mostrou a data do último post.
 - `confidence`: `alta` com 3 ou mais fontes que batem, `media` com 2,
   `baixa` com 1 ou com divergências.
 - `priority` do candidato: `alta` se a nota for 70 ou mais, `media` de 40
