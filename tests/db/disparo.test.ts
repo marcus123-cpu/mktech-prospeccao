@@ -126,3 +126,18 @@ describe('disparo simples', () => {
     expect((await next()).status).not.toBe('enviar');
   });
 });
+
+describe('disparo: lead de campanha encerrada volta a ficar livre', () => {
+  it('cancelar um disparo libera os leads para um novo', async () => {
+    await resetData(); n = 0; token = (await createToken()).id;
+    lead = await mk({ phone: '(17) 99123-4567' });
+    await pool.query("update commercial_settings set enabled=true,channel_authorized=true,engine_version='v6',test_mode=false; update outreach_settings set enabled=true,paused=false,window_start=0,window_end=24,send_days=array[1,2,3,4,5,6,7],daily_limit=50");
+    const first = await start([lead]);
+    await adm('select admin_campaign_action($1,$2)', [first.campaign_id, 'end']);
+    expect(await adm('select admin_dispatch_available_count()')).toBe(1);
+    const again = await start([lead]);
+    expect(again.added).toBe(1);
+    expect((await q('select campaign_id from commercial_campaign_leads where lead_id=$1', [lead]))[0].campaign_id).toBe(again.campaign_id);
+    await expect(start([lead])).rejects.toThrow(/em andamento/);
+  });
+});

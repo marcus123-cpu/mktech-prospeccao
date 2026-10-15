@@ -28,7 +28,7 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
   if (commercial.error || outreach.error || available.error) return <><PageHeader title="Disparar" /><ErrorBox message="Não foi possível carregar. Aplique as migrações 20261014160000 até 20261015120000 no Supabase." /></>;
   const c = commercial.data, o = outreach.data;
 
-  let query = supabase.from("leads").select("id,business_name,city,state,niche,fit_score,commercial_campaign_leads(lead_id)")
+  let query = supabase.from("leads").select("id,business_name,city,state,niche,fit_score,commercial_campaign_leads(lead_id,commercial_campaigns(status))")
     .eq("stage", "novo").eq("contacted", false).eq("do_not_contact", false).like("phone_e164", "+55__9________")
     .order("fit_score", { ascending: false, nullsFirst: false }).limit(300);
   const q = clean(sp.q); if (q) query = query.or(`business_name.ilike.%${q}%,city.ilike.%${q}%`);
@@ -36,8 +36,8 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
   const niche = clean(sp.niche); if (niche) query = query.ilike("niche", `%${niche}%`);
   if (sp.state && /^[A-Za-z]{2}$/.test(sp.state)) query = query.eq("state", sp.state.toUpperCase());
   const rows = await query;
-  const candidates = ((rows.data ?? []) as unknown as { id: string; business_name: string; city: string; state: string | null; niche: string | null; fit_score: number | null; commercial_campaign_leads: unknown[] }[])
-    .filter((l) => !l.commercial_campaign_leads?.length);
+  const candidates = ((rows.data ?? []) as unknown as { id: string; business_name: string; city: string; state: string | null; niche: string | null; fit_score: number | null; commercial_campaign_leads: { commercial_campaigns: { status: string } | null }[] }[])
+    .filter((l) => !l.commercial_campaign_leads?.some((m) => m.commercial_campaigns?.status !== "encerrada"));
 
   const stats = new Map<string, Stats>();
   for (const d of dispatches.data ?? []) {
