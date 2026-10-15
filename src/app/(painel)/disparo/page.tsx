@@ -12,6 +12,7 @@ export const metadata = { title: "Disparar" };
 
 type Sp = { q?: string; city?: string; state?: string; niche?: string };
 type Stats = { recipients: number; prepared: number; sent: number; delivered: number; replies: number; failures: number; blocked: number };
+type Membership = { commercial_campaigns: { status: string } | null }; // o banco devolve 1 objeto (lead_id é chave única)
 const DAYS = ["", "seg", "ter", "qua", "qui", "sex", "sáb", "dom"];
 const clean = (s?: string) => (s ?? "").replace(/[%,()*]/g, " ").trim();
 
@@ -36,8 +37,8 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
   const niche = clean(sp.niche); if (niche) query = query.ilike("niche", `%${niche}%`);
   if (sp.state && /^[A-Za-z]{2}$/.test(sp.state)) query = query.eq("state", sp.state.toUpperCase());
   const rows = await query;
-  const candidates = ((rows.data ?? []) as unknown as { id: string; business_name: string; city: string; state: string | null; niche: string | null; fit_score: number | null; commercial_campaign_leads: { commercial_campaigns: { status: string } | null }[] }[])
-    .filter((l) => !l.commercial_campaign_leads?.some((m) => m.commercial_campaigns?.status !== "encerrada"));
+  const candidates = ((rows.data ?? []) as unknown as { id: string; business_name: string; city: string; state: string | null; niche: string | null; fit_score: number | null; commercial_campaign_leads: Membership | Membership[] | null }[])
+    .filter((l) => ![l.commercial_campaign_leads ?? []].flat().some((m) => m.commercial_campaigns?.status !== "encerrada"));
 
   const stats = new Map<string, Stats>();
   for (const d of dispatches.data ?? []) {
