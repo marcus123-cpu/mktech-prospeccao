@@ -273,13 +273,18 @@ class WhatsAppWeb(Transporte):
         self._call("POST", "/resultados/ack", {"item_id": item["item_id"], "status": item["status"]})
 
     def health(self, ready: bool) -> None:
-        request("POST", "/api/hermes/v1/comercial/conexao", {"ready": ready, "demonstrations": getattr(self, "demonstrations", [])})
+        conn = getattr(self, "conn", {})
+        request("POST", "/api/hermes/v1/comercial/conexao", {"ready": ready, "demonstrations": getattr(self, "demonstrations", []),
+                                                             "number": conn.get("number"), "state": conn.get("state") or "ponte_offline", "qr": None if ready else conn.get("qr")})
 
     def pronto(self) -> bool:
         try:
             out = self._call("GET", "/estado")
         except RuntimeError:
+            self.conn = {"state": "ponte_offline"}
             return False
+        if isinstance(out, dict):
+            self.conn = {"number": out.get("numero"), "state": str(out.get("estado") or "")[:120], "qr": out.get("qr")}
         self.demonstrations = out.get("demonstrations", []) if isinstance(out, dict) else []
         return bool(isinstance(out, dict) and out.get("pronto"))
 

@@ -75,10 +75,19 @@ client.on("loading_screen", (pct, msg) => setState(`carregando ${pct}% ${msg || 
 client.on("authenticated", () => setState("autenticado, carregando conversas"));
 client.on("auth_failure", (m) => setState("falha de autenticação: " + m));
 client.on("change_state", (st) => console.log("[estado] WhatsApp:", st));
+let religando = false;
 client.on("disconnected", (reason) => {
   setState("desconectado: " + reason);
   ready = false;
   console.log("WhatsApp desconectado:", reason);
+  // Religa para gerar um QR novo sem precisar reiniciar a ponte (no máximo uma tentativa por vez).
+  if (religando) return;
+  religando = true;
+  setTimeout(async () => {
+    try { await client.destroy(); } catch (e) { console.log("destroy:", e.message); }
+    try { await client.initialize(); setState("aguardando leitura do QR"); } catch (e) { console.log("religar falhou:", e.message); }
+    religando = false;
+  }, 5000);
 });
 
 // O WhatsApp esconde o número atrás de um identificador (LID): descobre o telefone real.
@@ -199,7 +208,7 @@ const server = http.createServer(async (req, res) => {
   }
   if (TOKEN && req.headers["x-bridge-token"] !== TOKEN) return send(res, 401, { ok: false, erro: "token" });
   try {
-    if (req.method === "GET" && req.url === "/estado") return send(res, 200, { pronto: ready, numero: myNumber, estado: lastState, demonstrations:demos.availability().map(d=>({...d,available:d.available && (demos.resolve(d.id).kind!=='video' || !!chromePath)})) });
+    if (req.method === "GET" && req.url === "/estado") return send(res, 200, { pronto: ready, numero: myNumber, estado: lastState, qr: ready ? null : lastQr, demonstrations:demos.availability().map(d=>({...d,available:d.available && (demos.resolve(d.id).kind!=='video' || !!chromePath)})) });
     if (req.method === "GET" && req.url === "/recebidas") return send(res, 200, journal.list("recebidas"));
     if (req.method === "GET" && req.url === "/minhas") return send(res, 200, journal.list("minhas"));
     if (req.method === "GET" && req.url === "/resultados") return send(res, 200, journal.pendingResults());
