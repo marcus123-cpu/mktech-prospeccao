@@ -16,7 +16,7 @@ function back(form: FormData, message: { ok?: string; erro?: string }): never {
   }
   if (message.ok) p.set("ok", message.ok);
   if (message.erro) p.set("erro", message.erro);
-  revalidatePath("/listas"); revalidatePath("/kanban"); revalidatePath("/campanhas");
+  revalidatePath("/listas"); revalidatePath("/disparo");
   redirect(`/listas?${p.toString()}`);
 }
 

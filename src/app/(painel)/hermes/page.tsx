@@ -51,7 +51,7 @@ export default async function HermesPage() {
   }
   return <>
     <AutoRefresh />
-    <PageHeader title="🚀 Hermes Prospector" subtitle="Você controla a pesquisa, as listas e as campanhas. Depois que uma campanha é ativada, o Hermes conduz as conversas sozinho, dentro das regras." />
+    <PageHeader title="🚀 Hermes Prospector" subtitle="Você controla a pesquisa, as listas e os disparos. Ao disparar, o Hermes manda a saudação e, se você escolher, conversa sozinho, dentro das regras." />
 
     <section className="card mb-4 p-4">
       <h2 className="mb-2 font-semibold">Nova pesquisa</h2>
@@ -85,8 +85,7 @@ export default async function HermesPage() {
 
     <nav className="flex flex-wrap gap-3 text-sm">
       <Link href="/listas" className="btn-ghost">📋 Listas de prospecção</Link>
-      <Link href="/kanban" className="btn-ghost">🎯 Funil Kanban</Link>
-      <Link href="/campanhas" className="btn-ghost">📣 Campanhas e Disparos</Link>
+      <Link href="/disparo" className="btn-ghost">📤 Disparar</Link>
       <Link href="/execucoes" className="btn-ghost">🤖 Histórico das pesquisas</Link>
     </nav>
   </>;

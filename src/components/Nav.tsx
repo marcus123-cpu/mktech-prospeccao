@@ -9,8 +9,6 @@ const ITEMS = [
   { href: "/disparo", emoji: "📤", label: "Disparar", short: "Disparar", hint: "escolher leads e enviar", mobile: true, on: "bg-emerald-500/20", bar: "bg-emerald-400" },
   { href: "/hermes", emoji: "🚀", label: "Hermes", short: "Hermes", hint: "pesquisar leads e ver os números", mobile: true, on: "bg-violet-500/20", bar: "bg-violet-400" },
   { href: "/listas", emoji: "📋", label: "Listas de prospecção", short: "Listas", hint: "montar e organizar listas", mobile: false, on: "bg-sky-500/20", bar: "bg-sky-400" },
-  { href: "/kanban", emoji: "🗂️", label: "Funil Kanban", short: "Kanban", hint: "etapas da venda", mobile: false, on: "bg-teal-500/20", bar: "bg-teal-400" },
-  { href: "/campanhas", emoji: "📣", label: "Campanhas e Disparos", short: "Campanhas", hint: "ativar, pausar e acompanhar", mobile: false, on: "bg-violet-500/20", bar: "bg-violet-400" },
   { href: "/", emoji: "🏠", label: "Hoje", short: "Hoje", hint: "o que fazer agora", mobile: true, on: "bg-violet-500/20", bar: "bg-violet-400" },
   { href: "/leads", emoji: "👥", label: "Leads", short: "Leads", hint: "todos os contatos", mobile: true, on: "bg-sky-500/20", bar: "bg-sky-400" },
   { href: "/conversas", emoji: "💬", label: "Conversas", short: "Conversas", hint: "atendimento e memória do cliente", mobile: true, on: "bg-sky-500/20", bar: "bg-sky-400" },

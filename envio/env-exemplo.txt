@@ -20,5 +20,6 @@ HERMES_DEMO_ROOT=
 BRIDGE_CHROME_PATH=
 # Compatibilidade com o fluxo de vídeo anterior (opcional).
 BRIDGE_VIDEO_PATH=
-# Teste: só envia para estes números (separe por vírgula). Esvazie só depois da aprovação por escrito.
-ENVIO_SO_PARA=5517992250729
+# Opcional, só para testes: limita os destinos a estes números (separe por vírgula). Vazio ou ausente = sem restrição;
+# quem recebe é decidido no painel (aba Disparar).
+# ENVIO_SO_PARA=5517992250729

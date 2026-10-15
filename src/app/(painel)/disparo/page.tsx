@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ActionForm } from "@/components/ActionForm";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { CheckAll } from "@/components/CheckAll";
@@ -20,7 +19,7 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
   const sp = await searchParams;
   const { supabase } = await requireAdmin();
   const [commercial, outreach, available, lists, dispatches] = await Promise.all([
-    supabase.from("commercial_settings").select("enabled,channel_authorized,engine_version,bridge_connected").eq("id", 1).single(),
+    supabase.from("commercial_settings").select("enabled,channel_authorized,engine_version,bridge_connected,test_mode").eq("id", 1).single(),
     supabase.from("outreach_settings").select("enabled,paused,window_start,window_end,send_days,today_new_leads_target,today_new_leads_date").eq("id", 1).single(),
     supabase.rpc("admin_dispatch_available_count"),
     supabase.from("lead_lists").select("id,name,lead_list_items(count)").order("name"),
@@ -50,6 +49,7 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
   if (!c.enabled || !c.channel_authorized) problems.push("O Hermes está desligado: ative em “Hermes comercial” e confirme o canal.");
   if (!o.enabled) problems.push("A chave de envio está desligada na Central de disparos.");
   if (o.paused) problems.push("O envio está pausado. Ao iniciar um disparo ele volta a funcionar.");
+  if (c.test_mode) problems.push("O modo teste está ligado: só os telefones de teste recebem. Desligue em “Hermes comercial”.");
   if (c.bridge_connected === false) problems.push("O WhatsApp está desconectado: abra a ponte no PC.");
   const days = (o.send_days as number[]).map((d) => DAYS[d]).join(", ");
   const todayTarget = o.today_new_leads_date ? o.today_new_leads_target : null;
@@ -123,7 +123,6 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
           </li>;
         })}
       </ul>}
-      <p className="mt-3 text-xs text-muted">Quer testar sem enviar nada? Use a <Link href="/campanhas" className="underline">simulação em Campanhas</Link>.</p>
     </section>
   </>;
 }

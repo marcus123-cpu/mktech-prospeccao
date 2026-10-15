@@ -4,7 +4,7 @@ import { z } from "zod";
 import { requireAdmin, dbErrorMessage } from "@/lib/auth";
 
 type State = { error?: string; ok?: string };
-const refresh = () => { revalidatePath("/disparo"); revalidatePath("/campanhas"); revalidatePath("/hermes"); revalidatePath("/kanban"); };
+const refresh = () => { revalidatePath("/disparo"); revalidatePath("/hermes"); };
 const id = z.uuid();
 
 /** Um clique: cria o disparo já ativo para os leads escolhidos. */
