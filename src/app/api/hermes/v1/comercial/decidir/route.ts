@@ -30,5 +30,10 @@ export async function POST(request:Request){
   return json({status:'validacao_recusada',errors:decision.validation_errors});
  }
  const {data,error}=await db.rpc('api_commercial_v6_save',{p_token:auth.tokenId,p_lease:input.lease_id,p:{...decision,score:scoreResearch(ctx.research,ctx.now)}});
+ if(!error&&data?.status!=='desatualizada'){
+  // Aprendizado entra como pendente; sem dados do lead (telefone, link, e-mail) e só com aprovação do administrador.
+  const lesson=input.proposal?.learning?.trim();
+  if(lesson&&!/https?:|www\.|@|\d{4,}/i.test(lesson))await db.rpc('api_learning_propose',{p_lesson:lesson});
+ }
  return error?temporaryFailure():json(data,data?.status==='desatualizada'?409:200);
 }

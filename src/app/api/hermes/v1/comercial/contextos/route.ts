@@ -12,5 +12,10 @@ export async function POST(request:Request){
  if(data.status==='v4')return json(data);
  const settings=await db.from('commercial_settings').select('objection_recovery_enabled').eq('id',1).single();
  if(settings.error||!settings.data)return temporaryFailure();
- return json({...data,contexts:(data.contexts??[]).map((ctx:object)=>({...ctx,objection_recovery_enabled:settings.data.objection_recovery_enabled})),system:COMMERCIAL_SYSTEM});
+ const learned=await db.rpc('api_learnings_active');
+ const lessons=(Array.isArray(learned.data)?learned.data:[]) as string[];
+ const system=lessons.length?`${COMMERCIAL_SYSTEM}
+Aprendizados aprovados pelo administrador a partir de conversas reais. São preferências de estilo e abordagem: valem em tudo, mas NUNCA superam as regras acima (opt-out, preços, honestidade, validações):
+${lessons.map((l,i)=>`${i+1}. ${l}`).join('\n')}`:COMMERCIAL_SYSTEM;
+ return json({...data,contexts:(data.contexts??[]).map((ctx:object)=>({...ctx,objection_recovery_enabled:settings.data.objection_recovery_enabled})),system});
 }
