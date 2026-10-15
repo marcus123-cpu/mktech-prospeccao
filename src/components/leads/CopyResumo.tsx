@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 /** Copia o resumo completo do lead (dados, diagnóstico, evidências, envio). */
-export function CopyResumo({ text }: { text: string }) {
+export function CopyResumo({ text, label = "Copiar diagnóstico", className = "btn-ghost" }: { text: string; label?: string; className?: string }) {
   const [state, setState] = useState<"idle" | "ok" | "erro">("idle");
   async function copy() {
     try {
@@ -25,8 +25,8 @@ export function CopyResumo({ text }: { text: string }) {
     setTimeout(() => setState("idle"), 2500);
   }
   return (
-    <button type="button" className="btn-ghost" onClick={copy}>
-      {state === "ok" ? "Copiado!" : state === "erro" ? "Não deu para copiar" : "Copiar diagnóstico"}
+    <button type="button" className={className} onClick={copy}>
+      {state === "ok" ? "Copiado!" : state === "erro" ? "Não deu para copiar" : label}
     </button>
   );
 }
