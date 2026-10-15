@@ -2,6 +2,20 @@ import type { Research } from "./engine";
 
 const norm = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
+/**
+ * Cadastro de candidatos: só fica de fora quem já tem site próprio sem lacuna comprovada no Google.
+ * Presença digital ainda não verificada NÃO descarta; o lead entra incompleto para enriquecimento.
+ */
+export function registrationFocus(research: Research): { accepted: boolean; reason: string } {
+  const ownsSite = research.site_status === "site_proprio_encontrado" || Boolean(research.website_url);
+  if (!ownsSite) {
+    return { accepted: true, reason: research.site_status === "verificacao_pendente" || !research.site_status
+      ? "Presença digital a verificar; cadastrado para enriquecimento" : "Página própria não localizada na pesquisa" };
+  }
+  const focus = researchFocus(research);
+  return { accepted: focus.qualified, reason: focus.qualified ? focus.reason : "Já possui site próprio sem lacuna comprovada de visibilidade" };
+}
+
 /** Only a missing owned presentation or a documented search-visibility gap fits this campaign. */
 export function researchFocus(research: Research): { qualified: boolean; reason: string } {
   const ownsSite = research.site_status === "site_proprio_encontrado" || Boolean(research.website_url);

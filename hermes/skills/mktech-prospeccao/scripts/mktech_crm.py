@@ -237,6 +237,14 @@ def cmd_finish(args: argparse.Namespace) -> int:
     }
     if args.notes:
         body["notes"] = args.notes
+    reasons = {}
+    for item in args.discard_reason or []:
+        label, _, count = item.rpartition("=")
+        if not label or not count.strip().isdigit():
+            return fail(EXIT_INVALID, "--discard-reason deve ser 'motivo=N'")
+        reasons[label.strip()[:200]] = int(count)
+    if reasons:
+        body["discard_reasons"] = reasons
     return emit(*request("POST", f"/api/hermes/v1/runs/{args.run}/finish", body))
 
 
@@ -308,6 +316,7 @@ def main(argv: list[str] | None = None) -> int:
     f.add_argument("--end-reason", required=True)
     f.add_argument("--error-detail", action="append")
     f.add_argument("--notes")
+    f.add_argument("--discard-reason", action="append", help="motivo de descarte no formato 'motivo=N' (repita)")
     f.set_defaults(fn=cmd_finish)
     sub.add_parser("pedido-pendente").set_defaults(fn=cmd_request_pending)
     ep = sub.add_parser("envio-pendentes")

@@ -2,7 +2,9 @@ import { Empty, ErrorBox, PageHeader } from "@/components/ui";
 import { dbErrorMessage, requireAdmin } from "@/lib/auth";
 import { RUN_STATUS_LABEL } from "@/lib/labels";
 import { fmtDateTime } from "@/lib/time";
+import { locationLabel } from "@/lib/research";
 import { CancelSearchButton, RequestSearchForm } from "./Pedido";
+import { RunReport, type Report } from "./RunReport";
 
 export const metadata = { title: "Execuções do Hermes" };
 export const dynamic = "force-dynamic";
@@ -23,10 +25,15 @@ export default async function RunsPage() {
     .limit(100);
   const { data: pedidos } = await supabase
     .from("hermes_requests")
-    .select("id, qualified_target, max_searches, status, qualified_found, created_at, started_at, finished_at, note")
+    .select("id, qualified_target, max_searches, status, qualified_found, created_at, started_at, finished_at, note, run_id, niche, location_scope, location_state, location_city")
     .order("created_at", { ascending: false })
     .limit(5);
   const aberto = (pedidos ?? []).find((p) => p.status === "pendente" || p.status === "em_andamento");
+  const reports = new Map<string, Report>();
+  for (const p of (pedidos ?? []).filter((x) => x.run_id && x.status === "concluido").slice(0, 3)) {
+    const r = await supabase.rpc("admin_run_report", { p_run: p.run_id });
+    if (!r.error && r.data) reports.set(p.id, r.data as Report);
+  }
 
   return (
     <>
@@ -35,11 +42,11 @@ export default async function RunsPage() {
         subtitle="Cada vez que o Hermes pesquisou: quantas buscas fez, quantos leads cadastrou e por que parou."
       />
       <section className="card mb-4 p-4">
-        <h2 className="mb-1 text-sm font-semibold">🔎 Buscar mais leads qualificados</h2>
+        <h2 className="mb-1 text-sm font-semibold">🔎 Nova pesquisa de leads</h2>
         <p className="mb-3 text-xs text-muted">
-          Qualificado é o lead com WhatsApp, diagnóstico e nota 60 ou mais. O Hermes busca até achar essa quantidade ou usar o
-          limite de buscas, e os leads entram para o disparo. Buscar não envia mensagem para ninguém. O PC precisa estar ligado
-          com o iniciar-tudo rodando.
+          Escolha o nicho, a localização e a meta de leads novos. Leads com nota baixa, telefone fixo ou dados incompletos também
+          são salvos, para enriquecer depois. Pesquisar não envia mensagem para ninguém: disparo só começa quando você ativa uma
+          campanha. O PC precisa estar ligado com o iniciar-tudo rodando.
         </p>
         <RequestSearchForm disabled={!!aberto} />
         {(pedidos?.length ?? 0) > 0 && (
@@ -47,7 +54,7 @@ export default async function RunsPage() {
             {pedidos!.map((p) => (
               <li key={p.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
                 <span>
-                  <span className="font-medium">{p.qualified_target} qualificados</span>
+                  <span className="font-medium">{p.qualified_target} leads · {p.niche ?? "nicho das configurações"} · {locationLabel(p)}</span>
                   <span className="text-xs text-muted"> · pedido {fmtDateTime(p.created_at)} · {PEDIDO_LABEL[p.status] ?? p.status}</span>
                   {p.status === "concluido" && (
                     <span className={`text-xs ${(p.qualified_found ?? 0) >= p.qualified_target ? "text-emerald-300" : "text-amber-300"}`}>
@@ -55,6 +62,7 @@ export default async function RunsPage() {
                     </span>
                   )}
                   {p.note && p.status === "concluido" && <span className="block text-xs text-muted">{p.note}</span>}
+                  {reports.get(p.id) && <RunReport report={reports.get(p.id)!} />}
                 </span>
                 {p.status === "pendente" && <CancelSearchButton id={p.id} />}
               </li>

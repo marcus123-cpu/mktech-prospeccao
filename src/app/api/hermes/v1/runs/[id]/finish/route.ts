@@ -18,5 +18,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     p: body.data,
   });
   if (error) return temporaryFailure();
+  if (data?.status === "encerrada") {
+    // O Hermes e o painel recebem o relatório: encontradas, salvas, atualizadas, pendentes e descartadas.
+    const report = await serviceClient().rpc("hermes_run_report", { p_run: id });
+    if (!report.error && report.data) return fromDb({ ...data, report: report.data });
+  }
   return fromDb(data);
 }

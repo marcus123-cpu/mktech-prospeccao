@@ -22,11 +22,11 @@ if ($DryRun) {
 $instrucoes = if ($Modo -eq 'diaria') {
   'Execute a rotina diária com start-run normal, sem --manual. Obedeça à meta, cidades, nichos, limite de buscas e tempo retornados pelo CRM.'
 } else {
-  'Execute somente o pedido pendente do painel: start-run --routine pedido-painel. Obedeça à meta e ao limite do pedido.'
+  'Execute somente o pedido pendente do painel: start-run --routine pedido-painel. Pesquise apenas o nicho e a localização (Brasil, estado ou cidade) devolvidos no start-run, até a meta de leads novos ou o limite de buscas/tempo do pedido.'
 }
 $prompt = @"
 Você é o agente de PESQUISA da MKTech Dev. Leia $skill e siga somente as seções de pesquisa, diagnóstico, deduplicação e cadastro de candidatos. O cliente CRM é $crm (use o Python do sistema); o arquivo .env dele contém as credenciais. $instrucoes
-Pesquise na web com triagem de presença digital e atividade antes de aprofundar cada nome. Priorize negócios ativos sem site, landing page ou portfólio; descarte cedo quem já tem site. Só tente register quando as evidências satisfizerem os requisitos do CRM e houver oportunidade verificável. Se uma cidade ou consulta repetir apenas negócios com site, troque de nicho, bairro ou cidade antes de gastar todo o orçamento. Registre cada candidato com fontes verificáveis e diagnóstico honesto. Não execute modos de envio, leitura, secretário nem chamadas diretas ao WhatsApp. Não escreva mensagens comerciais; o motor V6 separado decide isso. Encerre a execução no CRM e informe números reais de buscas, cadastrados, descartados e erros.
+Pesquise na web com triagem de presença digital e atividade antes de aprofundar cada nome. Priorize negócios ativos sem site, landing page ou portfólio; descarte cedo quem já tem site. Cadastre candidatos mesmo com dados incompletos (telefone fixo ou celular, sem WhatsApp confirmado, nota baixa), registrando o que falta em pending_items; nunca afirme ausência de site sem confirmar. Descarte apenas duplicados, negócios fora do nicho ou da localização, encerrados e quem já tem site próprio sem lacuna comprovada. Se uma cidade ou consulta repetir apenas negócios com site, troque de nicho, bairro ou cidade antes de gastar todo o orçamento. Registre cada candidato com fontes verificáveis e diagnóstico honesto. Não execute modos de envio, leitura, secretário nem chamadas diretas ao WhatsApp. Não escreva mensagens comerciais; o motor V6 separado decide isso. Encerre a execução no CRM com --discard-reason "motivo=N" para cada motivo de descarte e informe números reais de buscas, cadastrados, descartados e erros; se ficar abaixo da meta, explique o motivo em --end-reason.
 "@
 
 & $codexPath exec --approve-for-me -c sandbox_workspace_write.network_access=true -C $projeto $prompt

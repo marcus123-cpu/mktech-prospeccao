@@ -26,7 +26,7 @@ export async function addCampaignLeads(_: State, form: FormData): Promise<State>
   refresh();
   const rejected = (data?.rejected ?? []) as { reason: string }[];
   const reasons = [...new Set(rejected.map((r) => r.reason))].join(" ");
-  return rejected.length ? { ok: `${data.added} adicionado(s). ${rejected.length} recusado(s): ${reasons}` } : { ok: `${data.added} lead(s) adicionado(s).` };
+  return rejected.length ? { ok: `${data.added} adicionado(s). ${data.rejected_total ?? rejected.length} recusado(s): ${reasons}` } : { ok: `${data.added} lead(s) adicionado(s).` };
 }
 
 export async function removeCampaignLead(_: State, form: FormData): Promise<State> {
@@ -71,4 +71,27 @@ export async function simulateReply(_: State, form: FormData): Promise<State> {
   const { error } = await supabase.rpc("admin_campaign_simulate_reply", { p_lead: parsed.data.lead_id, p_body: parsed.data.body });
   if (error) return { error: dbErrorMessage(error) };
   refresh(); return { ok: "Resposta simulada enviada ao Hermes; atualize em alguns segundos." };
+}
+
+const addedMessage = (data: { added?: number; rejected_total?: number; rejected?: { reason: string }[] }) => {
+  const reasons = [...new Set((data?.rejected ?? []).map((r) => r.reason))].join(" ");
+  return data?.rejected_total ? `${data.added ?? 0} adicionado(s). ${data.rejected_total} recusado(s): ${reasons}` : `${data?.added ?? 0} lead(s) adicionado(s).`;
+};
+
+export async function addCampaignList(_: State, form: FormData): Promise<State> {
+  const { supabase } = await requireAdmin();
+  const parsed = z.object({ campaign_id: id, list_id: id }).safeParse(Object.fromEntries(form));
+  if (!parsed.success) return { error: "Escolha a lista." };
+  const { data, error } = await supabase.rpc("admin_campaign_add_list", { p_campaign: parsed.data.campaign_id, p_list: parsed.data.list_id });
+  if (error) return { error: dbErrorMessage(error) };
+  refresh(); return { ok: addedMessage(data) };
+}
+
+export async function addCampaignEligible(_: State, form: FormData): Promise<State> {
+  const { supabase } = await requireAdmin();
+  const parsed = z.object({ campaign_id: id }).safeParse(Object.fromEntries(form));
+  if (!parsed.success) return { error: "Campanha inválida." };
+  const { data, error } = await supabase.rpc("admin_campaign_add_eligible", { p_campaign: parsed.data.campaign_id });
+  if (error) return { error: dbErrorMessage(error) };
+  refresh(); return { ok: addedMessage(data) };
 }

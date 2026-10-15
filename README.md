@@ -20,6 +20,13 @@ Consulte [relatório e instruções V4](docs/hermes-v4-relatorio.md) e
 tabela comercial, canal e contatos controlados configurados; nenhum disparo real
 foi ativado durante a implementação.
 
+## Pesquisa, listas, funil e campanhas
+
+A aba **Hermes** (`/hermes`) abre com nicho (livre), localização (Brasil inteiro por padrão) e meta
+(100 leads por padrão). Depois há **Listas de prospecção**, **Funil Kanban** e **Campanhas e Disparos**.
+Aplique `20261014170000_pesquisa_configuravel.sql` e `20261014180000_listas_kanban_dashboard.sql`.
+Detalhes e auditoria da baixa captação em [docs/hermes-pesquisa-listas-funil.md](docs/hermes-pesquisa-listas-funil.md).
+
 ## Campanhas do Hermes autônomo
 
 A aba **Campanhas** (`/campanhas`) controla o Hermes sem aprovação individual de mensagens:

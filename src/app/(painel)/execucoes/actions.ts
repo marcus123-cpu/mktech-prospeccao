@@ -3,17 +3,19 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { dbErrorMessage, requireAdmin } from "@/lib/auth";
+import { researchSchema } from "@/lib/research";
 
 export type PedidoState = { error?: string; ok?: string };
 
 export async function requestSearch(_: PedidoState, form: FormData): Promise<PedidoState> {
   const { supabase } = await requireAdmin();
-  const n = z.coerce.number().int().min(1).max(100).safeParse(form.get("quantidade"));
-  if (!n.success) return { error: "Digite de 1 a 100." };
-  const { error } = await supabase.rpc("admin_search_request", { p_target: n.data });
+  const parsed = researchSchema.safeParse(Object.fromEntries(form));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Revise os campos da pesquisa." };
+  const r = parsed.data;
+  const { error } = await supabase.rpc("admin_search_request_v2", { p_target: r.target, p_niche: r.niche, p_scope: r.scope, p_state: r.state ?? null, p_city: r.city ?? null });
   if (error) return { error: dbErrorMessage(error) };
-  revalidatePath("/execucoes");
-  return { ok: "Pedido enviado. O PC chama o Hermes em até 2 minutos." };
+  revalidatePath("/execucoes"); revalidatePath("/hermes");
+  return { ok: "Pesquisa iniciada. O PC chama o Hermes em até 2 minutos; a meta é um alvo e o relatório explica qualquer diferença." };
 }
 
 export async function cancelSearch(_: PedidoState, form: FormData): Promise<PedidoState> {
@@ -22,6 +24,6 @@ export async function cancelSearch(_: PedidoState, form: FormData): Promise<Pedi
   if (!id.success) return { error: "Pedido inválido." };
   const { error } = await supabase.rpc("admin_search_request_cancel", { p_id: id.data });
   if (error) return { error: dbErrorMessage(error) };
-  revalidatePath("/execucoes");
+  revalidatePath("/execucoes"); revalidatePath("/hermes");
   return { ok: "Pedido cancelado." };
 }

@@ -25,7 +25,7 @@ const cand = (fit = 80, over: Record<string, unknown> = {}) => {
     ...over,
   });
 };
-const ask = (q: number) => asAdmin((c) => rpc<string>(c, `select public.admin_search_request($1)`, [q]));
+const ask = (q: number) => asAdmin((c) => rpc<string>(c, `select public.admin_search_request_v2($1, 'Academia', 'brasil', null, null)`, [q]));
 const peek = () => asService((c) => rpc<any>(c, `select public.api_search_request_peek($1)`, [tk]));
 const start = (routine = "pedido-painel") =>
   asService((c) => rpc<any>(c, `select public.api_start_run($1, $2, '{}'::jsonb)`, [tk, routine]));
@@ -40,13 +40,13 @@ describe("pedido de busca pelo painel", () => {
     tk = (await tokenId((await createToken()).token))!;
   });
 
-  it("o painel pede N qualificados; o limite de buscas sai sozinho (15 por lead, de 150 a 500)", async () => {
+  it("o painel pede N qualificados; o limite de buscas sai sozinho (15 por lead, de 150 a 5000)", async () => {
     const id = await ask(30);
     expect(await request(id)).toMatchObject({ qualified_target: 30, max_searches: 450, status: "pendente" });
     await asAdmin((c) => c.query(`select public.admin_search_request_cancel($1)`, [id]));
     expect((await request(await ask(5))).max_searches).toBe(150);
     await pool.query(`update hermes_requests set status = 'cancelado'`);
-    expect((await request(await ask(100))).max_searches).toBe(500);
+    expect((await request(await ask(100))).max_searches).toBe(1500);
   });
 
   it("só um pedido aberto por vez, e só admin pede", async () => {
@@ -68,19 +68,17 @@ describe("pedido de busca pelo painel", () => {
     expect(await start()).toMatchObject({ status: "ja_em_andamento" });
   });
 
-  it("para ao bater a meta de qualificados; não qualificado não conta; não usa a meta diária", async () => {
+  it("para ao bater a meta de leads novos; nota baixa e sem telefone também contam; não usa a meta diária", async () => {
     await pool.query(`update prospecting_settings set daily_target = 1`);
     const id = await ask(2);
     const r = await start();
     expect((await register(tk, cand(40), undefined, r.run_id)).status).toBe("criado");
     expect((await register(tk, cand(80, { phone: undefined, instagram: "@sem.zap" }), undefined, r.run_id)).status).toBe("criado");
-    expect((await register(tk, cand(85), undefined, r.run_id)).status).toBe("criado");
-    expect((await register(tk, cand(90), undefined, r.run_id)).status).toBe("criado");
-    expect((await register(tk, cand(95), undefined, r.run_id)).status).toBe("limite_atingido");
+    expect((await register(tk, cand(85), undefined, r.run_id)).status).toBe("limite_atingido");
     const f = await finish(r.run_id);
     expect(f.qualificados).toBe(2);
     expect(await request(id)).toMatchObject({ status: "concluido", qualified_found: 2 });
-    expect(await count("leads")).toBe(4);
+    expect(await count("leads")).toBe(2);
   });
 
   it("execução de pedido abandonada fecha o pedido", async () => {

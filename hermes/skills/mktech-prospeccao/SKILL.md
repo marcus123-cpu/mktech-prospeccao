@@ -25,6 +25,37 @@ para esta campanha. Não transforme essas falhas em oferta de landing page.
 Seu trabalho de pesquisa termina no cadastro do candidato. O motor V6 decide
 e enfileira mensagens dentro das configurações; Marcos administra a estratégia.
 
+## Pesquisa configurável (vale sobre o restante desta skill)
+
+Cada pesquisa do painel traz o **nicho** (texto livre), a **localização**
+(`location_scope`: `brasil`, `estado` ou `cidade`, com `location_state` e
+`location_city`) e a **meta de leads novos** (`meta_qualificados`, padrão 100).
+Use somente esses valores na pesquisa do pedido; não use as cidades e nichos
+das Configurações nem a localização de pesquisas anteriores. Em `brasil`, varie
+estados e cidades grandes e médias por rodízio; em `estado`, as cidades do
+estado; em `cidade`, bairros e variações da cidade.
+
+A meta é um alvo, não uma promessa. **Cadastrar não exige** nota alta, WhatsApp
+confirmado, diagnóstico completo nem duas fontes: telefone fixo ou celular
+comercial público servem, e candidato com dados incompletos deve ser cadastrado
+(com `pending_items` dizendo o que falta) para enriquecimento posterior. Esses
+requisitos continuam valendo apenas para o **envio** (fila V6), que é decidido
+depois pelo servidor. Descarte somente: quem já está no CRM, quem tem site
+próprio sem lacuna comprovada no Google, negócio comprovadamente encerrado ou
+inativo, e quem está fora do nicho ou da localização. Nota baixa nunca é motivo.
+
+Verifique, quando possível, site institucional, landing page, Instagram público,
+link na bio, catálogo digital, formas de agendamento e oportunidades de
+automação. **Não afirme** que o negócio não tem site, agenda ou sistema se isso
+não foi confirmado: use `verificacao_pendente` e registre as fontes consultadas
+e a confiança. Priorize negócios sem site próprio localizado.
+
+Ao encerrar, informe os motivos de descarte com `--discard-reason "motivo=N"`
+(repita o parâmetro). O CRM devolve um relatório (analisadas, salvas, atualizadas,
+pendentes e descartadas com motivos). Se ficar abaixo da meta, diga em
+`--end-reason` por quê (fontes esgotadas, limite de buscas ou de tempo). Não pesquise
+indefinidamente: respeite `max_searches` e `max_run_minutes`.
+
 ## Fila comercial V6
 
 A rotina diária às 7h deve abastecer a fila V6 com candidatos **não contatados**
@@ -44,10 +75,11 @@ Confirme que o link público do WhatsApp leva ao mesmo telefone do candidato.
 Não inclua números particulares ou de terceiros sem vínculo verificado.
 
 Se faltar telefone, fonte independente, confirmação da presença digital ou
-diagnóstico firme, continue a pesquisa ou descarte o candidato. O CRM recusa
-presença digital não verificada; não gaste uma tentativa de `register` com
-`site_status: "verificacao_pendente"`. Nunca aumente nota/confiança ou remova
-`limitation` só para entrar na fila.
+diagnóstico firme, **cadastre mesmo assim como incompleto** (`pending_items`,
+`site_status: "verificacao_pendente"` quando não confirmou): o lead fica para
+enriquecimento e só entra na fila de envio quando os requisitos acima forem
+atendidos. Nunca aumente nota/confiança ou remova `limitation` só para
+entrar na fila.
 
 ## Operação V4
 
@@ -127,7 +159,7 @@ andamento (pare), `4` limite atingido (pare de cadastrar e encerre),
 ## Procedimento
 
 1. **Teste a conexão:** `selftest`. Se não der código 0, pare e relate.
-2. **Leia as configurações** que vieram no `selftest`: `run_target` (quantos
+2. **Leia as configurações** que vieram no `selftest` (no modo pedido, nicho, localização e meta vêm do `start-run`): `run_target` (quantos
    leads cadastrar nesta passada: a diferença até 20 quando o estoque de leads
    prontos está abaixo de 20, senão `daily_target`), `stock_ready`, `cities`, `niches`, `max_run_minutes`, `max_searches`.
 3. **Abra a execução:** `start-run` (na rotina agendada),
@@ -206,12 +238,13 @@ programa do PC só chama você quando há pedido. Então:
 2. A resposta traz a meta e os limites **deste pedido**: `meta_qualificados`
    (= `run_target`), `max_searches` e `max_run_minutes`. Use esses números,
    não os do `selftest`.
-3. Siga o procedimento normal (passos 4 a 12). **Qualificado** é o lead
-   cadastrado com WhatsApp, diagnóstico e nota 60 ou mais; só esses contam
-   para a meta. Cadastre os outros normalmente, mas continue buscando até
-   bater a meta de qualificados.
-4. O servidor recusa com código 4 quando a meta de qualificados é batida (ou
-   quando já cadastrou 4 vezes a meta): pare e encerre com `finish`.
+3. Siga o procedimento normal (passos 4 a 12), com o nicho e a localização
+   do pedido (`niche`, `location_scope`, `location_state`, `location_city`).
+   Todo lead **novo** cadastrado nesta execução conta para a meta, qualquer que
+   seja a nota ou a completude dos dados. Continue buscando até bater a meta,
+   esgotar as fontes ou atingir o limite de buscas/tempo.
+4. O servidor recusa com código 4 quando a meta é batida: pare e encerre com
+   `finish`.
    Não use `pedido-pendente` para decidir se continua: ele é só do programa
    do PC e responde `nenhum` enquanto o seu pedido está em andamento. Quem
    diz quando parar é o código 4 do `register` ou o fim das buscas/do tempo.
@@ -225,9 +258,9 @@ programa do PC só chama você quando há pedido. Então:
 No máximo **2 buscas** por candidato, antes da pesquisa completa. Descarte
 na hora (conta em `discarded`, sem cadastrar) se:
 
-1. **Sem contato comercial:** não aparece telefone nem Instagram do negócio
-   no resultado da descoberta ou em uma busca `<nome> <cidade>`. O CRM
-   recusa candidato sem telefone ou Instagram, então não vale pesquisar.
+1. **Sem identificador:** não há telefone, Instagram, endereço, site nem
+   identificador de fonte (por exemplo, o ID do Google Maps). Com qualquer um
+   deles, cadastre como incompleto para enriquecer depois.
 2. **Fora do foco comercial:** se encontrou site, landing page ou portfólio
    próprio, descarte, salvo quando uma busca concreta de procedimento + cidade
    mostra uma lacuna relevante de visibilidade no Google. Para essa exceção,

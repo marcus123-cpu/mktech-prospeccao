@@ -2,9 +2,18 @@ import { authenticate, fromDb, json, parseBody, temporaryFailure } from "@/lib/h
 import { compact, registerSchema } from "@/lib/hermes/schemas";
 import { serviceClient } from "@/lib/supabase/admin";
 import { scoreResearch } from "@/lib/commercial/engine";
-import { researchFocus } from "@/lib/commercial/research-focus";
+import { registrationFocus } from "@/lib/commercial/research-focus";
 
 export const dynamic = "force-dynamic";
+
+/** O motivo do descarte alimenta o relatório da pesquisa; falhar em gravá-lo nunca muda a resposta ao Hermes. */
+async function recordDiscard(runId: string, name: string, code: string, reason: string) {
+  try {
+    await serviceClient().from("hermes_run_discards").insert({ run_id: runId, business_name: name.slice(0, 200), reason_code: code, reason: reason.slice(0, 500) });
+  } catch {
+    /* relatório fica sem esta linha */
+  }
+}
 
 // POST /api/hermes/v1/candidates — cadastra um candidato com evidências.
 // Exige o cabeçalho Idempotency-Key. Respostas: criado (201), existente (200),
@@ -19,8 +28,11 @@ export async function POST(request: Request) {
   const body = await parseBody(request, registerSchema);
   if ("response" in body) return body.response;
   if (body.data.run_id) {
-    const focus = researchFocus(body.data.candidate);
-    if (!focus.qualified) return json({ status: "invalido", errors: [focus.reason] }, 422);
+    const focus = registrationFocus(body.data.candidate);
+    if (!focus.accepted) {
+      await recordDiscard(body.data.run_id, body.data.candidate.business_name, "ja_possui_site", focus.reason);
+      return json({ status: "invalido", errors: [focus.reason] }, 422);
+    }
   }
   const candidate = compact({
     ...body.data.candidate,
@@ -33,5 +45,9 @@ export async function POST(request: Request) {
     p_run: body.data.run_id ?? null,
   });
   if (error) return temporaryFailure();
+  if (body.data.run_id && data?.status === "invalido") {
+    const reason = (Array.isArray(data.errors) ? data.errors.join("; ") : "dados inválidos").slice(0, 500);
+    await recordDiscard(body.data.run_id, body.data.candidate.business_name, "dados_invalidos", reason);
+  }
   return fromDb(data);
 }

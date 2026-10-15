@@ -123,6 +123,7 @@ export const finishRunSchema = z
     discarded: z.number().int().min(0).max(100000),
     errors: z.number().int().min(0).max(100000),
     error_details: z.array(z.string().max(500)).max(50).optional(),
+    discard_reasons: z.record(z.string().min(1).max(200), z.number().int().min(0).max(100000)).refine((r) => Object.keys(r).length <= 30).optional(),
     end_reason: text(500).min(1),
     notes: optText(4000),
   })
