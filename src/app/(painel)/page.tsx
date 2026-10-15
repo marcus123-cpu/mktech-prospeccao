@@ -138,7 +138,7 @@ export default async function Hoje({
 
   return (
     <>
-      <PageHeader title="Visão geral" subtitle={`${fmtDate(`${today}T12:00:00Z`)} · acompanhe prospecção, conversas e oportunidades`} actions={<Link href="/envio" className="btn-primary">Controlar disparos</Link>} />
+      <PageHeader title="Visão geral" subtitle={`${fmtDate(`${today}T12:00:00Z`)} · acompanhe prospecção, conversas e oportunidades`} actions={<Link href="/disparo" className="btn-primary">Controlar disparos</Link>} />
 
       {metrics.error || activity.error || commercial.error || commercialQueue.error || commercialSent.error || !m || !a || !commercial.data ? (
         <ErrorBox message={dbErrorMessage(metrics.error ?? activity.error ?? commercial.error ?? commercialQueue.error ?? commercialSent.error) || "Não foi possível carregar o painel."} />
@@ -149,7 +149,7 @@ export default async function Hoje({
             <section className="card p-5 md:p-6">
               <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
                 <h2 className="text-lg font-semibold">Operação agora</h2>
-                <Link href="/envio" className="text-sm text-violet-300 hover:underline">Abrir central de disparos →</Link>
+                <Link href="/disparo" className="text-sm text-violet-300 hover:underline">Abrir Disparar →</Link>
               </div>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <Stat label="Novas abordagens" value={<span className={estadoCor}>{!env.enabled || env.paused || !commercial.data?.enabled ? "Suspensas" : commercial.data?.new_contacts_enabled ? "Liberadas" : "Pausadas"}</span>} hint={janela} />
@@ -165,7 +165,7 @@ export default async function Hoje({
                   hint={pediramParar ? `${pediramParar} pediram para parar` : "ninguém pediu para parar"}
                 />
               </div>
-              <Link href="/envio#meta-do-dia" className="mt-4 inline-block text-sm text-accent hover:underline">Ajustar meta de disparos de hoje</Link>
+              <Link href="/disparo" className="mt-4 inline-block text-sm text-accent hover:underline">Disparar saudações</Link>
             </section>
           )}
 

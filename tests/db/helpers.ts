@@ -27,7 +27,7 @@ export async function resetData() {
     insert into public.outreach_settings (id) values (1);
     truncate public.commercial_products;
     insert into public.commercial_settings(id) values(1) on conflict(id) do nothing;
-    update public.commercial_settings set v6_validation_run=null,engine_version='v4',new_contacts_enabled=true,enabled=false,channel_authorized=false,test_mode=true,test_phones='{}',
+    update public.commercial_settings set greeting_only=false,v6_validation_run=null,engine_version='v4',new_contacts_enabled=true,enabled=false,channel_authorized=false,test_mode=true,test_phones='{}',
       video_configured=false,allowed_strategies=array['A','B','C'],experiment_enabled=true,max_messages=15,last_worker_at=null,last_sender_at=null,bridge_connected=null,bridge_state_changed_at=null;
   `);
   await pool.query(`insert into auth.users (id, email) values ($1, 'admin@teste.local'), ($2, 'outro@teste.local')`, [

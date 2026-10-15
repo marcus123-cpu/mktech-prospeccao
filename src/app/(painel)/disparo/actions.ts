@@ -10,20 +10,17 @@ const id = z.uuid();
 /** Um clique: cria o disparo já ativo para os leads escolhidos. */
 export async function startDispatch(_: State, form: FormData): Promise<State> {
   const { supabase } = await requireAdmin();
-  const scope = z.enum(["selected", "list", "all"]).safeParse(form.get("scope"));
-  const how = z.enum(["normal", "bot"]).safeParse(form.get("how"));
+  const scope = z.enum(["selected", "all"]).safeParse(form.get("scope"));
   const today = z.coerce.number().int().min(1).max(200).safeParse(form.get("today"));
-  if (!scope.success || !how.success) return { error: "Escolha quem recebe e como enviar." };
+  if (!scope.success) return { error: "Escolha quem recebe." };
   if (!today.success) return { error: "Quantos enviar hoje: de 1 a 200." };
   const leads = z.array(id).max(5000).safeParse(form.getAll("lead_ids"));
-  const list = id.safeParse(form.get("list_id"));
   if (scope.data === "selected" && (!leads.success || leads.data.length === 0)) return { error: "Marque pelo menos um lead na lista." };
-  if (scope.data === "list" && !list.success) return { error: "Escolha uma das suas listas." };
   const { data, error } = await supabase.rpc("admin_dispatch_start", {
     p_leads: scope.data === "selected" && leads.success ? leads.data : null,
-    p_list: scope.data === "list" && list.success ? list.data : null,
+    p_list: null,
     p_all: scope.data === "all",
-    p_bot: how.data === "bot",
+    p_bot: false,
     p_today: today.data,
     p_name: null,
   });

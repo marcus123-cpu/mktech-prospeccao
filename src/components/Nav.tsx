@@ -5,17 +5,13 @@ import { usePathname } from "next/navigation";
 
 // Cada aba tem um emoji e uma cor própria (dot = bolinha/ícone, on = fundo quando está aberta).
 const ITEMS = [
-  { href: "/comercial", emoji: "🚀", label: "Hermes comercial", short: "Comercial", hint: "operação e oportunidades", mobile: false, on: "bg-violet-500/20", bar: "bg-violet-400" },
   { href: "/disparo", emoji: "📤", label: "Disparar", short: "Disparar", hint: "escolher leads e enviar", mobile: true, on: "bg-emerald-500/20", bar: "bg-emerald-400" },
   { href: "/hermes", emoji: "🚀", label: "Hermes", short: "Hermes", hint: "pesquisar leads e ver os números", mobile: true, on: "bg-violet-500/20", bar: "bg-violet-400" },
-  { href: "/aprendizados", emoji: "🧠", label: "Aprendizados", short: "Aprender", hint: "o que o Hermes aprendeu", mobile: false, on: "bg-violet-500/20", bar: "bg-violet-400" },
-  { href: "/listas", emoji: "📋", label: "Listas de prospecção", short: "Listas", hint: "montar e organizar listas", mobile: false, on: "bg-sky-500/20", bar: "bg-sky-400" },
   { href: "/", emoji: "🏠", label: "Hoje", short: "Hoje", hint: "o que fazer agora", mobile: true, on: "bg-violet-500/20", bar: "bg-violet-400" },
   { href: "/leads", emoji: "👥", label: "Leads", short: "Leads", hint: "todos os contatos", mobile: true, on: "bg-sky-500/20", bar: "bg-sky-400" },
   { href: "/conversas", emoji: "💬", label: "Conversas", short: "Conversas", hint: "atendimento e memória do cliente", mobile: true, on: "bg-sky-500/20", bar: "bg-sky-400" },
   { href: "/funil", emoji: "🎯", label: "Funil", short: "Funil", hint: "envio, conversa e fechamento", mobile: false, on: "bg-teal-500/20", bar: "bg-teal-400" },
   { href: "/retornos", emoji: "🔔", label: "Retornos", short: "Retornos", hint: "quem chamar de novo", mobile: false, on: "bg-amber-500/20", bar: "bg-amber-400" },
-  { href: "/envio", emoji: "📤", label: "Central de disparos", short: "Disparos", hint: "fila, limites e atendimento", mobile: true, on: "bg-emerald-500/20", bar: "bg-emerald-400" },
   { href: "/execucoes", emoji: "🤖", label: "Pesquisas do Hermes", short: "Hermes", hint: "o que o robô fez", mobile: false, on: "bg-fuchsia-500/20", bar: "bg-fuchsia-400" },
   { href: "/configuracoes", emoji: "⚙️", label: "Configurações", short: "Ajustes", hint: "metas, cidades, token", mobile: true, on: "bg-slate-500/25", bar: "bg-slate-300" },
 ];

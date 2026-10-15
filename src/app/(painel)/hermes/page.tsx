@@ -19,8 +19,6 @@ const TILES: { key: keyof Dash; label: string; hint?: string }[] = [
   { key: "new_leads", label: "Leads novos", hint: "cadastrados nas pesquisas" },
   { key: "existing_leads", label: "Leads existentes", hint: "já estavam no CRM" },
   { key: "with_contact", label: "Leads com contato" },
-  { key: "in_lists", label: "Leads nas listas" },
-  { key: "active_campaigns", label: "Campanhas ativas" },
   { key: "prepared", label: "Mensagens preparadas", hint: "na fila, ainda não enviadas" },
   { key: "sent", label: "Mensagens enviadas", hint: "saíram de verdade" },
   { key: "delivered", label: "Entregues", hint: "quando o WhatsApp confirma" },
@@ -51,7 +49,7 @@ export default async function HermesPage() {
   }
   return <>
     <AutoRefresh />
-    <PageHeader title="🚀 Hermes Prospector" subtitle="Você controla a pesquisa, as listas e os disparos. Ao disparar, o Hermes manda a saudação e, se você escolher, conversa sozinho, dentro das regras." />
+    <PageHeader title="🚀 Hermes Prospector" subtitle="O Hermes pesquisa os leads e faz o diagnóstico. Depois você dispara só a saudação e conversa manualmente." />
 
     <section className="card mb-4 p-4">
       <h2 className="mb-2 font-semibold">Nova pesquisa</h2>
@@ -84,7 +82,6 @@ export default async function HermesPage() {
     </section>
 
     <nav className="flex flex-wrap gap-3 text-sm">
-      <Link href="/listas" className="btn-ghost">📋 Listas de prospecção</Link>
       <Link href="/disparo" className="btn-ghost">📤 Disparar</Link>
       <Link href="/execucoes" className="btn-ghost">🤖 Histórico das pesquisas</Link>
     </nav>

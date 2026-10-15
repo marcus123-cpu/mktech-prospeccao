@@ -98,7 +98,7 @@ export default async function FunilPage() {
           {attention > 0 && (
             <p className="mb-4 rounded-lg border border-rose-900 bg-rose-950/40 p-3 text-sm text-rose-200">
               {attention} envio(s) precisam de verificação.{" "}
-              <Link href="/envio" className="underline">Ver em Envio automático</Link>
+              <Link href="/disparo" className="underline">Ir para Disparar</Link>
             </p>
           )}
           {/* No celular as colunas deslizam para o lado; estes atalhos levam direto a cada uma. */}

@@ -104,15 +104,25 @@ describe('disparo simples', () => {
     await expect(start([fixo])).rejects.toThrow(/Nenhum lead pôde/);
   });
 
-  it('avisos claros: Hermes desligado, envio desligado, quantidade inválida, nada escolhido', async () => {
-    await pool.query('update commercial_settings set enabled=false');
-    await expect(start([lead])).rejects.toThrow(/desligado/);
-    await pool.query('update commercial_settings set enabled=true');
+  it('disparar liga sozinho o Hermes e o envio; quantidade inválida e nada escolhido avisam', async () => {
+    await pool.query('update commercial_settings set enabled=false,channel_authorized=false');
     await pool.query('update outreach_settings set enabled=false');
-    await expect(start([lead])).rejects.toThrow(/chave de envio/);
-    await pool.query('update outreach_settings set enabled=true');
+    await start([lead]);
+    expect((await q('select enabled,channel_authorized from commercial_settings'))[0]).toMatchObject({ enabled: true, channel_authorized: true });
+    expect((await q('select enabled from outreach_settings'))[0].enabled).toBe(true);
     await expect(start([lead], { today: 0 })).rejects.toThrow(/1 a 200/);
     await expect(start([])).rejects.toThrow(/Nenhum lead escolhido/);
+  });
+
+  it('só saudação global: qualquer resposta passa a conversa para você, inclusive de quem já respondeu', async () => {
+    await pool.query('update commercial_settings set greeting_only=true');
+    await start([lead], { bot: true });
+    await greet();
+    const out = await next();
+    await result(out.id);
+    await reply('Oi, tudo bem?');
+    expect((await q('select secretary_handoff_at from leads where id=$1', [lead]))[0].secretary_handoff_at).toBeTruthy();
+    expect((await contexts()).contexts).toHaveLength(0);
   });
 
   it('pausar o disparo segura a fila; pedido de não contato nunca é contornado', async () => {

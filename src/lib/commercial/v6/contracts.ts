@@ -22,7 +22,6 @@ export const proposalSchema = z.object({
   summary:z.string().max(1500),next_action:z.string().max(500),
   followup_at:z.string().datetime({offset:true}).nullable(),followup_evidence:z.string().max(1000),
   source_ids:z.array(z.string().max(2000)).max(15),
-  learning:z.string().max(300).nullish(),
 }).strict();
 export type SemanticProposal=z.infer<typeof proposalSchema>;
 export type Readiness={status:"READY_FOR_OUTREACH"|"NEEDS_RESEARCH"|"LOW_CONFIDENCE"|"NOT_QUALIFIED"|"DO_NOT_CONTACT";reasons:string[];confidence:number};

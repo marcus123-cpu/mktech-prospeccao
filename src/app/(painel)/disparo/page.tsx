@@ -19,11 +19,10 @@ const clean = (s?: string) => (s ?? "").replace(/[%,()*]/g, " ").trim();
 export default async function DisparoPage({ searchParams }: { searchParams: Promise<Sp> }) {
   const sp = await searchParams;
   const { supabase } = await requireAdmin();
-  const [commercial, outreach, available, lists, dispatches] = await Promise.all([
+  const [commercial, outreach, available, dispatches] = await Promise.all([
     supabase.from("commercial_settings").select("enabled,channel_authorized,engine_version,bridge_connected,test_mode").eq("id", 1).single(),
     supabase.from("outreach_settings").select("enabled,paused,window_start,window_end,send_days,today_new_leads_target,today_new_leads_date").eq("id", 1).single(),
     supabase.rpc("admin_dispatch_available_count"),
-    supabase.from("lead_lists").select("id,name,lead_list_items(count)").order("name"),
     supabase.from("commercial_campaigns").select("id,name,status,bot_replies,created_at").eq("mode", "autonomo").order("created_at", { ascending: false }).limit(6),
   ]);
   if (commercial.error || outreach.error || available.error) return <><PageHeader title="Disparar" /><ErrorBox message="Não foi possível carregar. Aplique as migrações 20261014160000 até 20261015120000 no Supabase." /></>;
@@ -57,7 +56,7 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
 
   return <>
     <AutoRefresh />
-    <PageHeader title="📤 Disparar" subtitle="Escolha quem recebe, escolha como enviar e dispare. O Hermes manda aos poucos, respeitando horário, limite e quem pediu para não receber." />
+    <PageHeader title="📤 Disparar" subtitle="Escolha quem recebe e dispare. O Hermes manda só a saudação, aos poucos, respeitando horário, limite e quem pediu para não receber. A conversa depois é toda sua." />
 
     {problems.length > 0 && <div className="mb-4 rounded border border-amber-500/40 p-3 text-sm text-amber-300">{problems.map((p) => <p key={p}>⚠️ {p}</p>)}</div>}
     <p className="mb-4 text-sm text-muted">Horário de envio: {days}, das {o.window_start}h às {o.window_end}h (ajuste na Central de disparos). {todayTarget != null ? `Limite de hoje: ${todayTarget} novos contatos.` : ""}</p>
@@ -71,13 +70,11 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
     </form>
 
     <ActionForm action={startDispatch} submit="🚀 Disparar agora" className="space-y-4"
-      confirmText="O Hermes vai começar a enviar mensagens reais no WhatsApp para os leads escolhidos. Disparar?">
+      confirmText="O Hermes vai começar a enviar a saudação real no WhatsApp para os leads escolhidos. Disparar?">
       <section className="card p-4">
-        <h2 className="mb-2 font-semibold">1. Quem recebe</h2>
+        <h2 className="mb-2 font-semibold">1. Quem recebe a saudação</h2>
         <label className="mb-1 flex items-center gap-2 text-sm"><input type="radio" name="scope" value="selected" defaultChecked /> Os que eu marcar na lista abaixo</label>
-        <label className="mb-1 flex flex-wrap items-center gap-2 text-sm"><input type="radio" name="scope" value="list" /> Uma das minhas listas:
-          <select name="list_id" className="input" defaultValue=""><option value="">escolha…</option>{(lists.data ?? []).map((l) => <option key={l.id} value={l.id}>{l.name} ({(l.lead_list_items as unknown as { count: number }[])?.[0]?.count ?? 0})</option>)}</select>
-        </label>
+
         <label className="mb-3 flex items-center gap-2 text-sm"><input type="radio" name="scope" value="all" /> Todos os leads novos disponíveis ({available.data})</label>
         <p className="mb-2 text-xs text-muted">Só aparecem leads novos, com celular, nunca contatados e fora de outro disparo. Telefone fixo, já contatado e quem pediu para não receber ficam de fora automaticamente.</p>
         {candidates.length === 0 ? <p className="text-sm text-muted">Nenhum lead disponível com esses filtros.</p> : <>
@@ -88,15 +85,7 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
       </section>
 
       <section className="card p-4">
-        <h2 className="mb-2 font-semibold">2. Como enviar</h2>
-        <label className="mb-2 flex items-start gap-2 text-sm"><input type="radio" name="how" value="normal" defaultChecked className="mt-1" />
-          <span><b>Só a saudação — eu converso depois.</b><br /><span className="text-muted">O Hermes manda “Olá, bom dia! Tudo bem?” e para. Quando a pessoa responder, a conversa é com você (aparece em Conversas).</span></span></label>
-        <label className="flex items-start gap-2 text-sm"><input type="radio" name="how" value="bot" className="mt-1" />
-          <span><b>Bot conversa sozinho.</b><br /><span className="text-muted">O Hermes manda a saudação e continua atendendo as respostas: tira dúvidas, apresenta a MKTech Dev, oferece demonstração e trata objeções. Preço só dos produtos aprovados; o resto vem para você.</span></span></label>
-      </section>
-
-      <section className="card p-4">
-        <h2 className="mb-2 font-semibold">3. Quantos enviar hoje</h2>
+        <h2 className="mb-2 font-semibold">2. Quantas saudações enviar hoje</h2>
         <input name="today" type="number" min={1} max={200} defaultValue={20} className="input w-28" />
         <span className="ml-2 text-xs text-muted">Os envios saem espaçados, no horário acima. O que sobrar continua amanhã se você repetir o disparo.</span>
       </section>
@@ -113,7 +102,7 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
           const hidden = (action: string) => <><input type="hidden" name="campaign_id" value={d.id} /><input type="hidden" name="action" value={action} /></>;
           return <li key={d.id} className="py-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span><b>{d.name}</b> · {d.status === "ativa" ? "enviando" : d.status} · {d.bot_replies ? "bot conversa" : "só saudação"} <span className="text-xs text-muted">· {fmtDateTime(d.created_at)}</span></span>
+              <span><b>{d.name}</b> · {d.status === "ativa" ? "enviando" : d.status} · só saudação <span className="text-xs text-muted">· {fmtDateTime(d.created_at)}</span></span>
               <span className="flex gap-2">
                 {d.status === "ativa" && <ActionForm action={dispatchAction} submit="Pausar" variant="btn-ghost" className="space-y-0">{hidden("pause")}</ActionForm>}
                 {d.status === "pausada" && <ActionForm action={dispatchAction} submit="Retomar" variant="btn-ghost" className="space-y-0">{hidden("resume")}</ActionForm>}

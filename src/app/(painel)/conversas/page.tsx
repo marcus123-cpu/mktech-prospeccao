@@ -59,7 +59,7 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
   return (
     <>
       <PageHeader title="Conversas" subtitle="Histórico, diagnóstico e próxima ação no mesmo lugar."
-        actions={<><span className={`badge ${botActive ? "bg-emerald-500/15 text-emerald-300" : "bg-amber-500/15 text-amber-300"}`}>Secretário {botActive ? "liberado" : "pausado ou desligado"}</span><Link href="/envio" className="btn-ghost">Configurar bot</Link></>} />
+        actions={<><span className={`badge ${botActive ? "bg-emerald-500/15 text-emerald-300" : "bg-amber-500/15 text-amber-300"}`}>Secretário {botActive ? "liberado" : "pausado ou desligado"}</span><Link href="/disparo" className="btn-ghost">Configurar bot</Link></>} />
       <div className="mb-4 flex flex-wrap gap-2">
         {FILTERS.map((f) => <Link key={f.key} href={href({ filtro: f.key })} className={filter === f.key ? "btn-primary" : "btn-ghost"}>{f.label}</Link>)}
       </div>
