@@ -20,6 +20,14 @@ Consulte [relatório e instruções V4](docs/hermes-v4-relatorio.md) e
 tabela comercial, canal e contatos controlados configurados; nenhum disparo real
 foi ativado durante a implementação.
 
+## Campanhas do Hermes autônomo
+
+A aba **Campanhas** (`/campanhas`) controla o Hermes sem aprovação individual de mensagens:
+você seleciona os leads, testa em **simulação** (nada é enviado) e só então libera o modo
+**autônomo**. Há pausa imediata, encerramento e registro completo. Aplique
+`supabase/migrations/20261014160000_campanhas_autonomas.sql`. Com o motor V6, só lead de
+campanha ativa recebe primeiro contato. Detalhes em [docs/hermes-campanhas.md](docs/hermes-campanhas.md).
+
 ## Central de conversas (nova versão)
 
 Em **Conversas**, você vê os atendimentos por estado: com você, esperando

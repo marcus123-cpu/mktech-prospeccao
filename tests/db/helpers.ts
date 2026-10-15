@@ -21,7 +21,7 @@ export async function resetData() {
   await pool.query(`
     truncate public.leads, public.lead_evidences, public.contact_events, public.stage_events, public.lead_notes,
       public.proposals, public.lead_diagnoses, public.lead_messages, public.lead_message_uses, public.outreach_messages, public.outreach_replies, public.duplicate_reviews, public.dedupe_events, public.hermes_runs,
-      public.idempotency_keys, public.integration_tokens, public.app_admins, auth.users cascade;
+      public.idempotency_keys, public.integration_tokens, public.app_admins, public.commercial_campaigns, auth.users cascade;
     update public.prospecting_settings set daily_target = 20, max_run_minutes = 45, routine_enabled = false, restock_enabled = false, restock_min = 20, restock_batch = 20;
     delete from public.outreach_settings;
     insert into public.outreach_settings (id) values (1);
@@ -105,4 +105,11 @@ export async function register(tokenUuid: string, payload: object, key = randomU
 export async function count(table: string, where = "true"): Promise<number> {
   const r = await pool.query(`select count(*)::int as n from ${table} where ${where}`);
   return r.rows[0].n;
+}
+
+// Coloca o lead em uma campanha já ativa (sem passar pelas validações do painel).
+export async function enroll(leadId: string, mode: "simulacao" | "autonomo" = "autonomo", status = "ativa"): Promise<string> {
+  const camp = (await pool.query("insert into public.commercial_campaigns(name,mode,status) values ('Teste',$1,$2) returning id", [mode, status])).rows[0].id;
+  await pool.query("insert into public.commercial_campaign_leads(lead_id,campaign_id,baseline) select lead_id,$2,to_jsonb(c) from public.commercial_leads c where lead_id=$1", [leadId, camp]);
+  return camp;
 }

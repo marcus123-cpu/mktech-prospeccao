@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { asAdmin, asService, candidate, createToken, pool, register, resetData, rpc } from './helpers';
+import { asAdmin, asService, candidate, createToken, enroll, pool, register, resetData, rpc } from './helpers';
 import { greetingDecision } from '@/lib/commercial/v6/decision';
 import { contextualDecision } from '@/lib/commercial/v6/decision';
 let token:string;let lead:string;
@@ -18,6 +18,7 @@ describe('V6: leases e persistência isolada',()=>{
   await resetData();token=(await createToken()).id;
   lead=(await register(token,candidate())).lead_id;
   await asAdmin(c=>c.query('select admin_commercial_lead($1,$2::jsonb)',[lead,JSON.stringify({eligible:true,eligibility_reason:'simulação isolada'})]));
+  await enroll(lead);
   await pool.query("update commercial_settings set enabled=true,channel_authorized=true,engine_version='v6',test_phones=array['+5517991234567']; update outreach_settings set enabled=true,paused=false,window_start=0,window_end=24,reply_window_start=0,reply_window_end=24,min_fit_score=0,send_days=array[1,2,3,4,5,6,7]");
  });
  it('reserva exclusiva entre workers',async()=>{const r=await Promise.all([contexts(),contexts()]);expect(r.reduce((n,x)=>n+x.contexts.length,0)).toBe(1);});
