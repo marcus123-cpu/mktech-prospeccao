@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ErrorBox, Fold, PageHeader } from "@/components/ui";
 import { dbErrorMessage, requireAdmin } from "@/lib/auth";
 import { fmtDateTime, haQuanto } from "@/lib/time";
-import { SwitchControls, type OutreachSettings } from "../envio/Forms";
 import { ArchiveButton } from "./Archive";
 import { ClearPriceButton } from "./ClearPrice";
 import { AutoRefresh } from "@/components/AutoRefresh";
@@ -25,20 +24,17 @@ type Card = {
   sent_audio: boolean;
 };
 
-// Só mostra. Mover um lead entre colunas é feito na ficha (etapa, proposta,
-// fechamento); a resposta ao cliente é sempre sua.
+// Só mostra. A conversa com o cliente é sempre sua; o Hermes só manda a saudação.
+// Colunas parecidas ficam juntas para o quadro ser curto; as vazias (fora as principais) somem.
 const COLUMNS = [
-  { key: "fila", title: "⏳ Na fila", hint: "mensagem pronta, aguardando a vez", tone: "border-slate-400 bg-slate-500/10!" },
-  { key: "enviado", title: "📤 Enviado", hint: "aguardando resposta", tone: "border-indigo-400 bg-indigo-500/10!" },
-  { key: "aguardando", title: "🕐 Aguardando humano", hint: "resposta automática: o texto só sai quando uma pessoa escrever", tone: "border-cyan-400 bg-cyan-500/10!" },
-  { key: "sem_resposta", title: "😶 Sem resposta", hint: "2 dias úteis sem pessoa responder: nada é enviado sozinho", tone: "border-zinc-400 bg-zinc-500/10!" },
-  { key: "lembrando", title: "🔔 Lembrete enviado", hint: "você falou por último e o cliente sumiu: o sistema já lembrou", tone: "border-teal-400 bg-teal-500/10!" },
-  { key: "sem_retorno", title: "💤 Sem retorno", hint: "2 lembretes sem resposta: encerrado, nada mais é enviado", tone: "border-stone-400 bg-stone-500/10!" },
-  { key: "conversa", title: "💬 Em conversa", hint: "uma pessoa respondeu; abra o histórico para acompanhar", tone: "border-sky-400 bg-sky-500/10!" },
-  { key: "valor", title: "💰 Pergunta de valor", hint: "perguntou preço: responda você", tone: "border-amber-400 bg-amber-500/10!" },
-  { key: "fechando", title: "🤝 Fechando", hint: "proposta ou negociação em andamento", tone: "border-violet-400 bg-violet-500/10!" },
-  { key: "fechado", title: "🎉 Fechado", hint: "venda fechada", tone: "border-emerald-400 bg-emerald-500/10!" },
-  { key: "encerrado", title: "🚫 Encerrados", hint: "sem interesse, não contatar ou oportunidade encerrada", tone: "border-zinc-400 bg-zinc-500/10!" },
+  { key: "fila", keys: ["fila"], title: "⏳ Na fila", hint: "saudação pronta, aguardando a vez", dot: "bg-slate-400", core: false },
+  { key: "enviado", keys: ["enviado"], title: "📤 Saudação enviada", hint: "aguardando resposta", dot: "bg-indigo-400", core: true },
+  { key: "aguardando", keys: ["aguardando"], title: "🕐 Resposta automática", hint: "a clínica respondeu por robô: espere uma pessoa", dot: "bg-cyan-400", core: false },
+  { key: "conversa", keys: ["conversa", "valor"], title: "💬 Responderam", hint: "uma pessoa respondeu: é com você", dot: "bg-sky-400", core: true },
+  { key: "fechando", keys: ["fechando"], title: "🤝 Fechando", hint: "proposta ou negociação", dot: "bg-violet-400", core: false },
+  { key: "fechado", keys: ["fechado"], title: "🎉 Fechado", hint: "venda fechada", dot: "bg-emerald-400", core: false },
+  { key: "sem_resposta", keys: ["sem_resposta", "lembrando", "sem_retorno"], title: "😶 Sem resposta", hint: "ninguém respondeu", dot: "bg-zinc-400", core: false },
+  { key: "encerrado", keys: ["encerrado"], title: "🚫 Encerrados", hint: "sem interesse ou não contatar", dot: "bg-stone-500", core: false },
 ] as const;
 
 export default async function FunilPage() {
@@ -48,7 +44,6 @@ export default async function FunilPage() {
     .select("id, business_name, city, fit_score, coluna, movido_em, last_reply, last_reply_kind, last_reply_at, greeting_sent_at, sent_at, sent_audio")
     .order("movido_em", { ascending: false })
     .limit(600);
-  const { data: bot } = await supabase.from("outreach_settings").select("*").eq("id", 1).maybeSingle();
   const cards = (data ?? []) as Card[];
   const archived = cards.filter((c) => c.coluna === "arquivado");
   const attention = cards.filter((c) => c.coluna === "atencao").length;
@@ -62,19 +57,9 @@ export default async function FunilPage() {
       <AutoRefresh />
       <PageHeader
         title="🎯 Funil"
-        subtitle="Acompanhe as etapas da prospecção. Abra a central para ver o histórico e assumir o atendimento."
-        actions={<Link href="/conversas" className="btn-primary">Central de conversas</Link>}
+        subtitle="Do envio da saudação até o fechamento, tudo em um quadro só."
+        actions={<><Link href="/disparo" className="btn-ghost">📤 Disparar</Link><Link href="/conversas" className="btn-primary">💬 Conversas</Link></>}
       />
-      {bot && (
-        <div className="card mb-4 flex flex-wrap items-center justify-between gap-3 p-3">
-          <div className="text-sm">
-            <span className="font-medium">Bot de WhatsApp: </span>
-            {!bot.enabled ? "desligado" : bot.paused ? "pausado" : "ligado"}
-            <span className="block text-xs text-muted">Mesma chave da tela Envio automático.</span>
-          </div>
-          <SwitchControls s={bot as OutreachSettings} />
-        </div>
-      )}
       {error ? (
         <ErrorBox message={dbErrorMessage(error)} />
       ) : (
@@ -101,65 +86,52 @@ export default async function FunilPage() {
               <Link href="/disparo" className="underline">Ir para Disparar</Link>
             </p>
           )}
-          {/* No celular as colunas deslizam para o lado; estes atalhos levam direto a cada uma. */}
-          <nav aria-label="Colunas" className="-mx-4 mb-3 flex gap-2 overflow-x-auto px-4 md:hidden">
+          {/* Resumo: um número por etapa; no celular rola para o lado e leva à coluna. */}
+          <nav aria-label="Resumo do funil" className="-mx-4 mb-4 flex gap-2 overflow-x-auto px-4 md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
             {COLUMNS.map((col) => {
-              const n = cards.filter((c) => c.coluna === col.key).length;
+              const n = cards.filter((c) => (col.keys as readonly string[]).includes(c.coluna ?? "")).length;
               return (
-                <a
-                  key={col.key}
-                  href={`#${col.key}`}
-                  className={`badge shrink-0 py-1 ${col.key === "valor" && n > 0 ? "bg-amber-500/20 text-amber-200" : "bg-panel-2 text-slate-300"}`}
-                >
-                  {col.title} {n}
+                <a key={col.key} href={`#${col.key}`} className={`flex shrink-0 items-center gap-2 rounded-full border border-line px-3 py-1.5 text-xs ${n > 0 ? "bg-panel text-slate-100" : "text-muted"}`}>
+                  <span className={`h-2 w-2 rounded-full ${col.dot}`} />{col.title.replace(/^\S+\s/, "")}<b>{n}</b>
                 </a>
               );
             })}
           </nav>
-          <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-4 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 xl:grid-cols-4 2xl:grid-cols-5">
+          <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 xl:grid-cols-3">
             {COLUMNS.map((col) => {
-              const items = cards.filter((c) => c.coluna === col.key);
+              const items = cards.filter((c) => (col.keys as readonly string[]).includes(c.coluna ?? ""));
+              if (items.length === 0 && !col.core) return null;
+              const talk = col.key === "conversa";
               return (
-                <section
-                  key={col.key}
-                  id={col.key}
-                  aria-label={col.title}
-                  className={`card w-[82vw] max-w-sm shrink-0 snap-start border-t-4 p-3 md:w-auto md:max-w-none ${col.tone}`}
-                >
-                  <h2 className="flex items-baseline justify-between text-sm font-semibold">
-                    {col.title}
-                    <span className="text-xs font-normal text-muted">{items.length}</span>
+                <section key={col.key} id={col.key} aria-label={col.title} className="card w-[84vw] max-w-sm shrink-0 snap-start p-4 md:w-auto md:max-w-none">
+                  <h2 className="flex items-center justify-between text-sm font-semibold">
+                    <span className="flex items-center gap-2"><span className={`h-2.5 w-2.5 rounded-full ${col.dot}`} />{col.title}</span>
+                    <span className="rounded-full bg-panel-2 px-2 py-0.5 text-xs font-normal text-muted">{items.length}</span>
                   </h2>
-                  <p className="mb-3 text-xs text-muted">{col.hint}</p>
-                  <ul className="space-y-2">
+                  <p className="mb-3 mt-1 text-xs text-muted">{col.hint}</p>
+                  <ul className="max-h-[60vh] space-y-2 overflow-y-auto pr-1">
                     {items.slice(0, 50).map((c) => (
-                      <li key={c.id} className="rounded-lg bg-panel-2 p-3 text-sm">
-                        <Link href={`/conversas?lead=${c.id}`} className="font-medium hover:underline">{c.business_name}</Link>
-                        <div className="text-xs text-muted">
-                          {c.city}
-                          {c.fit_score !== null && ` · nota ${c.fit_score}`}
+                      <li key={c.id} className="rounded-xl border border-line bg-panel-2/60 p-3 text-sm">
+                        <div className="flex items-start justify-between gap-2">
+                          <Link href={`/conversas?lead=${c.id}`} className="min-w-0 truncate font-medium hover:underline">{c.business_name}</Link>
+                          {c.coluna === "valor" && <span className="shrink-0 rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] text-amber-200">💰 valor</span>}
                         </div>
-                        {c.sent_audio && (col.key === "conversa" || col.key === "valor") && (
-                          <p className="mt-2 rounded-md bg-amber-500/15 px-2 py-1 text-xs text-amber-200">Mandou áudio: mude o estilo da conversa</p>
-                        )}
-                        {c.last_reply && (col.key === "conversa" || col.key === "valor") && (
-                          <p className="mt-2 line-clamp-3 text-xs text-slate-300">“{c.last_reply}”</p>
-                        )}
-                        <div className="mt-1 text-[11px] text-muted">
-                          {c.last_reply_at && (col.key === "conversa" || col.key === "valor")
-                            ? `respondeu ${fmtDateTime(c.last_reply_at)} (${haQuanto(c.last_reply_at)})`
-                            : c.sent_at
-                              ? `enviada ${fmtDateTime(c.sent_at)}`
-                              : c.greeting_sent_at
-                                ? `saudação ${fmtDateTime(c.greeting_sent_at)}`
-                                : c.movido_em && fmtDateTime(c.movido_em)}
-                        </div>
-                        {col.key === "valor" && <ClearPriceButton id={c.id} />}
+                        <p className="text-xs text-muted">{c.city}{c.fit_score !== null && ` · nota ${c.fit_score}`}</p>
+                        {c.sent_audio && talk && <p className="mt-2 rounded-md bg-amber-500/15 px-2 py-1 text-xs text-amber-200">🎤 Mandou áudio</p>}
+                        {c.last_reply && talk && <p className="mt-2 line-clamp-3 rounded-lg bg-panel px-2.5 py-1.5 text-xs text-slate-300">“{c.last_reply}”</p>}
+                        <p className="mt-2 text-[11px] text-muted">
+                          {c.last_reply_at && talk
+                            ? `respondeu ${haQuanto(c.last_reply_at)}`
+                            : c.sent_at ? `enviada ${fmtDateTime(c.sent_at)}`
+                            : c.greeting_sent_at ? `saudação ${fmtDateTime(c.greeting_sent_at)}`
+                            : c.movido_em ? fmtDateTime(c.movido_em) : ""}
+                        </p>
+                        {c.coluna === "valor" && <ClearPriceButton id={c.id} />}
                         <ArchiveButton id={c.id} name={c.business_name} archived={false} />
                       </li>
                     ))}
                     {items.length > 50 && <li className="text-xs text-muted">e mais {items.length - 50}…</li>}
-                    {items.length === 0 && <li className="text-xs text-muted">Nada aqui.</li>}
+                    {items.length === 0 && <li className="py-3 text-center text-xs text-muted">Nada aqui ainda.</li>}
                   </ul>
                 </section>
               );
