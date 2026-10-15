@@ -19,7 +19,7 @@ const EVENT: Record<string, string> = {
 };
 const SOURCE: Record<string, string> = { simulacao: "Hermes (simulado)", hermes_v4: "Hermes", humana: "Cliente", automatica: "Resposta automática", saudacao: "Saudação" };
 type Campaign = { id: string; name: string; notes: string | null; mode: string; status: string; created_at: string; activated_at: string | null };
-type Member = { lead_id: string; leads: { business_name: string; city: string; contacted: boolean; do_not_contact: boolean; secretary_handoff_at: string | null } | null; commercial: { stage: string; conversation_phase: string } | null };
+type Member = { lead_id: string; leads: { business_name: string; city: string; contacted: boolean; do_not_contact: boolean; secretary_handoff_at: string | null } | null; commercial: { stage: string; conversation_phase: string; readiness: { status?: string; reasons?: string[] } | null } | null };
 type LogRow = { id: number; lead_id: string | null; event: string; detail: Record<string, unknown>; created_at: string };
 type Timeline = { id: string; lead_id: string; occurred_at: string; direction: string; source: string; body: string | null };
 
@@ -47,7 +47,7 @@ export default async function CampanhasPage({ searchParams }: { searchParams: Pr
     const base = (m.data ?? []) as unknown as Omit<Member, "commercial">[];
     const ids = base.map((x) => x.lead_id);
     const [states, tl] = ids.length ? await Promise.all([
-      supabase.from("commercial_leads").select("lead_id,stage,conversation_phase").in("lead_id", ids),
+      supabase.from("commercial_leads").select("lead_id,stage,conversation_phase,readiness").in("lead_id", ids),
       supabase.from("conversation_timeline").select("id,lead_id,occurred_at,direction,source,body").in("lead_id", ids).order("occurred_at"),
     ]) : [{ data: [] }, { data: [] }];
     const byLead = new Map((states.data ?? []).map((s) => [s.lead_id, s]));
@@ -110,7 +110,8 @@ export default async function CampanhasPage({ searchParams }: { searchParams: Pr
               const events = timeline.filter((t) => t.lead_id === m.lead_id);
               return <li key={m.lead_id} className="py-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div><b>{m.leads?.business_name}</b> <span className="text-sm text-muted">{m.leads?.city} · {m.commercial?.stage ?? "—"} · {m.commercial?.conversation_phase ?? "—"}{m.leads?.do_not_contact ? " · NÃO CONTATAR" : ""}{m.leads?.secretary_handoff_at ? " · com você" : ""}</span></div>
+                  <div><b>{m.leads?.business_name}</b> <span className="text-sm text-muted">{m.leads?.city} · {m.commercial?.stage ?? "—"} · {m.commercial?.conversation_phase ?? "—"}{m.leads?.do_not_contact ? " · NÃO CONTATAR" : ""}{m.leads?.secretary_handoff_at ? " · com você" : ""}</span>
+                    {m.commercial?.readiness?.status && m.commercial.readiness.status !== "READY_FOR_OUTREACH" && !m.leads?.contacted && <p className="text-xs text-amber-300">Hermes aguardando pesquisa antes da saudação: {(m.commercial.readiness.reasons ?? []).join("; ") || m.commercial.readiness.status}</p>}</div>
                   {current.status !== "encerrada" && !m.leads?.contacted && <ActionForm action={removeCampaignLead} submit="Remover" variant="btn-ghost" className="space-y-0"><input type="hidden" name="lead_id" value={m.lead_id} /></ActionForm>}
                 </div>
                 {events.length > 0 && <details className="mt-2 text-sm"><summary className="cursor-pointer">Conversa ({events.length})</summary>

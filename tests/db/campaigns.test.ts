@@ -59,19 +59,22 @@ describe('Hermes autônomo: campanhas', () => {
     expect((await q('select status from commercial_outbox'))[0].status).toBe('cancelada');
   });
 
-  it('seleção manual rejeita bloqueados, duplicados, contatados e pesquisa insuficiente', async () => {
+  it('seleção manual autoriza lead com pesquisa fraca, mas rejeita bloqueados, duplicados, contatados e telefone fixo', async () => {
     const dup = (await register(token, candidate({ business_name: 'Outra Clínica', phone: '(17) 98888-1111', instagram: '@outra' }))).lead_id;
     const weak = (await register(token, candidate({ business_name: 'Clínica Fraca', phone: '(17) 97777-2222', instagram: '@fraca' }))).lead_id;
+    const fixo = (await register(token, candidate({ business_name: 'Clínica Fixo', phone: '(14) 3222-1000', instagram: '@fixo' }))).lead_id;
     const blocked = (await register(token, candidate({ business_name: 'Clínica Bloqueada', phone: '(17) 96666-3333', instagram: '@bloq' }))).lead_id;
     const done = (await register(token, candidate({ business_name: 'Clínica Contatada', phone: '(17) 95555-4444', instagram: '@cont' }))).lead_id;
     for (const id of [dup, blocked, done]) await asAdmin(c => c.query('select admin_commercial_lead($1,$2::jsonb)', [id, JSON.stringify({ eligible: true, eligibility_reason: 'pesquisa completa' })]));
     await pool.query('update leads set do_not_contact=true where id=$1', [blocked]);
     await pool.query('update leads set contacted=true where id=$1', [done]);
     camp = await adm('select admin_campaign_create($1,$2)', ['Seleção', null]);
-    const r = await adm('select admin_campaign_add_leads($1,$2::uuid[])', [camp, [lead, dup, weak, blocked, done, lead]]);
-    expect(r.added).toBe(2);
+    const r = await adm('select admin_campaign_add_leads($1,$2::uuid[])', [camp, [lead, dup, weak, fixo, blocked, done, lead]]);
+    expect(r.added).toBe(3);
+    expect((await pool.query('select eligible from commercial_leads where lead_id=$1', [weak])).rows[0].eligible).toBe(true);
     const why = Object.fromEntries(r.rejected.map((x: any) => [x.lead_id, x.reason]));
-    expect(why[weak]).toMatch(/Pesquisa insuficiente/);
+    expect(why[weak]).toBeUndefined();
+    expect(why[fixo]).toMatch(/fixo/);
     expect(why[blocked]).toMatch(/não ser contatado/);
     expect(why[done]).toMatch(/já foi contatado/);
     // Mesmo lead em segunda campanha ou telefone repetido é recusado.

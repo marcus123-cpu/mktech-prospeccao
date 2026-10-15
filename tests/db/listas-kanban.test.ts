@@ -171,16 +171,16 @@ describe("campanhas a partir de listas e dashboard", () => {
   it("monta campanha por lista, por elegíveis, sem duplicar, e conta destinatários", async () => {
     const a = await mk(), b = await mk(), c = await mk();
     for (const id of [a, b, c]) await ready(id);
-    const weak = await mk(); // não elegível: pesquisa insuficiente
+    const weak = await mk(); // pesquisa fraca: a seleção do administrador autoriza
     const list = await newList();
     await adm(`select admin_list_add($1, $2::uuid[])`, [list, [a, b, weak]]);
     const camp = await adm(`select admin_campaign_create($1, null)`, ["Teste"]);
     const r = await adm(`select admin_campaign_add_list($1, $2)`, [camp, list]);
-    expect(r).toMatchObject({ added: 2, rejected_total: 1 });
+    expect(r).toMatchObject({ added: 3, rejected_total: 0 });
     expect((await q(`select source_list_id from commercial_campaigns`))[0].source_list_id).toBe(list);
     const all = await adm(`select admin_campaign_add_eligible($1)`, [camp]);
-    expect(all.added).toBe(1); // só o "c": a e b já estão; weak segue recusado
-    expect((await adm(`select admin_campaign_stats($1)`, [camp])).recipients).toBe(3);
+    expect(all.added).toBe(1); // só o "c": a, b e weak já estão
+    expect((await adm(`select admin_campaign_stats($1)`, [camp])).recipients).toBe(4);
     const other = await adm(`select admin_campaign_create($1, null)`, ["Outra"]);
     expect((await adm(`select admin_campaign_add_leads($1, $2::uuid[])`, [other, [a]])).rejected[0].reason).toMatch(/já pertence/);
   });
