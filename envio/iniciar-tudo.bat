@@ -5,5 +5,6 @@ start "" /b cmd /c "%~dp0ponte-loop.bat"
 start "" /b cmd /c "%~dp0secretario-loop.bat"
 rem A pesquisa pedida no painel roda pela tarefa independente "MKTech Pedido Hermes".
 start "" /b cmd /c "%~dp0comercial-loop.bat"
+start "" /b cmd /c "%~dp0aprendizado-loop.bat"
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0ativar-fila.ps1"
 call "%~dp0enviador-loop.bat"

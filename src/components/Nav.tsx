@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 // Cada aba tem um emoji e uma cor própria (dot = bolinha/ícone, on = fundo quando está aberta).
 const ITEMS = [
   { href: "/conexao", emoji: "🔌", label: "Conexão", short: "Conexão", hint: "WhatsApp e QR code", mobile: true, on: "bg-emerald-500/20", bar: "bg-emerald-400" },
+  { href: "/aprendizado", emoji: "🧠", label: "Aprendizado", short: "Aprender", hint: "o Hermes estudando você", mobile: false, on: "bg-violet-500/20", bar: "bg-violet-400" },
   { href: "/disparo", emoji: "📤", label: "Disparar", short: "Disparar", hint: "escolher leads e enviar", mobile: true, on: "bg-emerald-500/20", bar: "bg-emerald-400" },
   { href: "/hermes", emoji: "🚀", label: "Hermes", short: "Hermes", hint: "pesquisar leads e ver os números", mobile: true, on: "bg-violet-500/20", bar: "bg-violet-400" },
   { href: "/", emoji: "🏠", label: "Hoje", short: "Hoje", hint: "o que fazer agora", mobile: true, on: "bg-violet-500/20", bar: "bg-violet-400" },
