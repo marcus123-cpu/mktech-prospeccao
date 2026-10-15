@@ -40,6 +40,8 @@ describe('V6: autorização e contexto (propostas simuladas, sem inferência rea
  it('diagnóstico ausente bloqueia',()=>{const c=context();c.research.diagnosis=null;expect(greetingDecision(c).action).toBe('wait');});
  it('serviço inventado bloqueia',()=>{const c=context();c.research.services=['botox'];expect(evaluateReadiness(c).status).toBe('NEEDS_RESEARCH');});
  it('baixa confiança bloqueia',()=>{const c=context();c.research.diagnosis!.confidence='baixa';expect(evaluateReadiness(c).status).toBe('LOW_CONFIDENCE');});
+ it('campanha ativa autoriza a saudação simples mesmo sem pesquisa completa',()=>{const c=context();c.research.diagnosis=null;c.campaign_mode='autonomo';const d=greetingDecision(c);expect(d.action).toBe('text');expect(d.body).toMatch(/^Olá, (bom dia|boa tarde|boa noite)! Tudo bem\?$/);expect(d.readiness.status).toBe('READY_FOR_OUTREACH');});
+ it('campanha ativa não libera contato bloqueado nem fuso desconhecido',()=>{const a=context();a.campaign_mode='autonomo';a.do_not_contact=true;expect(greetingDecision(a).body).toBeNull();const b=context();b.campaign_mode='autonomo';b.recipient_timezone=null;expect(greetingDecision(b).action).toBe('wait');});
  it('opt-out bloqueia primeiro contato',()=>{const c=context();c.do_not_contact=true;expect(greetingDecision(c).body).toBeNull();});
  it('primeiro contato só saudação',()=>{const c=context();c.first_contact=true;expect(greetingDecision(c).body).toBe('Olá, boa tarde! Tudo bem?');});
  it('proposta contextual válida',()=>{const c=context();expect(validateProposal(c,proposal(c))).toEqual([]);});

@@ -6,7 +6,12 @@ import type { SemanticProposal, V6Context } from "./contracts";
 
 export type V6Decision=Decision & {phase:string;memory:V6Context['commercial_memory'];interpretations:SemanticProposal['interpretations'];readiness:ReturnType<typeof evaluateReadiness>;model:string|null;validation_errors:string[]};
 export function greetingDecision(ctx:V6Context):V6Decision {
-  const readiness=evaluateReadiness(ctx);
+  const checked=evaluateReadiness(ctx);
+  // Campanha ativa: a escolha do administrador autoriza a saudação simples ("Olá, bom dia! Tudo bem?"), que não afirma
+  // nada sobre o negócio. Contato bloqueado e fuso desconhecido continuam impedindo. A pesquisa é exigida nas respostas.
+  const authorized=(ctx.campaign_mode==='autonomo'||ctx.campaign_mode==='simulacao')&&checked.status!=='DO_NOT_CONTACT'&&!!ctx.recipient_timezone;
+  const readiness:typeof checked=authorized&&checked.status!=='READY_FOR_OUTREACH'
+    ?{status:'READY_FOR_OUTREACH',reasons:['Saudação autorizada pelo administrador na campanha. Pesquisa: '+checked.reasons.join('; ')],confidence:checked.confidence}:checked;
   const ready=readiness.status==='READY_FOR_OUTREACH'&&!ctx.manual&&!ctx.do_not_contact;
   return {intent:ready?'greeting_v6':'research_required',objective:'Verificar prontidão antes da saudação',reason:readiness.reasons.join('; '),action:ready?'text':'wait',body:ready?greetingAt(ctx.now,ctx.recipient_timezone!):null,
     state:{...ctx.state,facts:{...ctx.state.facts},stage:ready?'PRONTO_PARA_CONTATO':ctx.state.stage,video_offered:false},notification:null,
