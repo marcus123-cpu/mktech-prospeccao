@@ -66,25 +66,35 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
     key: e.id, serverId: e.id.replace(":painel", ""), body: e.body ?? "", at: e.occurred_at, status: "enviando",
   }));
   const doneIds = events.filter((e) => e.source === "painel" || e.source === "painel_falhou").map((e) => e.id.replace(":painel", ""));
-  const box = "lg:h-[calc(100vh-12rem)]";
 
   const list = (
-    <aside className={`flex h-[60vh] flex-col overflow-hidden rounded-xl border border-line bg-[#111b21] ${box}`}>
-      <form action="/conversas" className="flex gap-2 border-b border-line p-3">
+    <aside className="flex h-full min-h-0 flex-col overflow-hidden bg-[#111b21]">
+      <header className="flex h-16 shrink-0 items-center justify-between px-5">
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#e9edef]">Conversas</h1>
+        <span className="rounded-full bg-white/5 px-2.5 py-1 text-[11px] text-[#8696a0]">{inbox.count ?? 0} contatos</span>
+      </header>
+      <form action="/conversas" className="flex gap-1 px-3 pb-3">
         <input type="hidden" name="filtro" value={filter} />
-        <input id="q" name="q" className="input rounded-full bg-[#202c33]" placeholder="🔎 Buscar nome ou cidade" aria-label="Buscar conversa" defaultValue={term} />
-        <button className="btn-ghost rounded-full">Buscar</button>
+        <div className="flex min-w-0 flex-1 items-center gap-3 rounded-lg bg-[#202c33] px-3">
+          <svg width="17" height="17" className="shrink-0 text-[#8696a0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 4 4" /></svg>
+          <input id="q" name="q" className="h-9 w-full min-w-0 bg-transparent text-[13px] text-[#e9edef] outline-none placeholder:text-[#8696a0]" placeholder="Pesquisar nome ou cidade" aria-label="Buscar conversa" defaultValue={term} />
+          <button className="rounded px-1 py-2 text-[11px] text-[#8696a0] hover:text-white">Buscar</button>
+        </div>
       </form>
+      <nav aria-label="Filtrar conversas" className="flex shrink-0 gap-2 border-b border-white/5 px-3 pb-3">
+        {FILTERS.map((f) => <Link key={f.key} href={href({ filtro: f.key })} aria-current={filter === f.key ? "page" : undefined}
+          className={`rounded-full px-3 py-1.5 text-[12px] font-medium transition ${filter === f.key ? "bg-[#0a332c] text-[#00d9a4]" : "bg-[#202c33] text-[#8696a0] hover:bg-[#2a3942] hover:text-[#e9edef]"}`}>{f.label}</Link>)}
+      </nav>
       <div className="min-h-0 flex-1 overflow-y-auto">
         {rows.length === 0 ? <p className="p-4 text-sm text-muted">Nenhuma conversa neste filtro.</p> : rows.map((c) => {
           const waiting = conversationState(c) === "aguardando";
           const active = current?.id === c.id;
           return <Link key={c.id} href={href({ lead: c.id, pagina: String(page) })} aria-current={active ? "page" : undefined}
-            className={`flex gap-3 border-b border-white/5 px-3 py-3 transition hover:bg-[#202c33] ${active ? "bg-[#2a3942]" : ""}`}>
-            <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${waiting ? "bg-[#00a884] text-white" : "bg-[#6a7175] text-white"}`}>{initial(c.business_name)}</span>
+            className={`flex gap-3 border-b border-white/5 px-4 py-4 transition hover:bg-[#202c33] ${active ? "bg-[#2a3942]" : ""}`}>
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2d4147] text-base font-medium text-[#c5d4d6]">{initial(c.business_name)}</span>
             <span className="min-w-0 flex-1">
-              <span className="flex justify-between gap-2"><span className="truncate text-sm font-semibold">{c.business_name}</span><span className="shrink-0 text-[10px] text-muted">{haQuanto(c.activity_at)}</span></span>
-              <span className={`mt-0.5 line-clamp-1 block text-xs ${waiting ? "font-medium text-slate-100" : "text-slate-400"}`}>{waiting && "● "}{c.last_in_media === "audio" ? "🎤 Áudio recebido" : c.last_in_body ?? "Saudação enviada"}</span>
+              <span className="flex justify-between gap-2"><span className="truncate text-[14px] font-medium text-[#e9edef]">{c.business_name}</span><span className={`shrink-0 text-[10px] ${waiting ? "text-[#00a884]" : "text-[#8696a0]"}`}>{haQuanto(c.activity_at)}</span></span>
+              <span className="mt-1 flex items-center gap-2"><span className="min-w-0 flex-1 truncate text-[12px] text-[#8696a0]">{c.last_in_media === "audio" ? "Mensagem de voz" : c.last_in_body ?? "Conversa iniciada"}</span>{waiting && <span title="Aguardando resposta" className="h-2 w-2 shrink-0 rounded-full bg-[#00a884]" />}</span>
             </span>
           </Link>;
         })}
@@ -98,12 +108,13 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
   );
 
   const chat = detailError ? <ErrorBox message="Não foi possível carregar os dados desta conversa. Tente novamente." /> : current ? (
-    <section className={`flex h-[75vh] flex-col overflow-hidden rounded-xl border border-line bg-[#0b141a] ${box}`}>
+    <section className="flex h-full min-h-0 flex-col overflow-hidden bg-[#0b141a]">
       <ManualProvider key={current.id} initial={pendingInitial} doneIds={doneIds}>
-        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-white/5 bg-[#202c33] px-4 py-3">
+        <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-white/5 bg-[#202c33] px-4">
           <div className="flex min-w-0 items-center gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#6a7175] font-semibold text-white">{initial(current.business_name)}</span>
-            <div className="min-w-0"><h2 className="truncate font-semibold">{current.business_name}</h2><p className="truncate text-xs text-muted">{current.city}{current.phone_e164 ? ` · ${current.phone_e164}` : ""}</p></div>
+            <Link href={href({})} className="flex h-9 w-8 shrink-0 items-center justify-center rounded-full text-[#aebac1] hover:bg-white/10 md:hidden" aria-label="Voltar para lista de conversas">←</Link>
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#40565c] font-medium text-[#e9edef]">{initial(current.business_name)}</span>
+            <div className="min-w-0"><h2 className="truncate text-[14px] font-medium text-[#e9edef]">{current.business_name}</h2><p className="mt-0.5 truncate text-[11px] text-[#8696a0]">{current.city}{current.phone_e164 ? ` · ${current.phone_e164}` : ""}</p></div>
           </div>
           <InfoToggle />
         </header>
@@ -115,14 +126,14 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
               return <li key={e.id}>
                 {newDay && <p className="my-3 text-center"><span className="rounded-lg bg-[#182229] px-3 py-1 text-[11px] text-[#8696a0] shadow">{day(e.occurred_at)}</span></p>}
                 <div className={`flex ${out ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[88%] rounded-lg px-3 py-1.5 shadow-sm sm:max-w-[65%] ${out ? "rounded-tr-none bg-[#005c4b] text-[#e9edef]" : "rounded-tl-none bg-[#202c33] text-[#e9edef]"} ${e.source === "painel_falhou" ? "!bg-rose-900/50" : ""}`}>
-                    <p className={`mb-0.5 text-[10px] font-semibold uppercase tracking-wide ${out ? "text-white/70" : "text-muted"}`}>{out ? SOURCE[e.source] ?? who(e) : who(e) === "Cliente" && e.source === "automatica" ? "Resposta automática" : "Cliente"}</p>
+                  <div className={`max-w-[90%] rounded-lg px-3 py-2 shadow-sm sm:max-w-[78%] xl:max-w-[68%] ${out ? "rounded-tr-none bg-[#005c4b] text-[#e9edef]" : "rounded-tl-none bg-[#202c33] text-[#e9edef]"} ${e.source === "painel_falhou" ? "!bg-rose-900/50" : ""}`}>
+                    {(e.source === "painel_falhou" || e.source === "automatica" || ["hermes_v4", "secretario", "secretaria"].includes(e.source)) && <p className="mb-1 text-[10px] font-medium text-white/50">{SOURCE[e.source] ?? who(e)}</p>}
                     {e.media === "audio" ? (
                       e.external_id && audioIds.has(e.external_id) ? <div className="flex items-center gap-2">
                         <audio controls preload="none" className="h-10 w-56 max-w-full" src={`/api/conversas/audio/${encodeURIComponent(e.external_id)}`} />
                         <a href={`/api/conversas/audio/${encodeURIComponent(e.external_id)}?baixar=1`} download title="Baixar áudio" aria-label="Baixar áudio" className="btn-ghost shrink-0 px-2 py-1 text-sm">⬇</a>
                       </div> : <p className="text-sm text-muted">🎤 Áudio (arquivo não disponível)</p>
-                    ) : <p className="whitespace-pre-wrap break-words text-sm">{textOf(e)}</p>}
+                    ) : <p className="whitespace-pre-wrap break-words text-[14px] leading-[1.55]">{textOf(e)}</p>}
                     <p className={`mt-1 text-right text-[10px] ${out ? "text-white/70" : "text-muted"}`}>{new Date(e.occurred_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" })}</p>
                   </div>
                 </div>
@@ -140,7 +151,7 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
   ) : <Empty title="Selecione uma conversa">As respostas recebidas pelo WhatsApp aparecem aqui.</Empty>;
 
   const info = current ? (
-    <aside className={`space-y-4 overflow-y-auto ${box}`}>
+    <aside className="space-y-4">
       <section className="card p-4 text-center">
         <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-accent to-accent-2 text-2xl font-semibold text-white">{initial(current.business_name)}</span>
         <h3 className="mt-2 font-semibold">{current.business_name}</h3>
@@ -169,11 +180,7 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
 
   return (
     <>
-      <PageHeader title="💬 Conversas" subtitle="Conversas dos contatos cadastrados. Ao reconectar o WhatsApp, o histórico disponível é importado automaticamente." />
-      <div className="mb-4 flex flex-wrap gap-2">
-        {FILTERS.map((f) => <Link key={f.key} href={href({ filtro: f.key })} className={filter === f.key ? "btn-primary" : "btn-ghost"}>{f.label}</Link>)}
-      </div>
-      <ChatShell list={list} chat={chat} info={info} />
+      <ChatShell list={list} chat={chat} info={info} selected={!!sp.lead} />
     </>
   );
 }

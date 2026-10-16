@@ -34,7 +34,7 @@ export function VoiceReply({ leadId, disabled }: { leadId: string; disabled: boo
     finally { setBusy(false); }
   }
   if (disabled) return null;
-  return <details className="border-t border-white/5 bg-[#111b21]"><summary className="cursor-pointer px-4 py-2 text-xs text-[#8696a0] hover:text-white">🎙️ Enviar mensagem de voz</summary>
+  return <details className="shrink-0 border-t border-white/5 bg-[#202c33]"><summary className="cursor-pointer px-4 py-2 text-[11px] text-[#8696a0] hover:text-[#e9edef]">Enviar mensagem de voz</summary>
   <form onSubmit={send} className="space-y-3 p-3">
     <p className="text-xs text-muted">Anexe seu áudio, escute a prévia e envie. MP3, M4A, OGG, WAV ou WebM · até 3 MB e 10 minutos.</p>
     <input ref={input} id="voice-file" type="file" accept=".mp3,.m4a,.ogg,.wav,.webm,.aac,audio/*" disabled={busy}

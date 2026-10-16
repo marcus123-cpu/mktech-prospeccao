@@ -64,7 +64,6 @@ export function PendingBubbles() {
     {api.items.filter((p) => p.body).map((p) => (
       <li key={p.key} className="flex justify-end">
         <div className={`max-w-[88%] rounded-lg rounded-tr-none px-3 py-1.5 shadow-sm sm:max-w-[65%] ${p.status === "falhou" ? "bg-rose-900/50" : "bg-[#005c4b] text-[#e9edef]"}`}>
-          <p className="mb-0.5 text-[10px] font-semibold uppercase tracking-wide text-white/70">Você · painel</p>
           <p className="whitespace-pre-wrap break-words text-sm">{p.body}</p>
           <p className="mt-1 flex items-center justify-end gap-2 text-[10px] text-white/70">
             {p.status === "falhou" && <span className="text-rose-200">Não enviada{p.error ? `: ${p.error}` : ""}</span>}
@@ -104,9 +103,11 @@ export function ReplyBox({ leadId, disabled }: { leadId: string; disabled: boole
     <form onSubmit={submit} className="bg-[#202c33] px-3 py-2.5">
       <div className="flex items-end gap-2">
         <textarea ref={area} value={text} onChange={(e) => setText(e.target.value)} maxLength={1000} rows={1} aria-label="Mensagem"
-          className="max-h-40 min-h-[42px] flex-1 resize-none rounded-lg border-0 bg-[#2a3942] px-3 py-2.5 text-sm text-[#e9edef] outline-none placeholder:text-[#8696a0]" placeholder="Digite uma mensagem"
+          className="max-h-40 min-h-[44px] min-w-0 flex-1 resize-none rounded-xl border-0 bg-[#2a3942] px-4 py-3 text-[14px] text-[#e9edef] outline-none placeholder:text-[#8696a0]" placeholder="Digite uma mensagem"
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); void submit(); } }} />
-        <button disabled={!text.trim()} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#00a884] text-lg text-white transition hover:bg-[#06cf9c] disabled:opacity-40" aria-label="Enviar mensagem">➤</button>
+        <button disabled={!text.trim()} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#00a884] text-white transition hover:bg-[#06cf9c] disabled:opacity-40" aria-label="Enviar mensagem">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m3 3 19 9-19 9 3-8 9-1-9-1-3-8Z" /></svg>
+        </button>
       </div>
     </form>
   );
