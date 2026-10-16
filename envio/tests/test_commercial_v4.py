@@ -28,7 +28,7 @@ class V4Tests(unittest.TestCase):
     def test_video_uses_exact_reserved_asset(self):
         transport=FakeV4()
         item={'status':'enviar','id':'item-1','etapa':'comercial','telefone':'+5517991234567','texto':'Perfeito! Este vídeo mostra a ideia.','media':'video','asset':'demo'}
-        with patch.object(sender,'request',return_value=(200,item)),patch.object(sender,'report') as report:
+        with patch.object(sender,'send_manual_reply',return_value=None),patch.object(sender,'request',return_value=(200,item)),patch.object(sender,'report') as report:
             status,_=sender.step(transport)
             self.assertEqual(status,'enviada')
             self.assertEqual(transport.sent[0]['asset'],'demo')
@@ -36,7 +36,7 @@ class V4Tests(unittest.TestCase):
     def test_timeout_never_retries_transport(self):
         transport=FakeV4(fail=True)
         item={'status':'enviar','id':'item-1','etapa':'comercial','telefone':'+5517991234567','texto':'Olá, posso apresentar uma ideia?'}
-        with patch.object(sender,'request',return_value=(200,item)),patch.object(sender,'report') as report:
+        with patch.object(sender,'send_manual_reply',return_value=None),patch.object(sender,'request',return_value=(200,item)),patch.object(sender,'report') as report:
             status,_=sender.step(transport)
             self.assertEqual(status,'desconhecido')
             self.assertEqual(len(transport.sent),1)
@@ -49,7 +49,7 @@ class V4Tests(unittest.TestCase):
         transport=FakeV4()
         transport.comercial=lambda item: (_ for _ in ()).throw(sender.BridgeRejected('Vídeo não configurado; nada enviado'))
         item={'status':'enviar','id':'item-1','etapa':'comercial','telefone':'+5517991234567','texto':'Posso apresentar uma ideia?'}
-        with patch.object(sender,'request',return_value=(200,item)),patch.object(sender,'report') as report:
+        with patch.object(sender,'send_manual_reply',return_value=None),patch.object(sender,'request',return_value=(200,item)),patch.object(sender,'report') as report:
             self.assertEqual(sender.step(transport)[0],'falhou')
             self.assertEqual(report.call_args.kwargs['message_status'],'falhou')
     def test_input_only_ack_after_durable_server_confirmation(self):
@@ -64,3 +64,27 @@ class V4Tests(unittest.TestCase):
             self.assertEqual(request.call_args.args[2]['message_id'],'wa-in')
 
 if __name__=='__main__':unittest.main()
+
+
+class ManualReplyTests(unittest.TestCase):
+    def test_manual_reply_is_sent_without_technical_filter_and_reported(self):
+        item = {'status': 'enviar', 'id': 'abc', 'telefone': '+5511999999999', 'texto': 'Veja https://exemplo.com e o status do pedido'}
+        transport = unittest.mock.Mock(nome='teste')
+        transport.enviar.return_value = 'wa-1'
+        with patch.object(sender, 'request', side_effect=[(200, item), (200, {'status': 'registrado'})]) as request:
+            self.assertEqual(sender.send_manual_reply(transport), 'enviado')
+        transport.enviar.assert_called_once_with('+5511999999999', item['texto'])
+        self.assertEqual(request.call_args.args[2], {'ok': True, 'provider_id': 'wa-1'})
+
+    def test_manual_failure_is_reported_and_not_retried(self):
+        item = {'status': 'enviar', 'id': 'abc', 'telefone': '+5511999999999', 'texto': 'Oi'}
+        transport = unittest.mock.Mock(nome='teste')
+        transport.enviar.side_effect = RuntimeError('ponte fora do ar')
+        with patch.object(sender, 'request', side_effect=[(200, item), (200, {'status': 'registrado'})]) as request:
+            self.assertEqual(sender.send_manual_reply(transport), 'falhou')
+        self.assertFalse(request.call_args.args[2]['ok'])
+        transport.enviar.assert_called_once()
+
+    def test_nothing_queued_returns_none(self):
+        with patch.object(sender, 'request', return_value=(200, {'status': 'nenhum'})):
+            self.assertIsNone(sender.send_manual_reply(unittest.mock.Mock()))

@@ -11,6 +11,8 @@ end $$;
 
 create schema if not exists extensions;
 create schema if not exists auth;
+create schema if not exists storage;
+create table if not exists storage.buckets (id text primary key, name text, public boolean default false, file_size_limit bigint);
 
 create table if not exists auth.users (
   id uuid primary key default gen_random_uuid(),

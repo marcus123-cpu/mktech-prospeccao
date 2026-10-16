@@ -8,6 +8,7 @@
 //   GET  /estado     -> { pronto, numero }
 //   POST /enviar     -> { telefone, texto }  => { ok, id }
 //   GET  /recebidas  -> [ { telefone, texto, tipo, recebida_em } ]  (esvazia a fila)
+//   GET  /audio/<arquivo> -> bytes do áudio guardado (POST /audio/apagar remove)
 //   GET  /minhas     -> [ { telefone, texto, tipo, message_id, enviada_em } ]
 //
 // Variáveis: BRIDGE_PORT (3799), BRIDGE_TOKEN (opcional), ENVIO_SO_PARA (lista de números).
@@ -15,11 +16,14 @@
 const http = require("http");
 const qrcode = require("qrcode-terminal");
 require('./compat-media').ensureMediaCompatibility();
+require('./compat-history').ensureHistoryCompatibility();
 const { Client, LocalAuth, MessageMedia } = require("whatsapp-web.js");
 const path = require("node:path");
 const { Journal } = require("./journal");
 const { DemoLibrary } = require("./demo-library");
 const { messageId } = require('./message-id');
+const { syncHistory } = require('./history');
+const { deliverVoice } = require('./voice');
 // Somente configurações conhecidas, sem executar comandos contidos no .env.
 const envFile = path.join(__dirname, "..", ".env");
 if (require('node:fs').existsSync(envFile)) {
@@ -42,6 +46,8 @@ let ready = false;
 let myNumber = null;
 let lastQr = null;
 let lastState = "iniciando";
+let historySync = { estado: 'aguardando_conexao' };
+let syncingHistory = false;
 const setState = (st) => { lastState = st; console.log("[estado]", st); };
 const inbox = { push: (payload) => journal.push("recebidas", payload) };
 const minhas = { push: (payload) => journal.push("minhas", payload) };
@@ -50,7 +56,7 @@ const enviosEmAndamento = new Set();
 
 const client = new Client({
   authStrategy: new LocalAuth({ dataPath: ".wwebjs_auth", clientId: "chip2" }),
-  puppeteer: { headless: true, ...(chromePath ? {executablePath:chromePath} : {}), args: ["--no-sandbox"] },
+  puppeteer: { headless: true, protocolTimeout: 600000, ...(chromePath ? {executablePath:chromePath} : {}), args: ["--no-sandbox"] },
   // Versão do WhatsApp Web servida pelo cache remoto: evita travar em "carregando conversas".
   webVersionCache: {
     type: "remote",
@@ -70,6 +76,14 @@ client.on("ready", () => {
   lastQr = null;
   myNumber = client.info && client.info.wid ? client.info.wid.user : null;
   console.log(`WhatsApp pronto (número ${myNumber}).`);
+  if (!syncingHistory) {
+    syncingHistory = true;
+    historySync = { estado: 'sincronizando' };
+    syncHistory(client, journal, numeroDe, ehConversaIndividual, TIPOS_DE_SISTEMA)
+      .then(result => { historySync = { estado: result.errors.length ? 'parcial' : 'concluido', ...result }; })
+      .catch(error => { historySync = { estado: 'erro', erro: String(error.message).slice(0, 160) }; })
+      .finally(() => { syncingHistory = false; console.log('[historico]', historySync); });
+  }
 });
 client.on("loading_screen", (pct, msg) => setState(`carregando ${pct}% ${msg || ""}`));
 client.on("authenticated", () => setState("autenticado, carregando conversas"));
@@ -107,6 +121,25 @@ async function numeroDe(id, msg) {
   return achou;
 }
 
+// Áudios ficam em disco até o enviador subir para o servidor (GET /audio/<arquivo>, depois POST /audio/apagar).
+const AUDIO_DIR = path.join(__dirname, "audio");
+const AUDIO_FILE = /^[0-9a-f]{8,160}\.bin$/;
+async function guardarAudio(msg, id) {
+  if (!id || !msg.hasMedia) return {};
+  try {
+    const media = await msg.downloadMedia();
+    if (!media || !media.data) return {};
+    const fs = require("node:fs");
+    fs.mkdirSync(AUDIO_DIR, { recursive: true });
+    const arquivo = Buffer.from(String(id), "utf8").toString("hex").slice(0, 160) + ".bin";
+    fs.writeFileSync(path.join(AUDIO_DIR, arquivo), Buffer.from(media.data, "base64"));
+    return { audio_arquivo: arquivo, audio_mime: String(media.mimetype || "audio/ogg").split(";")[0].trim().toLowerCase() };
+  } catch (e) {
+    console.log("não consegui baixar o áudio:", e.message);
+    return {};
+  }
+}
+
 const ehConversaIndividual = (id) => id && !id.endsWith("@g.us") && !id.endsWith("@newsletter") && !id.endsWith("@broadcast");
 
 // Mensagem escrita no celular do chip. Exclui as enviadas por esta ponte,
@@ -119,11 +152,11 @@ client.on("message_create", async (msg) => {
     const to = msg.to || "";
     if (!ehConversaIndividual(to)) return;
     if (TIPOS_DE_SISTEMA.has(msg.type)) return;
-    if ([...enviosEmAndamento].some((item) => item.to === to && item.texto === msg.body)) return;
+    if ([...enviosEmAndamento].some((item) => item.to === to && item.texto === (msg.body || ''))) return;
     const numero = await numeroDe(to, msg);
     if (!numero) return;
     if (id && (enviadasPelaPonte.has(id) || journal.results().some(item=>item.provider_id===id))) return;
-    if ([...enviosEmAndamento].some(item=>item.phone===numero.replace(/\D/g,'') && item.texto===msg.body)) return;
+    if ([...enviosEmAndamento].some(item=>item.phone===numero.replace(/\D/g,'') && item.texto===(msg.body || ''))) return;
     console.log("[minha]", to, "->", numero);
     minhas.push({
       telefone: "+" + numero.replace(/\D/g, ""),
@@ -131,6 +164,7 @@ client.on("message_create", async (msg) => {
       tipo: msg.type === "chat" ? "texto" : msg.type === "ptt" || msg.type === "audio" ? "audio" : msg.type === "image" ? "imagem" : "outro",
       message_id: id || null,
       enviada_em: new Date((msg.timestamp || Date.now() / 1000) * 1000).toISOString(),
+      ...(msg.type === "ptt" || msg.type === "audio" ? await guardarAudio(msg, id) : {}),
     });
   } catch (e) {
     console.log("erro ao guardar mensagem minha:", e.message);
@@ -164,6 +198,7 @@ client.on("message", async (msg) => {
       texto: tipo === "texto" ? msg.body : null,
       tipo,
       recebida_em: new Date((msg.timestamp || Date.now() / 1000) * 1000).toISOString(),
+      ...(tipo === "audio" ? await guardarAudio(msg, messageId(msg)) : {}),
     });
   } catch (e) {
     console.log("erro ao guardar mensagem recebida:", e.message);
@@ -181,12 +216,12 @@ ${ready ? "<p><b>Já está conectado.</b> Pode fechar esta página.</p>" : qr
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>const q=${JSON.stringify(qr || "")};if(q&&!${ready}){new QRCode(document.getElementById("qr"),{text:q,width:280,height:280});}</script>`;
 
-function readJson(req) {
+function readJson(req, maxBytes = 20000) {
   return new Promise((resolve, reject) => {
     let data = "";
     req.on("data", (c) => {
       data += c;
-      if (data.length > 20000) reject(new Error("corpo grande demais"));
+      if (data.length > maxBytes) { data = ''; reject(new Error("corpo grande demais")); req.destroy(); }
     });
     req.on("end", () => {
       try { resolve(JSON.parse(data || "{}")); } catch (e) { reject(e); }
@@ -210,8 +245,24 @@ const server = http.createServer(async (req, res) => {
   try {
     if (req.method === "GET" && req.url === "/estado") return send(res, 200, { pronto: ready, numero: myNumber, estado: lastState, qr: ready ? null : lastQr, demonstrations:demos.availability().map(d=>({...d,available:d.available && (demos.resolve(d.id).kind!=='video' || !!chromePath)})) });
     if (req.method === "GET" && req.url === "/recebidas") return send(res, 200, journal.list("recebidas"));
+    if (req.method === "GET" && req.url === "/historico") return send(res, 200, journal.list("historico"));
+    if (req.method === "GET" && req.url === "/historico/estado") return send(res, 200, historySync);
     if (req.method === "GET" && req.url === "/minhas") return send(res, 200, journal.list("minhas"));
     if (req.method === "GET" && req.url === "/resultados") return send(res, 200, journal.pendingResults());
+    if (req.method === "GET" && req.url.startsWith("/audio/")) {
+      const arquivo = decodeURIComponent(req.url.slice(7));
+      if (!AUDIO_FILE.test(arquivo)) return send(res, 400, { ok: false });
+      const file = path.join(AUDIO_DIR, arquivo);
+      if (!require("node:fs").existsSync(file)) return send(res, 404, { ok: false });
+      const bytes = require("node:fs").readFileSync(file);
+      res.writeHead(200, { "Content-Type": "application/octet-stream", "Content-Length": bytes.length });
+      return res.end(bytes);
+    }
+    if (req.method === "POST" && req.url === "/audio/apagar") {
+      const body = await readJson(req);
+      if (typeof body.arquivo === "string" && AUDIO_FILE.test(body.arquivo)) { try { require("node:fs").unlinkSync(path.join(AUDIO_DIR, body.arquivo)); } catch (_) { /* já apagado */ } }
+      return send(res, 200, { ok: true });
+    }
     if (req.method === "POST" && req.url === "/resultados/ack") {
       const body = await readJson(req);
       journal.ackResult(body.item_id,body.status); return send(res,200,{ok:true});
@@ -257,6 +308,24 @@ const server = http.createServer(async (req, res) => {
       }
       if (item_id) journal.result(item_id, provider ? 'enviada' : 'desconhecido', provider);
       return send(res, 200, { ok: !!provider, id: provider, message_status: provider ? 'enviada' : 'desconhecido' });
+    }
+    if (req.method === 'POST' && req.url === '/enviar-voz') {
+      if (!ready) return send(res, 503, { ok:false, erro:'WhatsApp não está conectado' });
+      const { telefone, item_id, data, mime } = await readJson(req, 4300000);
+      const digits = String(telefone || '').replace(/\D/g, '');
+      if (!/^[1-9]\d{7,14}$/.test(digits) || !/^[0-9a-f-]{36}$/i.test(item_id || '')) return send(res,400,{ok:false,erro:'dados inválidos'});
+      if (ONLY_TO.size && !ONLY_TO.has(digits)) return send(res,403,{ok:false,erro:'destino fora de ENVIO_SO_PARA'});
+      try {
+        const result = await deliverVoice({client,journal,itemId:item_id,digits,data,mime,MessageMedia,
+          onSending: (to,phone) => {
+            const pending = {to,phone,texto:''};
+            enviosEmAndamento.add(pending);
+            return () => enviosEmAndamento.delete(pending);
+          },
+          onSent: id => enviadasPelaPonte.add(id),
+        });
+        return send(res,200,result);
+      } catch (error) { return send(res,422,{ok:false,erro:String(error.message).slice(0,200)}); }
     }
     return send(res, 404, { ok: false, erro: "não encontrado" });
   } catch (e) {

@@ -160,8 +160,15 @@ def safe_text(text: Any) -> str | None:
 class Transporte:
     nome = "base"
 
-    def enviar(self, telefone: str, texto: str) -> None:  # levanta exceção se falhar
+    def enviar(self, telefone: str, texto: str) -> str | None:  # levanta exceção se falhar; devolve o ID da mensagem, se houver
         raise NotImplementedError
+
+    def audio(self, msg: dict[str, Any]) -> tuple[bytes, str] | None:
+        """Bytes e tipo do áudio guardado pela ponte para este evento (se houver)."""
+        return None
+
+    def apagar_audio(self, msg: dict[str, Any]) -> None:
+        pass
 
     def comercial(self, item: dict[str, Any]) -> dict[str, Any]:
         raise BridgeRejected("transporte sem suporte V4; nada enviado")
@@ -185,6 +192,12 @@ class Transporte:
     def minhas(self) -> list[dict[str, Any]]:
         """Mensagens escritas no celular do chip, incluindo texto e ID quando disponíveis."""
         return []
+
+    def historico(self) -> list[dict[str, Any]]:
+        return []
+
+    def enviar_voz(self, item: dict[str, Any]) -> str:
+        raise RuntimeError("Este transporte não suporta mensagens de voz")
 
     def pronto(self) -> bool:
         """False enquanto o transporte não consegue enviar; nada é reservado no servidor."""
@@ -220,13 +233,36 @@ class WhatsAppWeb(Transporte):
 
     nome = "whatsappweb"
 
+    def enviar_voz(self, item: dict[str, Any]) -> str:
+        import base64
+        url = item.get("audio_url", "")
+        if not isinstance(url, str) or not url.startswith("https://"):
+            raise BridgeRejected("URL de áudio inválida")
+        with urllib.request.urlopen(url, timeout=30) as response:
+            audio = response.read(3 * 1024 * 1024 + 1)
+        if not audio or len(audio) > 3 * 1024 * 1024:
+            raise BridgeRejected("Áudio vazio ou maior que 3 MB")
+        out = self._call("POST", "/enviar-voz", {"telefone": item["telefone"], "item_id": item["id"],
+                          "mime": item.get("audio_mime"), "data": base64.b64encode(audio).decode("ascii")}, timeout=120)
+        if not out.get("ok") or not out.get("id"):
+            raise RuntimeError("A ponte não confirmou o envio da mensagem de voz; confira no WhatsApp")
+        return out["id"]
+
+    def historico(self) -> list[dict[str, Any]]:
+        try:
+            out = self._call("GET", "/historico")
+            return out if isinstance(out, list) else []
+        except RuntimeError as error:
+            log(str(error))
+            return []
+
     def __init__(self, env: dict[str, str] | None = None) -> None:
         e = env if env is not None else os.environ
         self.base = e.get("BRIDGE_URL", "http://127.0.0.1:3799").rstrip("/")
         self.token = e.get("BRIDGE_TOKEN", "").strip()
         self.only_to = {re.sub(r"\D", "", x) for x in e.get("ENVIO_SO_PARA", "").split(",") if re.sub(r"\D", "", x)}
 
-    def _call(self, method: str, path: str, body: Any = None) -> Any:
+    def _call(self, method: str, path: str, body: Any = None, timeout: float = TIMEOUT_SECONDS) -> Any:
         headers = {"Content-Type": "application/json"}
         if self.token:
             headers["X-Bridge-Token"] = self.token
@@ -234,7 +270,7 @@ class WhatsAppWeb(Transporte):
             self.base + path, data=json.dumps(body).encode() if body is not None else None, method=method, headers=headers
         )
         try:
-            with urllib.request.urlopen(req, timeout=TIMEOUT_SECONDS) as resp:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
                 return json.loads(resp.read() or b"null")
         except urllib.error.HTTPError as e:
             detail = ""
@@ -252,6 +288,25 @@ class WhatsAppWeb(Transporte):
         out = self._call("POST", "/enviar", {"telefone": digits, "texto": texto})
         if not (isinstance(out, dict) and out.get("ok")):
             raise RuntimeError("a ponte não confirmou o envio")
+        return out.get("id")
+
+    def audio(self, msg: dict[str, Any]) -> tuple[bytes, str] | None:
+        arquivo = msg.get("audio_arquivo")
+        if not arquivo or not re.fullmatch(r"[0-9a-f]{8,160}\.bin", arquivo):
+            return None
+        headers = {"X-Bridge-Token": self.token} if self.token else {}
+        req = urllib.request.Request(self.base + "/audio/" + arquivo, headers=headers)
+        try:
+            with urllib.request.urlopen(req, timeout=TIMEOUT_SECONDS) as resp:
+                return resp.read(), str(msg.get("audio_mime") or "audio/ogg")
+        except (urllib.error.URLError, OSError) as e:
+            log(f"áudio indisponível na ponte: {e}")
+            return None
+
+    def apagar_audio(self, msg: dict[str, Any]) -> None:
+        if msg.get("audio_arquivo"):
+            with contextlib.suppress(RuntimeError):
+                self._call("POST", "/audio/apagar", {"arquivo": msg["audio_arquivo"]})
 
     def comercial(self, item: dict[str, Any]) -> dict[str, Any]:
         digits = re.sub(r"\D", "", item["telefone"])
@@ -318,6 +373,36 @@ def report(item_id: str, etapa: str, ok: bool, erro: str | None = None, **extra:
     return payload
 
 
+def upload_audio(transporte: Transporte, msg: dict[str, Any]) -> bool:
+    """Sobe o áudio de um evento para o painel. True = nada pendente (subiu, não existe ou foi recusado de vez)."""
+    if not msg.get("audio_arquivo") or not msg.get("message_id"):
+        return True
+    got = transporte.audio(msg)
+    if got is None:
+        return True  # arquivo sumiu da ponte: não trava a fila por causa do áudio
+    data, mime = got
+    url, token = config()
+    req = urllib.request.Request(
+        url + "/api/hermes/v1/envio/audio/" + urllib.request.quote(msg["message_id"], safe=""), data=data, method="PUT",
+        headers={"Authorization": f"Bearer {token}", "Content-Type": mime, "User-Agent": "mktech-envio/1.0"},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=60):
+            pass
+    except urllib.error.HTTPError as e:
+        if e.code in (400, 413, 415, 422):
+            log(f"áudio de {msg.get('telefone')} recusado pelo painel (HTTP {e.code}); seguindo sem ele")
+            transporte.apagar_audio(msg)
+            return True
+        log(f"áudio de {msg.get('telefone')}: HTTP {e.code}; tento de novo")
+        return False
+    except (urllib.error.URLError, TimeoutError, ConnectionError, OSError) as e:
+        log(f"áudio de {msg.get('telefone')}: {e}; tento de novo")
+        return False
+    transporte.apagar_audio(msg)
+    return True
+
+
 def forward_replies(transporte: Transporte) -> int:
     n = 0
     for msg in transporte.recebidas():
@@ -330,7 +415,8 @@ def forward_replies(transporte: Transporte) -> int:
             body["message_id"] = msg["message_id"]
         status, payload = request("POST", "/api/hermes/v1/envio/respostas", body)
         if status < 400 and status > 0 and payload.get("status") in ("registrada", "existente", "ignorada"):
-            transporte.ack(msg)
+            if upload_audio(transporte, msg):
+                transporte.ack(msg)
         if payload.get("status") == "registrada":
             quem = "PESSOA" if payload.get("conversa") else "automática"
             log(f"resposta de {msg['telefone']} registrada como {quem}" + (" (texto segurado)" if payload.get("segurada") else ""))
@@ -352,17 +438,60 @@ def forward_minhas(transporte: Transporte) -> int:
                 body[key] = msg[key]
         status, payload = request("POST", "/api/hermes/v1/envio/minhas", body)
         if status < 400 and status > 0 and payload.get("status") in ("registrada", "existente", "ignorada"):
-            transporte.ack(msg)
+            if upload_audio(transporte, msg):
+                transporte.ack(msg)
         if payload.get("status") == "registrada":
             log(f"mensagem sua para {msg['telefone']} registrada (conta para os lembretes)")
         n += 1
     return n
 
 
+def forward_history(transporte: Transporte) -> int:
+    """Importa contexto antigo sem chamar a classificação ou automação ao vivo."""
+    now = time.monotonic()
+    if now < getattr(transporte, "_history_next_at", 0):
+        return 0
+    transporte._history_next_at = now + 30
+    count = 0
+    for msg in transporte.historico()[:20]:
+        body = {key: msg.get(key) for key in ("telefone", "message_id", "direcao", "texto", "tipo", "ocorrida_em")}
+        status, payload = request("POST", "/api/hermes/v1/envio/historico", body)
+        if 0 < status < 400 and payload.get("status") in ("registrada", "existente", "ignorada"):
+            transporte.ack(msg)
+            count += 1
+        else:
+            break  # Mantém a fila durável e evita exceder o limite de requisições.
+    return count
+
+
+def send_manual_reply(transporte: Transporte) -> str | None:
+    """Envia uma resposta escrita no painel (sem janela de horário: foi decisão humana)."""
+    status, nxt = request("POST", "/api/hermes/v1/envio/manual/proximo", {})
+    if status in (401, 403):
+        raise ConfigError("token do enviador inválido, revogado ou sem permissão")
+    if nxt.get("status") != "enviar" or not nxt.get("id") or not nxt.get("telefone"):
+        return None
+    # Texto humano: sem o filtro "parece erro" dos textos automáticos (links e termos comuns são válidos).
+    texto = nxt["texto"].strip() if isinstance(nxt.get("texto"), str) else ""
+    path = f"/api/hermes/v1/envio/manual/{nxt['id']}/resultado"
+    if nxt.get("media") != "audio" and (not texto or len(texto) > 1000):
+        request("POST", path, {"ok": False, "erro": "texto vazio ou grande demais; nada enviado"})
+        return "recusado"
+    try:
+        provider = transporte.enviar_voz(nxt) if nxt.get("media") == "audio" else transporte.enviar(nxt["telefone"], texto)
+    except Exception as e:  # noqa: BLE001 - qualquer falha vira "falhou" e nunca é reenviada sozinha
+        request("POST", path, {"ok": False, "erro": f"{transporte.nome}: {e}"[:400]})
+        return "falhou"
+    request("POST", path, {"ok": True, "provider_id": provider})
+    log(f"resposta do painel enviada para {nxt['telefone']}")
+    return "enviado"
+
+
 def step(transporte: Transporte) -> tuple[str, float]:
     """Executa uma rodada. Devolve (status, segundos até a próxima)."""
     forward_replies(transporte)
     forward_minhas(transporte)
+    forward_history(transporte)
     for item in transporte.resultados():
         confirmed = report(item["item_id"], "comercial", item["status"] in ("enviada", "entregue"), message_status=item["status"], provider_id=item.get("provider_id"))
         if confirmed.get("status") in ("registrado", "existente"):
@@ -371,6 +500,9 @@ def step(transporte: Transporte) -> tuple[str, float]:
     transporte.health(ready)
     if not ready:
         return "ponte_desconectada", POLL_SECONDS
+    manual = send_manual_reply(transporte)
+    if manual:
+        return manual, 2.0
     status, nxt = request("POST", "/api/hermes/v1/envio/proximo", {})
     if status in (401, 403):
         raise ConfigError("token do enviador inválido, revogado ou sem permissão")

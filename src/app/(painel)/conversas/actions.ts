@@ -30,6 +30,16 @@ export async function saveMemory(_: ConversationState, form: FormData): Promise<
   return { ok: "Memória salva. O bot usará essas informações na próxima resposta." };
 }
 
+export async function sendManualReply(_: ConversationState, form: FormData): Promise<ConversationState> {
+  const { supabase } = await requireAdmin();
+  const parsed = z.object({ lead_id: z.uuid(), body: z.string().trim().min(1, "Escreva a mensagem.").max(1000, "Máximo de 1000 caracteres.") }).safeParse(Object.fromEntries(form));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
+  const { error } = await supabase.rpc("admin_send_manual_reply", { p_lead: parsed.data.lead_id, p_body: parsed.data.body });
+  if (error) return { error: dbErrorMessage(error) };
+  refresh(parsed.data.lead_id);
+  return { ok: "Na fila: sai em instantes pelo WhatsApp do chip. Você assumiu a conversa." };
+}
+
 export async function setConversationOwner(_: ConversationState, form: FormData): Promise<ConversationState> {
   const { supabase } = await requireAdmin();
   const id = z.uuid().safeParse(form.get("lead_id"));

@@ -8,14 +8,16 @@ import { fmtDateTime, haQuanto } from "@/lib/time";
 import { MemoryForm, type Memory } from "./MemoryForm";
 import { ChatScroll } from "./ChatScroll";
 import { ReplyAssistant } from "./ReplyAssistant";
+import { ReplyBox } from "./ReplyBox";
+import { VoiceReply } from "./VoiceReply";
 
 export const metadata = { title: "Conversas" };
 export const dynamic = "force-dynamic";
 const FILTERS: { key: ConversationFilter; label: string }[] = [
   { key: "todas", label: "Todas" }, { key: "aguardando", label: "Responderam" }, { key: "minhas", label: "Com você" },
 ];
-type Event = { id: string; occurred_at: string; direction: string; source: string; body: string | null; media: string };
-const SOURCE: Record<string, string> = { hermes_v4: "Hermes V4", secretaria: "Secretário", secretario: "Secretário", saudacao: "Saudação", abordagem: "Abordagem", lembrete: "Lembrete", manual: "Você · celular", humana: "Cliente", automatica: "Resposta automática" };
+type Event = { id: string; occurred_at: string; direction: string; source: string; body: string | null; media: string; external_id: string | null };
+const SOURCE: Record<string, string> = { hermes_v4: "Hermes V4", secretaria: "Secretário", secretario: "Secretário", saudacao: "Saudação", abordagem: "Abordagem", lembrete: "Lembrete", manual: "Você · celular", painel: "Você · painel", painel_pendente: "Você · painel (enviando…)", painel_falhou: "Você · painel (falhou)", humana: "Cliente", automatica: "Resposta automática" };
 
 export default async function Conversations({ searchParams }: { searchParams: Promise<{ lead?: string; filtro?: string; q?: string; pagina?: string }> }) {
   const sp = await searchParams;
@@ -44,11 +46,14 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
   const current = selected?.data as Conversation | null;
   const detailError = selected?.error || history?.error || memory?.error || diagnosis?.error;
   const events = [...(history?.data ?? []) as Event[]].reverse();
+  const stored = new Set(events.filter((e) => e.media === "audio" && e.external_id).map((e) => e.external_id as string));
+  const audios = stored.size ? await supabase.from("chat_audio").select("external_id").in("external_id", [...stored]) : null;
+  const audioIds = new Set(((audios?.data ?? []) as { external_id: string }[]).map((a) => a.external_id));
   const href = (changes: Record<string, string>) => {
     const params = new URLSearchParams({ filtro: filter, ...(term ? { q: term } : {}), ...changes });
     return `/conversas?${params}`;
   };
-  const who = (e: Event) => e.direction === "entrada" ? "Cliente" : e.source === "manual" ? "Você" : "Hermes";
+  const who = (e: Event) => e.direction === "entrada" ? "Cliente" : e.source === "historico_saida" ? "Você · histórico WhatsApp" : e.source === "manual" ? "Você" : "Hermes";
   const textOf = (e: Event) => e.source === "manual" && !e.body ? "(mensagem enviada no celular; conteúdo indisponível)" : e.media !== "texto" ? `[${e.media}] ${e.body ?? ""}`.trim() : e.body ?? "";
   const copyText = current ? [`Conversa com ${current.business_name} (${current.city})${current.phone_e164 ? ` · ${current.phone_e164}` : ""}`, "",
     ...events.map((e) => `[${fmtDateTime(e.occurred_at)}] ${who(e)}: ${textOf(e)}`)].join("\n") : "";
@@ -56,7 +61,7 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
   const initial = (name: string) => (name.trim()[0] ?? "?").toUpperCase();
   return (
     <>
-      <PageHeader title="💬 Conversas" subtitle="Quem respondeu à saudação aparece aqui. A conversa é sua." />
+      <PageHeader title="💬 Conversas" subtitle="Conversas dos contatos cadastrados. Ao reconectar o WhatsApp, o histórico disponível é importado automaticamente." />
       <div className="mb-4 flex flex-wrap gap-2">
         {FILTERS.map((f) => <Link key={f.key} href={href({ filtro: f.key })} className={filter === f.key ? "btn-primary" : "btn-ghost"}>{f.label}</Link>)}
       </div>
@@ -111,7 +116,12 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
                       <div className={`flex ${out ? "justify-end" : "justify-start"}`}>
                         <div className={`max-w-[88%] rounded-2xl px-3.5 py-2 shadow-sm sm:max-w-[75%] ${out ? "rounded-br-sm bg-accent/20" : "rounded-bl-sm bg-panel"}`}>
                           <p className="mb-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted">{out ? SOURCE[e.source] ?? who(e) : who(e) === "Cliente" && e.source === "automatica" ? "Resposta automática" : "Cliente"}</p>
-                          <p className="whitespace-pre-wrap break-words text-sm">{textOf(e)}</p>
+                          {e.media === "audio" ? (
+                            e.external_id && audioIds.has(e.external_id) ? <div className="flex items-center gap-2">
+                              <audio controls preload="none" className="h-10 w-56 max-w-full" src={`/api/conversas/audio/${encodeURIComponent(e.external_id)}`} />
+                              <a href={`/api/conversas/audio/${encodeURIComponent(e.external_id)}?baixar=1`} download title="Baixar áudio" aria-label="Baixar áudio" className="btn-ghost shrink-0 px-2 py-1 text-sm">⬇</a>
+                            </div> : <p className="text-sm text-muted">🎤 Áudio (arquivo não disponível)</p>
+                          ) : <p className="whitespace-pre-wrap break-words text-sm">{textOf(e)}</p>}
                           <p className="mt-1 text-right text-[10px] text-muted">{new Date(e.occurred_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" })}</p>
                         </div>
                       </div>
@@ -120,6 +130,8 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
                   {events.length === 0 && <li className="py-8 text-center text-sm text-muted">Nenhuma mensagem registrada.</li>}
                 </ol>
               </ChatScroll>
+              <ReplyBox key={current.id} leadId={current.id} disabled={!current.phone_e164 || current.do_not_contact} />
+              <VoiceReply key={`voice-${current.id}`} leadId={current.id} disabled={!current.phone_e164 || current.do_not_contact} />
               {events.length === 300 && <p className="px-4 py-2 text-xs text-muted">Exibindo as últimas 300 mensagens.</p>}
             </section>
             <aside className="space-y-4 lg:col-start-2 2xl:col-start-3">

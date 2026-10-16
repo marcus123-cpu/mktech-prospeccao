@@ -1,0 +1,17 @@
+.env*
+.codex/
+.agents/
+.git/
+.next/
+node_modules/
+/envio/
+/hermes/
+/backups/
+/logs-rotina/
+.playwright-mcp/
+/tests/
+/docs/
+/supabase/
+*.log
+*.bat
+*.ps1

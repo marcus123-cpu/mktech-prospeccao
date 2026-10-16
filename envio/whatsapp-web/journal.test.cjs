@@ -5,6 +5,30 @@ const os = require('node:os');
 const path = require('node:path');
 const { Journal } = require('./journal');
 function file() { return path.join(fs.mkdtempSync(path.join(os.tmpdir(),'hermes-journal-')),'journal.json'); }
+
+test('gravação tolera bloqueio transitório de arquivo no Windows', () => {
+  const target = file();
+  const journal = new Journal(target);
+  const rename = fs.renameSync;
+  let calls = 0;
+  fs.renameSync = (...args) => {
+    if (calls++ === 0) { const error = new Error('temporarily locked'); error.code = 'EPERM'; throw error; }
+    return rename(...args);
+  };
+  try { journal.push('historico', {message_id:'durable-history'}); }
+  finally { fs.renameSync = rename; }
+  assert.equal(new Journal(target).list('historico').length, 1);
+  assert.equal(calls, 2);
+});
+
+test('ack do histórico não apaga uma mensagem recebida ao vivo com o mesmo ID', () => {
+  const j = new Journal(file());
+  j.push('recebidas', {message_id:'same-id'});
+  j.push('historico', {message_id:'same-id'});
+  j.ack([j.list('historico')[0].event_id]);
+  assert.equal(j.list('historico').length, 0);
+  assert.equal(j.list('recebidas').length, 1);
+});
 test('entrada sobrevive reinício e só sai depois de ack', () => {
   const f=file(); let j=new Journal(f); j.push('recebidas',{message_id:'msg-1',texto:'Pode mandar'});
   j=new Journal(f); assert.equal(j.list('recebidas').length,1);
