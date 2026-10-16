@@ -497,6 +497,7 @@ def step(transporte: Transporte) -> tuple[str, float]:
         if confirmed.get("status") in ("registrado", "existente"):
             transporte.ack_result(item)
     ready=transporte.pronto()
+    transporte._pronto_agora = ready
     transporte.health(ready)
     if not ready:
         return "ponte_desconectada", POLL_SECONDS
@@ -542,6 +543,21 @@ def step(transporte: Transporte) -> tuple[str, float]:
     return "enviado", 3.0
 
 
+MANUAL_POLL_SECONDS = 1.5
+
+
+def esperar(transporte: Transporte, seconds: float) -> None:
+    """Dorme até a próxima rodada, olhando a fila de respostas do painel a cada ~1,5 s (envio quase instantâneo)."""
+    fim = time.monotonic() + seconds
+    while True:
+        restante = fim - time.monotonic()
+        if restante <= 0:
+            return
+        time.sleep(min(MANUAL_POLL_SECONDS, restante))
+        if getattr(transporte, "_pronto_agora", False) and time.monotonic() < fim:
+            send_manual_reply(transporte)
+
+
 def cmd_rodar(args: argparse.Namespace) -> int:
     transporte = TRANSPORTES[args.transporte]()
     log(f"enviador iniciado (transporte: {transporte.nome}); Ctrl+C para parar")
@@ -555,7 +571,7 @@ def cmd_rodar(args: argparse.Namespace) -> int:
             if args.uma_vez:
                 print(json.dumps({"ok": True, "status": s}, ensure_ascii=False))
                 return EXIT_OK
-            time.sleep(wait)
+            esperar(transporte, wait)
     except KeyboardInterrupt:
         log("parado pelo usuário")
         return EXIT_OK

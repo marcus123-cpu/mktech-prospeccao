@@ -13,7 +13,7 @@ export type Scope =
   | "envio:operar";
 
 const MAX_BODY_BYTES = 256 * 1024;
-const RATE_LIMIT = 120; // requisições por minuto, por token
+const RATE_LIMIT = 240; // requisições por minuto, por token
 const TOKEN_TTL_MS = 15_000; // cache curto da checagem do token: revogação vale em até 15 s
 const tokenCache = new Map<string, { tokenId: string; expiresAt: number }>();
 const buckets = new Map<string, { count: number; resetAt: number }>();

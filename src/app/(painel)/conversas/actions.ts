@@ -5,7 +5,7 @@ import { z } from "zod";
 import { dbErrorMessage, requireAdmin } from "@/lib/auth";
 import { generateReplyDraft, type DraftContext, type ReplyDraft } from "@/lib/conversation-draft";
 
-export type ConversationState = { error?: string; ok?: string };
+export type ConversationState = { error?: string; ok?: string; id?: string };
 const memorySchema = z.object({
   lead_id: z.uuid(), summary: z.string().trim().max(2000), facts: z.string().trim().max(3000),
   objections: z.string().trim().max(2000), next_action: z.string().trim().max(1000),
@@ -34,10 +34,10 @@ export async function sendManualReply(_: ConversationState, form: FormData): Pro
   const { supabase } = await requireAdmin();
   const parsed = z.object({ lead_id: z.uuid(), body: z.string().trim().min(1, "Escreva a mensagem.").max(1000, "Máximo de 1000 caracteres.") }).safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
-  const { error } = await supabase.rpc("admin_send_manual_reply", { p_lead: parsed.data.lead_id, p_body: parsed.data.body });
+  const { data, error } = await supabase.rpc("admin_send_manual_reply", { p_lead: parsed.data.lead_id, p_body: parsed.data.body });
   if (error) return { error: dbErrorMessage(error) };
-  refresh(parsed.data.lead_id);
-  return { ok: "Na fila: sai em instantes pelo WhatsApp do chip. Você assumiu a conversa." };
+  // Sem revalidar a tela inteira: o balão já está na tela e o status é consultado à parte.
+  return { ok: "Na fila.", id: data as string };
 }
 
 export async function setConversationOwner(_: ConversationState, form: FormData): Promise<ConversationState> {
