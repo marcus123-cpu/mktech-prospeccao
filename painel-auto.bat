@@ -27,6 +27,11 @@ for /f %%i in ('git rev-parse HEAD') do set DEPOIS=%%i
 set PRECISA=0
 if not "%ANTES%"=="%DEPOIS%" set PRECISA=1
 if not exist ".next\BUILD_ID" set PRECISA=1
+rem Remonta tambem quando o codigo mudou sem o git pull mudar (commit feito neste PC) ou ha alteracoes locais no codigo.
+set MONTADO=
+if exist ".next\BUILD_HEAD" set /p MONTADO=<".next\BUILD_HEAD"
+if not "%MONTADO%"=="%DEPOIS%" set PRECISA=1
+for /f %%i in ('git status --porcelain -- src package.json next.config.ts') do set PRECISA=1
 
 set PID3000=
 for /f "tokens=5" %%p in ('netstat -ano ^| findstr /r /c:":3000 .*LISTENING"') do set PID3000=%%p
@@ -45,6 +50,7 @@ if "%PRECISA%"=="1" (
   echo Atualizando o painel, aguarde alguns minutos...
   call npm install --no-audit --no-fund || (pause & exit /b 1)
   call npm run build || (pause & exit /b 1)
+  >".next\BUILD_HEAD" echo %DEPOIS%
 )
 echo.
 echo Painel ligado em http://localhost:3000  ^(minimize esta janela, nao feche^)
