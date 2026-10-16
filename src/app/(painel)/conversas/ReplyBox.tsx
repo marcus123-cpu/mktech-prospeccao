@@ -63,7 +63,7 @@ export function PendingBubbles() {
   return <>
     {api.items.filter((p) => p.body).map((p) => (
       <li key={p.key} className="flex justify-end">
-        <div className={`max-w-[88%] rounded-2xl rounded-br-sm px-3.5 py-2 shadow-sm sm:max-w-[75%] ${p.status === "falhou" ? "bg-rose-900/50" : "bg-gradient-to-br from-accent to-accent-2 text-white"}`}>
+        <div className={`max-w-[88%] rounded-lg rounded-tr-none px-3 py-1.5 shadow-sm sm:max-w-[65%] ${p.status === "falhou" ? "bg-rose-900/50" : "bg-[#005c4b] text-[#e9edef]"}`}>
           <p className="mb-0.5 text-[10px] font-semibold uppercase tracking-wide text-white/70">Você · painel</p>
           <p className="whitespace-pre-wrap break-words text-sm">{p.body}</p>
           <p className="mt-1 flex items-center justify-end gap-2 text-[10px] text-white/70">
@@ -101,12 +101,12 @@ export function ReplyBox({ leadId, disabled }: { leadId: string; disabled: boole
     else api.patch(key, { serverId: r.id });
   }
   return (
-    <form onSubmit={submit} className="border-t border-line bg-panel p-3">
+    <form onSubmit={submit} className="bg-[#202c33] px-3 py-2.5">
       <div className="flex items-end gap-2">
         <textarea ref={area} value={text} onChange={(e) => setText(e.target.value)} maxLength={1000} rows={1} aria-label="Mensagem"
-          className="input max-h-40 min-h-[44px] flex-1 resize-none rounded-2xl" placeholder="Escreva uma mensagem… (Enter envia, Shift+Enter quebra a linha)"
+          className="max-h-40 min-h-[42px] flex-1 resize-none rounded-lg border-0 bg-[#2a3942] px-3 py-2.5 text-sm text-[#e9edef] outline-none placeholder:text-[#8696a0]" placeholder="Digite uma mensagem"
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); void submit(); } }} />
-        <button disabled={!text.trim()} className="btn-primary h-11 shrink-0 rounded-full px-5" aria-label="Enviar mensagem">Enviar ➤</button>
+        <button disabled={!text.trim()} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#00a884] text-lg text-white transition hover:bg-[#06cf9c] disabled:opacity-40" aria-label="Enviar mensagem">➤</button>
       </div>
     </form>
   );

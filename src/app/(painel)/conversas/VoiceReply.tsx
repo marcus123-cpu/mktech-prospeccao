@@ -34,8 +34,8 @@ export function VoiceReply({ leadId, disabled }: { leadId: string; disabled: boo
     finally { setBusy(false); }
   }
   if (disabled) return null;
-  return <form onSubmit={send} className="space-y-3 border-t border-line p-3">
-    <label className="block text-sm font-semibold" htmlFor="voice-file">🎙️ Enviar mensagem de voz</label>
+  return <details className="border-t border-white/5 bg-[#111b21]"><summary className="cursor-pointer px-4 py-2 text-xs text-[#8696a0] hover:text-white">🎙️ Enviar mensagem de voz</summary>
+  <form onSubmit={send} className="space-y-3 p-3">
     <p className="text-xs text-muted">Anexe seu áudio, escute a prévia e envie. MP3, M4A, OGG, WAV ou WebM · até 3 MB e 10 minutos.</p>
     <input ref={input} id="voice-file" type="file" accept=".mp3,.m4a,.ogg,.wav,.webm,.aac,audio/*" disabled={busy}
       className="input w-full text-sm" onChange={event => {
@@ -48,5 +48,5 @@ export function VoiceReply({ leadId, disabled }: { leadId: string; disabled: boo
     <button className="btn-primary" disabled={!file || busy}>{busy ? "Preparando envio…" : "Enviar como mensagem de voz"}</button>
     {error && <p role="alert" className="text-sm text-rose-300">{error}</p>}
     {success && <p role="status" className="text-sm text-emerald-300">{success}</p>}
-  </form>;
+  </form></details>;
 }

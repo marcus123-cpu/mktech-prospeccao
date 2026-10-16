@@ -69,10 +69,10 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
   const box = "lg:h-[calc(100vh-12rem)]";
 
   const list = (
-    <aside className={`card flex h-[60vh] flex-col overflow-hidden ${box}`}>
+    <aside className={`flex h-[60vh] flex-col overflow-hidden rounded-xl border border-line bg-[#111b21] ${box}`}>
       <form action="/conversas" className="flex gap-2 border-b border-line p-3">
         <input type="hidden" name="filtro" value={filter} />
-        <input id="q" name="q" className="input rounded-full" placeholder="🔎 Buscar nome ou cidade" aria-label="Buscar conversa" defaultValue={term} />
+        <input id="q" name="q" className="input rounded-full bg-[#202c33]" placeholder="🔎 Buscar nome ou cidade" aria-label="Buscar conversa" defaultValue={term} />
         <button className="btn-ghost rounded-full">Buscar</button>
       </form>
       <div className="min-h-0 flex-1 overflow-y-auto">
@@ -80,8 +80,8 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
           const waiting = conversationState(c) === "aguardando";
           const active = current?.id === c.id;
           return <Link key={c.id} href={href({ lead: c.id, pagina: String(page) })} aria-current={active ? "page" : undefined}
-            className={`mx-2 my-1 flex gap-3 rounded-xl px-3 py-3 transition hover:bg-panel-2 ${active ? "bg-gradient-to-r from-accent/30 to-accent-2/10 ring-1 ring-accent/40" : ""}`}>
-            <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${waiting ? "bg-gradient-to-br from-accent to-accent-2 text-white" : "bg-panel-2 text-muted"}`}>{initial(c.business_name)}</span>
+            className={`flex gap-3 border-b border-white/5 px-3 py-3 transition hover:bg-[#202c33] ${active ? "bg-[#2a3942]" : ""}`}>
+            <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${waiting ? "bg-[#00a884] text-white" : "bg-[#6a7175] text-white"}`}>{initial(c.business_name)}</span>
             <span className="min-w-0 flex-1">
               <span className="flex justify-between gap-2"><span className="truncate text-sm font-semibold">{c.business_name}</span><span className="shrink-0 text-[10px] text-muted">{haQuanto(c.activity_at)}</span></span>
               <span className={`mt-0.5 line-clamp-1 block text-xs ${waiting ? "font-medium text-slate-100" : "text-slate-400"}`}>{waiting && "● "}{c.last_in_media === "audio" ? "🎤 Áudio recebido" : c.last_in_body ?? "Saudação enviada"}</span>
@@ -98,11 +98,11 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
   );
 
   const chat = detailError ? <ErrorBox message="Não foi possível carregar os dados desta conversa. Tente novamente." /> : current ? (
-    <section className={`card flex h-[75vh] flex-col overflow-hidden ${box}`}>
+    <section className={`flex h-[75vh] flex-col overflow-hidden rounded-xl border border-line bg-[#0b141a] ${box}`}>
       <ManualProvider key={current.id} initial={pendingInitial} doneIds={doneIds}>
-        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-panel p-4">
+        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-white/5 bg-[#202c33] px-4 py-3">
           <div className="flex min-w-0 items-center gap-3">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-accent to-accent-2 font-semibold text-white">{initial(current.business_name)}</span>
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#6a7175] font-semibold text-white">{initial(current.business_name)}</span>
             <div className="min-w-0"><h2 className="truncate font-semibold">{current.business_name}</h2><p className="truncate text-xs text-muted">{current.city}{current.phone_e164 ? ` · ${current.phone_e164}` : ""}</p></div>
           </div>
           <InfoToggle />
@@ -113,9 +113,9 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
               const out = e.direction === "saida";
               const newDay = i === 0 || day(visible[i - 1].occurred_at) !== day(e.occurred_at);
               return <li key={e.id}>
-                {newDay && <p className="my-3 text-center"><span className="rounded-full bg-panel px-3 py-1 text-[11px] text-muted">{day(e.occurred_at)}</span></p>}
+                {newDay && <p className="my-3 text-center"><span className="rounded-lg bg-[#182229] px-3 py-1 text-[11px] text-[#8696a0] shadow">{day(e.occurred_at)}</span></p>}
                 <div className={`flex ${out ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[88%] rounded-2xl px-3.5 py-2 shadow-sm sm:max-w-[75%] ${out ? "rounded-br-sm bg-gradient-to-br from-accent/80 to-accent-2/70 text-white" : "rounded-bl-sm bg-panel"} ${e.source === "painel_falhou" ? "!bg-rose-900/50" : ""}`}>
+                  <div className={`max-w-[88%] rounded-lg px-3 py-1.5 shadow-sm sm:max-w-[65%] ${out ? "rounded-tr-none bg-[#005c4b] text-[#e9edef]" : "rounded-tl-none bg-[#202c33] text-[#e9edef]"} ${e.source === "painel_falhou" ? "!bg-rose-900/50" : ""}`}>
                     <p className={`mb-0.5 text-[10px] font-semibold uppercase tracking-wide ${out ? "text-white/70" : "text-muted"}`}>{out ? SOURCE[e.source] ?? who(e) : who(e) === "Cliente" && e.source === "automatica" ? "Resposta automática" : "Cliente"}</p>
                     {e.media === "audio" ? (
                       e.external_id && audioIds.has(e.external_id) ? <div className="flex items-center gap-2">
