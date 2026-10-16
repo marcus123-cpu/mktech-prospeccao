@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { AutoRefresh } from "@/components/AutoRefresh";
 import { ErrorBox, PageHeader } from "@/components/ui";
 import { requireAdmin } from "@/lib/auth";
 import { locationLabel } from "@/lib/research";
@@ -48,7 +47,6 @@ export default async function HermesPage() {
     if (!r.error && r.data) reports.set(p.id, r.data as Report);
   }
   return <>
-    <AutoRefresh />
     <PageHeader title="🚀 Hermes Prospector" subtitle="O Hermes pesquisa os leads e faz o diagnóstico. Depois você dispara só a saudação e conversa manualmente." />
 
     <section className="card mb-4 p-4">

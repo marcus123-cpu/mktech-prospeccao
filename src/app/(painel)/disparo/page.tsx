@@ -1,5 +1,4 @@
 import { ActionForm } from "@/components/ActionForm";
-import { AutoRefresh } from "@/components/AutoRefresh";
 import { CheckAll } from "@/components/CheckAll";
 import { ErrorBox, PageHeader } from "@/components/ui";
 import { requireAdmin } from "@/lib/auth";
@@ -55,7 +54,6 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
   const todayTarget = o.today_new_leads_date ? o.today_new_leads_target : null;
 
   return <>
-    <AutoRefresh />
     <PageHeader title="📤 Disparar" subtitle="Escolha quem recebe e dispare. O Hermes manda só a saudação, aos poucos, respeitando horário, limite e quem pediu para não receber. A conversa depois é toda sua." />
 
     {problems.length > 0 && <div className="mb-4 rounded border border-amber-500/40 p-3 text-sm text-amber-300">{problems.map((p) => <p key={p}>⚠️ {p}</p>)}</div>}

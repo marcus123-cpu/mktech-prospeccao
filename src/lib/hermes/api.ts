@@ -14,6 +14,8 @@ export type Scope =
 
 const MAX_BODY_BYTES = 256 * 1024;
 const RATE_LIMIT = 120; // requisições por minuto, por token
+const TOKEN_TTL_MS = 15_000; // cache curto da checagem do token: revogação vale em até 15 s
+const tokenCache = new Map<string, { tokenId: string; expiresAt: number }>();
 const buckets = new Map<string, { count: number; resetAt: number }>();
 
 export function json(body: unknown, status = 200, headers: Record<string, string> = {}) {
@@ -54,12 +56,18 @@ export async function authenticate(
       response: json({ status: "limite_excedido", errors: ["muitas requisições"] }, 429, { "Retry-After": String(retry) }),
     };
   }
+  const cacheKey = `${hash}:${scope}`;
+  const hit = tokenCache.get(cacheKey);
+  if (hit && hit.expiresAt > Date.now() && process.env.NODE_ENV !== "test") return { tokenId: hit.tokenId };
   try {
     const { data, error } = await serviceClient().rpc("api_token_check", { p_hash: hash, p_scope: scope });
     if (error) return { response: temporaryFailure() };
     if (!data) {
+      tokenCache.delete(cacheKey);
       return { response: json({ status: "nao_autorizado", errors: ["token inválido, revogado ou sem permissão"] }, 403) };
     }
+    if (tokenCache.size > 200) tokenCache.clear();
+    tokenCache.set(cacheKey, { tokenId: data as string, expiresAt: Date.now() + TOKEN_TTL_MS });
     return { tokenId: data as string };
   } catch {
     return { response: temporaryFailure() };

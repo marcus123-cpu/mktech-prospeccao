@@ -1,5 +1,4 @@
 import QRCode from "qrcode";
-import { AutoRefresh } from "@/components/AutoRefresh";
 import { ErrorBox, PageHeader } from "@/components/ui";
 import { requireAdmin } from "@/lib/auth";
 import { fmtDateTime, haQuanto } from "@/lib/time";
@@ -21,7 +20,6 @@ export default async function ConexaoPage() {
   const number = c.phone_number ? `+${c.phone_number}` : null;
 
   return <>
-    <AutoRefresh />
     <PageHeader title="🔌 Conexão" subtitle="O WhatsApp que o Hermes usa para mandar as saudações." />
     <section className="card mx-auto max-w-xl p-6 text-center">
       {status === "conectado" && <>

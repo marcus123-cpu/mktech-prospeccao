@@ -4,7 +4,6 @@ import { dbErrorMessage, requireAdmin } from "@/lib/auth";
 import { fmtDateTime, haQuanto } from "@/lib/time";
 import { ArchiveButton } from "./Archive";
 import { ClearPriceButton } from "./ClearPrice";
-import { AutoRefresh } from "@/components/AutoRefresh";
 
 export const metadata = { title: "Funil" };
 export const dynamic = "force-dynamic";
@@ -54,7 +53,6 @@ export default async function FunilPage() {
 
   return (
     <>
-      <AutoRefresh />
       <PageHeader
         title="🎯 Funil"
         subtitle="Do envio da saudação até o fechamento, tudo em um quadro só."

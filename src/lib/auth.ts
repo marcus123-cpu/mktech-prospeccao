@@ -6,12 +6,15 @@ import { createClient } from "@/lib/supabase/server";
 /** Garante usuário logado e cadastrado em app_admins. Retorna o cliente com a sessão dele. */
 export const requireAdmin = cache(async function requireAdmin() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-  const { data: isAdmin, error } = await supabase.rpc("is_admin");
+  // Claims verificadas localmente + checagem de admin em paralelo (uma ida ao banco só).
+  const [{ data: claimsData }, { data: isAdmin, error }] = await Promise.all([
+    supabase.auth.getClaims(),
+    supabase.rpc("is_admin"),
+  ]);
+  const claims = claimsData?.claims;
+  if (!claims) redirect("/login");
   if (error || !isAdmin) redirect("/login?erro=sem-permissao");
+  const user = { id: claims.sub, email: typeof claims.email === "string" ? claims.email : null };
   return { supabase, user };
 });
 

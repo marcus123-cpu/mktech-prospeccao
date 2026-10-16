@@ -1,5 +1,4 @@
 import { ActionForm } from "@/components/ActionForm";
-import { AutoRefresh } from "@/components/AutoRefresh";
 import { CopyResumo } from "@/components/leads/CopyResumo";
 import { ErrorBox, PageHeader } from "@/components/ui";
 import { requireAdmin } from "@/lib/auth";
@@ -29,7 +28,6 @@ export default async function AprendizadoPage() {
   const pct = Math.round((n / d.total_days) * 100);
 
   return <>
-    <AutoRefresh />
     <PageHeader title="🧠 Aprendizado do Hermes" subtitle="Durante 30 dias o Hermes estuda como você trabalha no WhatsApp: como abre, chama pelo nome, desenrola, trata robô, manda áudio. Só observa; nunca envia nada." />
 
     {p.status === "nao_iniciado" && <section className="card mb-4 p-6 text-center">
