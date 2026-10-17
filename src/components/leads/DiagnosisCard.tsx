@@ -1,3 +1,4 @@
+import { CopyResumo } from "@/components/leads/CopyResumo";
 import { CONFIDENCE_LABEL, OFFER_LABEL } from "@/lib/labels";
 import { fmtDateTime } from "@/lib/time";
 
@@ -16,6 +17,27 @@ export type Diagnosis = {
   objections: string[];
   created_at: string;
 };
+
+/** Texto puro do diagnóstico, para colar no WhatsApp ou em notas. */
+export function diagnosisText(d: Diagnosis): string {
+  const list = (title: string, items: string[]) => (items?.length ? [`${title}:`, ...items.map((t) => `- ${t}`), ""] : []);
+  return [
+    `Diagnóstico (pesquisa de ${fmtDateTime(d.created_at)} · ${CONFIDENCE_LABEL[d.confidence] ?? d.confidence})`,
+    `Potencial: ${d.fit_score}/100`,
+    "",
+    d.summary,
+    "",
+    `Oferta sugerida: ${OFFER_LABEL[d.offer] ?? d.offer}`,
+    d.offer_reason,
+    "",
+    ...(d.pains.length ? ["Dores percebidas:", ...d.pains.map((p) => `- ${p.pain} (evidência: ${p.evidence})`), ""] : []),
+    ...list("Como a MKTech ajuda", d.opportunities),
+    ...(d.approach ? ["Ângulo de abordagem:", d.approach, ""] : []),
+    ...list("Objeções prováveis", d.objections),
+    ...(d.audience ? [`Público: ${d.audience}`] : []),
+    ...(d.digital_presence ? [`Presença digital: ${d.digital_presence}`] : []),
+  ].join("\n").trim();
+}
 
 /** Diagnóstico comercial da pesquisa mais recente do Hermes. Só leitura. */
 export function DiagnosisCard({ d, olderCount }: { d: Diagnosis | null; olderCount: number }) {
@@ -38,6 +60,7 @@ export function DiagnosisCard({ d, olderCount }: { d: Diagnosis | null; olderCou
             {olderCount > 0 && ` · ${olderCount} versão(ões) anterior(es)`}
           </p>
         </div>
+        <CopyResumo text={diagnosisText(d)} label="📋 Copiar diagnóstico" className="btn-ghost px-3 py-1.5 text-xs" />
         <div className="text-right">
           <div className={`text-2xl font-semibold ${scoreColor}`}>{d.fit_score}<span className="text-sm text-muted">/100</span></div>
           <div className="text-xs text-muted">potencial</div>
