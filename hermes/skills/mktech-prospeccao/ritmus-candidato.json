@@ -1,0 +1,66 @@
+{
+  "business_name": "Ritmus Academia",
+  "city": "Barretos",
+  "state": "SP",
+  "niche": "Academia",
+  "instagram": null,
+  "phone": "1733226370",
+  "services": [
+    "Treino de Kangoo Jumps",
+    "personal trainer - funcional"
+  ],
+  "address": "Avenida Trinta e Três, 745, Centro, Barretos - SP",
+  "source_name": "busca_web",
+  "research_date": "2026-10-17",
+  "website_url": null,
+  "whatsapp_url": null,
+  "selection_reason": "Negócio do nicho e cidade configurados; presença inspecionada com Playwright. Nenhum site próprio localizado nas fontes consultadas; confirmar eventual página não indexada.",
+  "pending_items": "Confirmar WhatsApp comercial e vínculo do número; confirmar data da última atividade e eventual site não indexado. Instagram não localizado; não inventar handle. Data de publicação recente não visível.",
+  "priority": "alta",
+  "site_status": "apenas_redes_sociais",
+  "evidences": [
+    {
+      "kind": "busca",
+      "url": "https://www.facebook.com/ritmusacademiabarretos/",
+      "summary": "Facebook aberto sem login: Ritmus Academia | Barretos SP | Facebook; Ritmus Academia, Barretos. 863 seguidores · 1 falando sobre isso · 434 estiveram aqui. Academia",
+      "observed_at": "2026-10-17T10:05:03Z"
+    },
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Ritmus+Academia+Barretos",
+      "summary": "Busca por 'Ritmus Academia Barretos' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-17T10:05:03Z"
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://wellhub.com/pt-br/search/partners/1Faf1yhfLHcjSBELBsqkgfHwrQZlLV3HGOkc4LuZg9rzSfi_nesdUwr0sJsPLD27/",
+      "summary": "Ritmus Academia; Barretos, Avenida Trinta e Três, 745; Treino de Kangoo Jumps e personal trainer - funcional; telefone (17) 3322-6370; Facebook ritmusacademiabarretos; horários publicados."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://www.top-rated.online/cities/Barretos/place/p/10456256/Ritmus%2BAcademia",
+      "summary": "Ritmus Academia, Avenida Trinta e Três, 745, Barretos; telefone (17) 3322-6370; 4,7 de 27 avaliações.",
+      "limitation": "Atualização em 12/10/2025; não comprova atividade recente."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 78,
+    "confidence": "media",
+    "summary": "Ritmus Academia atua em Barretos, no segmento Academia. As fontes consultadas apresentam os serviços e canais públicos; a existência de site não indexado permanece sujeita a confirmação.",
+    "audience": "Pessoas que procuram Treino de Kangoo Jumps em Barretos.",
+    "digital_presence": "{\"handle\": \"\", \"status\": \"nao_informado\"}; sem_site",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: uma página própria pode reunir apresentação dos serviços e contato fora das redes e diretórios.",
+        "evidence": "Busca por 'Ritmus Academia Barretos' e conferência do link da bio: nenhum site ou landing page próprio localizado"
+      }
+    ],
+    "opportunities": [
+      "Reunir serviços, apresentação e contato comercial em página própria, caso a lacuna seja confirmada."
+    ],
+    "offer": "site_institucional",
+    "offer_reason": "Apresentar serviços e canais em endereço próprio, sujeito à confirmação da presença digital.",
+    "approach": "Pesquisa registrada para avaliação do motor V6; sem mensagem comercial preparada.",
+    "objections": []
+  }
+}

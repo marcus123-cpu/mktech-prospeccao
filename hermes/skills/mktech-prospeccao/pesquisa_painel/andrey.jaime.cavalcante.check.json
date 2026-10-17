@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "belem",
+    "unit": "",
+    "phone": "+5591993492717",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:andrey.jaime.cavalcante",
+    "instagram": "andrey.jaime.cavalcante",
+    "name_core": "andrey jaime cavalcante",
+    "name_norm": "andrey jaime cavalcante",
+    "source_name": "euterapeuta"
+  }
+}

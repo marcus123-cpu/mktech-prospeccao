@@ -1,0 +1,63 @@
+{
+  "business_name": "Jorge Albuquerque",
+  "niche": "Massagem",
+  "city": "Salvador",
+  "state": "BA",
+  "services": [
+    "Massagem Bioenergética",
+    "Massagem Relaxante",
+    "Massagem Tântrica",
+    "Massagem Terapêutica"
+  ],
+  "phone": "(13) 99763-7830",
+  "instagram": null,
+  "whatsapp_url": null,
+  "website_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:jorge.albuquerque",
+  "research_date": "2026-10-16",
+  "selection_reason": "Perfil público de massagem com sinal recente de uso no diretório; cadastrar como incompleto para enriquecer a presença digital. Não há conclusão de inexistência de site.",
+  "pending_items": "Confirmar atividade de atendimento diretamente em fonte independente; o sinal de uso recente observado é do diretório.\nConfirmar presença digital e eventual site/landing page com o negócio; busca negativa não prova ausência.\nObter segunda fonte independente.\nConfirmar WhatsApp do telefone comercial, sem abrir ou contatar WhatsApp.\nLocalizar Instagram e Facebook oficiais e conferir links da bio; perfil não forneceu identificadores verificáveis dessas redes.",
+  "priority": "media",
+  "site_status": "verificacao_pendente",
+  "evidences": [
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Jorge+Albuquerque+Salvador",
+      "summary": "Busca por 'Jorge Albuquerque Salvador' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-16T22:53:15Z",
+      "limitation": "Busca limitada aos resultados retornados pelo Bing; bio só foi verificável quando rede social abriu. Não prova inexistência de site."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/jorge.albuquerque",
+      "summary": "Jorge Albuquerque; Salvador - BA; contato público: (13) 99763-7830; serviços: Massagem Bioenergética, Massagem Relaxante, Massagem Tântrica, Massagem Terapêutica.",
+      "observed_at": "2026-10-16",
+      "limitation": "Perfil de marketplace; informações declaradas pelo anunciante, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/salvador-ba",
+      "summary": "Jorge Albuquerque Terapeuta corporal com bioenergia 0,0 Salvador, BA Visto há 2 semanas",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há indica acesso ao diretório, não prova atendimento nem data de publicação; mesma origem do perfil."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 50,
+    "confidence": "baixa",
+    "summary": "Candidato de massagem identificado em diretório público. Atividade e oportunidade de página própria requerem confirmação independente.",
+    "digital_presence": "Inspeção Playwright: sem_site; Instagram: nao_informado; Facebook: nao_informado. Não afirmar ausência de site.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços pode depender do perfil no marketplace.",
+        "evidence": "Jorge Albuquerque; Salvador - BA; contato público: (13) 99763-7830; serviços: Massagem Bioenergética, Massagem Relaxante, Massagem Tântrica, Massagem Terapêutica."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria de serviços somente após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Possível página de apresentação dos serviços; recomendação condicionada à verificação de presença e necessidade."
+  }
+}

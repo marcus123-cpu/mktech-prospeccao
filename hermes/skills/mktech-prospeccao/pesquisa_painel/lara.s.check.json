@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "salvador",
+    "unit": "",
+    "phone": "+5571992795717",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:lara.s",
+    "instagram": null,
+    "name_core": "lara s",
+    "name_norm": "lara s",
+    "source_name": "euterapeuta"
+  }
+}

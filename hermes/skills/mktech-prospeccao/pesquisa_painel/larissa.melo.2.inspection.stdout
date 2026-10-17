@@ -1,0 +1,34 @@
+{
+  "nome": "Larissa Melo",
+  "cidade": "Recife",
+  "verificado_em": "2026-10-16T22:05:01Z",
+  "instagram": {
+    "handle": "",
+    "status": "nao_informado"
+  },
+  "facebook": {
+    "status": "nao_informado"
+  },
+  "site": {
+    "situacao": "sem_site",
+    "detalhe": []
+  },
+  "nota_sugerida": 46,
+  "componentes": {
+    "lacuna_digital": 35,
+    "atividade": 0,
+    "demanda": 0,
+    "potencial_comercial": 11
+  },
+  "confianca": "baixa",
+  "site_status_sugerido": "site_nao_localizado",
+  "evidencias": [
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Larissa+Melo+Recife",
+      "summary": "Busca por 'Larissa Melo Recife' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-16T22:05:01Z"
+    }
+  ],
+  "avisos": []
+}

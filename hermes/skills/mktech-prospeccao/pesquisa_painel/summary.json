@@ -1,0 +1,14 @@
+{
+  "run_id": "a530496c-7627-4e51-a4dc-1a1c2cef6956",
+  "created": 100,
+  "review_registrations": 6,
+  "discarded": 17,
+  "discard_reasons": {
+    "duplicado": 9,
+    "site_proprio_sem_lacuna_comprovada": 8
+  },
+  "errors": 4,
+  "corrected_validation_errors": 3,
+  "searches_min": 177,
+  "searches_max": 178
+}

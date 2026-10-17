@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "joao pessoa",
+    "unit": "",
+    "phone": "+5583998788148",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:vera.lima",
+    "instagram": null,
+    "name_core": "vera limah",
+    "name_norm": "vera limah",
+    "source_name": "euterapeuta"
+  }
+}

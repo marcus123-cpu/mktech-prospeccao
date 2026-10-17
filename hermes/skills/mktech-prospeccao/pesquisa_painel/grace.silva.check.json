@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "recife",
+    "unit": "",
+    "phone": "+5581998455477",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:grace.silva",
+    "instagram": null,
+    "name_core": "grace silva",
+    "name_norm": "grace silva",
+    "source_name": "euterapeuta"
+  }
+}

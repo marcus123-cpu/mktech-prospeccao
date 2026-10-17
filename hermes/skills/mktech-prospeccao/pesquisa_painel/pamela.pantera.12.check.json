@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "campo grande",
+    "unit": "",
+    "phone": "+5511933015278",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:pamela.pantera.12",
+    "instagram": "pamelapanteraoficial",
+    "name_core": "pamela pantera",
+    "name_norm": "pamela pantera",
+    "source_name": "euterapeuta"
+  }
+}

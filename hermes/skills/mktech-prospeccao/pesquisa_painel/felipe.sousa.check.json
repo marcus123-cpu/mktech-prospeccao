@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "sao luis",
+    "unit": "",
+    "phone": "+5598933008953",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:felipe.sousa",
+    "instagram": null,
+    "name_core": "sebastian sousa",
+    "name_norm": "sebastian sousa",
+    "source_name": "euterapeuta"
+  }
+}

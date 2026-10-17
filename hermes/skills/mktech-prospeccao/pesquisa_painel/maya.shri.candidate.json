@@ -1,0 +1,86 @@
+{
+  "business_name": "Maya Shri",
+  "city": "Brasília",
+  "state": "DF",
+  "niche": "Massagem",
+  "services": [
+    "Aromaterapia",
+    "Ativação da Kundalini",
+    "Cristaloterapia",
+    "Cromoterapia",
+    "Liberação Miofascial",
+    "Massagem Ayurvédica",
+    "Massagem Bioenergética",
+    "Massagem com Pedras Quentes",
+    "Massagem Relaxante",
+    "Massagem Tailandesa",
+    "Massagem Tântrica",
+    "Massagem Terapêutica",
+    "Musicoterapia"
+  ],
+  "phone": "(61) 98110-0243",
+  "instagram": null,
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:maya.shri",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. Os resultados autodesk.com/products/maya são páginas do software Maya da Autodesk, sem vínculo com a terapeuta de Brasília.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://www.autodesk.com/products/maya/overview?msockid=0982fdf4cace6dbd3a4dea00cb846c2a",
+      "summary": "Link autodesk.com: endereço não abre (HTTP 403)",
+      "observed_at": "2026-10-16T21:58:25Z",
+      "limitation": "Os resultados autodesk.com/products/maya são páginas do software Maya da Autodesk, sem vínculo com a terapeuta de Brasília. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "site",
+      "url": "https://www.autodesk.com/products/maya/free-trial?msockid=0982fdf4cace6dbd3a4dea00cb846c2a",
+      "summary": "Link autodesk.com: endereço não abre (HTTP 403)",
+      "observed_at": "2026-10-16T21:58:25Z",
+      "limitation": "Os resultados autodesk.com/products/maya são páginas do software Maya da Autodesk, sem vínculo com a terapeuta de Brasília. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/maya.shri",
+      "summary": "Maya Shri; Brasília - DF; contato público: (61) 98110-0243; serviços: Aromaterapia, Ativação da Kundalini, Cristaloterapia, Cromoterapia, Liberação Miofascial, Massagem Ayurvédica, Massagem Bioenergética, Massagem com Pedras Quentes, Massagem Relaxante, Massagem Tailandesa, Massagem Tântrica, Massagem Terapêutica, Musicoterapia.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/brasilia-df",
+      "summary": "Maya Shri ✦ TERAPEUTA TÂNTRICA & MASSOTERAPEUTA 0,0 Brasília, DF Visto há 3 dias",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/maya.shri",
+      "summary": "Revisão da inspeção automática: Os resultados autodesk.com/products/maya são páginas do software Maya da Autodesk, sem vínculo com a terapeuta de Brasília.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 40,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. Os resultados autodesk.com/products/maya são páginas do software Maya da Autodesk, sem vínculo com a terapeuta de Brasília.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Maya Shri; Brasília - DF; contato público: (61) 98110-0243; serviços: Aromaterapia, Ativação da Kundalini, Cristaloterapia, Cromoterapia, Liberação Miofascial, Massagem Ayurvédica, Massagem Bioenergética, Massagem com Pedras Quentes, Massagem Relaxante, Massagem Tailandesa, Massagem Tântrica, Massagem Terapêutica, Musicoterapia."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

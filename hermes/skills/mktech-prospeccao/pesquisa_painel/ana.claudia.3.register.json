@@ -1,0 +1,9 @@
+{
+  "http": 202,
+  "reason": "nome_parecido",
+  "status": "possivel_duplicado",
+  "review_id": "0009ffed-1f4f-45e9-8472-cd0a4de3fddf",
+  "matched_lead_ids": [
+    "9d09e1fe-cfe9-4f71-96d7-6cfafc67bf52"
+  ]
+}

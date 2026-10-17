@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "sao luis",
+    "unit": "",
+    "phone": "+5598989248849",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:andressa.massoterapeuta",
+    "instagram": null,
+    "name_core": "luna prive exclusiva marcante",
+    "name_norm": "luna prive exclusiva e marcante",
+    "source_name": "euterapeuta"
+  }
+}

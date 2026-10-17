@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "manaus",
+    "unit": "",
+    "phone": "+5592993548049",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:naty.muller",
+    "instagram": null,
+    "name_core": "laura manoela",
+    "name_norm": "laura manoela",
+    "source_name": "euterapeuta"
+  }
+}

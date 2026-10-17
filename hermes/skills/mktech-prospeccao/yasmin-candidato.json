@@ -1,0 +1,71 @@
+{
+  "business_name": "Massoterapeuta Yasmin Calil",
+  "city": "Franca",
+  "state": "SP",
+  "niche": "Massoterapeutas",
+  "instagram": "massoterapeutayasmincalil",
+  "phone": "16991000606",
+  "services": [
+    "Massagem Terapêutica"
+  ],
+  "address": "Rua José Bonifácio, 1244, Centro, Franca - SP",
+  "source_name": "busca_web",
+  "research_date": "2026-10-17",
+  "website_url": null,
+  "whatsapp_url": null,
+  "selection_reason": "Negócio do nicho e cidade configurados; presença inspecionada com Playwright. Nenhum site próprio localizado nas fontes consultadas; confirmar eventual página não indexada.",
+  "pending_items": "Confirmar WhatsApp comercial e vínculo do número; confirmar data da última atividade e eventual site não indexado. Nota 42 preservada do inspetor. Conferir eventual site e corrigir falso positivo Maps antes de qualquer qualificação; data de atividade recente não comprovada.",
+  "priority": "media",
+  "site_status": "verificacao_pendente",
+  "evidences": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/massoterapeutayasmincalil/",
+      "summary": "Instagram @massoterapeutayasmincalil aberto sem login; 3101 seguidores, 517 publicações; link da bio: https://maps.app.goo.gl/aMRqREHBvRGLc9EJ7",
+      "observed_at": "2026-10-17T10:02:24Z"
+    },
+    {
+      "kind": "site",
+      "url": "https://maps.app.goo.gl/aMRqREHBvRGLc9EJ7",
+      "summary": "Inspeção abriu o link da bio com título Massoterapeuta Yasmin Calil - Google Maps; o script classificou automaticamente como site próprio.",
+      "limitation": "Falso positivo comprovado pelo domínio e título: Google Maps é diretório. Não foi realizada busca Bing pelo inspetor."
+    },
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Massoterapeuta+Yasmin+Calil+Franca+site+oficial",
+      "summary": "Busca manual Massoterapeuta Yasmin Calil Franca site oficial retornou LinkedIn e diretório Acharei; nenhum site próprio localizado nestes resultados.",
+      "limitation": "Existência de página não indexada permanece pendente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://www.acharei.com.br/sp/franca/empresas/medicina_saude_e_equipamentos/massagens_casas",
+      "summary": "Massoterapeuta Yasmin Calil; Rua José Bonifácio, 1244, Centro, Franca; telefone (16) 99100-0606.",
+      "limitation": "Data de atualização do telefone não informada."
+    },
+    {
+      "kind": "outro",
+      "url": "https://br.linkedin.com/in/yasmin-calil-b42b1a212",
+      "summary": "Yasmin Calil, Franca, São Paulo; massoterapeuta formada no Chile em 2008; links públicos para Instagram massoterapeutayasmincalil e Google Maps."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 42,
+    "confidence": "media",
+    "summary": "Massoterapeuta Yasmin Calil atua em Franca, no segmento Massoterapeutas. As fontes consultadas apresentam os serviços e canais públicos; a existência de site não indexado permanece sujeita a confirmação.",
+    "audience": "Pessoas que procuram Massagem Terapêutica em Franca.",
+    "digital_presence": "{\"handle\": \"massoterapeutayasmincalil\", \"status\": \"ok\", \"seguidores\": 3101, \"posts\": 517}; verificacao_pendente; Google Maps confundido com site próprio",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: uma página própria pode reunir apresentação dos serviços e contato fora das redes e diretórios.",
+        "evidence": "Busca manual Massoterapeuta Yasmin Calil Franca site oficial retornou LinkedIn e diretório Acharei; nenhum site próprio localizado nestes resultados."
+      }
+    ],
+    "opportunities": [
+      "Reunir serviços, apresentação e contato comercial em página própria, caso a lacuna seja confirmada."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Apresentar serviços e canais em endereço próprio, sujeito à confirmação da presença digital.",
+    "approach": "Pesquisa registrada para avaliação do motor V6; sem mensagem comercial preparada.",
+    "objections": []
+  }
+}

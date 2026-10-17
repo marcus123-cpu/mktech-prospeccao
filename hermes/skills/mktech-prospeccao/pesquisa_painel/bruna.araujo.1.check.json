@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "aracaju",
+    "unit": "",
+    "phone": "+5579996939409",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:bruna.araujo.1",
+    "instagram": null,
+    "name_core": "bruna araujo",
+    "name_norm": "bruna araujo",
+    "source_name": "euterapeuta"
+  }
+}

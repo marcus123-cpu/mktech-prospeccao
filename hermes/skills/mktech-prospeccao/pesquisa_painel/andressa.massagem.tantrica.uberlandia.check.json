@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "uberlandia",
+    "unit": "",
+    "phone": "+5534999467060",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:andressa.massagem.tantrica.uberlandia",
+    "instagram": null,
+    "name_core": "andressa massagem tantrica uberlandia",
+    "name_norm": "andressa massagem tantrica uberlandia",
+    "source_name": "euterapeuta"
+  }
+}

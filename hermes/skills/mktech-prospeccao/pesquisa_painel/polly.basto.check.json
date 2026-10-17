@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "salvador",
+    "unit": "",
+    "phone": "+5571992763500",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:polly.basto",
+    "instagram": null,
+    "name_core": "polly basto",
+    "name_norm": "polly basto",
+    "source_name": "euterapeuta"
+  }
+}

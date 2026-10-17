@@ -1,0 +1,88 @@
+{
+  "business_name": "Luiza Marjorie",
+  "city": "Manaus",
+  "state": "AM",
+  "niche": "Massagem",
+  "services": [
+    "Massagem Relaxante",
+    "Massagem com Pedras Quentes",
+    "Massagem Havaiana",
+    "Massagem Miofascial",
+    "Massagem Tailandesa",
+    "Massagem Tântrica",
+    "Massagem Terapêutica",
+    "Sexologia"
+  ],
+  "phone": "(65) 99277-7946",
+  "instagram": "indiarara7",
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:luiza.marjorie",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. Os resultados magazineluiza.com.br são do varejista Magazine Luiza, sem vínculo confirmado com Luiza Marjorie, massoterapeuta em Manaus.",
+  "evidences": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/indiarara7/",
+      "summary": "Instagram @indiarara7 aberto sem login; 1543 seguidores, 9 publicações; sem link de site na bio",
+      "observed_at": "2026-10-16T22:54:11Z",
+      "limitation": "Os resultados magazineluiza.com.br são do varejista Magazine Luiza, sem vínculo confirmado com Luiza Marjorie, massoterapeuta em Manaus. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "site",
+      "url": "https://www.magazineluiza.com.br/?msockid=2b126ea267716e2d26d3795666256fc2",
+      "summary": "Link magazineluiza.com.br: endereço não abre (HTTP 403)",
+      "observed_at": "2026-10-16T22:54:11Z",
+      "limitation": "Os resultados magazineluiza.com.br são do varejista Magazine Luiza, sem vínculo confirmado com Luiza Marjorie, massoterapeuta em Manaus. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "site",
+      "url": "https://www.magazineluiza.com.br/novo-site-magazine-luiza/?msockid=2b126ea267716e2d26d3795666256fc2",
+      "summary": "Link magazineluiza.com.br: endereço não abre (HTTP 403)",
+      "observed_at": "2026-10-16T22:54:11Z",
+      "limitation": "Os resultados magazineluiza.com.br são do varejista Magazine Luiza, sem vínculo confirmado com Luiza Marjorie, massoterapeuta em Manaus. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/luiza.marjorie",
+      "summary": "Luiza Marjorie; Manaus - AM; contato público: (65) 99277-7946; serviços: Massagem Relaxante, Massagem com Pedras Quentes, Massagem Havaiana, Massagem Miofascial, Massagem Tailandesa, Massagem Tântrica, Massagem Terapêutica, Sexologia.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/manaus-am",
+      "summary": "Premium Luiza Marjorie Massoterapeuta sensual 5,0 Manaus, AM Visto há 1 mês R$150",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/luiza.marjorie",
+      "summary": "Revisão da inspeção automática: Os resultados magazineluiza.com.br são do varejista Magazine Luiza, sem vínculo confirmado com Luiza Marjorie, massoterapeuta em Manaus.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 59,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. Os resultados magazineluiza.com.br são do varejista Magazine Luiza, sem vínculo confirmado com Luiza Marjorie, massoterapeuta em Manaus.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Luiza Marjorie; Manaus - AM; contato público: (65) 99277-7946; serviços: Massagem Relaxante, Massagem com Pedras Quentes, Massagem Havaiana, Massagem Miofascial, Massagem Tailandesa, Massagem Tântrica, Massagem Terapêutica, Sexologia."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

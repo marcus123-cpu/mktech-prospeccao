@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "uberlandia",
+    "unit": "",
+    "phone": "+5534997361905",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:anna.domi",
+    "instagram": null,
+    "name_core": "anna domi",
+    "name_norm": "anna domi",
+    "source_name": "euterapeuta"
+  }
+}

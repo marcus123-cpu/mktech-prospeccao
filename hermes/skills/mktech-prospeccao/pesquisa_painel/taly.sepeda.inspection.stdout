@@ -1,0 +1,47 @@
+{
+  "nome": "spa_terapia (Taly)",
+  "cidade": "Belém",
+  "verificado_em": "2026-10-16T22:09:32Z",
+  "instagram": {
+    "handle": "ts_spa/profilecard",
+    "status": "indisponivel",
+    "url": "https://www.instagram.com/ts_spa/profilecard/"
+  },
+  "facebook": {
+    "status": "ok",
+    "url": "https://www.facebook.com/share/16T2aNuVvp/",
+    "titulo": "Taly Sepeda | Facebook",
+    "descricao": "Taly Sepeda. 1.116 seguidores · 17 falando sobre isso. 🤌🏻🧘🏻‍♀️",
+    "curtidas_ou_seguidores": 1116
+  },
+  "site": {
+    "situacao": "sem_site",
+    "detalhe": []
+  },
+  "nota_sugerida": 82,
+  "componentes": {
+    "lacuna_digital": 50,
+    "atividade": 6,
+    "demanda": 11,
+    "potencial_comercial": 15
+  },
+  "confianca": "media",
+  "site_status_sugerido": "apenas_redes_sociais",
+  "evidencias": [
+    {
+      "kind": "busca",
+      "url": "https://www.facebook.com/share/16T2aNuVvp/",
+      "summary": "Facebook aberto sem login: Taly Sepeda | Facebook; Taly Sepeda. 1.116 seguidores · 17 falando sobre isso. 🤌🏻🧘🏻‍♀️",
+      "observed_at": "2026-10-16T22:09:32Z"
+    },
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=spa_terapia+(Taly)+Belém",
+      "summary": "Busca por 'spa_terapia (Taly) Belém' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-16T22:09:32Z"
+    }
+  ],
+  "avisos": [
+    "Instagram não abriu sem login (perfil restrito ou @ errado): confira o @ e use outra fonte para atividade."
+  ]
+}

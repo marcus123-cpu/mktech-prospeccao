@@ -1,0 +1,56 @@
+{
+  "nome": "Physico's Academia",
+  "cidade": "Barretos",
+  "verificado_em": "2026-10-17T10:03:25Z",
+  "instagram": {
+    "handle": "academia_physicos",
+    "status": "ok",
+    "url": "https://www.instagram.com/academia_physicos/",
+    "seguidores": 1246,
+    "seguindo": 333,
+    "posts": 74,
+    "bio_texto": "1.246 seguidores | 317 seguindo | PHYSICO’S 🏋🏻‍♂️ | Desde 1999 proporcionando qualidade de vida e bem-estar. MUSCULAÇÃO | *Aceitamos GYMPASS E TOTALPASS* | 📞17-99684-5422... | mais | wa.me/5517996845422 | HORARIOS",
+    "links_bio": [
+      "https://wa.me/5517996845422"
+    ]
+  },
+  "facebook": {
+    "status": "nao_informado"
+  },
+  "site": {
+    "situacao": "so_agregador",
+    "detalhe": [
+      {
+        "url": "https://wa.me/5517996845422",
+        "dominio": "wa.me",
+        "tipo": "agregador_links"
+      }
+    ]
+  },
+  "nota_sugerida": 87,
+  "componentes": {
+    "lacuna_digital": 45,
+    "atividade": 20,
+    "demanda": 11,
+    "potencial_comercial": 11
+  },
+  "confianca": "media",
+  "site_status_sugerido": "apenas_redes_sociais",
+  "evidencias": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/academia_physicos/",
+      "summary": "Instagram @academia_physicos aberto sem login; 1246 seguidores, 74 publicações; link da bio: https://wa.me/5517996845422",
+      "observed_at": "2026-10-17T10:03:25Z"
+    },
+    {
+      "kind": "busca",
+      "url": "https://wa.me/5517996845422",
+      "summary": "Link wa.me: agregador de links (não é site próprio)",
+      "observed_at": "2026-10-17T10:03:25Z"
+    }
+  ],
+  "avisos": [
+    "Última publicação não apareceu sem login: não afirme atividade recente sem outra fonte."
+  ]
+}

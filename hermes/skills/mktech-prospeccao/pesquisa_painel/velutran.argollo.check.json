@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "salvador",
+    "unit": "",
+    "phone": "+5571988017031",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:velutran.argollo",
+    "instagram": null,
+    "name_core": "velutran argollo",
+    "name_norm": "velutran argollo",
+    "source_name": "euterapeuta"
+  }
+}

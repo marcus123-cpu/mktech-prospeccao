@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "vitoria",
+    "unit": "",
+    "phone": "+5527988931718",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:maryellen.poton",
+    "instagram": null,
+    "name_core": "maryellen bodart",
+    "name_norm": "maryellen bodart",
+    "source_name": "euterapeuta"
+  }
+}

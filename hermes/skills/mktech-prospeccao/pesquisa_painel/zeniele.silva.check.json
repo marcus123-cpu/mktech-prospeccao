@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "belem",
+    "unit": "",
+    "phone": "+5591985931860",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:zeniele.silva",
+    "instagram": null,
+    "name_core": "zeniele silva",
+    "name_norm": "zeniele silva",
+    "source_name": "euterapeuta"
+  }
+}

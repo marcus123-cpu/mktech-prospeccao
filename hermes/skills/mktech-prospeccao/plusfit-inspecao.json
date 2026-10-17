@@ -1,0 +1,61 @@
+{
+  "nome": "Plus Fit Training Center",
+  "cidade": "Barretos",
+  "verificado_em": "2026-10-17T10:04:25Z",
+  "instagram": {
+    "handle": "plusfitbarretos",
+    "status": "ok",
+    "url": "https://www.instagram.com/plusfitbarretos/",
+    "seguidores": 1589,
+    "seguindo": 2093,
+    "posts": 64,
+    "bio_texto": "1.588 seguidores | 2.005 seguindo | Plus Fit Centro de Treinamento | Horário de Funcionamento | Seg a Qui das 6h as 22h | Sexta 6h as 21h | Sábado das 9h às 14h | Av 39 número 01578 | maps.app.goo.gl/vBEnM2HPnHoBRpPq9?g_st=ac",
+    "links_bio": [
+      "https://maps.app.goo.gl/vBEnM2HPnHoBRpPq9"
+    ]
+  },
+  "facebook": {
+    "status": "nao_informado"
+  },
+  "site": {
+    "situacao": "site_fraco",
+    "detalhe": [
+      {
+        "url": "https://maps.app.goo.gl/vBEnM2HPnHoBRpPq9",
+        "dominio": "maps.app.goo.gl",
+        "tipo": "site_fraco",
+        "http": 200,
+        "titulo": "241 Av. Trinta e Nove (Numeração Com Zero Inicial) - Google Maps",
+        "tem_https": true,
+        "tamanho_texto": 33,
+        "links_internos": 0
+      }
+    ]
+  },
+  "nota_sugerida": 71,
+  "componentes": {
+    "lacuna_digital": 25,
+    "atividade": 20,
+    "demanda": 11,
+    "potencial_comercial": 15
+  },
+  "confianca": "media",
+  "site_status_sugerido": "site_proprio_encontrado",
+  "evidencias": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/plusfitbarretos/",
+      "summary": "Instagram @plusfitbarretos aberto sem login; 1589 seguidores, 64 publicações; link da bio: https://maps.app.goo.gl/vBEnM2HPnHoBRpPq9",
+      "observed_at": "2026-10-17T10:04:25Z"
+    },
+    {
+      "kind": "site",
+      "url": "https://maps.app.goo.gl/vBEnM2HPnHoBRpPq9",
+      "summary": "Link maps.app.goo.gl: página muito simples, sem conteúdo suficiente",
+      "observed_at": "2026-10-17T10:04:25Z"
+    }
+  ],
+  "avisos": [
+    "Última publicação não apareceu sem login: não afirme atividade recente sem outra fonte."
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "nome": "Dayane Afonso",
+  "cidade": "Uberlândia",
+  "verificado_em": "2026-10-16T21:54:56Z",
+  "instagram": {
+    "handle": "estudio_zen_udi",
+    "status": "ok",
+    "url": "https://www.instagram.com/estudio_zen_udi/",
+    "seguidores": 1158,
+    "seguindo": 230,
+    "posts": 57,
+    "bio_texto": "1.160 seguidores | 227 seguindo | Dayane| Massoterapeuta Uberlândia🧚‍♂️ | estudio_zen_udi | 🌿Terapeuta | Massoterapia| Psicanálise | 💫Redução de estresse, ansiedade| +2000 Atendimentos | 🧚‍♂️Mãos de Fada!... | mais | wa.me/3498378156",
+    "links_bio": [
+      "https://www.threads.com/@estudio_zen_udi",
+      "https://wa.me/3498378156"
+    ]
+  },
+  "facebook": {
+    "status": "nao_informado"
+  },
+  "site": {
+    "situacao": "site_proprio",
+    "detalhe": [
+      {
+        "url": "https://www.threads.com/@estudio_zen_udi",
+        "dominio": "threads.com",
+        "tipo": "site_proprio",
+        "http": 200,
+        "titulo": "Dayane| Massoterapeuta Uberlândia🧚‍♂️ (@estudio_zen_udi) • Threads, diga mais",
+        "tem_https": true,
+        "tamanho_texto": 1334,
+        "links_internos": 37
+      },
+      {
+        "url": "https://wa.me/3498378156",
+        "dominio": "wa.me",
+        "tipo": "agregador_links"
+      }
+    ]
+  },
+  "nota_sugerida": 46,
+  "componentes": {
+    "lacuna_digital": 0,
+    "atividade": 20,
+    "demanda": 11,
+    "potencial_comercial": 15
+  },
+  "confianca": "media",
+  "site_status_sugerido": "site_proprio_encontrado",
+  "evidencias": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/estudio_zen_udi/",
+      "summary": "Instagram @estudio_zen_udi aberto sem login; 1158 seguidores, 57 publicações; link da bio: https://www.threads.com/@estudio_zen_udi, https://wa.me/3498378156",
+      "observed_at": "2026-10-16T21:54:56Z"
+    },
+    {
+      "kind": "site",
+      "url": "https://www.threads.com/@estudio_zen_udi",
+      "summary": "Link threads.com: site próprio no ar",
+      "observed_at": "2026-10-16T21:54:56Z"
+    },
+    {
+      "kind": "busca",
+      "url": "https://wa.me/3498378156",
+      "summary": "Link wa.me: agregador de links (não é site próprio)",
+      "observed_at": "2026-10-16T21:54:56Z"
+    }
+  ],
+  "avisos": [
+    "Última publicação não apareceu sem login: não afirme atividade recente sem outra fonte."
+  ]
+}

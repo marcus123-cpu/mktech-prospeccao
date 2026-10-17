@@ -1,0 +1,28 @@
+{
+  "business_name": "OP 28 Academia",
+  "niche": "Academia",
+  "services": ["natação", "hidroginástica", "Pilates", "musculação"],
+  "city": "Santos", "state": "SP", "neighborhood": "Aparecida",
+  "address": "Rua Primeiro de Maio, 109, Aparecida, Santos - SP",
+  "phone": "+5513988324334", "instagram": null, "whatsapp_url": null, "website_url": null,
+  "source_name": "busca_web", "research_date": "2026-10-14",
+  "selection_reason": "Academia com divulgação de modalidades em setembro de 2026, endereço confirmado em fontes independentes e apresentação pública localizada em Facebook e diretórios. Oportunidade de reunir modalidades e informações em página institucional; ausência de site é hipótese a confirmar, não declaração absoluta.",
+  "pending_items": "Não foi localizado link público de WhatsApp vinculado ao número comercial divulgado. Não atribuir prontidão V6. Diretório FitFit informa outro telefone fixo. Confirmar com o negócio se possui página própria não indexada.",
+  "priority": "media", "site_status": "apenas_redes_sociais",
+  "evidences": [
+    {"kind":"diretorio", "url":"https://www.findglocal.com/BR/Santos/320747018009147/OP-28-Academia", "summary":"Publicações em 15/09/2026 sobre hidroterapia e em 10/09/2026 sobre natação para bebês. Página apresenta Facebook como site, Rua Primeiro de Maio, 109, Santos. Resultado de busca da mesma página mostra divulgação em 22/05/2026 de musculação e Pilates e telefone comercial (13) 98832-4334.", "observed_at":"2026-10-14", "limitation":null},
+    {"kind":"diretorio", "url":"https://br.fitfit.fitness/pt/i/3093-op-28-academia/", "summary":"OP 28 Academia em Rua Primeiro de Maio, 109, Santos. Diretório mostra natação, hidroginástica, Pilates e musculação; nota 4,7/5 em 60 avaliações. Telefone fixo informado: (13) 3302-0428. Datas das avaliações exibidas são antigas e não foram usadas como prova de atividade recente.", "observed_at":"2026-10-14", "limitation":null},
+    {"kind":"busca", "url":"https://www.google.com/search?q=OP+28+Academia+Santos+site", "summary":"Busca por OP 28 Academia Santos site e OP 28 Academia whatsapp instagram site Santos localizou Facebook e diretórios; não localizou domínio próprio nos resultados examinados. A página pública aponta Facebook como site.", "observed_at":"2026-10-14", "limitation":"Resultado limitado aos itens retornados pelo provedor; não prova inexistência absoluta de site."}
+  ],
+  "diagnosis": {
+    "fit_score": 68, "confidence":"media",
+    "summary":"Academia de Santos com modalidades aquáticas e de treinamento. Divulgação de hidroterapia e natação em setembro de 2026 confirma sinal recente de atividade. Página institucional própria não foi localizada; oportunidade depende de confirmar essa hipótese com o negócio.",
+    "audience":"Público local interessado em modalidades aquáticas, Pilates e musculação, incluindo famílias.",
+    "digital_presence":"Facebook indicado na página pública e presença em diretórios; FitFit apresenta 4,7/5 em 60 avaliações. Sem métricas de seguidores verificadas ou link público de WhatsApp confirmado.",
+    "pains":[{"pain":"Hipótese a confirmar: apresentação das modalidades está distribuída em rede social e diretórios, sem página institucional própria localizada para reuni-las.","evidence":"Página apresenta Facebook como site, Rua Primeiro de Maio, 109, Santos."}],
+    "opportunities":["Página institucional que reúna modalidades, estrutura, localização e contato comercial confirmado."],
+    "offer":"site_institucional", "offer_reason":"Diversidade de modalidades e estrutura física permitem apresentação institucional; confirmar inexistência de página própria antes de qualquer proposta.",
+    "approach":"Pesquisa restrita ao diagnóstico; nenhuma mensagem comercial preparada.",
+    "objections":[]
+  }
+}

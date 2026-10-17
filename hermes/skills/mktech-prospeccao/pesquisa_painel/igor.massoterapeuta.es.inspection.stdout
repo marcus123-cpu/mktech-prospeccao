@@ -1,0 +1,48 @@
+{
+  "nome": "Igor massoterapeuta Es",
+  "cidade": "Vitória",
+  "verificado_em": "2026-10-16T21:58:02Z",
+  "instagram": {
+    "handle": "massoterapeuta.limaa",
+    "status": "ok",
+    "url": "https://www.instagram.com/massoterapeuta.limaa/",
+    "seguidores": 2616,
+    "seguindo": 7361,
+    "posts": 221,
+    "bio_texto": "Não disponível para determinados públicos. Faça login para continuar. | Entrar | Cadastre-se | Meta | Sobre | Blog | Carreiras | Ajuda | API",
+    "links_bio": []
+  },
+  "facebook": {
+    "status": "nao_informado"
+  },
+  "site": {
+    "situacao": "sem_site",
+    "detalhe": []
+  },
+  "nota_sugerida": 96,
+  "componentes": {
+    "lacuna_digital": 50,
+    "atividade": 20,
+    "demanda": 11,
+    "potencial_comercial": 15
+  },
+  "confianca": "media",
+  "site_status_sugerido": "apenas_redes_sociais",
+  "evidencias": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/massoterapeuta.limaa/",
+      "summary": "Instagram @massoterapeuta.limaa aberto sem login; 2616 seguidores, 221 publicações; sem link de site na bio",
+      "observed_at": "2026-10-16T21:58:02Z"
+    },
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Igor+massoterapeuta+Es+Vitória",
+      "summary": "Busca por 'Igor massoterapeuta Es Vitória' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-16T21:58:02Z"
+    }
+  ],
+  "avisos": [
+    "Última publicação não apareceu sem login: não afirme atividade recente sem outra fonte."
+  ]
+}

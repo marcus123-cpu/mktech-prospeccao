@@ -1,0 +1,78 @@
+{
+  "business_name": "Liz massoterapeuta",
+  "city": "Manaus",
+  "state": "AM",
+  "niche": "Massagem",
+  "services": [
+    "Massagem com Pedras Quentes",
+    "Massagem Mista",
+    "Massagem Relaxante",
+    "Massagem Tântrica",
+    "Massagem Terapêutica"
+  ],
+  "phone": "(92) 99372-0756",
+  "instagram": null,
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:liz.massoterapeuta",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. O inspetor retornou URLs /collection-liz e /roupas de liz.com.br, bloqueadas com HTTP 403. Não há vínculo confirmado com a massoterapeuta de Manaus; resultado ambíguo, não prova site do negócio.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://www.liz.com.br/collection-liz",
+      "summary": "Link liz.com.br: endereço não abre (HTTP 403)",
+      "observed_at": "2026-10-16T21:47:52Z",
+      "limitation": "O inspetor retornou URLs /collection-liz e /roupas de liz.com.br, bloqueadas com HTTP 403. Não há vínculo confirmado com a massoterapeuta de Manaus; resultado ambíguo, não prova site do negócio. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "site",
+      "url": "https://www.liz.com.br/roupas",
+      "summary": "Link liz.com.br: endereço não abre (HTTP 403)",
+      "observed_at": "2026-10-16T21:47:52Z",
+      "limitation": "O inspetor retornou URLs /collection-liz e /roupas de liz.com.br, bloqueadas com HTTP 403. Não há vínculo confirmado com a massoterapeuta de Manaus; resultado ambíguo, não prova site do negócio. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/liz.massoterapeuta",
+      "summary": "Liz massoterapeuta; Manaus - AM; contato público: (92) 99372-0756; serviços: Massagem com Pedras Quentes, Massagem Mista, Massagem Relaxante, Massagem Tântrica, Massagem Terapêutica.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/manaus-am",
+      "summary": "Premium Liz massoterapeuta Esteticista 0,0 Manaus, AM Visto há 2 dias R$150",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/liz.massoterapeuta",
+      "summary": "Revisão da inspeção automática: O inspetor retornou URLs /collection-liz e /roupas de liz.com.br, bloqueadas com HTTP 403. Não há vínculo confirmado com a massoterapeuta de Manaus; resultado ambíguo, não prova site do negócio.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 40,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. O inspetor retornou URLs /collection-liz e /roupas de liz.com.br, bloqueadas com HTTP 403. Não há vínculo confirmado com a massoterapeuta de Manaus; resultado ambíguo, não prova site do negócio.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Liz massoterapeuta; Manaus - AM; contato público: (92) 99372-0756; serviços: Massagem com Pedras Quentes, Massagem Mista, Massagem Relaxante, Massagem Tântrica, Massagem Terapêutica."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

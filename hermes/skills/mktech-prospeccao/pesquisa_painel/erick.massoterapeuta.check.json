@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "goiania",
+    "unit": "",
+    "phone": "+5562991592667",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:erick.massoterapeuta",
+    "instagram": null,
+    "name_core": "erick massoterapeuta",
+    "name_norm": "erick massoterapeuta",
+    "source_name": "euterapeuta"
+  }
+}

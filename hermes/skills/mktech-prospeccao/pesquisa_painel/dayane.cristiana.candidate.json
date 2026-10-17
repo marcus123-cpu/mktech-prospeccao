@@ -1,0 +1,74 @@
+{
+  "business_name": "Dayane Cristiana",
+  "city": "Uberlândia",
+  "state": "MG",
+  "niche": "Massagem",
+  "services": [
+    "Massagem Relaxante"
+  ],
+  "phone": "(34) 99837-8156",
+  "instagram": "studiozennn",
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:dayane.cristiana",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. O link Square é plataforma de agendamento; o título indica Studio Zen em SOMERVILLE, MA, divergente de Uberlândia. A associação do Instagram e do agendamento com a candidata precisa de verificação; não confirma site próprio.",
+  "evidences": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/studiozennn/",
+      "summary": "Instagram @studiozennn aberto sem login; 4489 seguidores, 0 publicações; link da bio: https://squareup.com/appointments/book/L24A505GACQEQ",
+      "observed_at": "2026-10-16T22:06:06Z",
+      "limitation": "O link Square é plataforma de agendamento; o título indica Studio Zen em SOMERVILLE, MA, divergente de Uberlândia. A associação do Instagram e do agendamento com a candidata precisa de verificação; não confirma site próprio. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "site",
+      "url": "https://squareup.com/appointments/book/L24A505GACQEQ",
+      "summary": "Link squareup.com: site próprio no ar",
+      "observed_at": "2026-10-16T22:06:06Z",
+      "limitation": "O link Square é plataforma de agendamento; o título indica Studio Zen em SOMERVILLE, MA, divergente de Uberlândia. A associação do Instagram e do agendamento com a candidata precisa de verificação; não confirma site próprio. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/dayane.cristiana",
+      "summary": "Dayane Cristiana; Uberlândia - MG; contato público: (34) 99837-8156; serviços: Massagem Relaxante.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/uberlandia-mg",
+      "summary": "Premium Dayane Cristiana Massoterapeuta 5,0 Uberlândia, MG Visto há 1 mês R$400 /\n            20 horas",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/dayane.cristiana",
+      "summary": "Revisão da inspeção automática: O link Square é plataforma de agendamento; o título indica Studio Zen em SOMERVILLE, MA, divergente de Uberlândia. A associação do Instagram e do agendamento com a candidata precisa de verificação; não confirma site próprio.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 22,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. O link Square é plataforma de agendamento; o título indica Studio Zen em SOMERVILLE, MA, divergente de Uberlândia. A associação do Instagram e do agendamento com a candidata precisa de verificação; não confirma site próprio.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Dayane Cristiana; Uberlândia - MG; contato público: (34) 99837-8156; serviços: Massagem Relaxante."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

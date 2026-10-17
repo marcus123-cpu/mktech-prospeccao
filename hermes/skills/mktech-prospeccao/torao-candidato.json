@@ -1,0 +1,66 @@
+{
+  "business_name": "Super Forma Academia do Torão",
+  "city": "Barretos",
+  "state": "SP",
+  "niche": "Academia",
+  "instagram": "academia.do.torao",
+  "phone": "17982134289",
+  "services": [
+    "musculação"
+  ],
+  "address": "Avenida MP 17, 325, Residencial Mais Parque, Barretos - SP",
+  "source_name": "busca_web",
+  "research_date": "2026-10-17",
+  "website_url": null,
+  "whatsapp_url": null,
+  "selection_reason": "Negócio do nicho e cidade configurados; presença inspecionada com Playwright. Nenhum site próprio localizado nas fontes consultadas; confirmar eventual página não indexada.",
+  "pending_items": "Confirmar WhatsApp comercial e vínculo do número; confirmar data da última atividade e eventual site não indexado. ",
+  "priority": "alta",
+  "site_status": "apenas_redes_sociais",
+  "evidences": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/academia.do.torao/",
+      "summary": "Instagram @academia.do.torao aberto sem login; 1411 seguidores, 466 publicações; sem link de site na bio",
+      "observed_at": "2026-10-17T10:02:45Z"
+    },
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Super+Forma+Academia+do+Torão+Barretos",
+      "summary": "Busca por Super Forma Academia do Torão Barretos e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-17T10:02:45Z",
+      "limitation": "Resultados consultados não excluem site não indexado."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://www.efirma.com.br/empresa/super-forma-academia-torao",
+      "summary": "Super Forma Academia do Torao; razão social A. B. dos Reis - Academia de Musculação; Barretos/SP; situação Ativa, dados verificados em 08/2026; telefone (17) 98213-4289."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://localtreino.com/academias/barretos/super-forma-academia-do-torao/",
+      "summary": "Super Forma - Academia do Torão; musculação em Barretos, Avenida MP 17, 325; telefone (17) 98213-4289; página indicada: instagram.com/academia.do.torao; nota Google reproduzida 4,6 com 14 avaliações.",
+      "limitation": "Datas das avaliações não informadas; nota secundária."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 92,
+    "confidence": "media",
+    "summary": "Super Forma Academia do Torão atua em Barretos, no segmento Academia. As fontes consultadas apresentam os serviços e canais públicos; a existência de site não indexado permanece sujeita a confirmação.",
+    "audience": "Pessoas que procuram musculação em Barretos.",
+    "digital_presence": "{}; sem_site",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: uma página própria pode reunir apresentação dos serviços e contato fora das redes e diretórios.",
+        "evidence": "Busca por Super Forma Academia do Torão Barretos e conferência do link da bio: nenhum site ou landing page próprio localizado"
+      }
+    ],
+    "opportunities": [
+      "Reunir serviços, apresentação e contato comercial em página própria, caso a lacuna seja confirmada."
+    ],
+    "offer": "site_institucional",
+    "offer_reason": "Apresentar serviços e canais em endereço próprio, sujeito à confirmação da presença digital.",
+    "approach": "Pesquisa registrada para avaliação do motor V6; sem mensagem comercial preparada.",
+    "objections": []
+  }
+}

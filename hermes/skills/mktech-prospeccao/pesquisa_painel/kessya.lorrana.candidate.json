@@ -1,0 +1,70 @@
+{
+  "business_name": "Lottus Spa",
+  "niche": "Massagem",
+  "city": "Manaus",
+  "state": "AM",
+  "services": [
+    "Massagem Relaxante",
+    "Massagem Tailandesa",
+    "Massagem Tântrica",
+    "Massagem Terapêutica"
+  ],
+  "phone": "(92) 98475-9732",
+  "instagram": "lottuss_spa",
+  "whatsapp_url": null,
+  "website_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:kessya.lorrana",
+  "research_date": "2026-10-16",
+  "selection_reason": "Perfil público de massagem com sinal recente de uso no diretório; cadastrar como incompleto para enriquecer a presença digital. Não há conclusão de inexistência de site.",
+  "pending_items": "Confirmar atividade de atendimento diretamente em fonte independente; o sinal de uso recente observado é do diretório.\nConfirmar presença digital e eventual site/landing page com o negócio; busca negativa não prova ausência.\nObter segunda fonte independente.\nConfirmar WhatsApp do telefone comercial, sem abrir ou contatar WhatsApp.\nInstagram não abriu sem login (perfil restrito ou @ errado): confira o @ e use outra fonte para atividade.",
+  "priority": "media",
+  "site_status": "verificacao_pendente",
+  "evidences": [
+    {
+      "kind": "busca",
+      "url": "https://www.facebook.com/share/16RLRCpSvJ/?mibextid=wwXIfr/",
+      "summary": "Facebook aberto sem login: LottusSpa | Manaus AM | Facebook; LottusSpa, Manaus. 45 seguidores · 105 falando sobre isso. Encontre o equilíbrio e a serenidade que você busca através da massoterapia �.",
+      "observed_at": "2026-10-16T23:04:28Z",
+      "limitation": "Busca limitada aos resultados retornados pelo Bing; bio só foi verificável quando rede social abriu. Não prova inexistência de site."
+    },
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Lottus+Spa+Manaus",
+      "summary": "Busca por 'Lottus Spa Manaus' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-16T23:04:28Z",
+      "limitation": "Busca limitada aos resultados retornados pelo Bing; bio só foi verificável quando rede social abriu. Não prova inexistência de site."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/kessya.lorrana",
+      "summary": "Lottus Spa; Manaus - AM; contato público: (92) 98475-9732; serviços: Massagem Relaxante, Massagem Tailandesa, Massagem Tântrica, Massagem Terapêutica.",
+      "observed_at": "2026-10-16",
+      "limitation": "Perfil de marketplace; informações declaradas pelo anunciante, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/manaus-am",
+      "summary": "Premium Lottus Spa Massoterapeuta 5,0 Manaus, AM Visto há 2 meses R$200 /\n            1 hora",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há indica acesso ao diretório, não prova atendimento nem data de publicação; mesma origem do perfil."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 74,
+    "confidence": "baixa",
+    "summary": "Candidato de massagem identificado em diretório público. Atividade e oportunidade de página própria requerem confirmação independente.",
+    "digital_presence": "Inspeção Playwright: sem_site; Instagram: indisponivel; Facebook: ok. Não afirmar ausência de site.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços pode depender do perfil no marketplace.",
+        "evidence": "Lottus Spa; Manaus - AM; contato público: (92) 98475-9732; serviços: Massagem Relaxante, Massagem Tailandesa, Massagem Tântrica, Massagem Terapêutica."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria de serviços somente após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Possível página de apresentação dos serviços; recomendação condicionada à verificação de presença e necessidade."
+  }
+}

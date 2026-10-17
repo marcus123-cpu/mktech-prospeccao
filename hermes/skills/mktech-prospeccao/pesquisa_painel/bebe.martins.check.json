@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "santos",
+    "unit": "",
+    "phone": "+5513981577142",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:bebe.martins",
+    "instagram": null,
+    "name_core": "bebe martins",
+    "name_norm": "bebe martins",
+    "source_name": "euterapeuta"
+  }
+}

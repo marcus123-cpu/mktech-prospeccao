@@ -1,0 +1,55 @@
+{
+  "nome": "Liz massoterapeuta",
+  "cidade": "Manaus",
+  "verificado_em": "2026-10-16T21:47:52Z",
+  "instagram": {
+    "handle": "",
+    "status": "nao_informado"
+  },
+  "facebook": {
+    "status": "nao_informado"
+  },
+  "site": {
+    "situacao": "site_fora_do_ar",
+    "detalhe": [
+      {
+        "url": "https://www.liz.com.br/collection-liz",
+        "dominio": "liz.com.br",
+        "tipo": "site_fora_do_ar",
+        "http": 403,
+        "origem": "busca"
+      },
+      {
+        "url": "https://www.liz.com.br/roupas",
+        "dominio": "liz.com.br",
+        "tipo": "site_fora_do_ar",
+        "http": 403,
+        "origem": "busca"
+      }
+    ]
+  },
+  "nota_sugerida": 40,
+  "componentes": {
+    "lacuna_digital": 25,
+    "atividade": 0,
+    "demanda": 0,
+    "potencial_comercial": 15
+  },
+  "confianca": "baixa",
+  "site_status_sugerido": "site_proprio_encontrado",
+  "evidencias": [
+    {
+      "kind": "site",
+      "url": "https://www.liz.com.br/collection-liz",
+      "summary": "Link liz.com.br: endereço não abre (HTTP 403)",
+      "observed_at": "2026-10-16T21:47:52Z"
+    },
+    {
+      "kind": "site",
+      "url": "https://www.liz.com.br/roupas",
+      "summary": "Link liz.com.br: endereço não abre (HTTP 403)",
+      "observed_at": "2026-10-16T21:47:52Z"
+    }
+  ],
+  "avisos": []
+}

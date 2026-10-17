@@ -1,0 +1,75 @@
+{
+  "business_name": "Victor Terapeuta Tântrico para Mulheres",
+  "city": "Curitiba",
+  "state": "PR",
+  "niche": "Massagem",
+  "services": [
+    "Massagem Relaxante",
+    "Massagem Tântrica",
+    "Massagem Terapêutica",
+    "Massagem Mista",
+    "Massagem Tailandesa",
+    "Resgate do Feminino",
+    "Sexologia",
+    "Terapia Sexual",
+    "Reconexão de Casais"
+  ],
+  "phone": "(41) 98717-1656",
+  "instagram": "massoterapiaebemestar2026",
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:victor.terapias.manuais",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. O resultado victoreleo.com.br tem título Victor & Leo - Turnê Essência e pertence à dupla musical. Não comprova site do terapeuta Victor de Curitiba.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://victoreleo.com.br/",
+      "summary": "Link victoreleo.com.br: site próprio no ar",
+      "observed_at": "2026-10-16T22:51:11Z",
+      "limitation": "O resultado victoreleo.com.br tem título Victor & Leo - Turnê Essência e pertence à dupla musical. Não comprova site do terapeuta Victor de Curitiba. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/victor.terapias.manuais",
+      "summary": "Victor Terapeuta Tântrico para Mulheres; Curitiba - PR; contato público: (41) 98717-1656; serviços: Massagem Relaxante, Massagem Tântrica, Massagem Terapêutica, Massagem Mista, Massagem Tailandesa, Resgate do Feminino, Sexologia, Terapia Sexual, Reconexão de Casais.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/curitiba-pr",
+      "summary": "Premium Victor Terapeuta Tântrico para Mulheres Massoterapeuta tântrico Femenino com foco também em massagens para gestantes 5,0 Curitiba, PR Visto há 1 dia",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/victor.terapias.manuais",
+      "summary": "Revisão da inspeção automática: O resultado victoreleo.com.br tem título Victor & Leo - Turnê Essência e pertence à dupla musical. Não comprova site do terapeuta Victor de Curitiba.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 15,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. O resultado victoreleo.com.br tem título Victor & Leo - Turnê Essência e pertence à dupla musical. Não comprova site do terapeuta Victor de Curitiba.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Victor Terapeuta Tântrico para Mulheres; Curitiba - PR; contato público: (41) 98717-1656; serviços: Massagem Relaxante, Massagem Tântrica, Massagem Terapêutica, Massagem Mista, Massagem Tailandesa, Resgate do Feminino, Sexologia, Terapia Sexual, Reconexão de Casais."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

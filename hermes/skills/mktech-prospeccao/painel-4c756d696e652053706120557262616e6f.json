@@ -1,0 +1,58 @@
+{
+  "business_name": "Lumine Spa Urbano",
+  "city": "Ribeirão Preto",
+  "phone": "+5516981678792",
+  "instagram": "luminespaurbano",
+  "address": "Rua Álvares Cabral, 464, Sala 706, Centro, Ribeirão Preto/SP",
+  "website_url": "https://luminespaurbano.com.br/",
+  "services": [
+    "Limpeza de Pele"
+  ],
+  "state": "SP",
+  "niche": "estética facial",
+  "research_date": "2026-10-14",
+  "source_name": "busca_web",
+  "site_status": "site_proprio_encontrado",
+  "priority": "alta",
+  "selection_reason": "Hipótese a confirmar: padronizar horários entre site e diretórios e tornar explícita a validade das condições temporárias.",
+  "pending_items": "Confirmar horários divergentes e link público de WhatsApp com número exato; requisição direta ao site recebeu HTTPError, mas conteúdo acessível via provedor web.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://luminespaurbano.com.br/",
+      "summary": "Lumine Spa Urbano, Ribeirão Preto. WhatsApp (16) 98167-8792. Segunda à Sexta das 09:00 às 18:00. Sábado das 08:00 às 15:30. Condição de acupuntura temporária sem data final; confirmar vigência pelo WhatsApp. Site anuncia 5,0 e 64 avaliações, sem verificação independente no Google.",
+      "observed_at": "2026-10-14"
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://blzanaempresa.com.br/parceiro/lumine-spa-urbano-ribeirao-preto",
+      "summary": "Lumine Spa Urbano em Rua Álvares Cabral, 464, Sala 706, Ribeirão Preto. Limpeza de Pele com Peeling. Horário Ter-Sex:09:00 - 18:00; agendamento na área do cliente.",
+      "observed_at": "2026-10-14"
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://www.tripadvisor.com.br/Attraction_Review-g303623-d34331040-Reviews-Lumine_Spa_Urbano-Ribeirao_Preto_State_of_Sao_Paulo.html",
+      "summary": "Lumine Spa Urbano, mesmo endereço comercial em Ribeirão Preto; 5,0 em 4 avaliações. Avaliações publicadas em 01/09/2026 e 31/08/2026; horários informados: segunda a sexta 9h às 19h, sábado 8h às 14h30.",
+      "observed_at": "2026-10-14"
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 74,
+    "confidence": "media",
+    "summary": "Lumine Spa Urbano atua em Ribeirão Preto com serviços estéticos e presença pública verificada. Confirmar horários divergentes e link público de WhatsApp com número exato; requisição direta ao site recebeu HTTPError, mas conteúdo acessível via provedor web.",
+    "digital_presence": "Site próprio localizado e canais descritos nas evidências; não presumir ausência de agenda ou baixa conversão.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: padronizar horários entre site e diretórios e tornar explícita a validade das condições temporárias.",
+        "evidence": "Segunda à Sexta das 09:00 às 18:00. Sábado das 08:00 às 15:30."
+      }
+    ],
+    "opportunities": [
+      "Revisar informações verificadas e organizar conteúdo por procedimento, conforme confirmação do negócio."
+    ],
+    "offer": "site_institucional",
+    "offer_reason": "Hipótese a confirmar: padronizar horários entre site e diretórios e tornar explícita a validade das condições temporárias.",
+    "approach": "Investigar a oportunidade registrada com dados confirmados; sem mensagem pronta.",
+    "objections": []
+  }
+}

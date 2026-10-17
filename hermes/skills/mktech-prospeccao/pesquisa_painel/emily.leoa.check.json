@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "santos",
+    "unit": "",
+    "phone": "+5511924864867",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:emily.leoa",
+    "instagram": null,
+    "name_core": "emily leoa",
+    "name_norm": "emily leoa",
+    "source_name": "euterapeuta"
+  }
+}

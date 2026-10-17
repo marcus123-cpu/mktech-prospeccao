@@ -1,0 +1,22 @@
+{
+ "business_name":"Rose Silva - Massoterapia e Estética Humanizada", "niche":"Massoterapeutas", "services":["Massoterapia","Drenagem linfática"],
+ "city":"Indaiatuba", "state":"SP", "phone":"+5519996585088", "whatsapp_url":"https://api.whatsapp.com/send?phone=5519996585088", "website_url":null,
+ "address":"Rua Alberto Santos Dumont, 1860, Indaiatuba - SP", "source_name":"busca_web", "research_date":"2026-10-14", "site_status":"apenas_redes_sociais", "priority":"alta",
+ "selection_reason":"Divulgação de massagem personalizada em agosto de 2026, telefone e endereço coincidentes em diretório independente. A apresentação pública aponta WhatsApp como site. Há oportunidade de uma página de apresentação dos serviços, hipótese que deve ser confirmada com o negócio.",
+ "pending_items":"Conteúdo social visto no índice de busca; abertura direta falhou. Não tratar como pronta V6 sem superar a limitação. Bairro aparece como Cidade Nova na divulgação e Vila Teller no diretório; manter somente logradouro e cidade verificados. Confirmar se há página própria fora dos resultados consultados.",
+ "evidences":[
+  {"kind":"diretorio","url":"https://www.findglocal.com/BR/Indaiatuba/1433854060075731/Rose-Silva---Est%C3%A9tica-Natural-%26-Spa","summary":"Índice de Rose Silva - Massoterapia e Estética Humanizada apresenta publicação em 31/08/2026 sobre massagem personalizada e drenagem linfática. Campo Site aponta https://api.whatsapp.com/send?phone=5519996585088; telefone +5519996585088; endereço Rua Alberto Santos Dumont, 1860, Indaiatuba. O texto orienta consultar o direct ou link da bio.","observed_at":"2026-10-14","limitation":"Abertura direta da página indisponível; divulgação consultada pelo índice de busca."},
+  {"kind":"diretorio","url":"https://www.indaiatubafacil.com.br/guia/saude/massoterapia.asp?c=603","summary":"Página aberta lista Rose Silva - Massoterapia e Drenagem linfática, Rua Alberto Santos Dumont, 1860, Vila Teller, Indaiatuba; telefone (19) 99658-5088 e horário cadastrado de 10:00 a 20:00. Nome, logradouro e telefone coincidem com a divulgação do negócio.","observed_at":"2026-10-14","limitation":null},
+  {"kind":"busca","url":"https://www.google.com/search?q=Rose+Silva+Indaiatuba+estetica+site","summary":"Busca Rose Silva Indaiatuba estética site retornou redes e diretórios; nenhum site próprio desse negócio foi localizado. Studio Rose Silva em Jundiaí é homônimo de outra cidade, com telefone diferente, e não foi associado à candidata.","observed_at":"2026-10-14","limitation":"Resultados examinados são limitados; não provam inexistência absoluta de site."}
+ ],
+ "diagnosis":{
+  "fit_score":72,"confidence":"media",
+  "summary":"Profissional de Indaiatuba divulga massoterapia personalizada e cuidados estéticos, com atividade registrada no índice em agosto de 2026. Diretório independente confirma nome, telefone e logradouro. A apresentação pública consultada conduz a WhatsApp e direct; página própria não localizada, hipótese a confirmar.",
+  "audience":"Público local interessado em massagens e cuidados corporais personalizados.",
+  "digital_presence":"Divulgação social com WhatsApp público e presença no Indaiatuba Fácil; sem seguidores ou avaliações quantificados. A fonte social possui limitação de acesso direto.",
+  "pains":[{"pain":"Hipótese para confirmar: a apresentação dos serviços está distribuída em divulgação social e diretório, sem página própria localizada que reúna informações de credibilidade e contato.","evidence":"Página aberta lista Rose Silva - Massoterapia e Drenagem linfática, Rua Alberto Santos Dumont, 1860, Vila Teller, Indaiatuba; telefone (19) 99658-5088 e horário cadastrado de 10:00 a 20:00."}],
+  "opportunities":["Página de apresentação dos serviços e do atendimento personalizado, reunindo contato e localização depois de confirmar dados atuais."],
+  "offer":"landing_page","offer_reason":"Atuação personalizada divulgada em rede social e contato direto; página simples pode reunir informações se não houver apresentação própria equivalente.",
+  "approach":"Somente pesquisa e diagnóstico; nenhuma mensagem comercial preparada.","objections":[]
+ }
+}

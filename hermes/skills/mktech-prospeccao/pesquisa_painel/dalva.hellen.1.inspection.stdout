@@ -1,0 +1,37 @@
+{
+  "nome": "Dalva Hellen",
+  "cidade": "Aracaju",
+  "verificado_em": "2026-10-16T22:07:09Z",
+  "instagram": {
+    "handle": "centro_terapeutico_jardim",
+    "status": "indisponivel",
+    "url": "https://www.instagram.com/centro_terapeutico_jardim/"
+  },
+  "facebook": {
+    "status": "nao_informado"
+  },
+  "site": {
+    "situacao": "sem_site",
+    "detalhe": []
+  },
+  "nota_sugerida": 50,
+  "componentes": {
+    "lacuna_digital": 35,
+    "atividade": 0,
+    "demanda": 0,
+    "potencial_comercial": 15
+  },
+  "confianca": "baixa",
+  "site_status_sugerido": "site_nao_localizado",
+  "evidencias": [
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Dalva+Hellen+Aracaju",
+      "summary": "Busca por 'Dalva Hellen Aracaju' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-16T22:07:09Z"
+    }
+  ],
+  "avisos": [
+    "Instagram não abriu sem login (perfil restrito ou @ errado): confira o @ e use outra fonte para atividade."
+  ]
+}

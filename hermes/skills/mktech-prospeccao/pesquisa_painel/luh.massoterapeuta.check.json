@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "curitiba",
+    "unit": "",
+    "phone": "+5541997422148",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:luh.massoterapeuta",
+    "instagram": null,
+    "name_core": "luh massoterapeuta",
+    "name_norm": "luh massoterapeuta",
+    "source_name": "euterapeuta"
+  }
+}

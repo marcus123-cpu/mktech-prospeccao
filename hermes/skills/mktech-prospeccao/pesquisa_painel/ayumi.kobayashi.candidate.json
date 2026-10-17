@@ -1,0 +1,81 @@
+{
+  "business_name": "Ayumi Kobayashi",
+  "city": "Manaus",
+  "state": "AM",
+  "niche": "Massagem",
+  "services": [
+    "Aromaterapia",
+    "Liberação Miofascial",
+    "Massagem com Pedras Quentes",
+    "Massagem Desportiva",
+    "Massagem Relaxante",
+    "Massagem Tailandesa",
+    "Massagem Tântrica",
+    "Ventosaterapia"
+  ],
+  "phone": "(92) 98482-8654",
+  "instagram": "ayumikobayash1",
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:ayumi.kobayashi",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. O endereço encontrado é um perfil TikTok, rede social, não site próprio. Site institucional e titularidade do perfil permanecem pendentes.",
+  "evidences": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/ayumikobayash1/",
+      "summary": "Instagram @ayumikobayash1 aberto sem login; 6175 seguidores, 25 publicações; link da bio: https://www.tiktok.com/@kimraissaa_",
+      "observed_at": "2026-10-16T22:01:45Z",
+      "limitation": "O endereço encontrado é um perfil TikTok, rede social, não site próprio. Site institucional e titularidade do perfil permanecem pendentes. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "site",
+      "url": "https://www.tiktok.com/@kimraissaa_",
+      "summary": "Link tiktok.com: página muito simples, sem conteúdo suficiente",
+      "observed_at": "2026-10-16T22:01:45Z",
+      "limitation": "O endereço encontrado é um perfil TikTok, rede social, não site próprio. Site institucional e titularidade do perfil permanecem pendentes. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/ayumi.kobayashi",
+      "summary": "Ayumi Kobayashi; Manaus - AM; contato público: (92) 98482-8654; serviços: Aromaterapia, Liberação Miofascial, Massagem com Pedras Quentes, Massagem Desportiva, Massagem Relaxante, Massagem Tailandesa, Massagem Tântrica, Ventosaterapia.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/manaus-am",
+      "summary": "Premium Ayumi Kobayashi Massoterapeuta 5,0 Manaus, AM Visto há 2 semanas R$150",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/ayumi.kobayashi",
+      "summary": "Revisão da inspeção automática: O endereço encontrado é um perfil TikTok, rede social, não site próprio. Site institucional e titularidade do perfil permanecem pendentes.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 69,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. O endereço encontrado é um perfil TikTok, rede social, não site próprio. Site institucional e titularidade do perfil permanecem pendentes.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Ayumi Kobayashi; Manaus - AM; contato público: (92) 98482-8654; serviços: Aromaterapia, Liberação Miofascial, Massagem com Pedras Quentes, Massagem Desportiva, Massagem Relaxante, Massagem Tailandesa, Massagem Tântrica, Ventosaterapia."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "recife",
+    "unit": "",
+    "phone": "+5581999328514",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:larissa.melo.2",
+    "instagram": null,
+    "name_core": "larissa melo",
+    "name_norm": "larissa melo",
+    "source_name": "euterapeuta"
+  }
+}

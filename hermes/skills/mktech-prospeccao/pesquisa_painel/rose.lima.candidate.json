@@ -1,0 +1,70 @@
+{
+  "business_name": "Rose Lima massagens & cia",
+  "city": "Santos",
+  "state": "SP",
+  "niche": "Massagem",
+  "services": [
+    "Massagem Desportiva",
+    "Massagem Dreno Relaxante",
+    "Massagem Relaxante",
+    "Massagem Terapêutica"
+  ],
+  "phone": "(13) 98182-2340",
+  "instagram": "roselimamassagensicia/profilecard",
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:rose.lima",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. O resultado letras.mus.br/rose é página de música, sem vínculo confirmado com o negócio de massagem de Santos.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://www.letras.mus.br/rose/",
+      "summary": "Link letras.mus.br: endereço não abre (HTTP 403)",
+      "observed_at": "2026-10-16T21:55:13Z",
+      "limitation": "O resultado letras.mus.br/rose é página de música, sem vínculo confirmado com o negócio de massagem de Santos. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/rose.lima",
+      "summary": "Rose Lima massagens & cia; Santos - SP; contato público: (13) 98182-2340; serviços: Massagem Desportiva, Massagem Dreno Relaxante, Massagem Relaxante, Massagem Terapêutica.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/santos-sp",
+      "summary": "Premium Rose Lima massagens & cia Massoterapeuta 5,0 Santos, SP Visto há 2 dias",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/rose.lima",
+      "summary": "Revisão da inspeção automática: O resultado letras.mus.br/rose é página de música, sem vínculo confirmado com o negócio de massagem de Santos.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 40,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. O resultado letras.mus.br/rose é página de música, sem vínculo confirmado com o negócio de massagem de Santos.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Rose Lima massagens & cia; Santos - SP; contato público: (13) 98182-2340; serviços: Massagem Desportiva, Massagem Dreno Relaxante, Massagem Relaxante, Massagem Terapêutica."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

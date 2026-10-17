@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "salvador",
+    "unit": "",
+    "phone": "+5571981066486",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:hanna.hanna",
+    "instagram": null,
+    "name_core": "jucilene resende",
+    "name_norm": "jucilene resende",
+    "source_name": "euterapeuta"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "vitoria",
+    "unit": "",
+    "phone": "+5534984400658",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:lilith.padilha",
+    "instagram": null,
+    "name_core": "renata andrade",
+    "name_norm": "renata andrade",
+    "source_name": "euterapeuta"
+  }
+}

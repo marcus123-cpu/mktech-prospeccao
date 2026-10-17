@@ -1,0 +1,61 @@
+{
+  "business_name": "Patrícia Terapeuta Sensorial",
+  "niche": "Massagem",
+  "city": "Joinville",
+  "state": "SC",
+  "services": [
+    "Massagem Relaxante",
+    "Massagem Tântrica"
+  ],
+  "phone": "(47) 99282-7182",
+  "instagram": null,
+  "whatsapp_url": null,
+  "website_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:patricia.terapeuta.sensorial",
+  "research_date": "2026-10-16",
+  "selection_reason": "Perfil público de massagem com sinal recente de uso no diretório; cadastrar como incompleto para enriquecer a presença digital. Não há conclusão de inexistência de site.",
+  "pending_items": "Confirmar atividade de atendimento diretamente em fonte independente; o sinal de uso recente observado é do diretório.\nConfirmar presença digital e eventual site/landing page com o negócio; busca negativa não prova ausência.\nObter segunda fonte independente.\nConfirmar WhatsApp do telefone comercial, sem abrir ou contatar WhatsApp.\nLocalizar Instagram e Facebook oficiais e conferir links da bio; perfil não forneceu identificadores verificáveis dessas redes.",
+  "priority": "media",
+  "site_status": "verificacao_pendente",
+  "evidences": [
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Patrícia+Terapeuta+Sensorial+Joinville",
+      "summary": "Busca por 'Patrícia Terapeuta Sensorial Joinville' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-16T21:58:33Z",
+      "limitation": "Busca limitada aos resultados retornados pelo Bing; bio só foi verificável quando rede social abriu. Não prova inexistência de site."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/patricia.terapeuta.sensorial",
+      "summary": "Patrícia Terapeuta Sensorial; Joinville - SC; contato público: (47) 99282-7182; serviços: Massagem Relaxante, Massagem Tântrica.",
+      "observed_at": "2026-10-16",
+      "limitation": "Perfil de marketplace; informações declaradas pelo anunciante, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/joinville-sc",
+      "summary": "Patrícia Terapeuta Sensorial Massoterapeuta 0,0 Joinville, SC Visto há 3 dias",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há indica acesso ao diretório, não prova atendimento nem data de publicação; mesma origem do perfil."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 50,
+    "confidence": "baixa",
+    "summary": "Candidato de massagem identificado em diretório público. Atividade e oportunidade de página própria requerem confirmação independente.",
+    "digital_presence": "Inspeção Playwright: sem_site; Instagram: nao_informado; Facebook: nao_informado. Não afirmar ausência de site.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços pode depender do perfil no marketplace.",
+        "evidence": "Patrícia Terapeuta Sensorial; Joinville - SC; contato público: (47) 99282-7182; serviços: Massagem Relaxante, Massagem Tântrica."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria de serviços somente após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Possível página de apresentação dos serviços; recomendação condicionada à verificação de presença e necessidade."
+  }
+}

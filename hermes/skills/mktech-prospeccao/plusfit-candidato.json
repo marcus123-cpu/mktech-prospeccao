@@ -1,0 +1,72 @@
+{
+  "business_name": "Plus Fit Training Center",
+  "city": "Barretos",
+  "state": "SP",
+  "niche": "Academia",
+  "instagram": "plusfitbarretos",
+  "phone": "17976049679",
+  "services": [
+    "Musculação",
+    "Personal Trainer"
+  ],
+  "address": "Avenida 39, 01578, Pimenta, Barretos - SP",
+  "source_name": "busca_web",
+  "research_date": "2026-10-17",
+  "website_url": null,
+  "whatsapp_url": null,
+  "selection_reason": "Negócio do nicho e cidade configurados; presença inspecionada com Playwright. Nenhum site próprio localizado nas fontes consultadas; confirmar eventual página não indexada.",
+  "pending_items": "Confirmar WhatsApp comercial e vínculo do número; confirmar data da última atividade e eventual site não indexado. Nota 71 preservada do inspetor, embora ele tenha confundido link do Maps com site. Confirmar presença digital e telefone móvel Wellhub versus fixo Solutudo.",
+  "priority": "alta",
+  "site_status": "verificacao_pendente",
+  "evidences": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/plusfitbarretos/",
+      "summary": "Instagram @plusfitbarretos aberto sem login; 1589 seguidores, 64 publicações; link da bio: https://maps.app.goo.gl/vBEnM2HPnHoBRpPq9",
+      "observed_at": "2026-10-17T10:04:25Z"
+    },
+    {
+      "kind": "site",
+      "url": "https://maps.app.goo.gl/vBEnM2HPnHoBRpPq9",
+      "summary": "Link maps.app.goo.gl: página muito simples, sem conteúdo suficiente",
+      "observed_at": "2026-10-17T10:04:25Z",
+      "limitation": "Classificação automática site fraco incorreta: título observado é Google Maps, que é diretório e não site próprio. O inspetor não executou busca externa neste caso."
+    },
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Plus+Fit+Training+Center+Barretos+site+oficial",
+      "summary": "Busca manual por Plus Fit Training Center Barretos site oficial retornou diretórios CNPJ e Solutudo; nenhum domínio próprio localizado nos resultados consultados.",
+      "limitation": "Não exclui página não indexada; manter verificação pendente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://wellhub.com/pt-br/search/partners/plus-fit-training-center-pimenta/",
+      "summary": "Plus Fit Training Center, Avenida 39, 01578, Pimenta, Barretos; Musculação e Personal Trainer; Instagram plusfitbarretos; telefone (17) 97604-9679; horários publicados."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://www.solutudo.com.br/empresas/sp/barretos/academias/plus-fit-training-center-ltda-30368217",
+      "summary": "Plus Fit Training Center Ltda; Barretos, Avenida 39, 01578; situação cadastral Ativa; telefone fixo (17) 3323-7606."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 71,
+    "confidence": "media",
+    "summary": "Plus Fit Training Center atua em Barretos, no segmento Academia. As fontes consultadas apresentam os serviços e canais públicos; a existência de site não indexado permanece sujeita a confirmação.",
+    "audience": "Pessoas que procuram Musculação em Barretos.",
+    "digital_presence": "{\"handle\": \"plusfitbarretos\", \"status\": \"ok\", \"url\": \"https://www.instagram.com/plusfitbarretos/\", \"seguidores\": 1589, \"seguindo\": 2093, \"posts\": 64, \"bio_texto\": \"1.588 seguidores | 2.005 seguindo | Plus Fit Centro de Treinamento | Horário de Funcionamento | Seg a Qui das 6h as 22h | Sexta 6h as 21h | Sábado das 9h às 14h | Av 39 número 01578 | maps.app.goo.gl/vBEnM2HPnHoBRpPq9?g_st=ac\", \"links_bio\": [\"https://maps.app.goo.gl/vBEnM2HPnHoBRpPq9\"]}; verificacao_pendente; inspetor confundiu Google Maps com site fraco",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: uma página própria pode reunir apresentação dos serviços e contato fora das redes e diretórios.",
+        "evidence": "Busca manual por Plus Fit Training Center Barretos site oficial retornou diretórios CNPJ e Solutudo; nenhum domínio próprio localizado nos resultados consultados."
+      }
+    ],
+    "opportunities": [
+      "Reunir serviços, apresentação e contato comercial em página própria, caso a lacuna seja confirmada."
+    ],
+    "offer": "site_institucional",
+    "offer_reason": "Apresentar serviços e canais em endereço próprio, sujeito à confirmação da presença digital.",
+    "approach": "Pesquisa registrada para avaliação do motor V6; sem mensagem comercial preparada.",
+    "objections": []
+  }
+}

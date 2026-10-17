@@ -1,0 +1,61 @@
+{
+  "business_name": "Massoterapeuta Gabriela Marques",
+  "city": "Franca",
+  "state": "SP",
+  "niche": "Massoterapeutas",
+  "instagram": null,
+  "phone": "16993085621",
+  "services": [
+    "massoterapia"
+  ],
+  "address": "Avenida Frei Germano, 2088, Estação, Franca - SP",
+  "source_name": "busca_web",
+  "research_date": "2026-10-17",
+  "website_url": null,
+  "whatsapp_url": null,
+  "selection_reason": "Negócio do nicho e cidade configurados; presença inspecionada com Playwright. Nenhum site próprio localizado nas fontes consultadas; confirmar eventual página não indexada.",
+  "pending_items": "Confirmar WhatsApp comercial e vínculo do número; confirmar data da última atividade e eventual site não indexado. Confirmar identidade em fonte oficial, serviços atuais, telefone e atividade; não foi localizado identificador de rede social oficial nas buscas. Redes sociais oficiais e atividade atual não confirmadas; candidato incompleto para enriquecimento, sem qualificação de envio.",
+  "priority": "media",
+  "site_status": "verificacao_pendente",
+  "evidences": [
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Massoterapeuta+Gabriela+Marques+Franca",
+      "summary": "Busca por 'Massoterapeuta Gabriela Marques Franca' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-17T10:06:25Z",
+      "limitation": "Não havia identificador de rede social confirmado para abertura. Busca negativa não comprova ausência de site, nem atividade atual."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://www.acharei.com.br/sp/franca/empresas/medicina_saude_e_equipamentos/massagens_casas",
+      "summary": "Massoterapeuta Gabriela Marques; massoterapia em Franca; endereço Avenida Frei Germano, 2088, Estação, Franca - SP; telefone 16993085621.",
+      "limitation": "Diretório sem data de atualização do negócio ou prova de atividade recente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://acheioprofissional.com.br/massagista/franca",
+      "summary": "Massoterapeuta Gabriela Marques aparece entre profissionais de massagem em Franca.",
+      "limitation": "Listagem não comprova atividade recente nem titularidade atual do telefone."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 46,
+    "confidence": "baixa",
+    "summary": "Massoterapeuta Gabriela Marques atua em Franca, no segmento Massoterapeutas. As fontes consultadas apresentam os serviços e canais públicos; a existência de site não indexado permanece sujeita a confirmação.",
+    "audience": "Pessoas que procuram massoterapia em Franca.",
+    "digital_presence": "{\"handle\": \"\", \"status\": \"nao_informado\"}; sem_site",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: uma página própria pode reunir apresentação dos serviços e contato fora das redes e diretórios.",
+        "evidence": "Busca por 'Massoterapeuta Gabriela Marques Franca' e conferência do link da bio: nenhum site ou landing page próprio localizado"
+      }
+    ],
+    "opportunities": [
+      "Reunir serviços, apresentação e contato comercial em página própria, caso a lacuna seja confirmada."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Apresentar serviços e canais em endereço próprio, sujeito à confirmação da presença digital.",
+    "approach": "Pesquisa registrada para avaliação do motor V6; sem mensagem comercial preparada.",
+    "objections": []
+  }
+}

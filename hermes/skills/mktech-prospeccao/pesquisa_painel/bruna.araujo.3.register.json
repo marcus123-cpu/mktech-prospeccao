@@ -1,0 +1,9 @@
+{
+  "http": 202,
+  "reason": "telefone_compartilhado",
+  "status": "possivel_duplicado",
+  "review_id": "e9c8ab88-8767-4c3a-a62f-28a03c6ac5cb",
+  "matched_lead_ids": [
+    "b6dc1caf-5d31-4f36-b1e8-4342d93cb749"
+  ]
+}

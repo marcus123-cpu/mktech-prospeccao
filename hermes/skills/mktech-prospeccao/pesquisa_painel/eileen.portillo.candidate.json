@@ -1,0 +1,70 @@
+{
+  "business_name": "Carol terapia",
+  "city": "Joinville",
+  "state": "SC",
+  "niche": "Massagem",
+  "services": [
+    "Massagem com Pedras Quentes",
+    "Massagem Relaxante",
+    "Massagem Terapêutica",
+    "Reflexologia Podal"
+  ],
+  "phone": "(47) 99231-3990",
+  "instagram": null,
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:eileen.portillo",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. O resultado oticascarol.com.br/brasil é da rede Óticas Carol, sem vínculo confirmado com Carol terapia de Joinville.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://www.oticascarol.com.br/brasil",
+      "summary": "Link oticascarol.com.br: endereço não abre (HTTP 403)",
+      "observed_at": "2026-10-16T22:03:10Z",
+      "limitation": "O resultado oticascarol.com.br/brasil é da rede Óticas Carol, sem vínculo confirmado com Carol terapia de Joinville. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/eileen.portillo",
+      "summary": "Carol terapia; Joinville - SC; contato público: (47) 99231-3990; serviços: Massagem com Pedras Quentes, Massagem Relaxante, Massagem Terapêutica, Reflexologia Podal.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/joinville-sc",
+      "summary": "Carol terapia Massoterapeuta 0,0 Joinville, SC Visto há 3 dias R$250 /\n            1 hora",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/eileen.portillo",
+      "summary": "Revisão da inspeção automática: O resultado oticascarol.com.br/brasil é da rede Óticas Carol, sem vínculo confirmado com Carol terapia de Joinville.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 40,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. O resultado oticascarol.com.br/brasil é da rede Óticas Carol, sem vínculo confirmado com Carol terapia de Joinville.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Carol terapia; Joinville - SC; contato público: (47) 99231-3990; serviços: Massagem com Pedras Quentes, Massagem Relaxante, Massagem Terapêutica, Reflexologia Podal."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "vitoria",
+    "unit": "",
+    "phone": "+5527999831979",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:laila.teixeira",
+    "instagram": null,
+    "name_core": "laila teixeira",
+    "name_norm": "laila teixeira",
+    "source_name": "euterapeuta"
+  }
+}

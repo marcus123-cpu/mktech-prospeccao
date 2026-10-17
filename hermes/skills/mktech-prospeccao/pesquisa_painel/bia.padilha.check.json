@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "brasilia",
+    "unit": "",
+    "phone": "+5521965875689",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:bia.padilha",
+    "instagram": null,
+    "name_core": "bia ruda",
+    "name_norm": "bia ruda",
+    "source_name": "euterapeuta"
+  }
+}

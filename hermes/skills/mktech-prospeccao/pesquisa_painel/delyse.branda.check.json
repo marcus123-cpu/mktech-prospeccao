@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "joinville",
+    "unit": "",
+    "phone": "+5547996627283",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:delyse.branda",
+    "instagram": null,
+    "name_core": "lyse",
+    "name_norm": "de lyse",
+    "source_name": "euterapeuta"
+  }
+}

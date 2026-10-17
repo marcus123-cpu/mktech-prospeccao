@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "joinville",
+    "unit": "",
+    "phone": "+5547992827182",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:patricia.terapeuta.sensorial",
+    "instagram": null,
+    "name_core": "patricia terapeuta sensorial",
+    "name_norm": "patricia terapeuta sensorial",
+    "source_name": "euterapeuta"
+  }
+}

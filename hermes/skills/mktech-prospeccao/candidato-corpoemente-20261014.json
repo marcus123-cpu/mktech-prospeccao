@@ -1,0 +1,55 @@
+{
+  "business_name": "Corpo e Mente Angela Mendez Massagem e Terapias Holísticas",
+  "niche": "Massoterapeutas",
+  "services": [
+    "massoterapia",
+    "Reiki"
+  ],
+  "city": "Maringá",
+  "state": "PR",
+  "phone": "(44) 99776-7532",
+  "instagram": "@corpoemente.mga",
+  "whatsapp_url": "https://wa.me/5544997767532",
+  "website_url": null,
+  "address": "Avenida Guaíra, 808, Zona 7, Maringá - PR",
+  "source_name": "busca_web",
+  "research_date": "2026-10-14",
+  "selection_reason": "Divulgação recente de terapias combinadas e agendamento por WhatsApp no Linktree, sem página institucional própria localizada. Oportunidade de explicar os serviços em página acessível fora das redes.",
+  "pending_items": "Diretório apresenta telefone diferente no rodapé; adotado número do Linktree oficial, corroborado pela publicação de 06/08/2026. Não houve contato. A inexistência absoluta de site não foi comprovada.",
+  "priority": "alta",
+  "site_status": "apenas_redes_sociais",
+  "evidences": [
+    {
+      "kind": "outro",
+      "url": "https://linktr.ee/corpoemente.mga",
+      "summary": "Corpo e Mente: Massoterapia & Terapias Holísticas. Mais de 15 anos divulgados; endereço Av. Guaíra, 808, Zona 7, Maringá. Links observados: Agendamentos! para https://wa.me/5544997767532 e Instagram corpoemente.mga. Nenhum link institucional próprio observado.",
+      "observed_at": "2026-10-14"
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://www.findhealthclinics.org/BR/Maring%C3%A1/250823918295759/Corpo-E-Mente-Angela-Mendez-Massagem--E-Terapias-Hol%C3%ADsticas",
+      "summary": "Publicação em 06/08/2026: Terapias Combinadas, Angela Mendez | Corpo e Mente MGA, Maringá, (44)99776-7532. Publicação em 01/08/2026: protocolo combinando massoterapia, Reiki e terapias de regressão; Agende seu atendimento personalizado. Endereço Avenida Guaíra 808; site indicado linktr.ee/corpoemente.mga. Rodapé telefônico diverge da publicação.",
+      "observed_at": "2026-10-14",
+      "limitation": "Conteúdo social reproduzido por diretório; número do rodapé diverge do post e do Linktree."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 70,
+    "confidence": "media",
+    "summary": "Profissional de massoterapia e terapias holísticas em Maringá. Publicações datadas de agosto de 2026 divulgam atendimento personalizado e terapias combinadas; Linktree confirma endereço e canal comercial.",
+    "digital_presence": "Linktree com agendamento WhatsApp e Instagram; diretório reproduz publicações datadas. Não localizado site próprio na busca nominal, o que não comprova ausência absoluta.",
+    "pains": [
+      {
+        "pain": "A divulgação apresenta terapias combinadas e pede agendamento; hipótese a confirmar: reunir explicações das opções em uma página pode ajudar quem chega sem conhecer os serviços.",
+        "evidence": "protocolo combinando massoterapia, Reiki e terapias de regressão; Agende seu atendimento personalizado."
+      }
+    ],
+    "opportunities": [
+      "Página explicando modalidades, atuação profissional, localização e contato já existente, com revisão das alegações terapêuticas pelo responsável."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Presença observada em agregador e redes, com serviços combinados cuja apresentação pode ser reunida numa página. Necessidade comercial ainda deve ser confirmada.",
+    "approach": "",
+    "objections": []
+  }
+}

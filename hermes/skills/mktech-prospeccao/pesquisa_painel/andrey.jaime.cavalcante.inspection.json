@@ -1,0 +1,78 @@
+{
+  "nome": "Andrey Jaime Cavalcante",
+  "cidade": "Belém",
+  "verificado_em": "2026-10-16T22:00:41Z",
+  "instagram": {
+    "handle": "andrey.jaime.cavalcante",
+    "status": "ok",
+    "url": "https://www.instagram.com/andrey.jaime.cavalcante/",
+    "seguidores": 261,
+    "seguindo": 393,
+    "posts": 41,
+    "bio_texto": "261 seguidores | 380 seguindo | 🌿 Andrey Jaime Cavalcante - Espaço de Terapias Naturais 🌿 | andrey.jaime.cavalcante | 🧠 Psicanálise | ☯️ Massoterapia e Acupuntura | 🌿 Fiterapia e Naturopatia | 🆔 IFP 49172 | CRTP 7719 | 👇 Agendamentos",
+    "links_bio": [
+      "https://www.threads.com/@andrey.jaime.cavalcante",
+      "https://wa.link/2gj2e7"
+    ]
+  },
+  "facebook": {
+    "status": "nao_informado"
+  },
+  "site": {
+    "situacao": "site_proprio",
+    "detalhe": [
+      {
+        "url": "https://www.threads.com/@andrey.jaime.cavalcante",
+        "dominio": "threads.com",
+        "tipo": "site_proprio",
+        "http": 200,
+        "titulo": "🧠 Andrey Jaime Cavalcante 🌿 (@andrey.jaime.cavalcante) • Threads, diga mais",
+        "tem_https": true,
+        "tamanho_texto": 2944,
+        "links_internos": 48
+      },
+      {
+        "url": "https://wa.link/2gj2e7",
+        "dominio": "wa.link",
+        "tipo": "site_proprio",
+        "http": 200,
+        "titulo": "Compartilhe no WhatsApp",
+        "tem_https": true,
+        "tamanho_texto": 520,
+        "links_internos": 143
+      }
+    ]
+  },
+  "nota_sugerida": 38,
+  "componentes": {
+    "lacuna_digital": 0,
+    "atividade": 20,
+    "demanda": 3,
+    "potencial_comercial": 15
+  },
+  "confianca": "media",
+  "site_status_sugerido": "site_proprio_encontrado",
+  "evidencias": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/andrey.jaime.cavalcante/",
+      "summary": "Instagram @andrey.jaime.cavalcante aberto sem login; 261 seguidores, 41 publicações; link da bio: https://www.threads.com/@andrey.jaime.cavalcante, https://wa.link/2gj2e7",
+      "observed_at": "2026-10-16T22:00:41Z"
+    },
+    {
+      "kind": "site",
+      "url": "https://www.threads.com/@andrey.jaime.cavalcante",
+      "summary": "Link threads.com: site próprio no ar",
+      "observed_at": "2026-10-16T22:00:41Z"
+    },
+    {
+      "kind": "site",
+      "url": "https://wa.link/2gj2e7",
+      "summary": "Link wa.link: site próprio no ar",
+      "observed_at": "2026-10-16T22:00:41Z"
+    }
+  ],
+  "avisos": [
+    "Última publicação não apareceu sem login: não afirme atividade recente sem outra fonte."
+  ]
+}

@@ -1,0 +1,26 @@
+{
+ "business_name":"Filipe Souza Massoterapia", "niche":"Massoterapeutas",
+ "services":["Massagem Relaxante","Drenagem Linfática","Liberação Miofascial"],
+ "city":"Uberlândia", "state":"MG", "neighborhood":"Morumbi",
+ "phone":"+5534991501462", "instagram":"@filipemassoterapeuta",
+ "whatsapp_url":"https://api.whatsapp.com/send?phone=%2B5534991501462", "website_url":null,
+ "source_name":"busca_web", "research_date":"2026-10-14", "site_status":"apenas_redes_sociais", "priority":"media",
+ "selection_reason":"Publicação de maio de 2026 divulga serviços e link público de WhatsApp do mesmo telefone confirmado em diretórios independentes. A presença pública consultada aponta Instagram como site; uma página própria pode reunir apresentação e serviços, hipótese a confirmar.",
+ "pending_items":"A página FindGlocal não abriu diretamente; data e conteúdo consultados pelo índice de busca. Não tratar como pronto V6 sem superar essa limitação. Confirmar endereço comercial atual antes de publicar página: diretórios indicam Rua Quero Quero, 35, e página social informa somente Uberlândia/Morumbi. Não afirmar inexistência absoluta de site.",
+ "evidences":[
+  {"kind":"diretorio","url":"https://www.findglocal.com/BR/Uberl%C3%A2ndia/228421138067505/Filipe-Souza-Massoterapia","summary":"Índice da página mostra publicação em 19/05/2026 sobre ventosaterapia e Liberação Miofascial. Lista Massagem Relaxante e Drenagem Linfática. Campo Site aponta http://instagram.com/filipemassoterapeuta. Divulga telefone +5534991501462 e link público https://api.whatsapp.com/send?phone=%2B5534991501462 para agendamento.","observed_at":"2026-10-14","limitation":"Conteúdo consultado pelo índice de busca; abertura direta retornou Cache miss."},
+  {"kind":"diretorio","url":"https://www.cylex.com.br/uberlandia/massoterapeuta.html","summary":"Diretório lista Filipe Souza Massoterapia no bairro Morumbi, Uberlândia, Rua Quero Quero, 35, e telefone (34) 99150-1462, coincidente com a divulgação pública do profissional.","observed_at":"2026-10-14","limitation":null},
+  {"kind":"diretorio","url":"https://www.locaisdobrasil.com.br/bairro/morumbi/uberlandia-mg","summary":"Filipe Souza Massoterapia identificado no Morumbi, Uberlândia. Apresentação pública informa atuação em Drenagem Linfática, Modeladora, Relaxante, Pedras Quentes, Massagem Sueca e Pré e Pós Operatório de Cirurgia Plástica. Diretório exibe 20 avaliações sem datas recentes verificadas.","observed_at":"2026-10-14","limitation":null},
+  {"kind":"busca","url":"https://www.google.com/search?q=Filipe+Souza+Massoterapia+Uberlandia+site","summary":"Buscas nominais por Filipe Souza Massoterapia Uberlândia site retornaram Instagram e diretórios, sem página própria localizada nos itens examinados.","observed_at":"2026-10-14","limitation":"Não encontrar domínio em resultados limitados não comprova inexistência absoluta de site."}
+ ],
+ "diagnosis":{
+  "fit_score":66,"confidence":"media",
+  "summary":"Massoterapeuta de Uberlândia com serviços corporais e contato comercial coincidente em fontes independentes. O índice da divulgação pública mostra atividade em maio de 2026 e Instagram como site. Há oportunidade de apresentação própria condicionada a confirmar a presença digital atual e superar a limitação de acesso à fonte social.",
+  "audience":"Público de Uberlândia interessado em massagens e terapias corporais.",
+  "digital_presence":"Instagram e WhatsApp divulgados publicamente; Locais do Brasil lista 20 avaliações. Site próprio não localizado; sem métricas atuais de seguidores ou frequência de posts confirmadas.",
+  "pains":[{"pain":"Hipótese para confirmar: serviços e contato estão distribuídos entre perfil social e diretórios, sem apresentação própria localizada que reúna as informações.","evidence":"Apresentação pública informa atuação em Drenagem Linfática, Modeladora, Relaxante, Pedras Quentes, Massagem Sueca e Pré e Pós Operatório de Cirurgia Plástica."}],
+  "opportunities":["Página simples para reunir formação confirmada, serviços, região de atendimento e contato comercial."],
+  "offer":"landing_page","offer_reason":"Atuação individual com diferentes massagens; página simples pode reunir apresentação e contato se o profissional confirmar que não possui equivalente.",
+  "approach":"Somente pesquisa e diagnóstico registrados, sem mensagem comercial.","objections":[]
+ }
+}

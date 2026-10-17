@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "joinville",
+    "unit": "",
+    "phone": "+5547992313990",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:eileen.portillo",
+    "instagram": null,
+    "name_core": "carol terapia",
+    "name_norm": "carol terapia",
+    "source_name": "euterapeuta"
+  }
+}

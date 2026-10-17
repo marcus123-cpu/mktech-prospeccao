@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "recife",
+    "unit": "",
+    "phone": "+5581983371171",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:erica.ferreira",
+    "instagram": null,
+    "name_core": "erica ferrer",
+    "name_norm": "erica ferrer",
+    "source_name": "euterapeuta"
+  }
+}

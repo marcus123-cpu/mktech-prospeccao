@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "manaus",
+    "unit": "",
+    "phone": "+5592992219579",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:dra.karla.brito.oliveira.fisioterapeuta",
+    "instagram": null,
+    "name_core": "karla brito oliveira fisioterapeuta",
+    "name_norm": "dra karla brito oliveira fisioterapeuta",
+    "source_name": "euterapeuta"
+  }
+}

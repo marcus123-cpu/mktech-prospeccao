@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "recife",
+    "unit": "",
+    "phone": "+5581991221349",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:katrina.valentim",
+    "instagram": null,
+    "name_core": "eldia massoterapia bem estar",
+    "name_norm": "eldia massoterapia bem estar",
+    "source_name": "euterapeuta"
+  }
+}

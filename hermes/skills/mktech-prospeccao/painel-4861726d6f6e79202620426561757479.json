@@ -1,0 +1,55 @@
+{
+  "business_name": "Harmony & Beauty",
+  "city": "Sorocaba",
+  "phone": "+5515997814079",
+  "instagram": "harmonyebeautysorocaba",
+  "address": "Rua Doracy Amaral, 346, Parque São Bento, Sorocaba/SP",
+  "website_url": "https://www.harmonyebeauty.com/",
+  "booking_url": "https://www.trinks.com/harmony-beauty",
+  "services": [
+    "Toxina Botulínica"
+  ],
+  "state": "SP",
+  "niche": "estética facial",
+  "research_date": "2026-10-14",
+  "source_name": "busca_web",
+  "site_status": "verificacao_pendente",
+  "priority": "baixa",
+  "selection_reason": "Hipótese a confirmar: integrar orientação dos procedimentos do site ao canal de agendamento já presente no Trinks.",
+  "pending_items": "Confirmar atividade recente, horário vigente, link de WhatsApp e existência de integração entre site e Trinks. Não há prova de sobrecarga na agenda.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://www.harmonyebeauty.com/",
+      "summary": "Harmony & Beauty, Dr. Richard Quirino em Sorocaba. Toxina Botulínica, Preenchimento, Bioestimuladores. Agende sua Consulta pelo WhatsApp ou redes sociais. (15) 99781-4079, Rua Doracy Amaral, 346.",
+      "observed_at": "2026-10-14",
+      "limitation": "Conteúdo indexado; HTML direto não expôs links nem datas de atividade."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://www.trinks.com/harmony-beauty",
+      "summary": "Harmony & Beauty, Rua Doracy Amaral, 346, Parque São Bento, Sorocaba. (15) 99781-4079; aberto todos os dias 08:00 às 22:00.",
+      "observed_at": "2026-10-14",
+      "limitation": "Sem datas de atendimento ou avaliações recentes."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 45,
+    "confidence": "baixa",
+    "summary": "Harmony & Beauty atua em Sorocaba com serviços estéticos e presença pública verificada. Confirmar atividade recente, horário vigente, link de WhatsApp e existência de integração entre site e Trinks. Não há prova de sobrecarga na agenda.",
+    "digital_presence": "Site próprio localizado e canais descritos nas evidências; não presumir ausência de agenda ou baixa conversão.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: integrar orientação dos procedimentos do site ao canal de agendamento já presente no Trinks.",
+        "evidence": "Agende sua Consulta pelo WhatsApp ou redes sociais."
+      }
+    ],
+    "opportunities": [
+      "Revisar informações verificadas e organizar conteúdo por procedimento, conforme confirmação do negócio."
+    ],
+    "offer": "landing_por_procedimento",
+    "offer_reason": "Hipótese a confirmar: integrar orientação dos procedimentos do site ao canal de agendamento já presente no Trinks.",
+    "approach": "Investigar a oportunidade registrada com dados confirmados; sem mensagem pronta.",
+    "objections": []
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "goiania",
+    "unit": "",
+    "phone": null,
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:agnes.giuliani.brito.santiago",
+    "instagram": null,
+    "name_core": "agnes giuliani brito santiago",
+    "name_norm": "agnes giuliani brito santiago",
+    "source_name": "euterapeuta"
+  }
+}

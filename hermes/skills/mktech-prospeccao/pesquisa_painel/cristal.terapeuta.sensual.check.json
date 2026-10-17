@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "maceio",
+    "unit": "",
+    "phone": "+5571988500881",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:cristal.terapeuta.sensual",
+    "instagram": null,
+    "name_core": "cristal terapeuta sensual",
+    "name_norm": "cristal terapeuta sensual",
+    "source_name": "euterapeuta"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "curitiba",
+    "unit": "",
+    "phone": "+5541992299029",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:henrique.centro",
+    "instagram": null,
+    "name_core": "henrique massagista",
+    "name_norm": "henrique massagista",
+    "source_name": "euterapeuta"
+  }
+}

@@ -1,0 +1,526 @@
+{
+  "run_id": "22c11b2f-3ed8-4be6-8fff-ac56c6ab9b4b",
+  "searched": 111,
+  "approved": 1,
+  "discarded": 83,
+  "errors": 12,
+  "discarded_candidates": [
+    {
+      "business_name": "Academia One Gym",
+      "city": "Limeira",
+      "url": "https://academiaonegym.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Panobianco Limeira Centro",
+      "city": "Limeira",
+      "url": "https://www.panobiancoacademia.com.br/unidade/limeira",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Skyfit Limeira",
+      "city": "Limeira",
+      "url": "http://skyfitacademia.com",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Younique Treinamento e Saúde",
+      "city": "Limeira",
+      "url": "https://www.youniquetreinamentoesaude.com.br",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "REDFIT Pátio Limeira",
+      "city": "Limeira",
+      "url": "http://www.redfit.com.br",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Studio Velocity Limeira",
+      "city": "Limeira",
+      "url": "http://www.studiovelocity.com.br",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Teslatics Limeira",
+      "city": "Limeira",
+      "url": "https://teslatics.com.br",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Ultra Academia Limeira",
+      "city": "Limeira",
+      "url": "https://ultraacademia.com.br/index.php?AC=Produtos&a1=A9",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Fitsse",
+      "city": "Limeira",
+      "url": "https://www.fitsse.com.br",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Estética Funcional Avançada",
+      "city": "Sorocaba",
+      "url": "https://apnt.app/esteticafuncionalavancada",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "FAZFISIO",
+      "city": "Sorocaba",
+      "url": "https://www.fazfisio.com.br/noticias/massoterapia-alivio-real/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "TeraSpa",
+      "city": "Sorocaba",
+      "url": "https://www.teraspa.com.br",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Ergon Saúde Integral",
+      "city": "Sorocaba",
+      "url": "https://www.ergonsaude.com.br/massagem-em-sorocaba/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Janete Alves Massoterapia",
+      "city": "Americana",
+      "url": "https://janetealves.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Clínica Mel Diniz",
+      "city": "Sorocaba",
+      "url": "https://clinicameldiniz.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Massoterra",
+      "city": "Ribeirão Preto",
+      "url": "https://massoterra.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Mahara Spa",
+      "city": "Ribeirão Preto",
+      "url": "https://www.massagememsorocaba.com/mahara-ribeirao-preto",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Lumine Spa Urbano",
+      "city": "Ribeirão Preto",
+      "url": "https://luminespaurbano.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Andréa Paula Massoterapia",
+      "city": "São José dos Campos",
+      "url": "https://andrea-paula.lovable.app/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Teyang",
+      "city": "Santos",
+      "url": "https://www.teyang.com.br/contato/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Academia Estilo do Corpo",
+      "city": "Santos",
+      "url": "https://www.estilodocorpo.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Engenharia do Corpo",
+      "city": "Santos",
+      "url": "https://engenhariadocorpo.com.br/unidade/santos/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Marathon Academia",
+      "city": "Santos",
+      "url": "https://www.marathonacademia.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Grace Celi",
+      "city": "São Bernardo do Campo",
+      "url": "https://www.graceesteticaavancada.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Clínica Kundalini",
+      "city": "Santo André",
+      "url": "https://clinicakundalini.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Roseli Azevedo",
+      "city": "Santo André",
+      "url": "https://roseliazevedo.com/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Camila Vinhas",
+      "city": "Jundiaí",
+      "url": "https://camilavinhas.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Cesar Augusto Massoterapia",
+      "city": "Santo André",
+      "url": "https://augustomassoterapia.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Nel Zen Massoterapia",
+      "city": "Santo André",
+      "url": "https://www.nelzen.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Massoterapeuta Elisabete",
+      "city": "Santo André",
+      "url": "https://www.massoterapeuta-elisabete.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Henka Estética",
+      "city": "São Caetano do Sul",
+      "url": "https://www.henkaestetica.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "VRM Estética",
+      "city": "Santo André",
+      "url": "https://vrmestetica.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Carla Stein",
+      "city": "Piracicaba",
+      "url": "https://carla-stein5.webnode.page/informacoes-uteis/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Bien Fit",
+      "city": "Americana",
+      "url": "https://bienfit.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Consultório Cavaglieri",
+      "city": "Indaiatuba",
+      "url": "https://www.consultoriocavaglieri.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Território Fit",
+      "city": "São Carlos",
+      "url": "https://www.territoriofit.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Regina Gonçalves Estética",
+      "city": "São Carlos",
+      "url": "https://reginagoncalvesestetica.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Dor-Off",
+      "city": "Araraquara",
+      "url": "https://dor-off.com/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Vitta Integrale",
+      "city": "São Carlos",
+      "url": "https://vittaintegrale.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Renan Massarenti",
+      "city": "Araçatuba",
+      "url": "https://osteopatiaaracatuba.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Expirar Pilates",
+      "city": "Araraquara",
+      "url": "https://expirarpilates.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Vitta Fisioterapia Fitness Pilates",
+      "city": "Presidente Prudente",
+      "url": "https://vittafisioterapiafitnesspilates.lovable.app/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "O2 Condicionamento Personalizado",
+      "city": "São Carlos",
+      "url": "https://www.o2personal.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Ozana Rodrigues",
+      "city": "Uberlândia",
+      "url": "https://casacaminhosdacura.com/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Studio Pró Corpo",
+      "city": "Uberaba",
+      "url": "https://studioprocorpo.lovable.app/contato",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Persera Wellness",
+      "city": "Belo Horizonte",
+      "url": "https://persera.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Gilson Batista Jiu-Jitsu",
+      "city": "Volta Redonda",
+      "url": "https://jiujitsuvoltaredonda.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Zahira",
+      "city": "Volta Redonda",
+      "url": "https://zahira.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Bellitate",
+      "city": "Juiz de Fora",
+      "url": "https://www.bellitate.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Moksha Yoga",
+      "city": "Juiz de Fora",
+      "url": "https://www.mokshayoga.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Thai Brasil",
+      "city": "Curitiba",
+      "url": "https://thaibrasil.com/index.php/contato/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Flávia Rodrigues",
+      "city": "Juiz de Fora",
+      "url": "https://flaviarodriguesjf.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Essência do Cuidar",
+      "city": "Curitiba",
+      "url": "https://essenciadocuidarcuritiba.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Massoterapia Oriental Miyamura",
+      "city": "Curitiba",
+      "url": "https://miyamura.webnode.page/sobre-nos/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Ketlin Arandt",
+      "city": "Curitiba",
+      "url": "https://ketlinarandtmassoterapeuta.com/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Renova Musculação Terapêutica",
+      "city": "Maringá",
+      "url": "https://renovamaringa.com.br/portal/contato/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Clínica PIO",
+      "city": "Londrina",
+      "url": "https://www.clinicapio.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "M7 Academia",
+      "city": "Cascavel",
+      "url": "https://m7academia.com/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Letícia Makita",
+      "city": "Londrina",
+      "url": "https://xn--letciamakitaestetica-r4b.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Pilatear",
+      "city": "Londrina",
+      "url": "https://pilatear.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Patrícia Machado",
+      "city": "Joinville",
+      "url": "https://patriciamachado.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Vilma Costa Inspirar Terapias",
+      "city": "Balneário Camboriú",
+      "url": "https://inspirarterapias.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Rang Yai",
+      "city": "Balneário Camboriú",
+      "url": "https://rangyai.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "JB Terapias Manuais",
+      "city": "Joinville",
+      "url": "https://jbterapiasmanuais.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "AH Terapias",
+      "city": "Balneário Camboriú",
+      "url": "https://www.ahterapias.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Patrícia Silva",
+      "city": "Brasília",
+      "url": "https://patriciasilva.com.br/contato/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Igor Massoterapia",
+      "city": "Brasília",
+      "url": "https://www.massagemdf.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Talyta Poletto",
+      "city": "Porto Alegre",
+      "url": "https://talytapoletto.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Integração Corporal",
+      "city": "Goiânia",
+      "url": "https://integracaocorporal.com/contato",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Vanessa Lima Spa",
+      "city": "Caxias do Sul",
+      "url": "https://vanessalimaspaeestetica.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Kayzen Terapias",
+      "city": "Campo Grande",
+      "url": "https://kayzencursos.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "GZ Serenity",
+      "city": "Dourados",
+      "url": "https://gz-serenity.vercel.app/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Isys Almeida",
+      "city": "Anápolis",
+      "url": "https://isysalmeida.com/lp/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Espaço Terapêutico Shen",
+      "city": "Campo Grande",
+      "url": "https://etshen.com.br/sobre-nos/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Lilianne Rocha",
+      "city": "Recife",
+      "url": "https://lilirocha.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Joyce Macário",
+      "city": "Fortaleza",
+      "url": "https://joyceestetica.com/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "V2 Academia",
+      "city": "Fortaleza",
+      "url": "https://sites.google.com/view/v2academia",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Espaço Vida",
+      "city": "Recife",
+      "url": "https://espaco-vida.lovable.app/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Raquel Ferreira",
+      "city": "Fortaleza",
+      "url": "https://raquelferreiraterapias.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Spa Rosy Oliveira",
+      "city": "Recife",
+      "url": "https://sparosyoliveira.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Takasu Estética e Terapias",
+      "city": "Barretos",
+      "url": "https://clinicatakasu.com.br/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "Oazen Spa",
+      "city": "Niterói",
+      "url": "https://oazen.com.br/sobre/",
+      "reason": "Site ou página própria localizada na triagem; descartado conforme prioridade expressa do pedido."
+    },
+    {
+      "business_name": "CFT4 Fitness Hub",
+      "city": "Santos",
+      "reason": "CRM recusou cadastro: presença digital própria ainda não verificada; sem alteração artificial do diagnóstico."
+    }
+  ],
+  "access_errors": [
+    "Linktree CFT4: cache miss no provedor (posteriormente acessível via Python).",
+    "Instagram Fox Fitness: HTTP 429.",
+    "Instagram Academia Faria: falha de obtenção.",
+    "Instagram Terapia Maylle: cache miss.",
+    "Salons10 Giselly Ramos: cache miss.",
+    "Wellhub CFT4: cache miss.",
+    "Solutudo Patricia: cache miss.",
+    "Findhealthclinics Elaine Lisboa: cache miss.",
+    "Locais do Brasil Elaine Lisboa: cache miss.",
+    "Findhealthclinics Elaine Lisboa via Python: HTTP 403.",
+    "Linktree elainelisboacupu via Python: HTTP 404."
+  ],
+  "registration_errors": 1,
+  "notes": "Todas as 50 cidades configuradas foram objeto de consulta nos nichos Academia e Massoterapeutas, incluindo consultas combinadas. Meta 100 não atingida. Limites 500 buscas e 240 minutos não esgotados. Cadastro aceito possui limitação em fonte independente e divergência de telefone documentada; não equivale a confirmação de prontidão V6. Nenhum contato ou mensagem comercial executado. Resposta final do CRM confirmou 1 qualificado.",
+  "finish_response": {
+    "http": 200,
+    "status": "encerrada",
+    "qualificados": 1
+  }
+}

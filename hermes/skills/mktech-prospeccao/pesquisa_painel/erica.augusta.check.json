@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "santos",
+    "unit": "",
+    "phone": "+5513991458164",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:erica.augusta",
+    "instagram": null,
+    "name_core": "erica augusta",
+    "name_norm": "erica augusta",
+    "source_name": "euterapeuta"
+  }
+}

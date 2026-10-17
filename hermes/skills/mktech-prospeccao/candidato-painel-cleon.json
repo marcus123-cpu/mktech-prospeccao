@@ -1,0 +1,64 @@
+{
+  "business_name": "Instituto Cleon",
+  "city": "Sorocaba",
+  "state": "SP",
+  "niche": "estética facial",
+  "services": [
+    "Microagulhamento",
+    "Limpeza profunda da Pele"
+  ],
+  "phone": "+5515996334646",
+  "website_url": "https://institutocleon.com.br/",
+  "address": "Av. Itavuvu, 783, Sorocaba/SP",
+  "source_name": "busca_web",
+  "research_date": "2026-10-14",
+  "site_status": "site_proprio_encontrado",
+  "priority": "alta",
+  "selection_reason": "Site próprio confirmado; diretório Unimed informa sem site, criando oportunidade concreta de alinhamento cadastral. Publicação de agosto de 2026 confirmada.",
+  "pending_items": "Confirmar bairro: site diz Vila Carol, Unimed Vila Olimpia, publicações Vila Gomes. Confirmar link público de WhatsApp; número é divulgado como WhatsApp, mas não foi localizado href. Conferir cadastro antigo no Guia-se com outro endereço.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://institutocleon.com.br/",
+      "summary": "Instituto Cleon em Sorocaba. Serviços: Microagulhamento e Limpeza profunda da Pele. WhatsApp (15) 99633 4646. Endereço Av. Itavuvu, 783 Vila Carol.",
+      "observed_at": "2026-10-14"
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://www.unimedsorocaba.coop.br/unimedsite/servicosonline/guiamedico/_partialinclusaodadosprestador?codigo=1002381",
+      "summary": "Instituto Cleon, Avenida Itavuvu,783, Sorocaba; telefone (15)33269397. Site: sem site.",
+      "observed_at": "2026-10-14"
+    },
+    {
+      "kind": "outro",
+      "url": "https://www.findhealthclinics.org/BR/Sorocaba/179278412204303/Instituto-Cleon",
+      "summary": "Publicação em 14/08/2026 sobre Terapia Neural com avaliação no (15) 99633-4646. Publicação em 07/07/2026 divulga Microagulhamento e endereço Avenida Itavuvu, 783 – Vila Gomes.",
+      "observed_at": "2026-10-14",
+      "limitation": "Publicações reproduzidas por agregador; confirmar em canal original."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 70,
+    "confidence": "media",
+    "summary": "Instituto de estética e saúde integrativa em Sorocaba, com site próprio e vários tratamentos. Há conteúdo datado de agosto de 2026 reproduzido em agregador; diretório de prestadores ainda informa sem site.",
+    "digital_presence": "Site institucional com tratamentos e WhatsApp público; cadastro Unimed com telefone fixo correspondente. Datas recentes somente em agregador.",
+    "pains": [
+      {
+        "pain": "Divergência cadastral verificável: diretório informa ausência de site apesar do domínio institucional acessível.",
+        "evidence": "telefone (15)33269397. Site: sem site."
+      },
+      {
+        "pain": "Hipótese a confirmar: alinhar identificação de bairro nos canais públicos facilita orientação de pacientes.",
+        "evidence": "Endereço Av. Itavuvu, 783 Vila Carol."
+      }
+    ],
+    "opportunities": [
+      "Alinhar cadastro do diretório ao site institucional e revisar endereço entre canais.",
+      "Organizar páginas de procedimentos com informações confirmadas pela equipe."
+    ],
+    "offer": "site_institucional",
+    "offer_reason": "Revisão do site existente e consistência dos dados públicos para clínica com vários tratamentos.",
+    "approach": "Investigar com o negócio a divergência do cadastro Unimed e do bairro; diagnóstico de pesquisa, sem mensagem comercial.",
+    "objections": []
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "nome": "Ayumi Kobayashi",
+  "cidade": "Manaus",
+  "verificado_em": "2026-10-16T22:01:45Z",
+  "instagram": {
+    "handle": "ayumikobayash1",
+    "status": "ok",
+    "url": "https://www.instagram.com/ayumikobayash1/",
+    "seguidores": 6175,
+    "seguindo": 1391,
+    "posts": 25,
+    "bio_texto": "6.170 seguidores | 1.179 seguindo | 𝐀𝐲𝐮𝐦𝐢 𝐊𝐨𝐛𝐚𝐲𝐚𝐬𝐡𝐢 | MASSOTERAPEUTA/ @ayumiterapias_ | agente de viagens ✈️ | trancista e costureira nas horas vagas✨ | www.tiktok.com/@kimraissaa_?_r=1&_t=ZS-95mdgMqVGgS | 💋💋 | 🩷",
+    "links_bio": [
+      "https://www.tiktok.com/@kimraissaa_"
+    ]
+  },
+  "facebook": {
+    "status": "nao_informado"
+  },
+  "site": {
+    "situacao": "site_fraco",
+    "detalhe": [
+      {
+        "url": "https://www.tiktok.com/@kimraissaa_",
+        "dominio": "tiktok.com",
+        "tipo": "site_fraco",
+        "http": 200,
+        "titulo": "TikTok - Make Your Day",
+        "tem_https": true,
+        "tamanho_texto": 170,
+        "links_internos": 1
+      }
+    ]
+  },
+  "nota_sugerida": 69,
+  "componentes": {
+    "lacuna_digital": 25,
+    "atividade": 14,
+    "demanda": 15,
+    "potencial_comercial": 15
+  },
+  "confianca": "media",
+  "site_status_sugerido": "site_proprio_encontrado",
+  "evidencias": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/ayumikobayash1/",
+      "summary": "Instagram @ayumikobayash1 aberto sem login; 6175 seguidores, 25 publicações; link da bio: https://www.tiktok.com/@kimraissaa_",
+      "observed_at": "2026-10-16T22:01:45Z"
+    },
+    {
+      "kind": "site",
+      "url": "https://www.tiktok.com/@kimraissaa_",
+      "summary": "Link tiktok.com: página muito simples, sem conteúdo suficiente",
+      "observed_at": "2026-10-16T22:01:45Z"
+    }
+  ],
+  "avisos": [
+    "Última publicação não apareceu sem login: não afirme atividade recente sem outra fonte."
+  ]
+}

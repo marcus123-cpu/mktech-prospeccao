@@ -28,4 +28,8 @@ envio/whatsapp-web/.wwebjs_cache/
 envio/whatsapp-web/.bridge-journal.json*
 supabase/.temp/
 .playwright-mcp/
+.codex/
+/debug.log
+/envio/preparador-loop.bat.bak-20261013
+/envio/preparador-loop.new
 envio/aprendizado/

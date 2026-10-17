@@ -1,0 +1,26 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "existente",
+  "matches": [
+    {
+      "id": "8f832442-dfb9-46cd-a7f1-70ec7f8876ad",
+      "city": "São Luís",
+      "unit": null,
+      "business_name": "Joseana Costa"
+    }
+  ],
+  "matched_on": "telefone",
+  "normalized": {
+    "city": "sao luis",
+    "unit": "",
+    "phone": "+5598991613597",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:joseana.costa",
+    "instagram": null,
+    "name_core": "joseana costta",
+    "name_norm": "joseana costta",
+    "source_name": "euterapeuta"
+  }
+}

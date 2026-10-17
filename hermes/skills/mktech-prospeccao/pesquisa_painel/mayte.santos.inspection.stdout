@@ -1,0 +1,48 @@
+{
+  "nome": "Maete Santos - Luz no Toque.",
+  "cidade": "Santos",
+  "verificado_em": "2026-10-16T21:50:16Z",
+  "instagram": {
+    "handle": "luznotoque",
+    "status": "ok",
+    "url": "https://www.instagram.com/luznotoque/",
+    "seguidores": 25,
+    "seguindo": 4,
+    "posts": 10,
+    "bio_texto": "25 seguidores | 4 seguindo | Maete Cilene Santos – Terapeuta e Instrutora. | Toques que despertam | 💆‍♀️ Massagens relaxante | Terapêutica | Tântrica. | 💫 Corpo e alma em sintonia | 📍 Santos/SP | 💌 Para... | mais | wa.me/5513991808035 e mais 1",
+    "links_bio": []
+  },
+  "facebook": {
+    "status": "nao_informado"
+  },
+  "site": {
+    "situacao": "sem_site",
+    "detalhe": []
+  },
+  "nota_sugerida": 82,
+  "componentes": {
+    "lacuna_digital": 50,
+    "atividade": 14,
+    "demanda": 3,
+    "potencial_comercial": 15
+  },
+  "confianca": "media",
+  "site_status_sugerido": "apenas_redes_sociais",
+  "evidencias": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/luznotoque/",
+      "summary": "Instagram @luznotoque aberto sem login; 25 seguidores, 10 publicações; sem link de site na bio",
+      "observed_at": "2026-10-16T21:50:16Z"
+    },
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Maete+Santos+-+Luz+no+Toque.+Santos",
+      "summary": "Busca por 'Maete Santos - Luz no Toque. Santos' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-16T21:50:16Z"
+    }
+  ],
+  "avisos": [
+    "Última publicação não apareceu sem login: não afirme atividade recente sem outra fonte."
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "porto alegre",
+    "unit": "",
+    "phone": "+5551992586995",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:massagem.ultra.relaxante",
+    "instagram": null,
+    "name_core": "massagem ultra relaxante",
+    "name_norm": "massagem ultra relaxante",
+    "source_name": "euterapeuta"
+  }
+}

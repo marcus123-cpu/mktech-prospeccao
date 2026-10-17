@@ -1,0 +1,26 @@
+{
+  "http": 202,
+  "reason": "nome_parecido",
+  "status": "possivel_duplicado",
+  "matches": [
+    {
+      "id": "8582db90-7444-4a1c-8b30-ec220470e58a",
+      "city": "Joinville",
+      "unit": null,
+      "business_name": "May Massoterapia"
+    }
+  ],
+  "matched_on": "nome_cidade",
+  "normalized": {
+    "city": "joinville",
+    "unit": "",
+    "phone": "+5547997128809",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:kalimera.massoterapia.masculina",
+    "instagram": null,
+    "name_core": "kali massoterapia",
+    "name_norm": "kali massoterapia",
+    "source_name": "euterapeuta"
+  }
+}

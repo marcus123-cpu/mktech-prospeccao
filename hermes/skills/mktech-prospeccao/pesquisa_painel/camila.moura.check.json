@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "salvador",
+    "unit": "",
+    "phone": "+5571981329139",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:camila.moura",
+    "instagram": null,
+    "name_core": "julia perez",
+    "name_norm": "julia perez",
+    "source_name": "euterapeuta"
+  }
+}

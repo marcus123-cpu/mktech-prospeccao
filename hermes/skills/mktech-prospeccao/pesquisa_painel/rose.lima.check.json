@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "santos",
+    "unit": "",
+    "phone": "+5513981822340",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:rose.lima",
+    "instagram": "roselimamassagensicia",
+    "name_core": "rose lima massagens cia",
+    "name_norm": "rose lima massagens cia",
+    "source_name": "euterapeuta"
+  }
+}

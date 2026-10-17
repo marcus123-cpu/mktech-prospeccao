@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "belem",
+    "unit": "",
+    "phone": "+5591987285819",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:ingrid.rodrigues",
+    "instagram": null,
+    "name_core": "ingrid rodrigues",
+    "name_norm": "ingrid rodrigues",
+    "source_name": "euterapeuta"
+  }
+}

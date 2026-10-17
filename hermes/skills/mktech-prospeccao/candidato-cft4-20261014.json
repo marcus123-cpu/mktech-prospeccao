@@ -1,0 +1,55 @@
+{
+  "business_name": "CFT4 Fitness Hub",
+  "niche": "Academia",
+  "services": [
+    "Cross",
+    "HYROX Training Club"
+  ],
+  "city": "Santos",
+  "state": "SP",
+  "phone": "(13) 99204-3934",
+  "instagram": "@cft4santos",
+  "whatsapp_url": "https://api.whatsapp.com/send?phone=5513992043934",
+  "website_url": null,
+  "address": "Av. General Francisco Glicério, 629, Santos - SP",
+  "source_name": "busca_web",
+  "research_date": "2026-10-14",
+  "selection_reason": "Linktree oficial apresenta Cross e HYROX, convite à aula experimental e contato; oportunidade de explicar modalidades em página própria. Nenhum site institucional próprio localizado nas buscas nominais.",
+  "pending_items": "Waze informa telefone antigo diferente do Linktree; priorizado WhatsApp publicado no Linktree. Confirmar vínculo do evento CFT4 HYROX E CROSS de 10/10/2026 com esta unidade; não tomado como prova definitiva de atividade.",
+  "priority": "baixa",
+  "site_status": "verificacao_pendente",
+  "evidences": [
+    {
+      "kind": "outro",
+      "url": "https://linktr.ee/cft4fitnesshub",
+      "summary": "CFT4 Fitness Hub: Cross | HYROX Training Club em Santos. Agende sua aula experimental! Endereço Av. Gen. Francisco Glicério, 629. Link público do WhatsApp aponta phone=5513992043934; aula experimental aponta app.tecnofit.com.br.",
+      "observed_at": "2026-10-14"
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://www.waze.com/live-map/directions/br/sp/cft4-crosstraning-em-santos?to=place.ChIJi3F3w4MDzpQRGSCPs8ocgJY",
+      "summary": "CFT4 - Crosstraning em Santos, Av. Gal. Francisco Glycério, 629; Instagram cft4santos e horários de segunda a domingo. Telefone publicado diverge do Linktree.",
+      "observed_at": "2026-10-14",
+      "limitation": "Fonte sem data de atualização e telefone divergente."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 50,
+    "confidence": "baixa",
+    "summary": "Academia de Cross e HYROX em Santos, com convite público a aula experimental. Identidade e localização corroboradas; atividade recente e telefone divergente exigem confirmação.",
+    "digital_presence": "Linktree com Instagram, WhatsApp e Tecnofit; Waze confirma nome e endereço. Busca nominal não localizou site próprio, sem provar inexistência.",
+    "pains": [
+      {
+        "pain": "Convite à aula experimental concentrado no agregador; hipótese a confirmar: uma página pode esclarecer diferenças das modalidades antes do agendamento.",
+        "evidence": "Cross | HYROX Training Club em Santos. Agende sua aula experimental!"
+      }
+    ],
+    "opportunities": [
+      "Página com descrição de Cross e HYROX, localização e acesso ao agendamento existente."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Agregador observado oferece links de contato e experiência; página poderia reunir explicação das modalidades. Validar necessidade.",
+    "approach": "",
+    "objections": []
+  }
+}

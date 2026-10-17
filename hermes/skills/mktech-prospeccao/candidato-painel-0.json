@@ -1,0 +1,44 @@
+{
+  "business_name": "WS Estética e Bem Estar Jundiaí",
+  "city": "Jundiaí",
+  "phone": "+5511937223262",
+  "instagram": "wsesteticajundiai",
+  "services": [
+    "Limpeza de pele avançada",
+    "Drenagem linfática corporal"
+  ],
+  "evidences": [
+    {
+      "kind": "diretorio",
+      "url": "https://mechameaqui.com.br/ws-estetica-e-bem-estar-jundiai-clinica-de-estetica-jundiai-sp/",
+      "summary": "WS Estética e Bem Estar Jundiaí; Limpeza de pele avançada e Drenagem linfática corporal. Diretório publica telefone (11) 93722-3262 e Instagram wsesteticajundiai.",
+      "observed_at": "2026-10-14",
+      "limitation": "Conteúdo acessível no resultado indexado; abertura falhou. Sem data de atividade ou segunda fonte independente."
+    }
+  ],
+  "pending_items": "Confirmar atividade recente, segunda fonte independente, endereço comercial, presença própria e destino do link público de WhatsApp.",
+  "state": "SP",
+  "niche": "clínica de estética",
+  "research_date": "2026-10-14",
+  "source_name": "busca_web",
+  "priority": "baixa",
+  "site_status": "verificacao_pendente",
+  "selection_reason": "Candidato em pesquisa: serviços estéticos e canal comercial publicados; presença própria e atividade recente ainda precisam ser confirmadas.",
+  "diagnosis": {
+    "fit_score": 35,
+    "confidence": "baixa",
+    "summary": "Negócio de estética listado em Jundiaí. Dados públicos permitem pesquisa, mas não confirmam atividade recente nem ausência de página própria.",
+    "digital_presence": "Canais e dados conforme evidências; não foi possível confirmar datas recentes de publicação ou avaliação.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: uma página própria pode reunir a apresentação dos procedimentos se o negócio ainda depender dos canais listados.",
+        "evidence": "WS Estética e Bem Estar Jundiaí; Limpeza de pele avançada e Drenagem linfática corporal. Diretório publica telefone (11) 93722-3262 e Instagram wsesteticajundiai."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página de apresentação dos serviços somente após confirmar presença própria e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Possibilidade condicionada à confirmação da lacuna digital; não qualificado nesta pesquisa."
+  }
+}

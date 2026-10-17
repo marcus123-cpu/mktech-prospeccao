@@ -1,0 +1,44 @@
+{
+  "nome": "Tripx academia",
+  "cidade": "Barretos",
+  "verificado_em": "2026-10-17T10:05:46Z",
+  "instagram": {
+    "handle": "",
+    "status": "nao_informado"
+  },
+  "facebook": {
+    "status": "ok",
+    "url": "https://facebook.com/tripxacademia",
+    "titulo": "TRIP X Academia | Barretos SP | Facebook",
+    "descricao": "TRIP X Academia, Barretos. 2.010 seguidores · 182 estiveram aqui. TRIP X ACADEMIA é para você que busca treinos de resultado! Musculação, treino funcional, muay thai e muito mais!",
+    "curtidas_ou_seguidores": 2010
+  },
+  "site": {
+    "situacao": "sem_site",
+    "detalhe": []
+  },
+  "nota_sugerida": 82,
+  "componentes": {
+    "lacuna_digital": 50,
+    "atividade": 6,
+    "demanda": 11,
+    "potencial_comercial": 15
+  },
+  "confianca": "media",
+  "site_status_sugerido": "apenas_redes_sociais",
+  "evidencias": [
+    {
+      "kind": "busca",
+      "url": "https://facebook.com/tripxacademia",
+      "summary": "Facebook aberto sem login: TRIP X Academia | Barretos SP | Facebook; TRIP X Academia, Barretos. 2.010 seguidores · 182 estiveram aqui. TRIP X ACADEMIA é para você que busca treinos de resultado! Musculação, treino funcional, muay thai e muito mais!",
+      "observed_at": "2026-10-17T10:05:46Z"
+    },
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Tripx+academia+Barretos",
+      "summary": "Busca por 'Tripx academia Barretos' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-17T10:05:46Z"
+    }
+  ],
+  "avisos": []
+}

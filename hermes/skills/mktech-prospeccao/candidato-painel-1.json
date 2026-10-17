@@ -1,0 +1,50 @@
+{
+  "business_name": "Clínica Patricia Rodrigues",
+  "city": "Jundiaí",
+  "phone": "+5511982794502",
+  "instagram": "drapatriciarodrigues",
+  "services": [
+    "harmonização facial"
+  ],
+  "evidences": [
+    {
+      "kind": "diretorio",
+      "url": "https://www.solutudo.com.br/empresas/sp/jundiai/clinicas-de-estetica-e-esteticistas/clinica-patricia-rodrigues-23124280",
+      "summary": "Clínica Patricia Rodrigues em Jundiaí; telefone e WhatsApp (11) 98279-4502; Instagram drapatriciarodrigues. Cadastro validado pelo diretório em 06/02/2026; não é data de atividade da clínica.",
+      "observed_at": "2026-10-14",
+      "limitation": null
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://esteticaguia.com/clinicas-de-harmonizacao/jundiai/dra-patricia-rodrigues-farmaceutica-esteta/",
+      "summary": "Dra Patrícia Rodrigues, Farmacêutica Esteta em Jundiaí oferece harmonização facial. Telefone +55 11 98279-4502. Campo página web aponta instagram.com/drapatriciarodrigues; informa 5 de 5 e mais de 26 avaliações no Google.",
+      "observed_at": "2026-10-14",
+      "limitation": "Avaliações reproduzidas pelo diretório, sem datas; endereço diverge da Solutudo."
+    }
+  ],
+  "pending_items": "Confirmar atividade recente e endereço: Solutudo informa Avenida Nove de Julho, 55; EstéticaGuia Av. Dr. Paulo Moutram, 55; cadastro empresarial informa Nove de Julho, 3290. Linktree homônimo não vinculado. Confirmar presença própria e link WhatsApp.",
+  "state": "SP",
+  "niche": "clínica de estética",
+  "research_date": "2026-10-14",
+  "source_name": "busca_web",
+  "priority": "baixa",
+  "site_status": "verificacao_pendente",
+  "selection_reason": "Candidato em pesquisa: serviços estéticos e canal comercial publicados; presença própria e atividade recente ainda precisam ser confirmadas.",
+  "diagnosis": {
+    "fit_score": 39,
+    "confidence": "baixa",
+    "summary": "Negócio de estética listado em Jundiaí. Dados públicos permitem pesquisa, mas não confirmam atividade recente nem ausência de página própria.",
+    "digital_presence": "Canais e dados conforme evidências; não foi possível confirmar datas recentes de publicação ou avaliação.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: uma página própria pode reunir a apresentação dos procedimentos se o negócio ainda depender dos canais listados.",
+        "evidence": "Dra Patrícia Rodrigues, Farmacêutica Esteta em Jundiaí oferece harmonização facial. Telefone +55 11 98279-4502. Campo página web aponta instagram.com/drapatriciarodrigues; informa 5 de 5 e mais de 26 avaliações no Google."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página de apresentação dos serviços somente após confirmar presença própria e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Possibilidade condicionada à confirmação da lacuna digital; não qualificado nesta pesquisa."
+  }
+}

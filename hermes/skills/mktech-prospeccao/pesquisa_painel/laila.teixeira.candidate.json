@@ -1,0 +1,80 @@
+{
+  "business_name": "Laila Teixeira",
+  "city": "Vitória",
+  "state": "ES",
+  "niche": "Massagem",
+  "services": [
+    "Massagem Mista",
+    "Massagem Relaxante",
+    "Liberação Miofascial",
+    "Massagem Desportiva",
+    "Massagem Havaiana",
+    "Massagem Modeladora",
+    "Massagem Terapêutica"
+  ],
+  "phone": "(27) 99983-1979",
+  "instagram": null,
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:laila.teixeira",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. Os resultados do G1 são notícias sobre Laíla, diretor de carnaval do Rio de Janeiro. São homônimos, não site da massoterapeuta de Vitória.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://g1.globo.com/rj/rio-de-janeiro/carnaval/2025/noticia/2025/03/06/quem-foi-laila-autodidata-tinha-ouvido-absoluto-e-fortaleceu-o-chao-de-escolas-de-samba.ghtml",
+      "summary": "Link g1.globo.com: site próprio no ar",
+      "observed_at": "2026-10-16T21:54:17Z",
+      "limitation": "Os resultados do G1 são notícias sobre Laíla, diretor de carnaval do Rio de Janeiro. São homônimos, não site da massoterapeuta de Vitória. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "site",
+      "url": "https://g1.globo.com/rj/rio-de-janeiro/noticia/2021/06/18/laila-diretor-de-carnaval-morre-no-rio.ghtml",
+      "summary": "Link g1.globo.com: site próprio no ar",
+      "observed_at": "2026-10-16T21:54:17Z",
+      "limitation": "Os resultados do G1 são notícias sobre Laíla, diretor de carnaval do Rio de Janeiro. São homônimos, não site da massoterapeuta de Vitória. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/laila.teixeira",
+      "summary": "Laila Teixeira; Vitória - ES; contato público: (27) 99983-1979; serviços: Massagem Mista, Massagem Relaxante, Liberação Miofascial, Massagem Desportiva, Massagem Havaiana, Massagem Modeladora, Massagem Terapêutica.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/vitoria-es",
+      "summary": "Premium Laila Teixeira Massoterapeuta 0,0 Vitória, ES Visto há 4 semanas",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/laila.teixeira",
+      "summary": "Revisão da inspeção automática: Os resultados do G1 são notícias sobre Laíla, diretor de carnaval do Rio de Janeiro. São homônimos, não site da massoterapeuta de Vitória.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 15,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. Os resultados do G1 são notícias sobre Laíla, diretor de carnaval do Rio de Janeiro. São homônimos, não site da massoterapeuta de Vitória.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Laila Teixeira; Vitória - ES; contato público: (27) 99983-1979; serviços: Massagem Mista, Massagem Relaxante, Liberação Miofascial, Massagem Desportiva, Massagem Havaiana, Massagem Modeladora, Massagem Terapêutica."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

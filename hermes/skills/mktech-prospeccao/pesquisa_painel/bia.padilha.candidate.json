@@ -1,0 +1,75 @@
+{
+  "business_name": "Bia Rudá",
+  "city": "Brasília",
+  "state": "DF",
+  "niche": "Massagem",
+  "services": [
+    "Massagem Desportiva",
+    "Massagem Miofascial",
+    "Massagem Mista",
+    "Massagem Modeladora",
+    "Massagem Relaxante",
+    "Massagem Tailandesa",
+    "Massagem Tântrica",
+    "Massagem Terapêutica",
+    "Yoga"
+  ],
+  "phone": "(21) 96587-5689",
+  "instagram": null,
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:bia.padilha",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. O site biakicis.com.br tem título Site da Deputada Federal pelo DF Bia Kicis. Não confirma site da terapeuta Bia Rudá; é associação por prenome e localização.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://biakicis.com.br/",
+      "summary": "Link biakicis.com.br: site próprio no ar",
+      "observed_at": "2026-10-16T22:02:57Z",
+      "limitation": "O site biakicis.com.br tem título Site da Deputada Federal pelo DF Bia Kicis. Não confirma site da terapeuta Bia Rudá; é associação por prenome e localização. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/bia.padilha",
+      "summary": "Bia Rudá; Brasília - DF; contato público: (21) 96587-5689; serviços: Massagem Desportiva, Massagem Miofascial, Massagem Mista, Massagem Modeladora, Massagem Relaxante, Massagem Tailandesa, Massagem Tântrica, Massagem Terapêutica, Yoga.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/brasilia-df",
+      "summary": "Bia Rudá Massoterapeuta 0,0 Brasília, DF Visto há 2 semanas",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/bia.padilha",
+      "summary": "Revisão da inspeção automática: O site biakicis.com.br tem título Site da Deputada Federal pelo DF Bia Kicis. Não confirma site da terapeuta Bia Rudá; é associação por prenome e localização.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 15,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. O site biakicis.com.br tem título Site da Deputada Federal pelo DF Bia Kicis. Não confirma site da terapeuta Bia Rudá; é associação por prenome e localização.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Bia Rudá; Brasília - DF; contato público: (21) 96587-5689; serviços: Massagem Desportiva, Massagem Miofascial, Massagem Mista, Massagem Modeladora, Massagem Relaxante, Massagem Tailandesa, Massagem Tântrica, Massagem Terapêutica, Yoga."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

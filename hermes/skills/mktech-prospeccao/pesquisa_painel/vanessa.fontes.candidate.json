@@ -1,0 +1,76 @@
+{
+  "business_name": "Vanessa fontes",
+  "city": "Salvador",
+  "state": "BA",
+  "niche": "Massagem",
+  "services": [
+    "Massagem com Pedras Quentes",
+    "Massagem Desportiva",
+    "Massagem Miofascial",
+    "Massagem Relaxante",
+    "Massagem Tântrica",
+    "Massagem Terapêutica",
+    "Quick Massage",
+    "Terapia de Casal",
+    "Terapia Sexual",
+    "Ventosaterapia"
+  ],
+  "phone": "(71) 99253-6893",
+  "instagram": null,
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:vanessa.fontes",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. O site vanessadamata.com.br identifica Vanessa da Mata, sem vínculo confirmado com Vanessa fontes, massoterapeuta em Salvador.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://vanessadamata.com.br/",
+      "summary": "Link vanessadamata.com.br: site próprio no ar",
+      "observed_at": "2026-10-16T22:06:29Z",
+      "limitation": "O site vanessadamata.com.br identifica Vanessa da Mata, sem vínculo confirmado com Vanessa fontes, massoterapeuta em Salvador. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/vanessa.fontes",
+      "summary": "Vanessa fontes; Salvador - BA; contato público: (71) 99253-6893; serviços: Massagem com Pedras Quentes, Massagem Desportiva, Massagem Miofascial, Massagem Relaxante, Massagem Tântrica, Massagem Terapêutica, Quick Massage, Terapia de Casal, Terapia Sexual, Ventosaterapia.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/salvador-ba",
+      "summary": "Vanessa fontes Cada pessoa é única, e cada corpo também! 0,0 Salvador, BA Visto há 1 semana",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/vanessa.fontes",
+      "summary": "Revisão da inspeção automática: O site vanessadamata.com.br identifica Vanessa da Mata, sem vínculo confirmado com Vanessa fontes, massoterapeuta em Salvador.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 15,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. O site vanessadamata.com.br identifica Vanessa da Mata, sem vínculo confirmado com Vanessa fontes, massoterapeuta em Salvador.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Vanessa fontes; Salvador - BA; contato público: (71) 99253-6893; serviços: Massagem com Pedras Quentes, Massagem Desportiva, Massagem Miofascial, Massagem Relaxante, Massagem Tântrica, Massagem Terapêutica, Quick Massage, Terapia de Casal, Terapia Sexual, Ventosaterapia."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

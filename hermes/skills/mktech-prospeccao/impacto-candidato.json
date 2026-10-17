@@ -1,0 +1,59 @@
+{
+  "business_name": "Impacto Fit Academia",
+  "city": "Barretos",
+  "state": "SP",
+  "niche": "Academia",
+  "instagram": null,
+  "phone": "17991233920",
+  "services": [
+    "Musculação"
+  ],
+  "address": "Rua Jerônimo Alves Pereira, 499, Jardim Universitário, Barretos - SP",
+  "source_name": "busca_web",
+  "research_date": "2026-10-17",
+  "website_url": null,
+  "whatsapp_url": null,
+  "selection_reason": "Negócio do nicho e cidade configurados; presença inspecionada com Playwright. Nenhum site próprio localizado nas fontes consultadas; confirmar eventual página não indexada.",
+  "pending_items": "Confirmar WhatsApp comercial e vínculo do número; confirmar data da última atividade e eventual site não indexado. Localizar perfis oficiais e data de atividade; listagem Wellhub e CNPJ ativo são sinais cadastrais, sem comprovação de postagem recente. Redes sociais oficiais e atividade atual não confirmadas; candidato incompleto para enriquecimento, sem qualificação de envio.",
+  "priority": "media",
+  "site_status": "verificacao_pendente",
+  "evidences": [
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Impacto+Fit+Academia+Barretos",
+      "summary": "Busca por 'Impacto Fit Academia Barretos' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-17T10:06:41Z",
+      "limitation": "Não havia identificador de rede social confirmado para abertura. Busca negativa não comprova ausência de site, nem atividade atual."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://www.solutudo.com.br/empresas/sp/barretos/academias/impacto-fit-academia-25565054",
+      "summary": "Impacto Fit Academia; CNPJ 48.963.676/0001-07, situação Ativa; Rua Jeronimo Alves Pereira, 499, Jardim Universitario, Barretos; telefone (17) 99123-3920."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://wellhub.com/pt-br/search/sp/barretos/pilates-fit/?term=pilates-fit",
+      "summary": "Impacto Fit Academia em Barretos; Treinamento Hibrido (Musculação + Funcional), Musculação e Fitness; horários publicados."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 46,
+    "confidence": "baixa",
+    "summary": "Impacto Fit Academia atua em Barretos, no segmento Academia. As fontes consultadas apresentam os serviços e canais públicos; a existência de site não indexado permanece sujeita a confirmação.",
+    "audience": "Pessoas que procuram Musculação em Barretos.",
+    "digital_presence": "{\"handle\": \"\", \"status\": \"nao_informado\"}; sem_site",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: uma página própria pode reunir apresentação dos serviços e contato fora das redes e diretórios.",
+        "evidence": "Busca por 'Impacto Fit Academia Barretos' e conferência do link da bio: nenhum site ou landing page próprio localizado"
+      }
+    ],
+    "opportunities": [
+      "Reunir serviços, apresentação e contato comercial em página própria, caso a lacuna seja confirmada."
+    ],
+    "offer": "site_institucional",
+    "offer_reason": "Apresentar serviços e canais em endereço próprio, sujeito à confirmação da presença digital.",
+    "approach": "Pesquisa registrada para avaliação do motor V6; sem mensagem comercial preparada.",
+    "objections": []
+  }
+}

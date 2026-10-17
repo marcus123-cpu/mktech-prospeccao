@@ -1,0 +1,71 @@
+{
+  "business_name": "Ali Terapêuta",
+  "city": "Porto Alegre",
+  "state": "RS",
+  "niche": "Massagem",
+  "services": [
+    "Aromaterapia",
+    "Massagem Mista",
+    "Massagem Relaxante",
+    "Massagem Tântrica",
+    "Terapia Sexual"
+  ],
+  "phone": "(51) 99015-3367",
+  "instagram": null,
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:ali.terapeuta",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. O resultado aliexpress.com é um marketplace de produtos e não confirma site próprio de Ali Terapêuta de Porto Alegre.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://www.aliexpress.com/",
+      "summary": "Link aliexpress.com: endereço não abre (HTTP 0)",
+      "observed_at": "2026-10-16T22:07:54Z",
+      "limitation": "O resultado aliexpress.com é um marketplace de produtos e não confirma site próprio de Ali Terapêuta de Porto Alegre. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/ali.terapeuta",
+      "summary": "Ali Terapêuta; Porto Alegre - RS; contato público: (51) 99015-3367; serviços: Aromaterapia, Massagem Mista, Massagem Relaxante, Massagem Tântrica, Terapia Sexual.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/porto-alegre-rs",
+      "summary": "Ali Terapêuta Terapêutica Holística 0,0 Porto Alegre, RS Visto há 6 dias",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/ali.terapeuta",
+      "summary": "Revisão da inspeção automática: O resultado aliexpress.com é um marketplace de produtos e não confirma site próprio de Ali Terapêuta de Porto Alegre.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 40,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. O resultado aliexpress.com é um marketplace de produtos e não confirma site próprio de Ali Terapêuta de Porto Alegre.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Ali Terapêuta; Porto Alegre - RS; contato público: (51) 99015-3367; serviços: Aromaterapia, Massagem Mista, Massagem Relaxante, Massagem Tântrica, Terapia Sexual."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

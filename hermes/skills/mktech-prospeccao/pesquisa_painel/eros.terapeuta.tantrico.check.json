@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "sao luis",
+    "unit": "",
+    "phone": "+5598984738998",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:eros.terapeuta.tantrico",
+    "instagram": null,
+    "name_core": "eros terapeuta tantrico",
+    "name_norm": "eros terapeuta tantrico",
+    "source_name": "euterapeuta"
+  }
+}

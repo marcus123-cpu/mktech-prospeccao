@@ -1,0 +1,26 @@
+{
+  "http": 202,
+  "reason": "nome_parecido",
+  "status": "possivel_duplicado",
+  "matches": [
+    {
+      "id": "9d09e1fe-cfe9-4f71-96d7-6cfafc67bf52",
+      "city": "Curitiba",
+      "unit": null,
+      "business_name": "Luh Massoterapeuta"
+    }
+  ],
+  "matched_on": "nome_cidade",
+  "normalized": {
+    "city": "curitiba",
+    "unit": "",
+    "phone": "+5541988686639",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:ana.claudia.3",
+    "instagram": null,
+    "name_core": "anny massoterapeuta",
+    "name_norm": "anny massoterapeuta",
+    "source_name": "euterapeuta"
+  }
+}

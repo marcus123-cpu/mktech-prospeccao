@@ -1,0 +1,34 @@
+{
+  "nome": "Luh Massoterapeuta",
+  "cidade": "Curitiba",
+  "verificado_em": "2026-10-16T22:53:54Z",
+  "instagram": {
+    "handle": "",
+    "status": "nao_informado"
+  },
+  "facebook": {
+    "status": "nao_informado"
+  },
+  "site": {
+    "situacao": "sem_site",
+    "detalhe": []
+  },
+  "nota_sugerida": 50,
+  "componentes": {
+    "lacuna_digital": 35,
+    "atividade": 0,
+    "demanda": 0,
+    "potencial_comercial": 15
+  },
+  "confianca": "baixa",
+  "site_status_sugerido": "site_nao_localizado",
+  "evidencias": [
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Luh+Massoterapeuta+Curitiba",
+      "summary": "Busca por 'Luh Massoterapeuta Curitiba' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-16T22:53:54Z"
+    }
+  ],
+  "avisos": []
+}

@@ -1,0 +1,71 @@
+{
+  "business_name": "spa_terapia (Taly)",
+  "niche": "Massagem",
+  "city": "Belém",
+  "state": "PA",
+  "services": [
+    "Massagem com Pedras Quentes",
+    "Massagem Desportiva",
+    "Massagem Miofascial",
+    "Massagem Mista",
+    "Massagem Relaxante"
+  ],
+  "phone": "(91) 98273-1760",
+  "instagram": "ts_spa/profilecard",
+  "whatsapp_url": null,
+  "website_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:taly.sepeda",
+  "research_date": "2026-10-16",
+  "selection_reason": "Perfil público de massagem com sinal recente de uso no diretório; cadastrar como incompleto para enriquecer a presença digital. Não há conclusão de inexistência de site.",
+  "pending_items": "Confirmar atividade de atendimento diretamente em fonte independente; o sinal de uso recente observado é do diretório.\nConfirmar presença digital e eventual site/landing page com o negócio; busca negativa não prova ausência.\nObter segunda fonte independente.\nConfirmar WhatsApp do telefone comercial, sem abrir ou contatar WhatsApp.\nInstagram não abriu sem login (perfil restrito ou @ errado): confira o @ e use outra fonte para atividade.",
+  "priority": "media",
+  "site_status": "verificacao_pendente",
+  "evidences": [
+    {
+      "kind": "busca",
+      "url": "https://www.facebook.com/share/16T2aNuVvp/",
+      "summary": "Facebook aberto sem login: Taly Sepeda | Facebook; Taly Sepeda. 1.116 seguidores · 17 falando sobre isso. 🤌🏻🧘🏻‍♀️",
+      "observed_at": "2026-10-16T22:09:32Z",
+      "limitation": "Busca limitada aos resultados retornados pelo Bing; bio só foi verificável quando rede social abriu. Não prova inexistência de site."
+    },
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=spa_terapia+(Taly)+Belém",
+      "summary": "Busca por 'spa_terapia (Taly) Belém' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-16T22:09:32Z",
+      "limitation": "Busca limitada aos resultados retornados pelo Bing; bio só foi verificável quando rede social abriu. Não prova inexistência de site."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/taly.sepeda",
+      "summary": "spa_terapia (Taly); Belém - PA; contato público: (91) 98273-1760; serviços: Massagem com Pedras Quentes, Massagem Desportiva, Massagem Miofascial, Massagem Mista, Massagem Relaxante.",
+      "observed_at": "2026-10-16",
+      "limitation": "Perfil de marketplace; informações declaradas pelo anunciante, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/belem-pa",
+      "summary": "spa_terapia (Taly) Massoterapeuta 0,0 Belém, PA Visto há 5 meses R$200 /\n            1 hora",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há indica acesso ao diretório, não prova atendimento nem data de publicação; mesma origem do perfil."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 82,
+    "confidence": "baixa",
+    "summary": "Candidato de massagem identificado em diretório público. Atividade e oportunidade de página própria requerem confirmação independente.",
+    "digital_presence": "Inspeção Playwright: sem_site; Instagram: indisponivel; Facebook: ok. Não afirmar ausência de site.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços pode depender do perfil no marketplace.",
+        "evidence": "spa_terapia (Taly); Belém - PA; contato público: (91) 98273-1760; serviços: Massagem com Pedras Quentes, Massagem Desportiva, Massagem Miofascial, Massagem Mista, Massagem Relaxante."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria de serviços somente após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Possível página de apresentação dos serviços; recomendação condicionada à verificação de presença e necessidade."
+  }
+}

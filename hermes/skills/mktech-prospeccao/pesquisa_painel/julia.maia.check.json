@@ -1,0 +1,26 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "existente",
+  "matches": [
+    {
+      "id": "68f903db-9efc-4b26-a8a5-69345699c62a",
+      "city": "Porto Alegre",
+      "unit": null,
+      "business_name": "Julia Maia Massoterapeuta"
+    }
+  ],
+  "matched_on": "telefone",
+  "normalized": {
+    "city": "porto alegre",
+    "unit": "",
+    "phone": "+5551991767095",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:julia.maia",
+    "instagram": null,
+    "name_core": "julia maia",
+    "name_norm": "julia maia",
+    "source_name": "euterapeuta"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "nome": "BRIANN MASSOTERAPEUTA (C LOCAL)🟢WHATSAPP(98)98131-1578 ATENDIMENTO PARA HOMENS, MULHERES & CASAIS",
+  "cidade": "São Luís",
+  "verificado_em": "2026-10-16T23:01:55Z",
+  "instagram": {
+    "handle": "",
+    "status": "nao_informado"
+  },
+  "facebook": {
+    "status": "nao_informado"
+  },
+  "site": {
+    "situacao": "sem_site",
+    "detalhe": []
+  },
+  "nota_sugerida": 50,
+  "componentes": {
+    "lacuna_digital": 35,
+    "atividade": 0,
+    "demanda": 0,
+    "potencial_comercial": 15
+  },
+  "confianca": "baixa",
+  "site_status_sugerido": "site_nao_localizado",
+  "evidencias": [
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=BRIANN+MASSOTERAPEUTA+(C+LOCAL)🟢WHATSAPP(98)98131-1578+ATENDIMENTO+PARA+HOMENS,+MULHERES+&+CASAIS+São+Luís",
+      "summary": "Busca por 'BRIANN MASSOTERAPEUTA (C LOCAL)🟢WHATSAPP(98)98131-1578 ATENDIMENTO PARA HOMENS, MULHERES & CASAIS São Luís' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-16T23:01:55Z"
+    }
+  ],
+  "avisos": []
+}

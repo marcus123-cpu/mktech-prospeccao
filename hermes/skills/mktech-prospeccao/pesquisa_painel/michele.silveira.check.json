@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "curitiba",
+    "unit": "",
+    "phone": "+5541997923333",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:michele.silveira",
+    "instagram": null,
+    "name_core": "michele silveira",
+    "name_norm": "michele silveira",
+    "source_name": "euterapeuta"
+  }
+}

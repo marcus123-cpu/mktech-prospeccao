@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "santos",
+    "unit": "",
+    "phone": "+5513996212600",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:bianca.ceresetti",
+    "instagram": null,
+    "name_core": "bianca ceresetti",
+    "name_norm": "bianca ceresetti",
+    "source_name": "euterapeuta"
+  }
+}

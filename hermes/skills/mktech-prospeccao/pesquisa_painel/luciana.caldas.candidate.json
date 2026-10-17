@@ -1,0 +1,81 @@
+{
+  "business_name": "Luciana Caldas",
+  "city": "Teresina",
+  "state": "PI",
+  "niche": "Massagem",
+  "services": [
+    "Acupuntura",
+    "Massagem Ayurvédica",
+    "Massagem Relaxante",
+    "Acupuntura Estética",
+    "Massagem Desportiva",
+    "Massagem Tântrica",
+    "Reiki",
+    "Ventosaterapia"
+  ],
+  "phone": "(86) 99826-5604",
+  "instagram": "ludemariacaldas",
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:luciana.caldas",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. O resultado brterapeutas.com.br/minhapagina é perfil de diretório de terapeutas. Não é prova de site próprio; identidade Luciana Caldas/Luciana de Maria precisa ser confirmada.",
+  "evidences": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/ludemariacaldas/",
+      "summary": "Instagram @ludemariacaldas aberto sem login; 3371 seguidores, 20 publicações; link da bio: https://www.brterapeutas.com.br/minhapagina/teresina/terapeuta-floral/5639",
+      "observed_at": "2026-10-16T22:01:31Z",
+      "limitation": "O resultado brterapeutas.com.br/minhapagina é perfil de diretório de terapeutas. Não é prova de site próprio; identidade Luciana Caldas/Luciana de Maria precisa ser confirmada. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "site",
+      "url": "https://www.brterapeutas.com.br/minhapagina/teresina/terapeuta-floral/5639",
+      "summary": "Link brterapeutas.com.br: site próprio no ar",
+      "observed_at": "2026-10-16T22:01:31Z",
+      "limitation": "O resultado brterapeutas.com.br/minhapagina é perfil de diretório de terapeutas. Não é prova de site próprio; identidade Luciana Caldas/Luciana de Maria precisa ser confirmada. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/luciana.caldas",
+      "summary": "Luciana Caldas; Teresina - PI; contato público: (86) 99826-5604; serviços: Acupuntura, Massagem Ayurvédica, Massagem Relaxante, Acupuntura Estética, Massagem Desportiva, Massagem Tântrica, Reiki, Ventosaterapia.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/teresina-pi",
+      "summary": "Luciana Caldas Terapeuta Holíatica 0,0 Teresina, PI Visto há 3 meses",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/luciana.caldas",
+      "summary": "Revisão da inspeção automática: O resultado brterapeutas.com.br/minhapagina é perfil de diretório de terapeutas. Não é prova de site próprio; identidade Luciana Caldas/Luciana de Maria precisa ser confirmada.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 40,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. O resultado brterapeutas.com.br/minhapagina é perfil de diretório de terapeutas. Não é prova de site próprio; identidade Luciana Caldas/Luciana de Maria precisa ser confirmada.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Luciana Caldas; Teresina - PI; contato público: (86) 99826-5604; serviços: Acupuntura, Massagem Ayurvédica, Massagem Relaxante, Acupuntura Estética, Massagem Desportiva, Massagem Tântrica, Reiki, Ventosaterapia."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

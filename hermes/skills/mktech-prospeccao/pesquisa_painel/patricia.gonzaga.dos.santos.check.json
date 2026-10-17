@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "vitoria",
+    "unit": "",
+    "phone": "+5527997296826",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:patricia.gonzaga.dos.santos",
+    "instagram": null,
+    "name_core": "branca santos",
+    "name_norm": "branca santos",
+    "source_name": "euterapeuta"
+  }
+}

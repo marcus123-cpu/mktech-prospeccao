@@ -1,0 +1,61 @@
+{
+  "business_name": "EBM Centro Especializado em Estética",
+  "city": "Brasília",
+  "state": "DF",
+  "phone": "+5561985529469",
+  "whatsapp_url": "https://api.whatsapp.com/send?phone=5561985529469",
+  "website_url": "https://www.ebmestetica.com.br/",
+  "address": "QNN 22 Conjunto P Lote 28A Sala 102, Av. Fundação Bradesco, Ceilândia Sul, Brasília/DF",
+  "services": [
+    "tratamentos corporais"
+  ],
+  "niche": "estética avançada",
+  "research_date": "2026-10-14",
+  "source_name": "busca_web",
+  "site_status": "site_proprio_encontrado",
+  "priority": "alta",
+  "selection_reason": "Site próprio apresenta placeholder de email junto ao endereço real; sinal de revisão verificável. Identidade confirmada por reportagem independente e publicação datada em agregador.",
+  "pending_items": "Confirmar atividade atual em canal original: agregador reproduz publicações de julho de 2026. Remover placeholder info@mysite.com após confirmar email vigente. Telefone de Guia Fácil diverge e não foi utilizado.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://www.ebmestetica.com.br/",
+      "summary": "EBM em Ceilândia Sul, Brasília-DF. tratamentos corporais, faciais e bem-estar. Contato: (61)98552-9469. EMAIL (info@mysite.com) e ebmestetica@gmail.com. Href público api.whatsapp.com/send?phone=5561985529469 corresponde ao telefone divulgado.",
+      "observed_at": "2026-10-14"
+    },
+    {
+      "kind": "outro",
+      "url": "https://www.iesb.br/noticias/empreendedorismo-feminino-dona-de-centro-de-estetica-transformou-r-500-reais-em-r-500-mil-em-cinco-anos/",
+      "summary": "Reportagem do IESB identifica Carla Gomes Silva Alves como dona da EBM Centro Especializado em Estética e aluna do Centro Universitário. Negócio reconhecido por premiações Sebrae.",
+      "observed_at": "2026-10-14",
+      "limitation": "Reportagem histórica; não prova atividade recente."
+    },
+    {
+      "kind": "outro",
+      "url": "https://www.beautynailhairsalons.com/BR/Ceil%C3%A2ndia/486123788116333/EBM-Centro-de-Est%C3%A9tica",
+      "summary": "EBM Centro de Estética no mesmo endereço QNN 22 Conjunto P Lote 28A Sala 102. Publicações datadas de 24/07/2026 e 18/07/2026 divulgam Dra. Carla Alves e central (61)98552-9469.",
+      "observed_at": "2026-10-14",
+      "limitation": "Agregador de publicações; confirmar original."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 68,
+    "confidence": "media",
+    "summary": "Clínica de estética com serviços corporais, faciais e bem-estar em Brasília, vinculada publicamente a Carla Alves. Conteúdo datado de julho de 2026 foi localizado em agregador e o site próprio apresenta email de template junto ao contato real.",
+    "digital_presence": "Site Wix institucional com serviços e link de WhatsApp comercial confirmado; reportagem independente identifica responsável e negócio.",
+    "pains": [
+      {
+        "pain": "Placeholder de email permanece no bloco de contato ao lado do email comercial; revisão de conteúdo verificável.",
+        "evidence": "EMAIL (info@mysite.com) e ebmestetica@gmail.com."
+      }
+    ],
+    "opportunities": [
+      "Remover texto de template e revisar contatos e navegação do site existente.",
+      "Organizar serviços e plano estético com condições confirmadas pela equipe."
+    ],
+    "offer": "site_institucional",
+    "offer_reason": "Revisão de informação pública e do bloco de contato no site existente.",
+    "approach": "Investigar se a equipe deseja revisar conteúdo e contato; sem mensagem pronta.",
+    "objections": []
+  }
+}

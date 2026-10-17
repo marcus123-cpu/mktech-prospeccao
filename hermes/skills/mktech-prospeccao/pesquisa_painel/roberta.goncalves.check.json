@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "joinville",
+    "unit": "",
+    "phone": "+5547991162012",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:roberta.goncalves",
+    "instagram": null,
+    "name_core": "val terapeuta depiladora joinville",
+    "name_norm": "val terapeuta e depiladora joinville",
+    "source_name": "euterapeuta"
+  }
+}

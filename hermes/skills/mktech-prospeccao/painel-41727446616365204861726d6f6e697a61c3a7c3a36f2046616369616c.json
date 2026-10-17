@@ -1,0 +1,61 @@
+{
+  "business_name": "ArtFace Harmonização Facial",
+  "city": "Balneário Camboriú",
+  "state": "SC",
+  "phone": "+554720332021",
+  "whatsapp_url": "https://wa.me/554720332021",
+  "instagram": "artface.bc",
+  "website_url": "https://clinicaartface.com.br/",
+  "address": "Rua 1300, esquina com Rua 1304, Sala 25, Centro, Balneário Camboriú/SC",
+  "services": [
+    "Toxina Botulínica"
+  ],
+  "niche": "harmonização facial",
+  "research_date": "2026-10-14",
+  "source_name": "busca_web",
+  "site_status": "site_proprio_encontrado",
+  "priority": "media",
+  "selection_reason": "Site institucional ativo editorialmente com discrepância de telefone e volume de avaliações entre site e diretório.",
+  "pending_items": "Confirmar se WhatsApp de diretório (47)98829-2053 ainda pertence à clínica ou foi substituído. Site oficial usa (47)2033-2021, confirmado no href público; priorizado. Não atribuir perda de pacientes; 154 avaliações é declaração do site, DentMap apresenta amostra de 4.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://clinicaartface.com.br/",
+      "summary": "ArtFace, Dr. Rafael Lucci, Balneário Camboriú. Toxina Botulínica e harmonização. Artigos datados de 13/10/2026 e 12/10/2026. Site declara 4,9 e 154 avaliações. Href público WhatsApp https://wa.me/554720332021 corresponde ao telefone oficial (47)2033-2021.",
+      "observed_at": "2026-10-14"
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://dentmap.com.br/dentistas/balneario-camboriu/artface-harmonizacao-facial-8e3e9137",
+      "summary": "Artface Harmonização Facial em Centro, Balneário Camboriú. Endereço Rua Um Mil e Trezentos, 25. WhatsApp (47) 98829-2053. Nota 4,9 com 4 avaliações.",
+      "observed_at": "2026-10-14",
+      "limitation": "Telefone diverge do site oficial; número de avaliações pode refletir amostra do diretório."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://www.doctoralia.com.br/servicos-de-tratamento/botox/balneario-camboriu?page=2",
+      "summary": "Dr. Rafael Lucci dos Santos, CRO SC 18965, ArtFace Harmonização Facial, Rua 1300 esquina com Rua 1304, Balneário Camboriú. Aplicação da toxina botulínica.",
+      "observed_at": "2026-10-14"
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 65,
+    "confidence": "baixa",
+    "summary": "Clínica de harmonização facial em Balneário Camboriú conduzida pelo Dr. Rafael Lucci. O site contém conteúdo editorial de outubro de 2026, com canal comercial confirmado, mas há divergência de telefone em diretório.",
+    "digital_presence": "Site completo por procedimento, blog com artigos datados de outubro de 2026, Instagram e presença Doctoralia/DentMap. Não há evidência de ausência de site ou agenda.",
+    "pains": [
+      {
+        "pain": "Divergência de canais comerciais entre site e diretório; confirmar vigência e alinhar cadastro.",
+        "evidence": "WhatsApp (47) 98829-2053. Nota 4,9 com 4 avaliações."
+      }
+    ],
+    "opportunities": [
+      "Auditar cadastros de canais públicos e padronizar o WhatsApp confirmado pela equipe.",
+      "Revisar comunicação da origem e quantidade de avaliações para distinguir total e amostra."
+    ],
+    "offer": "site_institucional",
+    "offer_reason": "Revisão e integração cadastral do site existente; a estrutura atual já é robusta.",
+    "approach": "Validar o telefone vigente e necessidade real de revisão; sem mensagem pronta.",
+    "objections": []
+  }
+}

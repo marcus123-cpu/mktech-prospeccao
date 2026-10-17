@@ -1,0 +1,110 @@
+{"name": "G2 Academia Centro Multidisciplinar", "city": "Barretos", "result": "{\"http\": 422, \"status\": \"invalido\", \"errors\": [\"Presença digital própria ainda não verificada\"]}\n", "code": 2}
+{"name": "Terapia Maylle", "city": "Campinas", "result": "{\"http\": 422, \"status\": \"invalido\", \"errors\": [\"Presença digital própria ainda não verificada\"]}\n", "code": 2}
+{"name": "Renato Ferreira Massoterapeuta", "city": "Campinas", "result": "{\"http\": 422, \"status\": \"invalido\", \"errors\": [\"Presença digital própria ainda não verificada\"]}\n", "code": 2}
+{"name": "Daniel Ferreira Massoterapeuta", "city": "Campinas", "result": "{\"http\": 422, \"status\": \"invalido\", \"errors\": [\"Presença digital própria ainda não verificada\"]}\n", "code": 2}
+{"name": "Val Massoterapia", "city": "Campinas", "result": "{\"http\": 422, \"status\": \"invalido\", \"errors\": [\"Presença digital própria ainda não verificada\"]}\n", "code": 2}
+{"name": "Mario Massoterapeuta Campinas", "city": "Campinas", "result": "{\"http\": 422, \"status\": \"invalido\", \"errors\": [\"Presença digital própria ainda não verificada\"]}\n", "code": 2}
+{"name": "G2 Academia Centro Multidisciplinar", "city": "Barretos", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"8a283a0f-4f80-45b2-9a57-6161ccf5ceb9\"}\n", "code": 0}
+{"name": "Terapia Maylle", "city": "Campinas", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"9164bef8-7f9a-497b-a3ca-beb33fea8fa8\"}\n", "code": 0}
+{"name": "Renato Ferreira Massoterapeuta", "city": "Campinas", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"2680d251-70e3-432d-8a5f-3862500b774a\"}\n", "code": 0}
+{"name": "Daniel Ferreira Massoterapeuta", "city": "Campinas", "result": "{\"http\": 202, \"reason\": \"nome_parecido\", \"status\": \"possivel_duplicado\", \"review_id\": \"4364d423-8d48-4950-93d1-a3b1f38ddd92\", \"matched_lead_ids\": [\"2680d251-70e3-432d-8a5f-3862500b774a\"]}\n", "code": 0}
+{"name": "Val Massoterapia", "city": "Campinas", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"41cc2632-c03c-4e06-acc5-19c957c053e9\"}\n", "code": 0}
+{"name": "Mario Massoterapeuta Campinas", "city": "Campinas", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"b1309674-1e33-4766-8846-f9582b6075d7\"}\n", "code": 0}
+{"name": "Deep Therapy", "city": "Americana", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"c4c09483-9487-4763-8eb8-7b3dfd6015f6\"}\n", "code": 0}
+{"name": "Flor de Lothus Terapias Holísticas", "city": "Americana", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"05160ed9-e69d-4c14-8665-71b0ce6b57b0\"}\n", "code": 0}
+{"name": "Layra Massoterapeuta", "city": "Americana", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"ac7f07fb-82e4-47cd-8473-e4098f96cac4\"}\n", "code": 0}
+{"name": "Mariana Lopes Saúde e Bem Estar", "city": "Americana", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"1dd2782a-4a07-47b8-89dd-58d925dd80df\"}\n", "code": 0}
+{"name": "Spa Equilibrium", "city": "Americana", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"30861866-fbcd-4da5-8535-64c451081071\"}\n", "code": 0}
+{"name": "Matheus Massoterapeuta & Massagem Relaxante", "city": "Americana", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"7994c7d4-ac4a-4f6c-aba9-c29ba55d6ca1\"}\n", "code": 0}
+{"name": "Academia Impuls Fitness World", "city": "Araçatuba", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"c657cd55-d347-42dd-b0fc-17d16232c663\"}\n", "code": 0}
+{"name": "Academia Mix Evolution", "city": "Araçatuba", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"1efd21d3-6215-4078-ad1c-3c42f3b6347f\"}\n", "code": 0}
+{"name": "Malibu Presidente Prudente", "city": "Presidente Prudente", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"39619706-9241-4636-aa23-3e29bff42348\"}\n", "code": 0}
+{"name": "Atletic Academia de Musculação", "city": "Presidente Prudente", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"99b3c5b6-8af8-4516-9e4b-1a2701e82250\"}\n", "code": 0}
+{"name": "Of Massoterapia", "city": "Limeira", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"9b61f1ce-7fd7-4ff0-a815-f17cfbd63110\"}\n", "code": 0}
+{"name": "Vidah Massoterapia", "city": "Limeira", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"a8c7595f-6a78-4256-8a12-33b5874c9136\"}\n", "code": 0}
+{"name": "Massoterapeuta Nicole Torres", "city": "Limeira", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"5fa3cbbb-5631-4528-b744-8b73d04c8699\"}\n", "code": 0}
+{"name": "Mãos que Cuidam By Edvania Schimidt", "city": "Limeira", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"0bd33899-a13d-4290-8578-4666e52298bc\"}\n", "code": 0}
+{"name": "Tatiane Terapeuta Corporal", "city": "Limeira", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"cfe9cbd9-07fb-4f95-b412-ea166fc132d4\"}\n", "code": 0}
+{"name": "Lina Fazanaro Massoterapia e Estética", "city": "Limeira", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"61fb1d04-afc4-40a0-82eb-9c55edf4b313\"}\n", "code": 0}
+{"name": "Spaço Relax", "city": "Limeira", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"3320c75f-f8a4-4b55-ac88-af0b9af3f760\"}\n", "code": 0}
+{"name": "Massoterapeuta Daniele Sella", "city": "Limeira", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"040cf9fc-fc94-4ba9-a05a-525cf9e4640a\"}\n", "code": 0}
+{"name": "Ana Paula Antonio Massoterapeuta", "city": "Limeira", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"5505ef5e-b240-4b92-bb82-d4071c890a9f\"}\n", "code": 0}
+{"name": "Toque Terapia", "city": "Limeira", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"60a5bc47-eb3f-425a-89a2-de4394a2ceae\"}\n", "code": 0}
+{"name": "Alyne Marques Massoterapia", "city": "São Carlos", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"037385a1-a71f-4081-ba38-bceb96763b6c\"}\n", "code": 0}
+{"name": "Relax Express", "city": "São Carlos", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"9bb5e8c3-9c70-42ee-9ade-6fc721423164\"}\n", "code": 0}
+{"name": "Gabriela Terapeuta", "city": "Jundiaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"7bfa13c7-9fcd-4607-9030-9a4cf08b6d41\"}\n", "code": 0}
+{"name": "Thaís Terapia", "city": "Jundiaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"3dcf1a5f-ed1a-4d01-ae87-a47da54bd0be\"}\n", "code": 0}
+{"name": "Le Rosa Massoterapia", "city": "Jundiaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"faa2330a-7419-47d1-9bf6-52b97a2d5a39\"}\n", "code": 0}
+{"name": "César Massoterapeuta", "city": "Jundiaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"bcb8f645-5dcb-49cf-b84b-844752583cb7\"}\n", "code": 0}
+{"name": "Massoterapeuta Solange Toyota", "city": "Jundiaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"980416a6-02d0-4665-bc03-357a7234e167\"}\n", "code": 0}
+{"name": "Espaço Wellness Saúde e Bem Estar", "city": "Jundiaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"4eff5cca-69be-46b0-8a47-968301569392\"}\n", "code": 0}
+{"name": "Rodrigo Allexandre Massoterapia", "city": "Jundiaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"a89b369e-5af5-4476-9730-13d59c8e4f46\"}\n", "code": 0}
+{"name": "Leandro Massoterapeuta Home Studio", "city": "Jundiaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"e428e0b3-0f7d-4634-903e-d6052380b6b6\"}\n", "code": 0}
+{"name": "Tânia Brito Massoterapia", "city": "Jundiaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"48e11913-6292-4323-8846-7b9d18a9682b\"}\n", "code": 0}
+{"name": "Adriana Venâncio Massoterapeuta", "city": "Jundiaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"d46c6eba-2923-42e3-853b-a190203a7a3b\"}\n", "code": 0}
+{"name": "Espaço Sol Abas Massoterapia", "city": "Jundiaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"32e09dd7-77b1-4290-a045-f438e5465a41\"}\n", "code": 0}
+{"name": "Monique Souza Massoterapia e Terapia Corporal", "city": "Jundiaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"a8aeb23f-eada-4130-98cc-755960bad42a\"}\n", "code": 0}
+{"name": "Ana Gisele Massoterapeuta", "city": "Jundiaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"9aaf13b2-5e37-492f-a0f9-11d49b57b43b\"}\n", "code": 0}
+{"name": "Elisabete Terapeuta Corporal", "city": "Jundiaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"b03d07d4-256d-47c9-b62e-03fc2a3e095b\"}\n", "code": 0}
+{"name": "Claudia Santos Massoterapeuta e Naturopata", "city": "Jundiaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"5db8800c-4953-4217-a5db-f12b5c55c63b\"}\n", "code": 0}
+{"name": "Espaço Enlevo Massoterapia", "city": "Jundiaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"9d7ffbc9-8b63-4f0d-b13e-327bdd7b2337\"}\n", "code": 0}
+{"name": "Adilson Alves Massagens", "city": "Jundiaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"6d87e1dc-b204-4aea-bc8a-58fcc589f3f7\"}\n", "code": 0}
+{"name": "MR Studio Massoterapia", "city": "Jundiaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"f4ad19cd-8481-41c7-b33f-93cb5114ecd4\"}\n", "code": 0}
+{"name": "Jennifer Onodera Estética Corporal e Massoterapia", "city": "Jundiaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"d83241eb-50db-49a9-ad55-79abe406a06e\"}\n", "code": 0}
+{"name": "Laura Massoterapia e Depilação", "city": "Curitiba", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"78b92d8b-638a-4e75-85b4-fbd7f321ec8a\"}\n", "code": 0}
+{"name": "Jeferson Antunes Massoterapia e Estética", "city": "Curitiba", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"735879a1-709d-4af2-b597-0115c0439d0f\"}\n", "code": 0}
+{"name": "Luna Zen Massoterapia CWB", "city": "Curitiba", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"735836bc-07f4-49a0-9912-24492a41f796\"}\n", "code": 0}
+{"name": "Wagner Barby Massoterapeuta", "city": "Curitiba", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"0f8d51db-f136-430b-a733-4c12d06e13a2\"}\n", "code": 0}
+{"name": "Vanda Massagem", "city": "Curitiba", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"ee91051d-a435-4bf5-b3d9-c845fea4ece5\"}\n", "code": 0}
+{"name": "Jeuane Agnes Massoterapeuta", "city": "Curitiba", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"e1651f01-45ec-41f8-87ae-ed941f42e19a\"}\n", "code": 0}
+{"name": "Massoterapia Djalma Menezes", "city": "Londrina", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"282c0911-cf67-4b49-b442-9a650a77a022\"}\n", "code": 0}
+{"name": "Tulipa Massagens Terapêuticas", "city": "Londrina", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"86b5d3a2-a319-4906-a719-46f2450daa28\"}\n", "code": 0}
+{"name": "Massozem", "city": "Londrina", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"e035d2f9-5f23-40ec-90f9-9ee2a9c53694\"}\n", "code": 0}
+{"name": "Damião Massoterapia", "city": "Londrina", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"69d2d071-d028-4633-8935-80345492ebab\"}\n", "code": 0}
+{"name": "Centro de Terapias e Quiropraxia Sag", "city": "Maringá", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"5bece0c6-e774-4a83-b1b5-f38e3e7cab37\"}\n", "code": 0}
+{"name": "Jorge Rubino Massoterapeuta", "city": "Maringá", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"868b67dc-3096-411f-863a-d28f57f9fb1f\"}\n", "code": 0}
+{"name": "Massagem Terapêutica Alcides Mariano", "city": "Maringá", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"fc43727f-70ae-4bd1-a97d-32b79f592f11\"}\n", "code": 0}
+{"name": "Valter Barrenuevo", "city": "Maringá", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"7c840aa4-cfd4-4c0d-b1b1-df8cb181624b\"}\n", "code": 0}
+{"name": "Birigui Massoterapeuta", "city": "Cascavel", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"f8b88380-6fa4-425b-bce1-9511b9a5eb94\"}\n", "code": 0}
+{"name": "Estética Terapeuta Clarice", "city": "Cascavel", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"9c0f4693-4ed8-4850-b471-ee0972818a1f\"}\n", "code": 0}
+{"name": "Ricardo Massoterapeuta", "city": "Fortaleza", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"cb0cd1e3-cf34-43f2-8f98-2137bd1c1e5a\"}\n", "code": 0}
+{"name": "Revitalle Massoterapia", "city": "Fortaleza", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"f8246eb8-4f61-42f1-bf1f-1c7cbdb9e16e\"}\n", "code": 0}
+{"name": "Massofortal Massagem Humanizada", "city": "Fortaleza", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"79278951-dece-43ef-9b4c-25d24d9baf20\"}\n", "code": 0}
+{"name": "Isa Aguiar Massagem", "city": "Fortaleza", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"5dde7b32-4527-4a04-963e-5c8d33d3887b\"}\n", "code": 0}
+{"name": "Massagem do Bem", "city": "Fortaleza", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"c3496a0b-c166-481e-8dc8-55e91451b8a0\"}\n", "code": 0}
+{"name": "Miss Massoterapia Serviços", "city": "Fortaleza", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"c3c5b2e0-ac87-431a-9d74-a9b51485e711\"}\n", "code": 0}
+{"name": "Mandala Serviços de Massoterapia", "city": "Fortaleza", "result": "{\"http\": 202, \"reason\": \"nome_parecido\", \"status\": \"possivel_duplicado\", \"review_id\": \"7d22e539-0aba-44a4-98d9-7539f4629a29\", \"matched_lead_ids\": [\"c3c5b2e0-ac87-431a-9d74-a9b51485e711\"]}\n", "code": 0}
+{"name": "Bruno Sousa Massoterapia", "city": "Fortaleza", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"4108e4a7-b0d9-4b4c-88d8-cc7ccc9ffeae\"}\n", "code": 0}
+{"name": "Orlando Massoterapia e Estética", "city": "Fortaleza", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"34115400-1ceb-4b92-9c23-9116e1575458\"}\n", "code": 0}
+{"name": "Ramos da Aldeia Massoterapia e Spa", "city": "Fortaleza", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"b7e4cfb1-96cd-465b-b109-c83b7c5feed6\"}\n", "code": 0}
+{"name": "Espaço Viver Bem de Massoterapia", "city": "Fortaleza", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"bd7ed7b6-024d-4dba-bb04-e5aafc620d6b\"}\n", "code": 0}
+{"name": "Lia Massoterapia", "city": "Fortaleza", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"0a05d320-5a91-41a7-8952-8c315e1ae80e\"}\n", "code": 0}
+{"name": "Leon Castelo Massoterapeuta", "city": "Fortaleza", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"a057a0cb-ab15-4273-85f8-990e493ae663\"}\n", "code": 0}
+{"name": "Fique Zen Massoterapia", "city": "Fortaleza", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"23c15f35-2dff-4ead-9870-a1ac194577e2\"}\n", "code": 0}
+{"name": "Diego Costa Massoterapia", "city": "Fortaleza", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"886998a0-e978-40ee-bb38-e7a8c2a597a9\"}\n", "code": 0}
+{"name": "Aldenora Massoterapeuta", "city": "Fortaleza", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"48f3f0ed-cd33-4130-a4c2-cd98d1fecef5\"}\n", "code": 0}
+{"name": "Espaço Ttoque Suave Massoterapia e Estética", "city": "Fortaleza", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"868da2cc-ba4f-43de-a5e9-977d0c59a638\"}\n", "code": 0}
+{"name": "Sarayu Massoterapia Recife", "city": "Recife", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"a6e86cf0-a382-40d2-8e37-9af93f21e721\"}\n", "code": 0}
+{"name": "Yanga Massagem", "city": "Recife", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"2e6345ca-7e9c-4254-8912-bebfddcabc7d\"}\n", "code": 0}
+{"name": "UnoMasso Massagista Homem", "city": "Recife", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"5c62ec8a-159b-408a-94ea-8b770bb837f8\"}\n", "code": 0}
+{"name": "Terapeuta Anderson Silva", "city": "Recife", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"686b3bf0-71b7-46a3-8a91-919e263ef2c0\"}\n", "code": 0}
+{"name": "Sana Vitta", "city": "Recife", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"f034b058-0454-43c0-a601-2e832dacfcd9\"}\n", "code": 0}
+{"name": "Massagens com Reiki em Recife", "city": "Recife", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"67e95f54-d5a8-41a2-be19-65f5b11178e7\"}\n", "code": 0}
+{"name": "Silvandra Barbosa Massoterapia", "city": "Itajaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"eb08ff9f-3f47-4d53-acd8-a18082d51d18\"}\n", "code": 0}
+{"name": "Natália Marize Terapias Integrativas", "city": "Itajaí", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"785508a4-6eb8-493f-951c-58f40ba83429\"}\n", "code": 0}
+{"name": "Jussara Massoterapia", "city": "Campinas", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"5d34b6a8-ba25-4d1e-aa20-328b45003ccb\"}\n", "code": 0}
+{"name": "Edy Massoterapia", "city": "Campinas", "result": "{\"http\": 202, \"reason\": \"nome_parecido\", \"status\": \"possivel_duplicado\", \"review_id\": \"423036ab-1685-4ab5-b5c1-d726c86f6207\", \"matched_lead_ids\": [\"41cc2632-c03c-4e06-acc5-19c957c053e9\"]}\n", "code": 0}
+{"name": "Massage Spa", "city": "Campinas", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"8b1ffae8-5237-4d06-8b7a-cd57a829b7b3\"}\n", "code": 0}
+{"name": "Terapias Valen", "city": "Campinas", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"74b3fa35-6367-4ce8-89fd-f5288473b8bf\"}\n", "code": 0}
+{"name": "Francielly Ferreira Estética", "city": "Campinas", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"14e489a9-8060-47bf-9d4c-76a3aaa62bd4\"}\n", "code": 0}
+{"name": "Leili Silva Massoterapeuta", "city": "Maringá", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"db01bf99-14a7-4283-8f83-a2fc97e50a0a\"}\n", "code": 0}
+{"name": "Nathalia Rosa Massoterapia", "city": "Maringá", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"49d02ac5-66c6-4392-9609-0b7433dd68ef\"}\n", "code": 0}
+{"name": "Lunae Lumen Studio", "city": "Maringá", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"c74c024f-ecc6-469a-819d-35358b9f045e\"}\n", "code": 0}
+{"name": "Patrícia Bartolomeu Massoterapia", "city": "Maringá", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"48f60092-ba76-4cfd-ba68-b8a0e6990d99\"}\n", "code": 0}
+{"name": "Ana Paula Terapeuta Espaço Corpo e Mente", "city": "Natal", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"6210303a-5ac7-43fd-94d4-cfaa8f422152\"}\n", "code": 0}
+{"name": "Luana Silva Terapeuta", "city": "Natal", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"5ba0ee79-e547-4a41-b8b2-fecfc6f040a9\"}\n", "code": 0}
+{"name": "Alice Terapeuta Espaço Corpo e Mente", "city": "Natal", "result": "{\"http\": 202, \"reason\": \"nome_parecido\", \"status\": \"possivel_duplicado\", \"review_id\": \"4265baa8-f519-4fcf-be66-f67134801009\", \"matched_lead_ids\": [\"6210303a-5ac7-43fd-94d4-cfaa8f422152\"]}\n", "code": 0}
+{"name": "Nielly Mãos de Fada", "city": "Natal", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"b38754f0-fe8d-41e4-aacc-a4aa646bf527\"}\n", "code": 0}
+{"name": "Edwina Massoterapeuta", "city": "Natal", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"b4008678-b457-4bb4-8f7b-965bd101aed1\"}\n", "code": 0}
+{"name": "Karla Dantas Massoterapia Integrativa", "city": "Natal", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"eccb2977-1624-4edd-b176-c5970a924fd1\"}\n", "code": 0}
+{"name": "Márcia Cruz Massoterapia", "city": "Sorocaba", "result": "{\"http\": 201, \"status\": \"criado\", \"lead_id\": \"38b9eb38-2c16-4472-b73d-36ee3cd80c3c\"}\n", "code": 0}

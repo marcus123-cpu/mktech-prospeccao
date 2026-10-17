@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "uberlandia",
+    "unit": "",
+    "phone": "+5534998640099",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:lotus.massoterapia",
+    "instagram": null,
+    "name_core": "lotus massoterapia",
+    "name_norm": "lotus massoterapia",
+    "source_name": "euterapeuta"
+  }
+}

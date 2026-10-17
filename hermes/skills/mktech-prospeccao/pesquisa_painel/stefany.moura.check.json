@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "santos",
+    "unit": "",
+    "phone": "+5513991440569",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:stefany.moura",
+    "instagram": null,
+    "name_core": "agatha duarte",
+    "name_norm": "agatha duarte",
+    "source_name": "euterapeuta"
+  }
+}

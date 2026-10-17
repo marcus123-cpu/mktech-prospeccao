@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "recife",
+    "unit": "",
+    "phone": "+5581987804252",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:bella.teraupeta",
+    "instagram": null,
+    "name_core": "spa 24 horas",
+    "name_norm": "spa 24 horas",
+    "source_name": "euterapeuta"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "business_name": "Estética Talita Brito",
+  "city": "Campinas",
+  "phone": "+5519982011050",
+  "services": [
+    "Limpeza de Pele",
+    "Rejuvenescimento Facial"
+  ],
+  "evidences": [
+    {
+      "kind": "diretorio",
+      "url": "https://guiafacil.com/site/estetica-talita-brito/campinas/sp/3570352",
+      "summary": "Estetica Talita Brito, Campinas, telefone (19) 98201-1050; diretório sem avaliações ou endereço detalhado.",
+      "observed_at": "2026-10-14",
+      "limitation": null
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://www.telelistas.net/locais/sp/campinas/depilacao/bu-20353630/estetica%2Btalita%2Bbrito%2Bem%2Bjardim%2Blisa?amp=1",
+      "summary": "Estética Talita Brito em Jardim Lisa, Campinas; telefone (19) 98201-1050, atendimento com hora marcada; Limpeza de Pele, Peeling e Rejuvenescimento Facial.",
+      "observed_at": "2026-10-14",
+      "limitation": "Avaliação visível de 20/05/2022 não comprova atividade recente; outro número e endereço divergem do EncontraCampinas."
+    }
+  ],
+  "pending_items": "Confirmar atividade recente, endereço e presença própria. Telelistas informa Av. Armando Mário Tozzi, 585 e EncontraCampinas número 131, com telefone 98873-2623. Linktree studiotalitabrito não vinculado à unidade de Campinas. Não há WhatsApp verificado.",
+  "state": "SP",
+  "niche": "clínica de estética",
+  "research_date": "2026-10-14",
+  "source_name": "busca_web",
+  "priority": "baixa",
+  "site_status": "verificacao_pendente",
+  "selection_reason": "Candidato em pesquisa: serviços estéticos e canal comercial publicados; presença própria e atividade recente ainda precisam ser confirmadas.",
+  "diagnosis": {
+    "fit_score": 30,
+    "confidence": "baixa",
+    "summary": "Negócio de estética listado em Campinas. Dados públicos permitem pesquisa, mas não confirmam atividade recente nem ausência de página própria.",
+    "digital_presence": "Canais e dados conforme evidências; não foi possível confirmar datas recentes de publicação ou avaliação.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: uma página própria pode reunir a apresentação dos procedimentos se o negócio ainda depender dos canais listados.",
+        "evidence": "Estética Talita Brito em Jardim Lisa, Campinas; telefone (19) 98201-1050, atendimento com hora marcada; Limpeza de Pele, Peeling e Rejuvenescimento Facial."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página de apresentação dos serviços somente após confirmar presença própria e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Possibilidade condicionada à confirmação da lacuna digital; não qualificado nesta pesquisa."
+  }
+}

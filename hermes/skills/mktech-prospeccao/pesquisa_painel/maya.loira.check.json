@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "uberlandia",
+    "unit": "",
+    "phone": "+5534996738246",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:maya.loira",
+    "instagram": null,
+    "name_core": "maya loira",
+    "name_norm": "maya loira",
+    "source_name": "euterapeuta"
+  }
+}

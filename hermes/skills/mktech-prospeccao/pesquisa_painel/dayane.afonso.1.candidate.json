@@ -1,0 +1,94 @@
+{
+  "business_name": "Dayane Afonso",
+  "city": "Uberlândia",
+  "state": "MG",
+  "niche": "Massagem",
+  "services": [
+    "Acupuntura",
+    "Liberação Miofascial",
+    "Massagem com Pedras Quentes",
+    "Massagem Dreno Relaxante",
+    "Massagem Relaxante",
+    "Massagem Tântrica",
+    "Ventosaterapia"
+  ],
+  "phone": "(34) 99837-8156",
+  "instagram": "estudio_zen_udi",
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:dayane.afonso.1",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. Threads @estudio_zen_udi é rede social, não site próprio. O título confirma Dayane, massoterapeuta em Uberlândia. Link wa.me não foi aberto.",
+  "evidences": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/estudio_zen_udi/",
+      "summary": "Instagram @estudio_zen_udi aberto sem login; 1158 seguidores, 57 publicações; link da bio: https://www.threads.com/@estudio_zen_udi, https://wa.me/3498378156",
+      "observed_at": "2026-10-16T21:54:56Z",
+      "limitation": "Threads @estudio_zen_udi é rede social, não site próprio. O título confirma Dayane, massoterapeuta em Uberlândia. Link wa.me não foi aberto. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "site",
+      "url": "https://www.threads.com/@estudio_zen_udi",
+      "summary": "Link threads.com: site próprio no ar",
+      "observed_at": "2026-10-16T21:54:56Z",
+      "limitation": "Threads @estudio_zen_udi é rede social, não site próprio. O título confirma Dayane, massoterapeuta em Uberlândia. Link wa.me não foi aberto. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "busca",
+      "url": "https://wa.me/3498378156",
+      "summary": "Link wa.me: agregador de links (não é site próprio)",
+      "observed_at": "2026-10-16T21:54:56Z",
+      "limitation": "Threads @estudio_zen_udi é rede social, não site próprio. O título confirma Dayane, massoterapeuta em Uberlândia. Link wa.me não foi aberto. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/dayane.afonso.1",
+      "summary": "Dayane Afonso; Uberlândia - MG; contato público: (34) 99837-8156; serviços: Acupuntura, Liberação Miofascial, Massagem com Pedras Quentes, Massagem Dreno Relaxante, Massagem Relaxante, Massagem Tântrica, Ventosaterapia.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/uberlandia-mg",
+      "summary": "Premium Dayane Afonso Massoterapeuta 5,0 Uberlândia, MG Visto há 2 semanas R$250 /\n            1 hora",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/dayane.afonso.1",
+      "summary": "Revisão da inspeção automática: Threads @estudio_zen_udi é rede social, não site próprio. O título confirma Dayane, massoterapeuta em Uberlândia. Link wa.me não foi aberto.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    },
+    {
+      "kind": "outro",
+      "url": "https://www.threads.com/@estudio_zen_udi",
+      "summary": "Página Threads aberta pelo inspetor com título: Dayane| Massoterapeuta Uberlândia (@estudio_zen_udi).",
+      "observed_at": "2026-10-16",
+      "limitation": "Rede social; sem data recente de publicação comprovada."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 46,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. Threads @estudio_zen_udi é rede social, não site próprio. O título confirma Dayane, massoterapeuta em Uberlândia. Link wa.me não foi aberto.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Dayane Afonso; Uberlândia - MG; contato público: (34) 99837-8156; serviços: Acupuntura, Liberação Miofascial, Massagem com Pedras Quentes, Massagem Dreno Relaxante, Massagem Relaxante, Massagem Tântrica, Ventosaterapia."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

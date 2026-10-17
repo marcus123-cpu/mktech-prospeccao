@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "santos",
+    "unit": "",
+    "phone": "+5513981090187",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:alves.terapeuta",
+    "instagram": null,
+    "name_core": "alves terapeuta",
+    "name_norm": "alves terapeuta",
+    "source_name": "euterapeuta"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "business_name": "Sebastian sousa",
+  "city": "São Luís",
+  "state": "MA",
+  "niche": "Massagem",
+  "services": [
+    "Massagem Modeladora",
+    "Massagem Relaxante",
+    "Massagem Tântrica",
+    "Massagem Terapêutica"
+  ],
+  "phone": "(98) 93300-8953",
+  "instagram": null,
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:felipe.sousa",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. O resultado belezanaweb.com.br/sebastian-professional é página comercial de produtos da marca Sebastian, sem vínculo confirmado com o massoterapeuta de São Luís.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://www.belezanaweb.com.br/sebastian-professional/",
+      "summary": "Link belezanaweb.com.br: endereço não abre (HTTP 403)",
+      "observed_at": "2026-10-16T21:58:16Z",
+      "limitation": "O resultado belezanaweb.com.br/sebastian-professional é página comercial de produtos da marca Sebastian, sem vínculo confirmado com o massoterapeuta de São Luís. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/felipe.sousa",
+      "summary": "Sebastian sousa; São Luís - MA; contato público: (98) 93300-8953; serviços: Massagem Modeladora, Massagem Relaxante, Massagem Tântrica, Massagem Terapêutica.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/sao-luis-ma",
+      "summary": "Premium Sebastian sousa Massaterapeuta 0,0 São Luís, MA Visto há 3 dias",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/felipe.sousa",
+      "summary": "Revisão da inspeção automática: O resultado belezanaweb.com.br/sebastian-professional é página comercial de produtos da marca Sebastian, sem vínculo confirmado com o massoterapeuta de São Luís.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 40,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. O resultado belezanaweb.com.br/sebastian-professional é página comercial de produtos da marca Sebastian, sem vínculo confirmado com o massoterapeuta de São Luís.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Sebastian sousa; São Luís - MA; contato público: (98) 93300-8953; serviços: Massagem Modeladora, Massagem Relaxante, Massagem Tântrica, Massagem Terapêutica."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

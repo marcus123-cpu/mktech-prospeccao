@@ -1,0 +1,44 @@
+{
+  "nome": "Ritmus Academia",
+  "cidade": "Barretos",
+  "verificado_em": "2026-10-17T10:05:03Z",
+  "instagram": {
+    "handle": "",
+    "status": "nao_informado"
+  },
+  "facebook": {
+    "status": "ok",
+    "url": "https://www.facebook.com/ritmusacademiabarretos/",
+    "titulo": "Ritmus Academia | Barretos SP | Facebook",
+    "descricao": "Ritmus Academia, Barretos. 863 seguidores · 1 falando sobre isso · 434 estiveram aqui. Academia",
+    "curtidas_ou_seguidores": 863
+  },
+  "site": {
+    "situacao": "sem_site",
+    "detalhe": []
+  },
+  "nota_sugerida": 78,
+  "componentes": {
+    "lacuna_digital": 50,
+    "atividade": 6,
+    "demanda": 7,
+    "potencial_comercial": 15
+  },
+  "confianca": "media",
+  "site_status_sugerido": "apenas_redes_sociais",
+  "evidencias": [
+    {
+      "kind": "busca",
+      "url": "https://www.facebook.com/ritmusacademiabarretos/",
+      "summary": "Facebook aberto sem login: Ritmus Academia | Barretos SP | Facebook; Ritmus Academia, Barretos. 863 seguidores · 1 falando sobre isso · 434 estiveram aqui. Academia",
+      "observed_at": "2026-10-17T10:05:03Z"
+    },
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Ritmus+Academia+Barretos",
+      "summary": "Busca por 'Ritmus Academia Barretos' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-17T10:05:03Z"
+    }
+  ],
+  "avisos": []
+}

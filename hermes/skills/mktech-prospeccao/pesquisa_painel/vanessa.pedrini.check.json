@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "joinville",
+    "unit": "",
+    "phone": "+5555991793340",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:vanessa.pedrini",
+    "instagram": null,
+    "name_core": "vanessa pedrini",
+    "name_norm": "vanessa pedrini",
+    "source_name": "euterapeuta"
+  }
+}

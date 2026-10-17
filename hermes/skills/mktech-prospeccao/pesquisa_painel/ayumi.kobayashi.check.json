@@ -1,0 +1,26 @@
+{
+  "http": 202,
+  "reason": "telefone_compartilhado",
+  "status": "possivel_duplicado",
+  "matches": [
+    {
+      "id": "d84a8999-6cca-49c1-9933-dfbcf59fba13",
+      "city": "Manaus",
+      "unit": null,
+      "business_name": "Aurora Gabriella"
+    }
+  ],
+  "matched_on": "telefone",
+  "normalized": {
+    "city": "manaus",
+    "unit": "",
+    "phone": "+5592984828654",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:ayumi.kobayashi",
+    "instagram": "ayumikobayash1",
+    "name_core": "ayumi kobayashi",
+    "name_norm": "ayumi kobayashi",
+    "source_name": "euterapeuta"
+  }
+}

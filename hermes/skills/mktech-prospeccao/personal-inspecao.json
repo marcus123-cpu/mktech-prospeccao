@@ -1,0 +1,44 @@
+{
+  "nome": "Academia Personal Studio",
+  "cidade": "Barretos",
+  "verificado_em": "2026-10-17T10:06:02Z",
+  "instagram": {
+    "handle": "",
+    "status": "nao_informado"
+  },
+  "facebook": {
+    "status": "ok",
+    "url": "https://www.facebook.com/536857649745149",
+    "titulo": "Academia Personal Studio | Barretos SP | Facebook",
+    "descricao": "Academia Personal Studio, Barretos. 886 seguidores · 143 estiveram aqui. PERSONAL TRAINER\n\nACADEMIA QUE VISA QUALIDADE\n\nDE VIDA E RESPEITA\n\nINDIVIDUALIDADE DOS ALUNOS",
+    "curtidas_ou_seguidores": 886
+  },
+  "site": {
+    "situacao": "sem_site",
+    "detalhe": []
+  },
+  "nota_sugerida": 78,
+  "componentes": {
+    "lacuna_digital": 50,
+    "atividade": 6,
+    "demanda": 7,
+    "potencial_comercial": 15
+  },
+  "confianca": "media",
+  "site_status_sugerido": "apenas_redes_sociais",
+  "evidencias": [
+    {
+      "kind": "busca",
+      "url": "https://www.facebook.com/536857649745149",
+      "summary": "Facebook aberto sem login: Academia Personal Studio | Barretos SP | Facebook; Academia Personal Studio, Barretos. 886 seguidores · 143 estiveram aqui. PERSONAL TRAINER\n\nACADEMIA QUE VISA QUALIDADE\n\nDE VIDA E RESPEITA\n\nINDIVIDUALIDADE DOS ALUNOS",
+      "observed_at": "2026-10-17T10:06:02Z"
+    },
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Academia+Personal+Studio+Barretos",
+      "summary": "Busca por 'Academia Personal Studio Barretos' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-17T10:06:02Z"
+    }
+  ],
+  "avisos": []
+}

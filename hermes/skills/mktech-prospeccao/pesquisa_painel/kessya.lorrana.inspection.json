@@ -1,0 +1,47 @@
+{
+  "nome": "Lottus Spa",
+  "cidade": "Manaus",
+  "verificado_em": "2026-10-16T23:04:28Z",
+  "instagram": {
+    "handle": "lottuss_spa",
+    "status": "indisponivel",
+    "url": "https://www.instagram.com/lottuss_spa/"
+  },
+  "facebook": {
+    "status": "ok",
+    "url": "https://www.facebook.com/share/16RLRCpSvJ/?mibextid=wwXIfr/",
+    "titulo": "LottusSpa | Manaus AM | Facebook",
+    "descricao": "LottusSpa, Manaus. 45 seguidores · 105 falando sobre isso. Encontre o equilíbrio e a serenidade que você busca através da massoterapia �.",
+    "curtidas_ou_seguidores": 45
+  },
+  "site": {
+    "situacao": "sem_site",
+    "detalhe": []
+  },
+  "nota_sugerida": 74,
+  "componentes": {
+    "lacuna_digital": 50,
+    "atividade": 6,
+    "demanda": 3,
+    "potencial_comercial": 15
+  },
+  "confianca": "media",
+  "site_status_sugerido": "apenas_redes_sociais",
+  "evidencias": [
+    {
+      "kind": "busca",
+      "url": "https://www.facebook.com/share/16RLRCpSvJ/?mibextid=wwXIfr/",
+      "summary": "Facebook aberto sem login: LottusSpa | Manaus AM | Facebook; LottusSpa, Manaus. 45 seguidores · 105 falando sobre isso. Encontre o equilíbrio e a serenidade que você busca através da massoterapia �.",
+      "observed_at": "2026-10-16T23:04:28Z"
+    },
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Lottus+Spa+Manaus",
+      "summary": "Busca por 'Lottus Spa Manaus' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-16T23:04:28Z"
+    }
+  ],
+  "avisos": [
+    "Instagram não abriu sem login (perfil restrito ou @ errado): confira o @ e use outra fonte para atividade."
+  ]
+}

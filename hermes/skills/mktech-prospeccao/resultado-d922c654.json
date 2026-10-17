@@ -1,0 +1,588 @@
+{
+  "run_id": "d922c654-5276-4794-b00f-517e7dea2f4a",
+  "searches": 500,
+  "registered": 1,
+  "discarded": 118,
+  "discard_breakdown": {
+    "site_proprio": 100,
+    "evidencias_insuficientes": 17,
+    "inatividade_documentada": 1
+  },
+  "discarded_records": [
+    {
+      "name": "HA Estética Avançada no Tatuapé | Dra. Hemilin Aguirre",
+      "url": "https://haesteticaavancada.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "AR Estética Avançada | Rejuvenescimento Facial e Corporal na Avenida Paulista",
+      "url": "https://arestetica.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "LivStetic · Harmonização Facial & Corporal | São Paulo",
+      "url": "https://www.livstetic.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Clínica Avivah | Estética Avançada & Bem-Estar em São Paulo",
+      "url": "https://www.clinicaavivah.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra. Letícia Ferreira — Harmonização Facial · Faria Lima",
+      "url": "https://www.lfclinic.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "contato – Estética Avançada",
+      "url": "https://www.draromanovavb.com.br/contato/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Innovafy — Estética avançada e planejamento individual | Vila Olímpia, São Paulo",
+      "url": "https://www.innovafyesteticaavancada.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra. Patricia Rodrigues — Estética Avançada | Corpo, Rosto e Cabelo",
+      "url": "https://www.drapatriciarodrigues.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Olenka Estética Avançada – Os Melhores Tratamentos Estéticos",
+      "url": "https://olenkaesteticaavancada.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Contatos – InOut Estética Avançada",
+      "url": "https://inoutesteticaavancada.com.br/contatos/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Clínica Sudário | Estética Avançada e Integrativa em São Paulo",
+      "url": "https://clinicasudario.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dr. Danilo Zanin · Harmonização facial em Campinas",
+      "url": "https://www.danilozanin.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Mariana Moure | Especialista em Harmonização Facial e Implantodontia em Campinas - Dra. Mariana Moure - Dentista Especialista em Harmonização Orofacial | Campinas SP",
+      "url": "https://dramarianamoure.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Recife - BotoEsthetic",
+      "url": "https://botoesthetic.com.br/recife/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Clube IMAC — Saúde Capilar, Estética Facial e Soroterapia em Campinas",
+      "url": "https://www.artescapilares.com/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra. Claudia Miranda - Dra. Claudia Miranda",
+      "url": "https://draclaudiamiranda.com.br/dra-claudia-miranda/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Contatos | Tay Akemi Estética",
+      "url": "https://tayakemiestetica.com/contatos/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "@DraAlineRossi - Dra Aline Rossi",
+      "url": "https://www.draalinerossi.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Gláucia Gonçalves - Estética Avançada",
+      "url": "https://glauciagoncalves.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Instituto Médico-Estético em Campinas | Botox e Harmonização Facial | LeVenus",
+      "url": "https://www.levenus.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Limpeza de Pele no Butantã, São Paulo | MSS Estética",
+      "url": "https://www.mssestetica.com.br/servicos/limpeza-de-pele",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Unidade - GIO Estética Avançada",
+      "url": "https://www.gioesteticaavancada.com.br/unidade/itajai/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Centro de Estética Avançada em Campinas - Grupo Vip Rejuveness",
+      "url": "https://rejuvenessclinic.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Elisa | Esteticista em Ribeirão Preto",
+      "url": "https://elisaestetica.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Wendy Menezes - Estética Avançada | Campinas - SP",
+      "url": "https://wendymenezes.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Home | Nivara Dermo Care - Andréa Fernandes",
+      "url": "https://nivaradermocare.com.br/index.html",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Clínica de Estética em Campinas | Botox e Harmonização Facial",
+      "url": "https://www.clinicaflorea.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "cirinoclinic.com.br",
+      "url": "https://cirinoclinic.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Natural's Belle Estética Avançada | Harmonização e Preenchimento Facial",
+      "url": "https://www.naturalsbelle.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Estética Daniela Santos – Especialista em Harmonização Facial e Botox",
+      "url": "https://esteticadanielasantos.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra. Lorena Ferreira - Harmonização Facial e Fisioterapia Dermato Funcional em Ribeirão Preto",
+      "url": "https://dralorena.com/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Instituto López - Harmonizando Saúde e Estética",
+      "url": "https://institutolopez.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "clinicazaria.com.br – Especialista em Harmonização Facial",
+      "url": "https://clinicazaria.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Serviços | Harmonização Facial - Clínica Barsotini",
+      "url": "https://www.clinicabarsotini.com.br/servicos/harmonizacao-facial/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Regiane Sieto — Clínica de Estética em Ribeirão Preto",
+      "url": "https://www.draregianesieto.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Harmony & Beauty - Harmonização Facial e Corporal em Sorocaba",
+      "url": "https://www.harmonyebeauty.com/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "VP - Estética Avançada - Sorocaba / Beleza sobre Beleza",
+      "url": "https://www.vpea.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Débora Paulino | Harmonização Facial e Rejuvenescimento em Sorocaba",
+      "url": "https://esteticadeborapaulino.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dermatologista em Sorocaba - Dra. Kalili August | Dra Kalili August",
+      "url": "https://www.drakaliliaugust.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra. Lara Andrade | Harmonização Facial em Sorocaba",
+      "url": "https://doutoralaraandrade.com/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "home-nova - Patricia Peres Esteticista",
+      "url": "https://patriciaesteticista.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Instituto Alexandre Paiva – Site do consultório odontologico do Dr Alexandre Paiva",
+      "url": "https://institutoalexandrepaiva.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Bodyprime - Estética Avançada | Sorocaba",
+      "url": "https://bodyprimesorocaba.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Bella's – Estética Avançada",
+      "url": "https://esteticabellas.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "HanaClinic — Harmonização Facial e Estética em São José dos Campos",
+      "url": "https://hanaclinic.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "draadrianacuglianna.com.br",
+      "url": "https://draadrianacuglianna.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra. Pietra Mancilha — Especialista em Harmonização Orofacial",
+      "url": "https://drapietramancilha.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra. Mikaelly Cardoso | Full Face e Harmonização Facial em São José dos Campos | CROSP 172.486",
+      "url": "https://dramikaellycardoso.com.br/?lang=en",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Rosane Salles – Estética",
+      "url": "https://rosanesalles.netlify.app/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Harmonização | Personalita",
+      "url": "https://www.odontopersonalita.com.br/c%C3%B3pia-check-up",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra. Cris Conde – Seja sempre sua melhor versão",
+      "url": "https://dracrisconde.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra. Ana Chaves | Harmonização Facial e Odontologia",
+      "url": "https://www.draanachaves.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dr Marcos Augusto - Harmonização Facial em São José dos Campos Dr Marcos Augusto - Harmonização Facial em SJC",
+      "url": "https://www.profissaopersonal.com/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra. Taís Latini | Harmonização Facial Full Face",
+      "url": "https://drataislatini.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Harmonização Facial em Santos | Pâmela Ebbing Biomédica",
+      "url": "https://www.pamelaebbing.com.br/harmonizacao-facial",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra. Erika Kugler Harmonização Orofacial | harmonização facial | Avenida Conselheiro Nébias, 754 - Paquetá, Santos - SP, Brasil",
+      "url": "https://www.harmonizacaofacialemsantos.com/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "(https://rafaellafreitas.com.br/)",
+      "url": "https://rafaellafreitas.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dr. Douglas de Siqueira | Harmonização Orofacial",
+      "url": "https://drdouglasdesiqueira.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Contato | Drthiagoarico",
+      "url": "https://www.drthiagoarico.com/contato",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Botazini Odontologia | Lentes de Resina e Harmonização Facial em Santos",
+      "url": "https://consultoriodrpedrobotazini.lovable.app/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Katia Onofre Libório – Harmonização Facial em Santos",
+      "url": "https://katiaonofreliborio.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra Laila Santos - Informações e Agendamento",
+      "url": "https://dralailasantos.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Site",
+      "url": "https://harmoniousface.my.canva.site/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra. Alline Neves - Biomedicina Estética",
+      "url": "https://allineneves.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Espaço Pri Ribeiro | Estética Avançada - Inauguração",
+      "url": "https://www.priribeiro.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra. Verlane Mendes — Estética Avançada em Santos/SP – Especialista em Estética Avançada em Santos/SP. Protocolos Exclusivos como o Bioredensific Face para Rejuvenescimento Natural e Sofisticado. Agende sua Avaliação.",
+      "url": "https://verlanemendes.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Instituto Piran | Cirurgia Dermatológica e Medicina Estética Avançada | Santos/SP",
+      "url": "https://institutopiran.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Home - Clínica Angélica Saúde, Beleza e Bem-estar",
+      "url": "https://clinicaangelica.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra. Rachel Romanelli - Estética Avançada e Harmonização Facial",
+      "url": "https://drarachelromanelli.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra. Karina Martins – Fisioterapia e Estética Integrativa",
+      "url": "https://drakarinamartins.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Autentika Estética | Estética Facial e Corporal em São Bernardo do Campo",
+      "url": "https://www.autentikaestetica.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Clínica de Estética em Santos | Casa Anne — Boqueirão",
+      "url": "https://casaanne.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Início",
+      "url": "https://www.dragiovannacuricampos.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Lisboa Beauty Center — Estética Avançada Premium em São Bernardo",
+      "url": "https://lisboaesteticaavancada.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "santieclinica.com.br",
+      "url": "https://santieclinica.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Contato | Dra. Juliana Andrade — Harmonização Facial em São Bernardo e Indaiatuba",
+      "url": "https://drajulianandrade.com.br/contato",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra. Érika Vassoler",
+      "url": "https://www.erikavassolerfacialclinic.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Harmonização Facial em São Bernardo do Campo | Mar de Sorrisos - Clínica Odontológica",
+      "url": "https://clinicamardesorrisos.com.br/harmonizacao-facial/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Doutores da Estética | estética avançada",
+      "url": "https://www.doutoresdaestetica.com/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Harmonização Orofacial - Dra Thais Rosa",
+      "url": "https://drathaisrosa.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "SPA Nature – Estética Corporal e Facial Avançada – Em São Bernardo do Campo",
+      "url": "https://spanatureabc.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra. Juliane Osko | Biomédica Esteta em São Bernardo do Campo",
+      "url": "https://www.esteticasaobernardo.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Home - Estética Avançada | Dra Karine Fernanda Santo André",
+      "url": "https://www.karinefernanda.com/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Harmonização Facial em Santo André | Dra. Ana Carolina Prata — ABC Paulista",
+      "url": "https://anacarolprata.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra. Mayara Vecchi | Harmonização Facial — Santo André, São Caetano e São Bernardo do Campo",
+      "url": "https://dramayaravecchi.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Gabi Nascimento Clinic — Estética Avançada · Santo André",
+      "url": "https://clinicagn.com/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Spazio Vitta Bella · Estética Avançada em Santo André",
+      "url": "https://www.spaziovittabella.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dra. Sabrina Santos - Estética Avançada - Informações e Agendamento",
+      "url": "https://sabrinasantosestetica.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Clínica Ana Paula Perin | Estética Avançada em Santo André",
+      "url": "https://esteticaperin.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Valiva Clinic · Estética avançada em Santo André e São Bernardo",
+      "url": "https://valivaclinic.com/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Studio Nicoletti – Estética Avançada",
+      "url": "https://ostudionicoletti.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Estética e Ortodontia em Santo André SP | MG+ Saúde Oral – Centro",
+      "url": "https://mgsaudeoral.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Harmonização Facial em São Caetano do Sul e ABC Paulista - Dra. Priscila Daguis",
+      "url": "https://draprisciladaguis.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Pró Estética Indaiatuba: clínica de estética em Indaiatuba | Pró Estética",
+      "url": "https://proesteticaoficial.com.br/unidades/indaiatuba/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Dentista | Azzolino Odontologia | São Paulo",
+      "url": "https://www.clinicaazzolino.com/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "VOTRE | Estética Avançada",
+      "url": "https://votreestetica.com.br/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Beleza com Naturalidade e Sofisticação",
+      "url": "https://brunaalmeida.com/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Sala Ísis | Clínica de Estética em São Caetano do Sul – Harmonização Facial e Tratamentos de Pele",
+      "url": "https://www.salaisis.com/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Harmonização Facial | Odontovolp",
+      "url": "https://odontovolp.com.br/harmonizacao-facial-especialidades/",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Contato | Dra. Yasmin Ferreira — Harmonização Facial em Jundiaí",
+      "url": "https://drayasminferreira.com/contato",
+      "reason": "Site próprio identificado na triagem"
+    },
+    {
+      "name": "Vanessa Peres Simões de Lima",
+      "reason": "Evidência insuficiente de atividade recente, presença digital ou vínculo do número ao link público de WhatsApp"
+    },
+    {
+      "name": "Leide França Estética",
+      "reason": "Evidência insuficiente de atividade recente, presença digital ou vínculo do número ao link público de WhatsApp"
+    },
+    {
+      "name": "Estética Nayara Garcia",
+      "reason": "Evidência insuficiente de atividade recente, presença digital ou vínculo do número ao link público de WhatsApp"
+    },
+    {
+      "name": "Espaço Natture de São Carlos",
+      "reason": "Evidência insuficiente de atividade recente, presença digital ou vínculo do número ao link público de WhatsApp"
+    },
+    {
+      "name": "Jaque Bru Estetic Center",
+      "reason": "Evidência insuficiente de atividade recente, presença digital ou vínculo do número ao link público de WhatsApp"
+    },
+    {
+      "name": "Alessandra Niches",
+      "reason": "Evidência insuficiente de atividade recente, presença digital ou vínculo do número ao link público de WhatsApp"
+    },
+    {
+      "name": "Clínica Define",
+      "reason": "Evidência insuficiente de atividade recente, presença digital ou vínculo do número ao link público de WhatsApp"
+    },
+    {
+      "name": "Marize Valério Estética",
+      "reason": "Evidência insuficiente de atividade recente, presença digital ou vínculo do número ao link público de WhatsApp"
+    },
+    {
+      "name": "Dra. Aléxia Carmo",
+      "reason": "Evidência insuficiente de atividade recente, presença digital ou vínculo do número ao link público de WhatsApp"
+    },
+    {
+      "name": "Dra. Luciana Miranda",
+      "reason": "Evidência insuficiente de atividade recente, presença digital ou vínculo do número ao link público de WhatsApp"
+    },
+    {
+      "name": "Mariane Butturi Peluque",
+      "reason": "Evidência insuficiente de atividade recente, presença digital ou vínculo do número ao link público de WhatsApp"
+    },
+    {
+      "name": "Espaço Jéssica Larocca",
+      "reason": "Evidência insuficiente de atividade recente, presença digital ou vínculo do número ao link público de WhatsApp"
+    },
+    {
+      "name": "Aline Faria Estética",
+      "reason": "Evidência insuficiente de atividade recente, presença digital ou vínculo do número ao link público de WhatsApp"
+    },
+    {
+      "name": "Sabine Negrini",
+      "reason": "Evidência insuficiente de atividade recente, presença digital ou vínculo do número ao link público de WhatsApp"
+    },
+    {
+      "name": "Dra. Vitória Mello",
+      "reason": "Evidência insuficiente de atividade recente, presença digital ou vínculo do número ao link público de WhatsApp"
+    },
+    {
+      "name": "Aline Moreti Estética Avançada",
+      "reason": "Evidência insuficiente de atividade recente, presença digital ou vínculo do número ao link público de WhatsApp"
+    },
+    {
+      "name": "Dra. Biannca",
+      "reason": "Evidência insuficiente de atividade recente, presença digital ou vínculo do número ao link público de WhatsApp"
+    },
+    {
+      "name": "Fernanda Chiari Esteticista",
+      "reason": "Cadastro empresarial baixado em 10/02/2020; sem confirmação de operação atual"
+    }
+  ],
+  "errors": 8,
+  "error_detail": "8 falhas de acesso a fontes: Instagram Define; avaliações Ecocard Aléxia; Findglocal Vitória; TodosNegócios Be on TOX; Conecta.bio Mariane; BeautyNail Aline Faria; DentMap Aline Moreti; HTTP 403 ao consultar HTML BeautyNail Aline Moreti. Falha de sintaxe corrigida não incluída.",
+  "notes": "Contagem conservadora por candidato documentado; resultados repetidos e páginas sem candidato individualizado não contabilizados como descartes. 250 consultas cidade x nicho; 200 variações de bairro/profissional; 50 buscas de descoberta/triagem e aprofundamento. Sem WhatsApp direto ou mensagens."
+}

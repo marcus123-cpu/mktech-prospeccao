@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "sao luis",
+    "unit": "",
+    "phone": "+5598992198585",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:casal.tantra",
+    "instagram": null,
+    "name_core": "marilia mezzadry massagens renascenca whats 98 99219 858",
+    "name_norm": "marilia mezzadry massagens renascenca whats 98 99219 858",
+    "source_name": "euterapeuta"
+  }
+}

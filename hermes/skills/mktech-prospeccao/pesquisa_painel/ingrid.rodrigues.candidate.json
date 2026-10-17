@@ -1,0 +1,65 @@
+{
+  "business_name": "Ingrid Rodrigues",
+  "niche": "Massagem",
+  "city": "Belém",
+  "state": "PA",
+  "services": [
+    "Massagem com Pedras Quentes",
+    "Massagem Desportiva",
+    "Massagem Miofascial",
+    "Massagem Mista",
+    "Massagem Relaxante",
+    "Massagem Terapêutica"
+  ],
+  "phone": "(91) 98728-5819",
+  "instagram": null,
+  "whatsapp_url": null,
+  "website_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:ingrid.rodrigues",
+  "research_date": "2026-10-16",
+  "selection_reason": "Perfil público de massagem com sinal recente de uso no diretório; cadastrar como incompleto para enriquecer a presença digital. Não há conclusão de inexistência de site.",
+  "pending_items": "Confirmar atividade de atendimento diretamente em fonte independente; o sinal de uso recente observado é do diretório.\nConfirmar presença digital e eventual site/landing page com o negócio; busca negativa não prova ausência.\nObter segunda fonte independente.\nConfirmar WhatsApp do telefone comercial, sem abrir ou contatar WhatsApp.\nLocalizar Instagram e Facebook oficiais e conferir links da bio; perfil não forneceu identificadores verificáveis dessas redes.",
+  "priority": "media",
+  "site_status": "verificacao_pendente",
+  "evidences": [
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Ingrid+Rodrigues+Belém",
+      "summary": "Busca por 'Ingrid Rodrigues Belém' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-16T21:56:05Z",
+      "limitation": "Busca limitada aos resultados retornados pelo Bing; bio só foi verificável quando rede social abriu. Não prova inexistência de site."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/ingrid.rodrigues",
+      "summary": "Ingrid Rodrigues; Belém - PA; contato público: (91) 98728-5819; serviços: Massagem com Pedras Quentes, Massagem Desportiva, Massagem Miofascial, Massagem Mista, Massagem Relaxante, Massagem Terapêutica.",
+      "observed_at": "2026-10-16",
+      "limitation": "Perfil de marketplace; informações declaradas pelo anunciante, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/belem-pa",
+      "summary": "Ingrid Rodrigues Massoterapeuta 0,0 Belém, PA Visto há 2 semanas",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há indica acesso ao diretório, não prova atendimento nem data de publicação; mesma origem do perfil."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 50,
+    "confidence": "baixa",
+    "summary": "Candidato de massagem identificado em diretório público. Atividade e oportunidade de página própria requerem confirmação independente.",
+    "digital_presence": "Inspeção Playwright: sem_site; Instagram: nao_informado; Facebook: nao_informado. Não afirmar ausência de site.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços pode depender do perfil no marketplace.",
+        "evidence": "Ingrid Rodrigues; Belém - PA; contato público: (91) 98728-5819; serviços: Massagem com Pedras Quentes, Massagem Desportiva, Massagem Miofascial, Massagem Mista, Massagem Relaxante, Massagem Terapêutica."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria de serviços somente após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Possível página de apresentação dos serviços; recomendação condicionada à verificação de presença e necessidade."
+  }
+}

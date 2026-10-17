@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "uberlandia",
+    "unit": "",
+    "phone": "+5534998378156",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:dayane.afonso.1",
+    "instagram": "estudio_zen_udi",
+    "name_core": "dayane afonso",
+    "name_norm": "dayane afonso",
+    "source_name": "euterapeuta"
+  }
+}

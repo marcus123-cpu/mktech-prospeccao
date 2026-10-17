@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "curitiba",
+    "unit": "",
+    "phone": "+5541997882055",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:rosana.coroa.massagista.terapeutica",
+    "instagram": null,
+    "name_core": "jaqueline coroa massagista terapeutica",
+    "name_norm": "jaqueline coroa massagista terapeutica",
+    "source_name": "euterapeuta"
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "business_name": "Andrey Jaime Cavalcante",
+  "city": "Belém",
+  "state": "PA",
+  "niche": "Massagem",
+  "services": [
+    "Psicanálise Clínica",
+    "Naturopatia",
+    "Acupuntura",
+    "Fitoterapia",
+    "Massagem Relaxante",
+    "Ventosaterapia",
+    "Aromaterapia",
+    "Reflexologia Podal"
+  ],
+  "phone": "(91) 99349-2717",
+  "instagram": "andrey.jaime.cavalcante",
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:andrey.jaime.cavalcante",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. Threads é rede social; wa.link é um redirecionador de WhatsApp. Não são site próprio. Apenas metadados públicos de apresentação foram lidos; nenhum contato foi iniciado.",
+  "evidences": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/andrey.jaime.cavalcante/",
+      "summary": "Instagram @andrey.jaime.cavalcante aberto sem login; 261 seguidores, 41 publicações; link da bio: https://www.threads.com/@andrey.jaime.cavalcante, https://wa.link/2gj2e7",
+      "observed_at": "2026-10-16T22:00:41Z",
+      "limitation": "Threads é rede social; wa.link é um redirecionador de WhatsApp. Não são site próprio. Apenas metadados públicos de apresentação foram lidos; nenhum contato foi iniciado. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "site",
+      "url": "https://www.threads.com/@andrey.jaime.cavalcante",
+      "summary": "Link threads.com: site próprio no ar",
+      "observed_at": "2026-10-16T22:00:41Z",
+      "limitation": "Threads é rede social; wa.link é um redirecionador de WhatsApp. Não são site próprio. Apenas metadados públicos de apresentação foram lidos; nenhum contato foi iniciado. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "site",
+      "url": "https://wa.link/2gj2e7",
+      "summary": "Link wa.link: site próprio no ar",
+      "observed_at": "2026-10-16T22:00:41Z",
+      "limitation": "Threads é rede social; wa.link é um redirecionador de WhatsApp. Não são site próprio. Apenas metadados públicos de apresentação foram lidos; nenhum contato foi iniciado. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/andrey.jaime.cavalcante",
+      "summary": "Andrey Jaime Cavalcante; Belém - PA; contato público: (91) 99349-2717; serviços: Psicanálise Clínica, Naturopatia, Acupuntura, Fitoterapia, Massagem Relaxante, Ventosaterapia, Aromaterapia, Reflexologia Podal.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/belem-pa",
+      "summary": "Andrey Jaime Cavalcante Psicanalista - IFP 49172 | Naturopata - CRTP 7719 5,0 Belém, PA Visto há 1 mês R$150 /\n            1 hora",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/andrey.jaime.cavalcante",
+      "summary": "Revisão da inspeção automática: Threads é rede social; wa.link é um redirecionador de WhatsApp. Não são site próprio. Apenas metadados públicos de apresentação foram lidos; nenhum contato foi iniciado.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 38,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. Threads é rede social; wa.link é um redirecionador de WhatsApp. Não são site próprio. Apenas metadados públicos de apresentação foram lidos; nenhum contato foi iniciado.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Andrey Jaime Cavalcante; Belém - PA; contato público: (91) 99349-2717; serviços: Psicanálise Clínica, Naturopatia, Acupuntura, Fitoterapia, Massagem Relaxante, Ventosaterapia, Aromaterapia, Reflexologia Podal."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

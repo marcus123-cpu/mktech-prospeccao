@@ -1,0 +1,26 @@
+{
+  "http": 202,
+  "reason": "telefone_compartilhado",
+  "status": "possivel_duplicado",
+  "matches": [
+    {
+      "id": "b6dc1caf-5d31-4f36-b1e8-4342d93cb749",
+      "city": "Aracaju",
+      "unit": null,
+      "business_name": "Bruna Araujo"
+    }
+  ],
+  "matched_on": "telefone",
+  "normalized": {
+    "city": "natal",
+    "unit": "",
+    "phone": "+5579996939409",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:bruna.araujo.3",
+    "instagram": null,
+    "name_core": "bruna araujo",
+    "name_norm": "bruna araujo",
+    "source_name": "euterapeuta"
+  }
+}

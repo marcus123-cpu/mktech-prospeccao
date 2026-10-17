@@ -1,0 +1,67 @@
+{
+  "business_name": "Be on TOX",
+  "city": "Araraquara",
+  "state": "SP",
+  "niche": "estética facial",
+  "services": [
+    "Botox",
+    "Preenchimento",
+    "Harmonização facial"
+  ],
+  "phone": "+5516997310559",
+  "instagram": "@beontoxararaquara",
+  "whatsapp_url": "https://api.whatsapp.com/send?phone=5516997310559",
+  "address": "Rua Expedicionários do Brasil, 2236 - Centro, Araraquara - SP",
+  "research_date": "2026-10-14",
+  "priority": "alta",
+  "site_status": "apenas_redes_sociais",
+  "selection_reason": "Publicação de julho de 2026 divulga WhatsApp comercial; Instagram e encurtador de WhatsApp são os canais de apresentação identificados. O encurtador cadastrado como site redireciona ao mesmo número, sem acessar WhatsApp.",
+  "pending_items": "Post de janeiro menciona outro número; adotado o número do post mais recente, coincidente com SISMAR e Telu. Confirmar com o negócio se existe página própria não divulgada.",
+  "evidences": [
+    {
+      "kind": "diretorio",
+      "url": "https://www.salons10.com/BR/Araraquara/114460256580402/Be-on-tox",
+      "summary": "Be on tox, Rua Expedicionários do Brasil, 2236, Araraquara. Publicação em 23/07/2026: Adeus vasinhos! Agende de sua sessão pelo WhatsApp 16 99731-0559. Publicação em 29/06/2026: Botox! Apresentação: clínica especializada em Toxina Botulínica, Preenchimento. Campo Site aponta para https://www.instagram.com/beontoxararaquara/.",
+      "observed_at": "2026-10-14"
+    },
+    {
+      "kind": "outro",
+      "url": "https://www.sismar.org/convenios",
+      "summary": "Convênio SISMAR com Be On Tox - estética da face: Harmonização facial e estética; desconto de 10 a 20%; telefone 99731-0559; Rua Expedicionários do Brasil, 2236 - Centro; Site https://bit.ly/BeOnTox.",
+      "observed_at": "2026-10-14"
+    },
+    {
+      "kind": "outro",
+      "url": "https://bit.ly/BeOnTox",
+      "summary": "Verificação HTTP HEAD em 14/10/2026, sem seguir o redirecionamento: status 301; destino https://api.whatsapp.com/send?phone=5516997310559. O link apresentado como Site no SISMAR é um canal WhatsApp do mesmo telefone público.",
+      "observed_at": "2026-10-14"
+    },
+    {
+      "kind": "busca",
+      "summary": "Buscas Be on tox Araraquara site e Be on tox Araraquara site oficial retornaram redes sociais e diretórios. Não foi localizado domínio institucional nos resultados examinados.",
+      "observed_at": "2026-10-14",
+      "limitation": "Ausência nos resultados não prova inexistência de site."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 75,
+    "confidence": "media",
+    "summary": "Clínica de estética facial em Araraquara com divulgação de Botox e atendimento por WhatsApp em julho de 2026. Nas fontes examinadas, os campos de site apontam para Instagram ou encurtador do WhatsApp; cabe confirmar se existe página própria não divulgada.",
+    "digital_presence": "Instagram indicado em diretório; WhatsApp comercial confirmado por publicação, SISMAR e destino do encurtador. Atividade comprovada em 23/07/2026.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar com o negócio: apresentação dos procedimentos concentrada na rede social e WhatsApp, sem página institucional identificada nos canais públicos examinados.",
+        "evidence": "Campo Site aponta para https://www.instagram.com/beontoxararaquara/."
+      }
+    ],
+    "opportunities": [
+      "Reunir procedimentos, informações da clínica e contato em uma página institucional própria."
+    ],
+    "offer": "site_institucional",
+    "offer_reason": "Clínica com vários tratamentos e presença pública concentrada nos canais de rede social e contato examinados.",
+    "approach": "Contexto de pesquisa: divulgação recente de procedimentos e canais públicos de apresentação.",
+    "objections": [
+      "Já utiliza Instagram e WhatsApp"
+    ]
+  }
+}

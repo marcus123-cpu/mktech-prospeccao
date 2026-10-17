@@ -1,0 +1,26 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "existente",
+  "matches": [
+    {
+      "id": "067d3c12-1897-420b-b701-4bc9320c2a9d",
+      "city": "Salvador",
+      "unit": null,
+      "business_name": "Raika Terapeuta - Espaço Zuri"
+    }
+  ],
+  "matched_on": "telefone",
+  "normalized": {
+    "city": "salvador",
+    "unit": "",
+    "phone": "+5571982878246",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:rafaela.freitas",
+    "instagram": null,
+    "name_core": "raika terapeuta",
+    "name_norm": "raika terapeuta",
+    "source_name": "euterapeuta"
+  }
+}

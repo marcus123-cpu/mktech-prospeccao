@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "santos",
+    "unit": "",
+    "phone": "+5513997339025",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:robertta.massoterapeuta",
+    "instagram": null,
+    "name_core": "robertta massoterapeuta",
+    "name_norm": "robertta massoterapeuta",
+    "source_name": "euterapeuta"
+  }
+}

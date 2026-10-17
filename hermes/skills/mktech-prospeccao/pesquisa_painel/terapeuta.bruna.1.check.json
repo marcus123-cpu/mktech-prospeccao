@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "curitiba",
+    "unit": "",
+    "phone": "+5541987649205",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:terapeuta.bruna.1",
+    "instagram": null,
+    "name_core": "bruna massagista",
+    "name_norm": "bruna massagista",
+    "source_name": "euterapeuta"
+  }
+}

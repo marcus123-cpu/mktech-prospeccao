@@ -1,0 +1,70 @@
+{
+  "business_name": "Physico's Academia",
+  "city": "Barretos",
+  "state": "SP",
+  "niche": "Academia",
+  "instagram": "academia_physicos",
+  "phone": "17996845422",
+  "services": [
+    "MUSCULAÇÃO"
+  ],
+  "address": "Rua Vinte e Seis, 2014, Barretos - SP",
+  "source_name": "busca_web",
+  "research_date": "2026-10-17",
+  "website_url": null,
+  "whatsapp_url": null,
+  "selection_reason": "Negócio do nicho e cidade configurados; presença inspecionada com Playwright. Nenhum site próprio localizado nas fontes consultadas; confirmar eventual página não indexada.",
+  "pending_items": "Confirmar WhatsApp comercial e vínculo do número; confirmar data da última atividade e eventual site não indexado. Número da bio oficial utilizado em preferência ao Wellhub, que informa (17) 99199-0919. Link wa.me apenas lido na bio, sem chamada ao WhatsApp.",
+  "priority": "alta",
+  "site_status": "apenas_redes_sociais",
+  "evidences": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/academia_physicos/",
+      "summary": "Instagram @academia_physicos aberto sem login; 1246 seguidores, 74 publicações; link da bio: https://wa.me/5517996845422",
+      "observed_at": "2026-10-17T10:03:25Z"
+    },
+    {
+      "kind": "busca",
+      "url": "https://wa.me/5517996845422",
+      "summary": "Link wa.me: agregador de links (não é site próprio)",
+      "observed_at": "2026-10-17T10:03:25Z"
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://wellhub.com/pt-br/search/partners/physico-s-academia-fortaleza-barretos/",
+      "summary": "Physico’s Academia em Barretos; Musculação, personal trainer; Rua Vinte e Seis, 2014; Instagram academia_physicos; telefone (17) 99199-0919.",
+      "limitation": "Telefone diverge da bio oficial."
+    },
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/academia_physicos/",
+      "summary": "Bio pública: Desde 1999 proporcionando qualidade de vida e bem-estar. MUSCULAÇÃO; Aceitamos GYMPASS E TOTALPASS; telefone 17-99684-5422 e link wa.me/5517996845422."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://totalpass.com/br/academias/physico-s/",
+      "summary": "Physico’s, Rua Vinte e Seis, 2014, Barretos, SP; Musculação e horários de funcionamento."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 87,
+    "confidence": "media",
+    "summary": "Physico's Academia atua em Barretos, no segmento Academia. As fontes consultadas apresentam os serviços e canais públicos; a existência de site não indexado permanece sujeita a confirmação.",
+    "audience": "Pessoas que procuram MUSCULAÇÃO em Barretos.",
+    "digital_presence": "{\"handle\": \"academia_physicos\", \"status\": \"ok\", \"url\": \"https://www.instagram.com/academia_physicos/\", \"seguidores\": 1246, \"seguindo\": 333, \"posts\": 74, \"bio_texto\": \"1.246 seguidores | 317 seguindo | PHYSICO’S 🏋🏻‍♂️ | Desde 1999 proporcionando qualidade de vida e bem-estar. MUSCULAÇÃO | *Aceitamos GYMPASS E TOTALPASS* | 📞17-99684-5422... | mais | wa.me/5517996845422 | HORARIOS\", \"links_bio\": [\"https://wa.me/5517996845422\"]}; so_agregador",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: uma página própria pode reunir apresentação dos serviços e contato fora das redes e diretórios.",
+        "evidence": "Link wa.me: agregador de links (não é site próprio)"
+      }
+    ],
+    "opportunities": [
+      "Reunir serviços, apresentação e contato comercial em página própria, caso a lacuna seja confirmada."
+    ],
+    "offer": "site_institucional",
+    "offer_reason": "Apresentar serviços e canais em endereço próprio, sujeito à confirmação da presença digital.",
+    "approach": "Pesquisa registrada para avaliação do motor V6; sem mensagem comercial preparada.",
+    "objections": []
+  }
+}

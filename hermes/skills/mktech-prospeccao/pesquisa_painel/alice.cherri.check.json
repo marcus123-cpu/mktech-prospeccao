@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "recife",
+    "unit": "",
+    "phone": "+5581983508721",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:alice.cherri",
+    "instagram": null,
+    "name_core": "alice cherri",
+    "name_norm": "alice cherri",
+    "source_name": "euterapeuta"
+  }
+}

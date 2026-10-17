@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "joinville",
+    "unit": "",
+    "phone": "+5547997507476",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:cris.guedes",
+    "instagram": null,
+    "name_core": "cris guedes",
+    "name_norm": "cris guedes",
+    "source_name": "euterapeuta"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "nome": "Luiza Marjorie",
+  "cidade": "Manaus",
+  "verificado_em": "2026-10-16T22:54:11Z",
+  "instagram": {
+    "handle": "indiarara7",
+    "status": "ok",
+    "url": "https://www.instagram.com/indiarara7/",
+    "seguidores": 1543,
+    "seguindo": 1466,
+    "posts": 9,
+    "bio_texto": "Não disponível para determinados públicos. Faça login para continuar. | Entrar | Cadastre-se | Meta | Sobre | Blog | Carreiras | Ajuda | API",
+    "links_bio": []
+  },
+  "facebook": {
+    "status": "nao_informado"
+  },
+  "site": {
+    "situacao": "site_fora_do_ar",
+    "detalhe": [
+      {
+        "url": "https://www.magazineluiza.com.br/?msockid=2b126ea267716e2d26d3795666256fc2",
+        "dominio": "magazineluiza.com.br",
+        "tipo": "site_fora_do_ar",
+        "http": 403,
+        "origem": "busca"
+      },
+      {
+        "url": "https://www.magazineluiza.com.br/novo-site-magazine-luiza/?msockid=2b126ea267716e2d26d3795666256fc2",
+        "dominio": "magazineluiza.com.br",
+        "tipo": "site_fora_do_ar",
+        "http": 403,
+        "origem": "busca"
+      }
+    ]
+  },
+  "nota_sugerida": 59,
+  "componentes": {
+    "lacuna_digital": 25,
+    "atividade": 8,
+    "demanda": 11,
+    "potencial_comercial": 15
+  },
+  "confianca": "media",
+  "site_status_sugerido": "site_proprio_encontrado",
+  "evidencias": [
+    {
+      "kind": "instagram",
+      "url": "https://www.instagram.com/indiarara7/",
+      "summary": "Instagram @indiarara7 aberto sem login; 1543 seguidores, 9 publicações; sem link de site na bio",
+      "observed_at": "2026-10-16T22:54:11Z"
+    },
+    {
+      "kind": "site",
+      "url": "https://www.magazineluiza.com.br/?msockid=2b126ea267716e2d26d3795666256fc2",
+      "summary": "Link magazineluiza.com.br: endereço não abre (HTTP 403)",
+      "observed_at": "2026-10-16T22:54:11Z"
+    },
+    {
+      "kind": "site",
+      "url": "https://www.magazineluiza.com.br/novo-site-magazine-luiza/?msockid=2b126ea267716e2d26d3795666256fc2",
+      "summary": "Link magazineluiza.com.br: endereço não abre (HTTP 403)",
+      "observed_at": "2026-10-16T22:54:11Z"
+    }
+  ],
+  "avisos": [
+    "Última publicação não apareceu sem login: não afirme atividade recente sem outra fonte."
+  ]
+}

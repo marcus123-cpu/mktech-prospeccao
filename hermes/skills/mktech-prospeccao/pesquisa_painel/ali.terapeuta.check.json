@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "porto alegre",
+    "unit": "",
+    "phone": "+5551990153367",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:ali.terapeuta",
+    "instagram": null,
+    "name_core": "ali terapeuta",
+    "name_norm": "ali terapeuta",
+    "source_name": "euterapeuta"
+  }
+}

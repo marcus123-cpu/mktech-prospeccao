@@ -1,0 +1,42 @@
+{
+  "nome": "Ali Terapêuta",
+  "cidade": "Porto Alegre",
+  "verificado_em": "2026-10-16T22:07:54Z",
+  "instagram": {
+    "handle": "",
+    "status": "nao_informado"
+  },
+  "facebook": {
+    "status": "nao_informado"
+  },
+  "site": {
+    "situacao": "site_fora_do_ar",
+    "detalhe": [
+      {
+        "url": "https://www.aliexpress.com/",
+        "dominio": "aliexpress.com",
+        "tipo": "site_fora_do_ar",
+        "http": 0,
+        "origem": "busca"
+      }
+    ]
+  },
+  "nota_sugerida": 40,
+  "componentes": {
+    "lacuna_digital": 25,
+    "atividade": 0,
+    "demanda": 0,
+    "potencial_comercial": 15
+  },
+  "confianca": "baixa",
+  "site_status_sugerido": "site_proprio_encontrado",
+  "evidencias": [
+    {
+      "kind": "site",
+      "url": "https://www.aliexpress.com/",
+      "summary": "Link aliexpress.com: endereço não abre (HTTP 0)",
+      "observed_at": "2026-10-16T22:07:54Z"
+    }
+  ],
+  "avisos": []
+}

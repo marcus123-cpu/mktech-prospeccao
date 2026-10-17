@@ -1,0 +1,26 @@
+{
+  "http": 202,
+  "reason": "telefone_compartilhado",
+  "status": "possivel_duplicado",
+  "matches": [
+    {
+      "id": "d2ac3bac-5f57-47b0-8fa1-1e31e965cf4d",
+      "city": "Uberlândia",
+      "unit": null,
+      "business_name": "Dayane Afonso"
+    }
+  ],
+  "matched_on": "telefone",
+  "normalized": {
+    "city": "uberlandia",
+    "unit": "",
+    "phone": "+5534998378156",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:dayane.cristiana",
+    "instagram": "studiozennn",
+    "name_core": "dayane cristiana",
+    "name_norm": "dayane cristiana",
+    "source_name": "euterapeuta"
+  }
+}

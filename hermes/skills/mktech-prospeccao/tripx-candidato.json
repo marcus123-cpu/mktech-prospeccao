@@ -1,0 +1,66 @@
+{
+  "business_name": "Tripx academia",
+  "city": "Barretos",
+  "state": "SP",
+  "niche": "Academia",
+  "instagram": null,
+  "phone": "17991963890",
+  "services": [
+    "Musculação",
+    "Pilates"
+  ],
+  "address": "Avenida Antônio Frederico Ozanan, 2511, Jardim Allah, Barretos - SP",
+  "source_name": "busca_web",
+  "research_date": "2026-10-17",
+  "website_url": null,
+  "whatsapp_url": null,
+  "selection_reason": "Negócio do nicho e cidade configurados; presença inspecionada com Playwright. Nenhum site próprio localizado nas fontes consultadas; confirmar eventual página não indexada.",
+  "pending_items": "Confirmar WhatsApp comercial e vínculo do número; confirmar data da última atividade e eventual site não indexado. Instagram não localizado; data de publicação recente não visível.",
+  "priority": "alta",
+  "site_status": "apenas_redes_sociais",
+  "evidences": [
+    {
+      "kind": "busca",
+      "url": "https://facebook.com/tripxacademia",
+      "summary": "Facebook aberto sem login: TRIP X Academia | Barretos SP | Facebook; TRIP X Academia, Barretos. 2.010 seguidores · 182 estiveram aqui. TRIP X ACADEMIA é para você que busca treinos de resultado! Musculação, treino funcional, muay thai e muito mais!",
+      "observed_at": "2026-10-17T10:05:46Z"
+    },
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Tripx+academia+Barretos",
+      "summary": "Busca por 'Tripx academia Barretos' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-17T10:05:46Z",
+      "limitation": "Busca e bio consultadas não excluem página própria não indexada; ausência não afirmada de forma absoluta."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://wellhub.com/pt-br/search/partners/tripx-academia-jardim-allah/",
+      "summary": "Tripx academia; Barretos, Avenida Antônio Frederico Ozanan, 2511, Jardim Allah; telefone (17) 99196-3890; Facebook tripxacademia; horários de funcionamento."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://totalpass.com/br/academias/tripx-academia/",
+      "summary": "Tripx academia, Avenida Antonio Frederico Ozanan, 2511, Jardim Allah, Barretos; Pilates e Musculação."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 82,
+    "confidence": "media",
+    "summary": "Tripx academia atua em Barretos, no segmento Academia. As fontes consultadas apresentam os serviços e canais públicos; a existência de site não indexado permanece sujeita a confirmação.",
+    "audience": "Pessoas que procuram Musculação em Barretos.",
+    "digital_presence": "{\"handle\": \"\", \"status\": \"nao_informado\"}; sem_site",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: uma página própria pode reunir apresentação dos serviços e contato fora das redes e diretórios.",
+        "evidence": "Busca por 'Tripx academia Barretos' e conferência do link da bio: nenhum site ou landing page próprio localizado"
+      }
+    ],
+    "opportunities": [
+      "Reunir serviços, apresentação e contato comercial em página própria, caso a lacuna seja confirmada."
+    ],
+    "offer": "site_institucional",
+    "offer_reason": "Apresentar serviços e canais em endereço próprio, sujeito à confirmação da presença digital.",
+    "approach": "Pesquisa registrada para avaliação do motor V6; sem mensagem comercial preparada.",
+    "objections": []
+  }
+}

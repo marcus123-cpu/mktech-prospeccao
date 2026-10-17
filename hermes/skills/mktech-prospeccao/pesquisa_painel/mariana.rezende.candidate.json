@@ -1,0 +1,69 @@
+{
+  "business_name": "Mariana Rezende",
+  "city": "Joinville",
+  "state": "SC",
+  "niche": "Massagem",
+  "services": [
+    "Massagem Mista",
+    "Massagem Relaxante",
+    "Massagem Tântrica"
+  ],
+  "phone": "(47) 97400-8593",
+  "instagram": null,
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:mariana.rezende",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. O resultado letras.mus.br/galinha-pintadinha é página de música. Não comprova site da massoterapeuta de Joinville.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://www.letras.mus.br/galinha-pintadinha/1759804/",
+      "summary": "Link letras.mus.br: endereço não abre (HTTP 403)",
+      "observed_at": "2026-10-16T21:54:44Z",
+      "limitation": "O resultado letras.mus.br/galinha-pintadinha é página de música. Não comprova site da massoterapeuta de Joinville. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/mariana.rezende",
+      "summary": "Mariana Rezende; Joinville - SC; contato público: (47) 97400-8593; serviços: Massagem Mista, Massagem Relaxante, Massagem Tântrica.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/joinville-sc",
+      "summary": "Premium Mariana Rezende Massoterapeuta 0,0 Joinville, SC Visto há 2 meses",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/mariana.rezende",
+      "summary": "Revisão da inspeção automática: O resultado letras.mus.br/galinha-pintadinha é página de música. Não comprova site da massoterapeuta de Joinville.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 40,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. O resultado letras.mus.br/galinha-pintadinha é página de música. Não comprova site da massoterapeuta de Joinville.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Mariana Rezende; Joinville - SC; contato público: (47) 97400-8593; serviços: Massagem Mista, Massagem Relaxante, Massagem Tântrica."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

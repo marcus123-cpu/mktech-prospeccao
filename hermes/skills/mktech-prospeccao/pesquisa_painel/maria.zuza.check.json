@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "teresina",
+    "unit": "",
+    "phone": "+5589994672466",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:maria.zuza",
+    "instagram": null,
+    "name_core": "maria zuza",
+    "name_norm": "maria zuza",
+    "source_name": "euterapeuta"
+  }
+}

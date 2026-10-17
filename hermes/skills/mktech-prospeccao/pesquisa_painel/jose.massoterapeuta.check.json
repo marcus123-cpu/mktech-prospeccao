@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "maceio",
+    "unit": "",
+    "phone": "+5582991569117",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:jose.massoterapeuta",
+    "instagram": null,
+    "name_core": "jose massoterapeuta",
+    "name_norm": "jose massoterapeuta",
+    "source_name": "euterapeuta"
+  }
+}

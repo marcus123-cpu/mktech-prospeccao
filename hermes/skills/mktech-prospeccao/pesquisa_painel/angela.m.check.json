@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "joinville",
+    "unit": "",
+    "phone": "+5547997079110",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:angela.m",
+    "instagram": null,
+    "name_core": "angel",
+    "name_norm": "espaco angel",
+    "source_name": "euterapeuta"
+  }
+}

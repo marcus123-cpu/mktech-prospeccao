@@ -1,0 +1,61 @@
+{
+  "business_name": "Dermal Clean Piracicaba",
+  "city": "Piracicaba",
+  "state": "SP",
+  "phone": "+5519981662979",
+  "instagram": "clinicadermalclean",
+  "website_url": "https://dermalclean.site/",
+  "address": "Av. Independência, 350, Sala 113, Edifício Primus, Piracicaba/SP",
+  "services": [
+    "Harmonização Facial"
+  ],
+  "niche": "harmonização facial",
+  "research_date": "2026-10-14",
+  "site_status": "verificacao_pendente",
+  "priority": "baixa",
+  "source_name": "busca_web",
+  "selection_reason": "Site próprio indexado oferece Harmonização Facial; canal público confirmado em diretório. Diagnóstico limitado por versões divergentes da página de publicações.",
+  "pending_items": "Confirmar atividade recente: busca retorna post 21/08/2026, abertura do mesmo URL retorna cache de 02/07/2025. Confirmar bairro (Alemães/Cidade Alta), horário e link público de WhatsApp; não concluir inatividade.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://dermalclean.site/",
+      "summary": "Dermal Clean Piracicaba. Harmonização Facial. WhatsApp (19) 98166-2979. Av. Independência, 350, Sala 113; bairro Alemães. Horário seg-sex 9h30–20h30, sábado 9h–14h.",
+      "limitation": "Conteúdo indexado; abertura expõe apenas iframe, sem menu completo ou datas.",
+      "observed_at": "2026-10-14"
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://guiafix.com.br/piracicaba-sp/harmonizacao-facial",
+      "summary": "Dermal Clean Piracicaba, Dra. Cristiane Alves, Farmacêutica Esteta. Harmonização Facial e Corporal, Peeling e Laserterapia.",
+      "observed_at": "2026-10-14"
+    },
+    {
+      "kind": "outro",
+      "url": "https://www.beautynailhairsalons.com/BR/Piracicaba/101117015680511/Dermal-Clean---Cl%C3%ADnica-Piracicaba",
+      "summary": "Dermal Clean, Av. Independência, 350/Sala 113, Piracicaba, +5519981662979. Diretório informa seg-sex 08h–18h. Busca retorna post 21/08/2026, mas abertura mostra publicação 02/07/2025.",
+      "limitation": "Divergência de versões/cache impede confirmar atividade recente.",
+      "observed_at": "2026-10-14"
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 45,
+    "confidence": "baixa",
+    "summary": "Clínica de harmonização facial e estética em Piracicaba, identificada no site e diretórios. A pesquisa localizou divergências de horários e de versões de publicações, por isso atividade recente requer confirmação.",
+    "digital_presence": "Site próprio indexado, Instagram divulgado e telefone comercial correspondente em agregador.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: padronizar horários de atendimento entre site e diretórios.",
+        "evidence": "Horário seg-sex 9h30–20h30, sábado 9h–14h."
+      }
+    ],
+    "opportunities": [
+      "Confirmar horários e atualizar canais com informação consistente.",
+      "Revisar acessibilidade do conteúdo do site, cujo HTML extraído não apresentou tratamentos."
+    ],
+    "offer": "site_institucional",
+    "offer_reason": "Revisão de conteúdo e dados públicos existentes condicionada à confirmação do negócio.",
+    "approach": "Investigar horários e atividade; sem mensagem pronta.",
+    "objections": []
+  }
+}

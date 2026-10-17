@@ -1,0 +1,34 @@
+{
+  "nome": "Luna Privé — exclusiva e marcante",
+  "cidade": "São Luís",
+  "verificado_em": "2026-10-16T21:49:20Z",
+  "instagram": {
+    "handle": "",
+    "status": "nao_informado"
+  },
+  "facebook": {
+    "status": "nao_informado"
+  },
+  "site": {
+    "situacao": "sem_site",
+    "detalhe": []
+  },
+  "nota_sugerida": 50,
+  "componentes": {
+    "lacuna_digital": 35,
+    "atividade": 0,
+    "demanda": 0,
+    "potencial_comercial": 15
+  },
+  "confianca": "baixa",
+  "site_status_sugerido": "site_nao_localizado",
+  "evidencias": [
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Luna+Privé+—+exclusiva+e+marcante+São+Luís",
+      "summary": "Busca por 'Luna Privé — exclusiva e marcante São Luís' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-16T21:49:20Z"
+    }
+  ],
+  "avisos": []
+}

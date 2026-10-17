@@ -1,0 +1,54 @@
+{
+  "business_name": "Elisa Bordignon Estética",
+  "city": "Ribeirão Preto",
+  "phone": "+5516981731708",
+  "instagram": "elisaesteta",
+  "address": "R. Antônio Martinês, 352, Jardim Palma Travassos, Ribeirão Preto/SP",
+  "website_url": "https://elisaestetica.com.br/",
+  "whatsapp_url": "https://wa.me/5516981731708",
+  "services": [
+    "estética facial"
+  ],
+  "state": "SP",
+  "niche": "estética facial",
+  "research_date": "2026-10-14",
+  "source_name": "busca_web",
+  "site_status": "verificacao_pendente",
+  "priority": "baixa",
+  "selection_reason": "Observação: página inicial apresenta especialidade e contato, sem lista dos procedimentos no conteúdo extraído; hipótese a confirmar de ampliar informação para primeira consulta.",
+  "pending_items": "Confirmar atividade recente, procedimentos oferecidos e grafia do logradouro. Perfil LinkedIn sem data recente; não presumir inatividade.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://elisaestetica.com.br/",
+      "summary": "Elisa Bordignon. Estetacosmetóloga especialista em estética facial. Atendimento com hora marcada, WhatsApp (16) 98173-1708; href público wa.me/5516981731708 corresponde ao telefone. Endereço R. Antônio Martinês, 352, Ribeirão Preto.",
+      "observed_at": "2026-10-14"
+    },
+    {
+      "kind": "outro",
+      "url": "https://br.linkedin.com/in/elisa-bordignon-1b015a11a",
+      "summary": "Elisa Bordignon Makeup e Estética, Ribeirão Preto e Região. Formação FATESA 2017–2019.",
+      "observed_at": "2026-10-14",
+      "limitation": "Perfil sem data recente; confirmar vínculo atual."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 38,
+    "confidence": "baixa",
+    "summary": "Elisa Bordignon Estética atua em Ribeirão Preto com serviços estéticos e presença pública verificada. Confirmar atividade recente, procedimentos oferecidos e grafia do logradouro. Perfil LinkedIn sem data recente; não presumir inatividade.",
+    "digital_presence": "Site próprio localizado e canais descritos nas evidências; não presumir ausência de agenda ou baixa conversão.",
+    "pains": [
+      {
+        "pain": "Observação: página inicial apresenta especialidade e contato, sem lista dos procedimentos no conteúdo extraído; hipótese a confirmar de ampliar informação para primeira consulta.",
+        "evidence": "Estetacosmetóloga especialista em estética facial"
+      }
+    ],
+    "opportunities": [
+      "Revisar informações verificadas e organizar conteúdo por procedimento, conforme confirmação do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Observação: página inicial apresenta especialidade e contato, sem lista dos procedimentos no conteúdo extraído; hipótese a confirmar de ampliar informação para primeira consulta.",
+    "approach": "Investigar a oportunidade registrada com dados confirmados; sem mensagem pronta.",
+    "objections": []
+  }
+}

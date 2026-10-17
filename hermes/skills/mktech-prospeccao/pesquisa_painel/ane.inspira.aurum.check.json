@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "curitiba",
+    "unit": "",
+    "phone": "+5541999640611",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:ane.inspira.aurum",
+    "instagram": null,
+    "name_core": "ane inspira bemestar",
+    "name_norm": "ane inspira bemestar",
+    "source_name": "euterapeuta"
+  }
+}

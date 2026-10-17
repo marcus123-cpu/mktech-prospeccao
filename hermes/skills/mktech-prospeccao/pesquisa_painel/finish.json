@@ -1,0 +1,41 @@
+{
+  "http": 200,
+  "run_id": "a530496c-7627-4e51-a4dc-1a1c2cef6956",
+  "status": "encerrada",
+  "qualificados": 100,
+  "report": {
+    "niche": "Massagem",
+    "saved": 100,
+    "errors": 4,
+    "run_id": "a530496c-7627-4e51-a4dc-1a1c2cef6956",
+    "status": "concluida",
+    "target": 100,
+    "updated": 0,
+    "analyzed": 178,
+    "discarded": 17,
+    "shortfall": null,
+    "location_city": null,
+    "location_scope": "brasil",
+    "location_state": null,
+    "pending_review": 6,
+    "discard_reasons": [
+      {
+        "count": 9,
+        "reason": "duplicado"
+      },
+      {
+        "count": 8,
+        "reason": "site_proprio_sem_lacuna_comprovada"
+      },
+      {
+        "count": 1,
+        "reason": "phone não reconhecido (informe DDD)"
+      },
+      {
+        "count": 1,
+        "reason": "instagram não reconhecido"
+      }
+    ],
+    "pending_enrichment": 100
+  }
+}

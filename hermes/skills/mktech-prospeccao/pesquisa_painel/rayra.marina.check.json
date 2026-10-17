@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "uberlandia",
+    "unit": "",
+    "phone": "+5521995996668",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:rayra.marina",
+    "instagram": null,
+    "name_core": "rayra divine massage",
+    "name_norm": "rayra divine massage",
+    "source_name": "euterapeuta"
+  }
+}

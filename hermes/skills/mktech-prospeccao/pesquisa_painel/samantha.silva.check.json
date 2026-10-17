@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "santos",
+    "unit": "",
+    "phone": "+5513996036670",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:samantha.silva",
+    "instagram": null,
+    "name_core": "samantha silva",
+    "name_norm": "samantha silva",
+    "source_name": "euterapeuta"
+  }
+}

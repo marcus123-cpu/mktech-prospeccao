@@ -1,0 +1,72 @@
+{
+  "business_name": "Massagem Ultra relaxante",
+  "city": "Porto Alegre",
+  "state": "RS",
+  "niche": "Massagem",
+  "services": [
+    "Massagem com Pedras Quentes",
+    "Massagem Dreno Relaxante",
+    "Massagem Mista",
+    "Massagem Modeladora",
+    "Massagem Relaxante",
+    "Massagem Tântrica"
+  ],
+  "phone": "(51) 99258-6995",
+  "instagram": null,
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:massagem.ultra.relaxante",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. O resultado topmassagens.com.br/casa-de-massagens é artigo genérico de um diretório nacional (menu Encontrar Terapeutas e Criar Anúncio), não site próprio confirmado deste negócio de Porto Alegre.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://topmassagens.com.br/casa-de-massagens/",
+      "summary": "Link topmassagens.com.br: site próprio no ar",
+      "observed_at": "2026-10-16T22:02:12Z",
+      "limitation": "O resultado topmassagens.com.br/casa-de-massagens é artigo genérico de um diretório nacional (menu Encontrar Terapeutas e Criar Anúncio), não site próprio confirmado deste negócio de Porto Alegre. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/massagem.ultra.relaxante",
+      "summary": "Massagem Ultra relaxante; Porto Alegre - RS; contato público: (51) 99258-6995; serviços: Massagem com Pedras Quentes, Massagem Dreno Relaxante, Massagem Mista, Massagem Modeladora, Massagem Relaxante, Massagem Tântrica.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/porto-alegre-rs",
+      "summary": "Massagem Ultra relaxante Massoterapeuta e esteticista 0,0 Porto Alegre, RS Visto há 21 horas",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/massagem.ultra.relaxante",
+      "summary": "Revisão da inspeção automática: O resultado topmassagens.com.br/casa-de-massagens é artigo genérico de um diretório nacional (menu Encontrar Terapeutas e Criar Anúncio), não site próprio confirmado deste negócio de Porto Alegre.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 15,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. O resultado topmassagens.com.br/casa-de-massagens é artigo genérico de um diretório nacional (menu Encontrar Terapeutas e Criar Anúncio), não site próprio confirmado deste negócio de Porto Alegre.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Massagem Ultra relaxante; Porto Alegre - RS; contato público: (51) 99258-6995; serviços: Massagem com Pedras Quentes, Massagem Dreno Relaxante, Massagem Mista, Massagem Modeladora, Massagem Relaxante, Massagem Tântrica."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

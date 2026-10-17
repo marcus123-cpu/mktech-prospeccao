@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "manaus",
+    "unit": "",
+    "phone": "+5592984828654",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:aurora.gabriella",
+    "instagram": null,
+    "name_core": "aurora gabriella",
+    "name_norm": "aurora gabriella",
+    "source_name": "euterapeuta"
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "business_name": "Academia Personal Studio",
+  "city": "Barretos",
+  "state": "SP",
+  "niche": "Academia",
+  "instagram": null,
+  "phone": "1733221990",
+  "services": [
+    "musculação",
+    "personal trainer"
+  ],
+  "address": "Rua 26, Barretos - SP",
+  "source_name": "busca_web",
+  "research_date": "2026-10-17",
+  "website_url": null,
+  "whatsapp_url": null,
+  "selection_reason": "Negócio do nicho e cidade configurados; presença inspecionada com Playwright. Nenhum site próprio localizado nas fontes consultadas; confirmar eventual página não indexada.",
+  "pending_items": "Confirmar WhatsApp comercial e vínculo do número; confirmar data da última atividade e eventual site não indexado. Confirmar número e complemento do endereço; fonte indexada indica Rua 26, enquanto outra listagem indica Rua Dezoito 1217. Instagram não localizado.",
+  "priority": "alta",
+  "site_status": "apenas_redes_sociais",
+  "evidences": [
+    {
+      "kind": "busca",
+      "url": "https://www.facebook.com/536857649745149",
+      "summary": "Facebook aberto sem login: Academia Personal Studio | Barretos SP | Facebook; Academia Personal Studio, Barretos. 886 seguidores · 143 estiveram aqui. PERSONAL TRAINER\n\nACADEMIA QUE VISA QUALIDADE\n\nDE VIDA E RESPEITA\n\nINDIVIDUALIDADE DOS ALUNOS",
+      "observed_at": "2026-10-17T10:06:02Z"
+    },
+    {
+      "kind": "busca",
+      "url": "https://www.bing.com/search?q=Academia+Personal+Studio+Barretos",
+      "summary": "Busca por 'Academia Personal Studio Barretos' e conferência do link da bio: nenhum site ou landing page próprio localizado",
+      "observed_at": "2026-10-17T10:06:02Z",
+      "limitation": "Busca e bio consultadas não excluem página própria não indexada; ausência não afirmada de forma absoluta."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://www.findglocal.com/BR/Barretos/536857649745149/Academia-Personal-Studio",
+      "summary": "Academia Personal Studio em Barretos, Rua 26; telefone +551733221990; publicação reproduzida de 31/08/2026 convida à retomada dos treinos após Festa do Peão; publicação de 03/08/2026 apresenta musculação e acompanhamento.",
+      "limitation": "Conteúdo de Facebook reproduzido por diretório; abertura web direta falhou, texto acessível no resultado indexado."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 78,
+    "confidence": "media",
+    "summary": "Academia Personal Studio atua em Barretos, no segmento Academia. As fontes consultadas apresentam os serviços e canais públicos; a existência de site não indexado permanece sujeita a confirmação.",
+    "audience": "Pessoas que procuram musculação em Barretos.",
+    "digital_presence": "{\"handle\": \"\", \"status\": \"nao_informado\"}; sem_site",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: uma página própria pode reunir apresentação dos serviços e contato fora das redes e diretórios.",
+        "evidence": "Busca por 'Academia Personal Studio Barretos' e conferência do link da bio: nenhum site ou landing page próprio localizado"
+      }
+    ],
+    "opportunities": [
+      "Reunir serviços, apresentação e contato comercial em página própria, caso a lacuna seja confirmada."
+    ],
+    "offer": "site_institucional",
+    "offer_reason": "Apresentar serviços e canais em endereço próprio, sujeito à confirmação da presença digital.",
+    "approach": "Pesquisa registrada para avaliação do motor V6; sem mensagem comercial preparada.",
+    "objections": []
+  }
+}

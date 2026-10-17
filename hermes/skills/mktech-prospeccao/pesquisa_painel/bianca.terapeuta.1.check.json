@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "sao luis",
+    "unit": "",
+    "phone": "+5598988962923",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:bianca.terapeuta.1",
+    "instagram": null,
+    "name_core": "bianca terapeuta",
+    "name_norm": "bianca terapeuta",
+    "source_name": "euterapeuta"
+  }
+}

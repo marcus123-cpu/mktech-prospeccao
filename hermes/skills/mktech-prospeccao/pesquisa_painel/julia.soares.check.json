@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "natal",
+    "unit": "",
+    "phone": "+5584996196569",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:julia.soares",
+    "instagram": null,
+    "name_core": "inversao papeis dominacao",
+    "name_norm": "inversao de papeis e dominacao",
+    "source_name": "euterapeuta"
+  }
+}

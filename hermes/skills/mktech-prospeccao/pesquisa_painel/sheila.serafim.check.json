@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "brasilia",
+    "unit": "",
+    "phone": "+5561992035658",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:sheila.serafim",
+    "instagram": null,
+    "name_core": "sheila serafim",
+    "name_norm": "sheila serafim",
+    "source_name": "euterapeuta"
+  }
+}

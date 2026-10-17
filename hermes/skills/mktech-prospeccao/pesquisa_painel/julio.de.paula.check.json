@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "belem",
+    "unit": "",
+    "phone": "+5591998232828",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:julio.de.paula",
+    "instagram": null,
+    "name_core": "julio paula",
+    "name_norm": "julio de paula",
+    "source_name": "euterapeuta"
+  }
+}

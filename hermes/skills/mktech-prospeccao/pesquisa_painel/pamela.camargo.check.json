@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "curitiba",
+    "unit": "",
+    "phone": "+5541997091819",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:pamela.camargo",
+    "instagram": null,
+    "name_core": "pamela camargo",
+    "name_norm": "pamela camargo",
+    "source_name": "euterapeuta"
+  }
+}

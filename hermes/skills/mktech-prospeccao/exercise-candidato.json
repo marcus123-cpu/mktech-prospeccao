@@ -1,0 +1,61 @@
+{
+  "business_name": "Exercise Academia",
+  "city": "Barretos",
+  "state": "SP",
+  "niche": "Academia",
+  "instagram": null,
+  "phone": null,
+  "services": [
+    "Musculação",
+    "Treinamento Funcional"
+  ],
+  "address": "Rua 06, 0862, São José, Barretos - SP",
+  "source_name": "busca_web",
+  "research_date": "2026-10-17",
+  "website_url": null,
+  "whatsapp_url": null,
+  "selection_reason": "Negócio do nicho e cidade configurados; presença inspecionada com Playwright. Nenhum site próprio localizado nas fontes consultadas; confirmar eventual página não indexada.",
+  "pending_items": "Confirmar WhatsApp comercial e vínculo do número; confirmar data da última atividade e eventual site não indexado. Nota 32 preservada do inspetor; falso positivo do dicionário descartado como site. Telefone atual não confirmado: fonte BR Firmas de 2016 indica (17) 3323-0672 e endereço divergente Avenida Nove de Julho 265; número antigo não adotado. Localizar redes oficiais e confirmar atividade. Redes sociais oficiais e atividade atual não confirmadas; candidato incompleto para enriquecimento, sem qualificação de envio.",
+  "priority": "baixa",
+  "site_status": "verificacao_pendente",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://dictionary.cambridge.org/dictionary/english/exercise",
+      "summary": "Link dictionary.cambridge.org: endereço não abre (HTTP 403)",
+      "observed_at": "2026-10-17T10:06:54Z",
+      "limitation": "Não havia identificador de rede social confirmado para abertura. Busca negativa não comprova ausência de site, nem atividade atual."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://www.gurupass.com.br/detalhes-da-academia/exercise-academia/",
+      "summary": "Exercíse Academia, Rua 06, 0862, São José, Barretos; Musculação e Treinamento Funcional; horários publicados de segunda a sexta."
+    },
+    {
+      "kind": "outro",
+      "url": "https://sindees.org.br/beneficios",
+      "summary": "Sindicato SINDEES publica convênio com Academia Exercise e desconto de 10% para associados.",
+      "limitation": "Não informa data de vigência do convênio."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 32,
+    "confidence": "baixa",
+    "summary": "Exercise Academia atua em Barretos, no segmento Academia. As fontes consultadas apresentam os serviços e canais públicos; a existência de site não indexado permanece sujeita a confirmação.",
+    "audience": "Pessoas que procuram Musculação em Barretos.",
+    "digital_presence": "{\"handle\": \"\", \"status\": \"nao_informado\"}; verificacao_pendente; resultado do dicionário não pertence ao negócio",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: uma página própria pode reunir apresentação dos serviços e contato fora das redes e diretórios.",
+        "evidence": "Link dictionary.cambridge.org: endereço não abre (HTTP 403)"
+      }
+    ],
+    "opportunities": [
+      "Reunir serviços, apresentação e contato comercial em página própria, caso a lacuna seja confirmada."
+    ],
+    "offer": "site_institucional",
+    "offer_reason": "Apresentar serviços e canais em endereço próprio, sujeito à confirmação da presença digital.",
+    "approach": "Pesquisa registrada para avaliação do motor V6; sem mensagem comercial preparada.",
+    "objections": []
+  }
+}

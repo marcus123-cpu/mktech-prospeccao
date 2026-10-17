@@ -1,0 +1,73 @@
+{
+  "business_name": "Pamela Pantera",
+  "city": "Campo Grande",
+  "state": "MS",
+  "niche": "Massagem",
+  "services": [
+    "Massagem Desportiva",
+    "Massagem Mista",
+    "Massagem Relaxante",
+    "Massagem Tailandesa",
+    "Massagem Tântrica",
+    "Massagem Terapêutica",
+    "Terapia Sexual"
+  ],
+  "phone": "(11) 93301-5278",
+  "instagram": "pamelapanteraoficial",
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:pamela.pantera.12",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. O resultado letras.mus.br/pamela é página de músicas, sem vínculo confirmado com a massoterapeuta de Campo Grande.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://www.letras.mus.br/pamela/",
+      "summary": "Link letras.mus.br: endereço não abre (HTTP 403)",
+      "observed_at": "2026-10-16T21:48:34Z",
+      "limitation": "O resultado letras.mus.br/pamela é página de músicas, sem vínculo confirmado com a massoterapeuta de Campo Grande. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/pamela.pantera.12",
+      "summary": "Pamela Pantera; Campo Grande - MS; contato público: (11) 93301-5278; serviços: Massagem Desportiva, Massagem Mista, Massagem Relaxante, Massagem Tailandesa, Massagem Tântrica, Massagem Terapêutica, Terapia Sexual.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/campo-grande-ms",
+      "summary": "Pamela Pantera Massoterapeuta 0,0 Campo Grande, MS Visto há 6 meses",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/pamela.pantera.12",
+      "summary": "Revisão da inspeção automática: O resultado letras.mus.br/pamela é página de músicas, sem vínculo confirmado com a massoterapeuta de Campo Grande.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 40,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. O resultado letras.mus.br/pamela é página de músicas, sem vínculo confirmado com a massoterapeuta de Campo Grande.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Pamela Pantera; Campo Grande - MS; contato público: (11) 93301-5278; serviços: Massagem Desportiva, Massagem Mista, Massagem Relaxante, Massagem Tailandesa, Massagem Tântrica, Massagem Terapêutica, Terapia Sexual."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

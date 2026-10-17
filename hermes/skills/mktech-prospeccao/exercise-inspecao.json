@@ -1,0 +1,42 @@
+{
+  "nome": "Exercise Academia",
+  "cidade": "Barretos",
+  "verificado_em": "2026-10-17T10:06:54Z",
+  "instagram": {
+    "handle": "",
+    "status": "nao_informado"
+  },
+  "facebook": {
+    "status": "nao_informado"
+  },
+  "site": {
+    "situacao": "site_fora_do_ar",
+    "detalhe": [
+      {
+        "url": "https://dictionary.cambridge.org/dictionary/english/exercise",
+        "dominio": "dictionary.cambridge.org",
+        "tipo": "site_fora_do_ar",
+        "http": 403,
+        "origem": "busca"
+      }
+    ]
+  },
+  "nota_sugerida": 32,
+  "componentes": {
+    "lacuna_digital": 25,
+    "atividade": 0,
+    "demanda": 0,
+    "potencial_comercial": 7
+  },
+  "confianca": "baixa",
+  "site_status_sugerido": "site_proprio_encontrado",
+  "evidencias": [
+    {
+      "kind": "site",
+      "url": "https://dictionary.cambridge.org/dictionary/english/exercise",
+      "summary": "Link dictionary.cambridge.org: endereço não abre (HTTP 403)",
+      "observed_at": "2026-10-17T10:06:54Z"
+    }
+  ],
+  "avisos": []
+}

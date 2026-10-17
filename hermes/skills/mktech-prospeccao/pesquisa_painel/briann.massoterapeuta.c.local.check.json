@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "sao luis",
+    "unit": "",
+    "phone": "+5598981311578",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:briann.massoterapeuta.c.local",
+    "instagram": null,
+    "name_core": "briann massoterapeuta c local whatsapp 98 98131 1578 atendimento para homens mulheres casais",
+    "name_norm": "briann massoterapeuta c local whatsapp 98 98131 1578 atendimento para homens mulheres casais",
+    "source_name": "euterapeuta"
+  }
+}

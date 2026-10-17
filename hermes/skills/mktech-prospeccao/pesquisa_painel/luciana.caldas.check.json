@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "teresina",
+    "unit": "",
+    "phone": "+5586998265604",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:luciana.caldas",
+    "instagram": "ludemariacaldas",
+    "name_core": "luciana caldas",
+    "name_norm": "luciana caldas",
+    "source_name": "euterapeuta"
+  }
+}

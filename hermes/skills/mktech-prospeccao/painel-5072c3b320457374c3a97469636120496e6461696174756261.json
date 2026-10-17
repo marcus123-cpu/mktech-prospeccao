@@ -1,0 +1,64 @@
+{
+  "business_name": "Pró Estética Indaiatuba",
+  "city": "Indaiatuba",
+  "phone": "+5519971178352",
+  "whatsapp_url": "https://wa.me/5519971178352",
+  "website_url": "https://proesteticaoficial.com.br/unidades/indaiatuba/",
+  "address": "Rua 9 de Julho, 600, Centro, Indaiatuba/SP",
+  "services": [
+    "Limpeza de Pele",
+    "Criolipólise de Placas"
+  ],
+  "niche": "estética avançada",
+  "state": "SP",
+  "research_date": "2026-10-14",
+  "site_status": "site_proprio_encontrado",
+  "priority": "alta",
+  "source_name": "busca_web",
+  "selection_reason": "A página da unidade contém divergência interna de endereço e link Instagram de outra unidade. Canal de WhatsApp local confirmado pelo href.",
+  "pending_items": "Confirmar endereço vigente e corrigir referência a Rua Candelária e Instagram Perdizes II. Avaliações de consumidores são relatos, não confirmação de falha operacional.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://proesteticaoficial.com.br/unidades/indaiatuba/",
+      "summary": "Pró Estética Indaiatuba. Cabeçalho: Rua 9 de Julho, 600. Seção Limpeza de Pele refere Rua Candelária. Limpeza de Pele e Criolipólise de Placas. Hrefs de agendamento local: https://wa.me/5519971178352. Link Instagram extraído: proestetica.perdizes2.",
+      "observed_at": "2026-10-14"
+    },
+    {
+      "kind": "outro",
+      "url": "https://br.indeed.com/jobs?jobKey=5a1c6dc3f8eb01ae&l=Indaiatuba%2C+sp&q=Esteticista",
+      "summary": "Página de vagas publicada em 13/10/2026 relaciona Pró Estética em Indaiatuba com função Esteticista Facial e Corporal e recepção/atendimento. É sinal recente de divulgação de contratação.",
+      "observed_at": "2026-10-14"
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://guiafix.com.br/indaiatuba-sp/clinica-de-estetica",
+      "summary": "Diretório lista Clínica PRÓ Estética Indaiatuba, com Ultraformer MPT, Fotona, Botox Facial, Liftera.",
+      "observed_at": "2026-10-14"
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 75,
+    "confidence": "media",
+    "summary": "Unidade de estética facial e corporal em Indaiatuba com site e WhatsApp comercial local confirmado. Há divulgação recente de contratação e inconsistências verificáveis no conteúdo da página da unidade.",
+    "digital_presence": "Site de rede com página local, WhatsApp local público e presença em diretório. Página local inclui Instagram de Perdizes II e referência a duas ruas.",
+    "pains": [
+      {
+        "pain": "Informações locais inconsistentes podem confundir orientação; confirmar endereço vigente e revisar template da unidade.",
+        "evidence": "Cabeçalho: Rua 9 de Julho, 600. Seção Limpeza de Pele refere Rua Candelária."
+      },
+      {
+        "pain": "Link de rede social da página local aponta para unidade diferente; oportunidade de alinhamento cadastral.",
+        "evidence": "Link Instagram extraído: proestetica.perdizes2."
+      }
+    ],
+    "opportunities": [
+      "Revisar endereço e links da página de Indaiatuba para manter canais específicos da unidade.",
+      "Auditar reaproveitamento de template em páginas locais da rede."
+    ],
+    "offer": "site_institucional",
+    "offer_reason": "Melhoria concreta de página institucional existente com inconsistências locais verificadas.",
+    "approach": "Investigar qual endereço e perfil correspondem à unidade; sem mensagem comercial.",
+    "objections": []
+  }
+}

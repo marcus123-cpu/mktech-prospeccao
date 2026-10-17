@@ -1,0 +1,83 @@
+{
+  "business_name": "Anny dos anjos",
+  "city": "Manaus",
+  "state": "AM",
+  "niche": "Massagem",
+  "services": [
+    "Liberação Miofascial",
+    "Massagem com Pedras Quentes",
+    "Massagem Desportiva",
+    "Massagem Dreno Relaxante",
+    "Massagem Mista",
+    "Massagem Modeladora",
+    "Massagem Relaxante",
+    "Massagem Tântrica",
+    "Massagem Terapêutica",
+    "Ventosaterapia"
+  ],
+  "phone": "(92) 98479-5758",
+  "instagram": null,
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:anny.dos.anjos",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. Os resultados letras.mus.br/anny são páginas de músicas, sem vínculo confirmado com a massoterapeuta de Manaus.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://www.letras.mus.br/anny/orgulho-part-blxckoficial/",
+      "summary": "Link letras.mus.br: endereço não abre (HTTP 403)",
+      "observed_at": "2026-10-16T21:52:54Z",
+      "limitation": "Os resultados letras.mus.br/anny são páginas de músicas, sem vínculo confirmado com a massoterapeuta de Manaus. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "site",
+      "url": "https://www.letras.mus.br/anny/blue-part-takab/",
+      "summary": "Link letras.mus.br: endereço não abre (HTTP 403)",
+      "observed_at": "2026-10-16T21:52:54Z",
+      "limitation": "Os resultados letras.mus.br/anny são páginas de músicas, sem vínculo confirmado com a massoterapeuta de Manaus. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/anny.dos.anjos",
+      "summary": "Anny dos anjos; Manaus - AM; contato público: (92) 98479-5758; serviços: Liberação Miofascial, Massagem com Pedras Quentes, Massagem Desportiva, Massagem Dreno Relaxante, Massagem Mista, Massagem Modeladora, Massagem Relaxante, Massagem Tântrica, Massagem Terapêutica, Ventosaterapia.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/manaus-am",
+      "summary": "Premium Anny dos anjos Massoterapeuta 0,0 Manaus, AM Visto há 1 semana",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/anny.dos.anjos",
+      "summary": "Revisão da inspeção automática: Os resultados letras.mus.br/anny são páginas de músicas, sem vínculo confirmado com a massoterapeuta de Manaus.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 40,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. Os resultados letras.mus.br/anny são páginas de músicas, sem vínculo confirmado com a massoterapeuta de Manaus.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Anny dos anjos; Manaus - AM; contato público: (92) 98479-5758; serviços: Liberação Miofascial, Massagem com Pedras Quentes, Massagem Desportiva, Massagem Dreno Relaxante, Massagem Mista, Massagem Modeladora, Massagem Relaxante, Massagem Tântrica, Massagem Terapêutica, Ventosaterapia."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}

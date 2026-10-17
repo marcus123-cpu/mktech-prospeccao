@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "brasilia",
+    "unit": "",
+    "phone": "+5561981100243",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:maya.shri",
+    "instagram": null,
+    "name_core": "maya shri",
+    "name_norm": "maya shri",
+    "source_name": "euterapeuta"
+  }
+}

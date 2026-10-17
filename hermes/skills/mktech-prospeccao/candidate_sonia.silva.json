@@ -1,0 +1,60 @@
+{
+  "business_name": "Sonia Silva",
+  "city": "São Bernardo do Campo",
+  "state": "SP",
+  "phone": "(11) 98168-0502",
+  "niche": "Massoterapeutas",
+  "services": [
+    "Massagem Terapêutica",
+    "Quick Massage"
+  ],
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:sonia.silva",
+  "research_date": "2026-10-15",
+  "website_url": null,
+  "whatsapp_url": null,
+  "site_status": "verificacao_pendente",
+  "priority": "baixa",
+  "selection_reason": "Serviços de massoterapia e canal comercial públicos na cidade configurada. Candidato incompleto para enriquecimento: site próprio não identificado nas fontes consultadas, sem afirmar sua ausência.",
+  "pending_items": "Confirmar presença digital completa, domínio próprio e links de redes sociais; validar WhatsApp do número público sem contato; confirmar atividade comercial recente e endereço de atendimento. Não tratar acesso ao diretório como prova de atendimento.",
+  "evidences": [
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/sonia.silva",
+      "summary": "Sonia Silva, São Bernardo do Campo - SP. Telefone comercial público: (11) 98168-0502. Serviços: Massagem Terapêutica, Quick Massage. Oferece atendimento por sessão.",
+      "observed_at": "2026-10-15"
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/quick-massage/sao-bernardo-do-campo-sp",
+      "summary": "Listagem exibe Sonia Silva, visto há 1 mês.",
+      "observed_at": "2026-10-15",
+      "limitation": "Sinal de acesso ao perfil no diretório; não comprova sessão ou publicação recente."
+    },
+    {
+      "kind": "busca",
+      "summary": "Busca nominal por nome, cidade e site consultada em 15/10/2026. Não foi identificado domínio próprio associado com segurança nos resultados retornados.",
+      "observed_at": "2026-10-15",
+      "limitation": "Resultados limitados do buscador; ausência de site não confirmada."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 35,
+    "confidence": "baixa",
+    "summary": "Sonia Silva divulga Massagem Terapêutica em São Bernardo do Campo. O perfil oferece informações de atendimento; a presença digital e a atividade comercial atual exigem confirmação.",
+    "audience": "Pessoas que procuram Massagem Terapêutica em São Bernardo do Campo; hipótese baseada no serviço anunciado.",
+    "digital_presence": "Listagem exibe Sonia Silva, visto há 1 mês. Site próprio não confirmado; ausência não estabelecida.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: uma página própria pode reunir apresentação dos serviços e informações de contato, caso ainda não exista.",
+        "evidence": "Sonia Silva, São Bernardo do Campo - SP. Telefone comercial público: (11) 98168-0502. Serviços: Massagem Terapêutica, Quick Massage. Oferece atendimento por sessão."
+      }
+    ],
+    "opportunities": [
+      "Se a ausência de página própria for confirmada, avaliar uma landing page de serviços, formação e contato."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Possibilidade preliminar condicionada à confirmação de ausência de página própria; não há evidência para recomendar automação de agenda.",
+    "objections": []
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "http": 202,
+  "reason": "telefone_compartilhado",
+  "status": "possivel_duplicado",
+  "matches": [
+    {
+      "id": "0d31554b-e58d-46a3-bf25-4cd82eda5a8e",
+      "city": "São Luís",
+      "unit": null,
+      "business_name": "💆🏻‍♀️Juju Massagista 🟢(98)98118-7972"
+    }
+  ],
+  "matched_on": "telefone",
+  "normalized": {
+    "city": "sao luis",
+    "unit": "",
+    "phone": "+5598981187972",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:narah.nuru.150.com.final.feliz.9898118.8036",
+    "instagram": null,
+    "name_core": "mirella massagista com local top 98 98118 7972",
+    "name_norm": "mirella massagista com local top 98 98118 7972",
+    "source_name": "euterapeuta"
+  }
+}

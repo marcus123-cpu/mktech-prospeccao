@@ -1,0 +1,19 @@
+{
+  "http": 200,
+  "reason": null,
+  "status": "novo",
+  "matches": [],
+  "matched_on": null,
+  "normalized": {
+    "city": "recife",
+    "unit": "",
+    "phone": "+5581985401157",
+    "domain": null,
+    "address": null,
+    "place_id": "euterapeuta:cleice.felix",
+    "instagram": null,
+    "name_core": "cleice felix",
+    "name_norm": "cleice felix",
+    "source_name": "euterapeuta"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "business_name": "Jacqueline silva",
+  "city": "Manaus",
+  "state": "AM",
+  "niche": "Massagem",
+  "services": [
+    "Massagem Relaxante",
+    "Massagem Tântrica",
+    "Massagem Terapêutica",
+    "Ventosaterapia"
+  ],
+  "phone": "(92) 98264-5529",
+  "instagram": null,
+  "website_url": null,
+  "whatsapp_url": null,
+  "source_name": "euterapeuta",
+  "source_place_id": "euterapeuta:jacqueline.silva",
+  "research_date": "2026-10-16",
+  "site_status": "verificacao_pendente",
+  "priority": "media",
+  "selection_reason": "Candidato de massagem com sinal de uso recente no diretório. A revisão não confirmou site próprio; cadastrar com pendências, sem afirmar ausência.",
+  "pending_items": "Confirmar atividade de atendimento e presença digital em fonte independente. Confirmar eventual site/landing page. Localizar ou conferir redes oficiais e bio. Confirmar telefone e WhatsApp comercial. O domínio jacquelineoficial.com foi encontrado apenas por busca e não abriu (HTTP 0). Titularidade e relação com a terapeuta de Manaus não foram confirmadas; manter site em verificação, sem afirmar ausência.",
+  "evidences": [
+    {
+      "kind": "site",
+      "url": "https://jacquelineoficial.com/",
+      "summary": "Link jacquelineoficial.com: endereço não abre (HTTP 0)",
+      "observed_at": "2026-10-16T22:09:45Z",
+      "limitation": "O domínio jacquelineoficial.com foi encontrado apenas por busca e não abriu (HTTP 0). Titularidade e relação com a terapeuta de Manaus não foram confirmadas; manter site em verificação, sem afirmar ausência. Classificação automática do inspetor não confirma a titularidade ou a natureza de site próprio."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/jacqueline.silva",
+      "summary": "Jacqueline silva; Manaus - AM; contato público: (92) 98264-5529; serviços: Massagem Relaxante, Massagem Tântrica, Massagem Terapêutica, Ventosaterapia.",
+      "observed_at": "2026-10-16",
+      "limitation": "Informações do anunciante no marketplace, sem validação independente."
+    },
+    {
+      "kind": "diretorio",
+      "url": "https://euterapeuta.com.br/terapeutas/massagem-relaxante/manaus-am",
+      "summary": "Premium Jacqueline silva Terapeuta tântrica 5,0 Manaus, AM Visto há 4 semanas R$150 /\n            1 hora",
+      "observed_at": "2026-10-16",
+      "limitation": "Visto há é acesso ao diretório, não publicação ou prova de atendimento."
+    },
+    {
+      "kind": "outro",
+      "url": "https://euterapeuta.com.br/jacqueline.silva",
+      "summary": "Revisão da inspeção automática: O domínio jacquelineoficial.com foi encontrado apenas por busca e não abriu (HTTP 0). Titularidade e relação com a terapeuta de Manaus não foram confirmadas; manter site em verificação, sem afirmar ausência.",
+      "observed_at": "2026-10-16",
+      "limitation": "Site próprio permanece por verificar."
+    }
+  ],
+  "diagnosis": {
+    "fit_score": 40,
+    "confidence": "baixa",
+    "summary": "Candidato incompleto. O domínio jacquelineoficial.com foi encontrado apenas por busca e não abriu (HTTP 0). Titularidade e relação com a terapeuta de Manaus não foram confirmadas; manter site em verificação, sem afirmar ausência.",
+    "digital_presence": "Presença de site próprio permanece pendente. Classificação automática revisada com limitação explícita.",
+    "pains": [
+      {
+        "pain": "Hipótese a confirmar: apresentação dos serviços depende de plataforma de terceiros.",
+        "evidence": "Jacqueline silva; Manaus - AM; contato público: (92) 98264-5529; serviços: Massagem Relaxante, Massagem Tântrica, Massagem Terapêutica, Ventosaterapia."
+      }
+    ],
+    "opportunities": [
+      "Avaliar página própria após confirmar ausência de site e necessidade do negócio."
+    ],
+    "offer": "landing_page",
+    "offer_reason": "Hipótese de página de serviços condicionada à verificação; não é mensagem comercial."
+  }
+}
