@@ -3,6 +3,8 @@ import { AutoRefresh } from "@/components/AutoRefresh";
 import { BotChip } from "@/components/BotChip";
 import { requireAdmin } from "@/lib/auth";
 import { PanelShell } from "@/components/PanelShell";
+import { ConversationNotifications } from "@/components/ConversationNotifications";
+import { Suspense } from "react";
 
 export default async function PainelLayout({ children }: { children: React.ReactNode }) {
   const { supabase, user } = await requireAdmin();
@@ -15,6 +17,7 @@ export default async function PainelLayout({ children }: { children: React.React
   return (
     <>
       <AutoRefresh />
+      <Suspense fallback={null}><ConversationNotifications /></Suspense>
       <PanelShell mobileHeader={
       <header className="sticky top-0 z-30 flex items-center justify-between border-b border-line bg-panel/95 px-4 py-3 backdrop-blur md:hidden">
         <div>

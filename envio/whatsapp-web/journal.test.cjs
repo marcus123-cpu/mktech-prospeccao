@@ -6,6 +6,17 @@ const path = require('node:path');
 const { Journal } = require('./journal');
 function file() { return path.join(fs.mkdtempSync(path.join(os.tmpdir(),'hermes-journal-')),'journal.json'); }
 
+test('confirmações não se perdem quando entrega e leitura chegam antes do ack', () => {
+  const j = new Journal(file());
+  j.push('historico', { message_id: 'old' });
+  j.push('historico', { message_id: 'wa', ack: 2, live_receipt: true });
+  j.push('historico', { message_id: 'wa', ack: 3, live_receipt: true });
+  j.push('historico', { message_id: 'wa', ack: 3, live_receipt: true });
+  assert.deepEqual(j.list('historico').map(e => e.ack), [2, 3, undefined]);
+  j.ack([j.list('historico')[0].event_id]);
+  assert.equal(new Journal(j.file).list('historico')[0].ack, 3);
+});
+
 test('gravação tolera bloqueio transitório de arquivo no Windows', () => {
   const target = file();
   const journal = new Journal(target);

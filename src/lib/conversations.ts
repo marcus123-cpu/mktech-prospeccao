@@ -15,6 +15,9 @@ export type Conversation = {
   pending_status: string | null;
   pending_body: string | null;
   activity_at: string;
+  last_message_body?: string | null;
+  last_message_direction?: string | null;
+  last_message_media?: string | null;
 };
 
 export type ConversationFilter = "todas" | "minhas" | "aguardando" | "bot";

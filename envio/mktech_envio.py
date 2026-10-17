@@ -455,6 +455,8 @@ def forward_history(transporte: Transporte) -> int:
     count = 0
     for msg in transporte.historico()[:20]:
         body = {key: msg.get(key) for key in ("telefone", "message_id", "direcao", "texto", "tipo", "ocorrida_em")}
+        if isinstance(msg.get("ack"), int):
+            body["ack"] = msg["ack"]
         status, payload = request("POST", "/api/hermes/v1/envio/historico", body)
         if 0 < status < 400 and payload.get("status") in ("registrada", "existente", "ignorada"):
             transporte.ack(msg)

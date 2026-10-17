@@ -10,6 +10,7 @@ const schema = z.object({
   texto: z.string().max(4000).nullable(),
   tipo: z.enum(["texto", "audio", "imagem", "outro"]),
   ocorrida_em: z.iso.datetime(),
+  ack: z.number().int().min(-1).max(4).optional(),
 });
 
 export async function POST(request: Request) {

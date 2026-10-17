@@ -21,6 +21,15 @@ describe("historical import endpoint", () => {
     expect((await POST(req(message))).status).toBe(403);
     expect(rpc).not.toHaveBeenCalled();
   });
+  it("persists read receipts and rejects invalid acknowledgements", async () => {
+    rpc.mockResolvedValue({ data: { status: "existente" }, error: null });
+    const receipt = { ...message, direcao: "saida", ack: 3 };
+    await POST(req(receipt));
+    expect(rpc).toHaveBeenCalledWith("api_conversation_history", { p: receipt });
+    rpc.mockClear();
+    expect((await POST(req({ ...receipt, ack: 5 }))).status).toBe(422);
+    expect(rpc).not.toHaveBeenCalled();
+  });
   it("rejects invalid dates and retries database failure", async () => {
     expect((await POST(req({ ...message, ocorrida_em: "bad" }))).status).toBe(422);
     expect(rpc).not.toHaveBeenCalled();

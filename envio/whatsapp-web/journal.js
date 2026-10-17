@@ -22,13 +22,18 @@ class Journal {
   }
   push(kind, payload) {
     const event_id = kind === 'historico' && payload.message_id
-      ? 'historico:' + payload.message_id
+      ? 'historico:' + payload.message_id + (Number.isInteger(payload.ack) ? ':ack:' + payload.ack : '')
       : payload.message_id || require('node:crypto').randomUUID();
     if (!this.data.events.some(e => e.kind === kind && e.event_id === event_id)) {
       this.data.events.push({ ...payload, event_id, kind }); this.flush();
     }
   }
-  list(kind) { return this.data.events.filter(e => e.kind === kind).slice(0, 100); }
+  list(kind) {
+    const events = this.data.events.filter(e => e.kind === kind);
+    // Live delivery/read confirmations must not wait behind a large history import.
+    if (kind === 'historico') events.sort((a, b) => Number(!!b.live_receipt) - Number(!!a.live_receipt));
+    return events.slice(0, 100);
+  }
   ack(ids) { this.data.events = this.data.events.filter(e => !ids.includes(e.event_id)); this.flush(); }
   begin(key, fingerprint, channel = 'comercial') {
     const existing = this.data.sends[key];

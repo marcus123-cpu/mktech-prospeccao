@@ -12,13 +12,15 @@ import { ManualProvider, PendingBubbles, ReplyBox, type Pending } from "./ReplyB
 import { ChatShell, InfoToggle } from "./ChatShell";
 import { STAGE_LABEL } from "@/lib/labels";
 import { VoiceReply } from "./VoiceReply";
+import { receiptLabel } from "@/lib/message-receipts";
+import { SeenConversation } from "./SeenConversation";
 
 export const metadata = { title: "Conversas" };
 export const dynamic = "force-dynamic";
 const FILTERS: { key: ConversationFilter; label: string }[] = [
   { key: "todas", label: "Todas" }, { key: "aguardando", label: "Responderam" }, { key: "minhas", label: "Com você" },
 ];
-type Event = { id: string; occurred_at: string; direction: string; source: string; body: string | null; media: string; external_id: string | null };
+type Event = { id: string; occurred_at: string; direction: string; source: string; body: string | null; media: string; external_id: string | null; receipt_ack?: number | null };
 const SOURCE: Record<string, string> = { hermes_v4: "Hermes V4", secretaria: "Secretário", secretario: "Secretário", saudacao: "Saudação", abordagem: "Abordagem", lembrete: "Lembrete", manual: "Você · celular", painel: "Você · painel", painel_pendente: "Você · painel (enviando…)", painel_falhou: "Você · painel (falhou)", humana: "Cliente", automatica: "Resposta automática" };
 
 export default async function Conversations({ searchParams }: { searchParams: Promise<{ lead?: string; filtro?: string; q?: string; pagina?: string }> }) {
@@ -33,9 +35,11 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
   if (filter === "bot") query = query.in("pending_status", ["pronta", "enviando"]).is("secretary_handoff_at", null).eq("do_not_contact", false).not("stage", "in", "(fechado,sem_interesse,desqualificado)");
   // A condição temporal é calculada no banco, antes da paginação.
   if (filter === "aguardando") query = query.eq("needs_reply", true);
-  const [inbox] = await Promise.all([
+  const [inbox, unread] = await Promise.all([
     query.order("activity_at", { ascending: false }).order("id").range((page - 1) * 30, page * 30 - 1),
+    supabase.from("conversation_unread").select("id"),
   ]);
+  const unreadIds = new Set((unread.data ?? []).map((row: { id: string }) => row.id));
   if (inbox.error) return <><PageHeader title="Conversas" /><ErrorBox message="Não foi possível carregar a central. Confira se a atualização do banco foi aplicada." /></>;
   const rows = (inbox.data ?? []) as Conversation[];
   const selectedId = sp.lead && /^[0-9a-f-]{36}$/i.test(sp.lead) ? sp.lead : rows[0]?.id;
@@ -87,14 +91,15 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
       </nav>
       <div className="min-h-0 flex-1 overflow-y-auto">
         {rows.length === 0 ? <p className="p-4 text-sm text-muted">Nenhuma conversa neste filtro.</p> : rows.map((c) => {
-          const waiting = conversationState(c) === "aguardando";
+          const waiting = !!c.last_in_at && (!c.last_out_at || Date.parse(c.last_in_at) > Date.parse(c.last_out_at));
+          const isUnread = unreadIds.has(c.id);
           const active = current?.id === c.id;
           return <Link key={c.id} href={href({ lead: c.id, pagina: String(page) })} aria-current={active ? "page" : undefined}
             className={`flex gap-3 border-b border-white/5 px-4 py-4 transition hover:bg-[#202c33] ${active ? "bg-[#2a3942]" : ""}`}>
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2d4147] text-base font-medium text-[#c5d4d6]">{initial(c.business_name)}</span>
             <span className="min-w-0 flex-1">
               <span className="flex justify-between gap-2"><span className="truncate text-[14px] font-medium text-[#e9edef]">{c.business_name}</span><span className={`shrink-0 text-[10px] ${waiting ? "text-[#00a884]" : "text-[#8696a0]"}`}>{haQuanto(c.activity_at)}</span></span>
-              <span className="mt-1 flex items-center gap-2"><span className="min-w-0 flex-1 truncate text-[12px] text-[#8696a0]">{c.last_in_media === "audio" ? "Mensagem de voz" : c.last_in_body ?? "Conversa iniciada"}</span>{waiting && <span title="Aguardando resposta" className="h-2 w-2 shrink-0 rounded-full bg-[#00a884]" />}</span>
+              <span className="mt-1 flex items-center gap-2"><span className={`min-w-0 flex-1 truncate text-[12px] ${isUnread ? "font-semibold text-[#e9edef]" : "text-[#8696a0]"}`}>{c.last_message_direction === "saida" ? "Você: " : ""}{c.last_message_media === "audio" ? "Mensagem de voz" : c.last_message_body ?? c.last_in_body ?? "Conversa iniciada"}</span>{isUnread ? <span className="shrink-0 rounded-full bg-[#00a884] px-2 py-0.5 text-[10px] font-semibold text-white">Nova</span> : waiting && <span title="Aguardando resposta" className="h-2 w-2 shrink-0 rounded-full bg-[#00a884]" />}</span>
             </span>
           </Link>;
         })}
@@ -109,6 +114,7 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
 
   const chat = detailError ? <ErrorBox message="Não foi possível carregar os dados desta conversa. Tente novamente." /> : current ? (
     <section className="flex h-full min-h-0 flex-col overflow-hidden bg-[#0b141a]">
+      <SeenConversation leadId={current.id} at={current.last_in_at} explicit={!!sp.lead} />
       <ManualProvider key={current.id} initial={pendingInitial} doneIds={doneIds}>
         <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-white/5 bg-[#202c33] px-4">
           <div className="flex min-w-0 items-center gap-3">
@@ -127,14 +133,14 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
                 {newDay && <p className="my-3 text-center"><span className="rounded-lg bg-[#182229] px-3 py-1 text-[11px] text-[#8696a0] shadow">{day(e.occurred_at)}</span></p>}
                 <div className={`flex ${out ? "justify-end" : "justify-start"}`}>
                   <div className={`max-w-[90%] rounded-lg px-3 py-2 shadow-sm sm:max-w-[78%] xl:max-w-[68%] ${out ? "rounded-tr-none bg-[#005c4b] text-[#e9edef]" : "rounded-tl-none bg-[#202c33] text-[#e9edef]"} ${e.source === "painel_falhou" ? "!bg-rose-900/50" : ""}`}>
-                    {(e.source === "painel_falhou" || e.source === "automatica" || ["hermes_v4", "secretario", "secretaria"].includes(e.source)) && <p className="mb-1 text-[10px] font-medium text-white/50">{SOURCE[e.source] ?? who(e)}</p>}
+                    {(e.source === "painel_falhou" || ["hermes_v4", "secretario", "secretaria"].includes(e.source)) && <p className="mb-1 text-[10px] font-medium text-white/50">{SOURCE[e.source] ?? who(e)}</p>}
                     {e.media === "audio" ? (
                       e.external_id && audioIds.has(e.external_id) ? <div className="flex items-center gap-2">
                         <audio controls preload="none" className="h-10 w-56 max-w-full" src={`/api/conversas/audio/${encodeURIComponent(e.external_id)}`} />
                         <a href={`/api/conversas/audio/${encodeURIComponent(e.external_id)}?baixar=1`} download title="Baixar áudio" aria-label="Baixar áudio" className="btn-ghost shrink-0 px-2 py-1 text-sm">⬇</a>
                       </div> : <p className="text-sm text-muted">🎤 Áudio (arquivo não disponível)</p>
                     ) : <p className="whitespace-pre-wrap break-words text-[14px] leading-[1.55]">{textOf(e)}</p>}
-                    <p className={`mt-1 text-right text-[10px] ${out ? "text-white/70" : "text-muted"}`}>{new Date(e.occurred_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" })}</p>
+                    <p className={`mt-1 text-right text-[10px] ${out ? "text-white/70" : "text-muted"}`}>{new Date(e.occurred_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" })}{out && e.source !== "simulacao" && <span title="A leitura depende da confirmação enviada pelo WhatsApp." className={`ml-2 ${e.receipt_ack != null && e.receipt_ack >= 3 ? "text-sky-300" : ""}`}>{e.source === "painel_falhou" ? "Falha no envio" : receiptLabel(e.receipt_ack)} {e.receipt_ack != null && e.receipt_ack >= 2 ? "✓✓" : e.receipt_ack === 1 ? "✓" : ""}</span>}</p>
                   </div>
                 </div>
               </li>;

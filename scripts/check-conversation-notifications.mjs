@@ -1,0 +1,20 @@
+// Authenticated HTTP checks; never print cookies, tokens, or conversation content.
+import fs from 'node:fs';
+const base = 'https://mktech-prospeccao.vercel.app';
+const saved = JSON.parse(fs.readFileSync('backups/release-browser-session.json', 'utf8'));
+const cookie = saved.cookies.map(c => `${c.name}=${c.value}`).join('; ');
+const headers = { Cookie: cookie };
+const inbox = await fetch(`${base}/api/conversas/notificacoes`, { headers });
+const data = await inbox.json();
+if (inbox.status !== 200 || !Array.isArray(data.conversations)) throw Error('Notification API failed');
+const chat = await fetch(`${base}/conversas`, { headers });
+const html = await chat.text();
+if (chat.status !== 200 || chat.url.includes('/login') || html.includes('Não foi possível carregar')) throw Error('Conversation page failed');
+if (!html.includes('conversas com respostas não lidas')) throw Error('Notification control missing');
+const forged = await fetch(`${base}/api/conversas/notificacoes`, { method: 'POST', headers: { ...headers, Origin: 'https://invalid.example', 'Content-Type': 'application/json' }, body: '{}' });
+if (forged.status !== 403) throw Error('Origin protection failed');
+const invalid = await fetch(`${base}/api/conversas/notificacoes`, { method: 'POST', headers: { ...headers, Origin: base, 'Content-Type': 'application/json' }, body: '{}' });
+if (invalid.status !== 422) throw Error('Input validation failed');
+const anonymous = await fetch(`${base}/api/conversas/notificacoes`, { redirect: 'manual' });
+if (![303, 307, 308, 401, 403].includes(anonymous.status)) throw Error('Anonymous request was not blocked');
+console.log(JSON.stringify({ notifications: inbox.status, unreadConversations: data.conversations.length, conversationPage: chat.status, notificationControl: true, originProtection: forged.status, invalidInput: invalid.status, anonymous: anonymous.status }));

@@ -22,6 +22,7 @@ async function syncHistory(client, journal, resolveNumber, isIndividual, systemT
           texto: typeof msg.body === 'string' ? msg.body.slice(0, 4000) : null,
           tipo: msg.type === 'chat' ? 'texto' : ['audio', 'ptt'].includes(msg.type) ? 'audio' : msg.type === 'image' ? 'imagem' : 'outro',
           ocorrida_em: new Date(msg.timestamp * 1000).toISOString(),
+          ...(msg.fromMe && Number.isInteger(msg.ack) ? { ack: msg.ack } : {}),
         });
         imported++;
       }

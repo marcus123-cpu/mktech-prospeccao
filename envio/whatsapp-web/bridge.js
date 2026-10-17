@@ -338,6 +338,16 @@ client.on('message_ack', (msg, ack) => {
   for (const item of journal.results()) {
     if (id && item.provider_id === id && ack >= 2) journal.result(item.item_id, 'entregue', id);
   }
+  if (!id || !msg.fromMe || !msg.timestamp || !Number.isInteger(ack) || ack < -1 || ack > 4 || !ehConversaIndividual(msg.to)) return;
+  numeroDe(msg.to, msg).then(number => {
+    if (!number) return;
+    journal.push('historico', {
+      message_id: id, telefone: '+' + number.replace(/\D/g, ''), direcao: 'saida',
+      texto: typeof msg.body === 'string' ? msg.body.slice(0, 4000) : null,
+      tipo: msg.type === 'chat' ? 'texto' : ['audio', 'ptt'].includes(msg.type) ? 'audio' : msg.type === 'image' ? 'imagem' : 'outro',
+      ocorrida_em: new Date(msg.timestamp * 1000).toISOString(), ack, live_receipt: true,
+    });
+  }).catch(error => console.error('[confirmacao]', String(error.message).slice(0, 160)));
 });
 
 server.listen(PORT, "127.0.0.1", () => console.log(`Ponte em http://127.0.0.1:${PORT}`));
