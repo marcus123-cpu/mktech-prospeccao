@@ -4,7 +4,7 @@ export function PageHeader({ title, subtitle, actions }: { title: string; subtit
   return (
     <div className="mb-4 flex flex-wrap items-end justify-between gap-3 md:mb-6">
       <div>
-        <h1 className="text-xl font-semibold md:text-2xl">{title}</h1>
+        <h1 className="text-gradient text-xl font-semibold tracking-tight md:text-2xl">{title}</h1>
         {subtitle && <p className="mt-1 text-sm text-muted">{subtitle}</p>}
       </div>
       {actions && <div className="flex w-full flex-wrap gap-2 sm:w-auto [&>*]:flex-1 sm:[&>*]:flex-none">{actions}</div>}
@@ -42,7 +42,7 @@ export function SiteBadge({ status }: { status: SiteStatus }) {
 
 export function Empty({ title, children }: { title: string; children?: React.ReactNode }) {
   return (
-    <div className="card p-6 text-center md:p-10">
+    <div className="card animate-fade p-6 text-center md:p-10">
       <p className="font-medium">{title}</p>
       {children && <div className="mt-2 text-sm text-muted">{children}</div>}
     </div>
@@ -51,7 +51,7 @@ export function Empty({ title, children }: { title: string; children?: React.Rea
 
 export function ErrorBox({ message }: { message: string }) {
   return (
-    <div role="alert" className="rounded-xl border border-rose-900 bg-rose-950/40 p-4 text-sm text-rose-200">
+    <div role="alert" className="animate-pop rounded-2xl border border-rose-900 bg-rose-950/40 p-4 text-sm text-rose-200">
       {message}
     </div>
   );
@@ -59,7 +59,7 @@ export function ErrorBox({ message }: { message: string }) {
 
 export function Stat({ label, value, hint }: { label: string; value: React.ReactNode; hint?: string }) {
   return (
-    <div className="card p-4">
+    <div className="card card-hover p-4">
       <div className="text-xs font-medium uppercase tracking-wide text-muted">{label}</div>
       <div className="mt-2 text-2xl font-semibold tabular-nums">{value}</div>
       {hint && <div className="mt-1 text-xs text-muted">{hint}</div>}
@@ -84,14 +84,14 @@ export function Fold({
   children: React.ReactNode;
 }) {
   return (
-    <details open={open} className={`card group p-4 ${tone ?? ""}`}>
+    <details open={open} className={`card group p-4 open:shadow-[0_12px_30px_-14px_rgb(124_108_255/0.3)] ${tone ?? ""}`}>
       <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold [&::-webkit-details-marker]:hidden">
         <span aria-hidden className="inline-block text-muted transition-transform group-open:rotate-90">▶</span>
         <span>{title}</span>
         {count !== undefined && <span className="badge bg-panel-2 text-slate-300">{count}</span>}
         {hint && <span className="ml-auto hidden text-xs font-normal text-muted sm:inline">{hint}</span>}
       </summary>
-      <div className="mt-3">{children}</div>
+      <div className="mt-3 animate-fade">{children}</div>
     </details>
   );
 }

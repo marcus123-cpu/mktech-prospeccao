@@ -40,11 +40,12 @@ export function Nav({ pendingReviews }: { pendingReviews: number }) {
         <Link
           key={item.href}
           href={item.href}
-          className={`rounded-lg px-3 py-2 text-sm transition ${
-            active(item.href) ? `${item.on} font-medium text-white` : "text-muted hover:bg-panel-2 hover:text-slate-200"
+          className={`group relative rounded-xl px-3 py-2 text-sm transition duration-200 ${
+            active(item.href) ? `${item.on} font-medium text-white shadow-[0_1px_0_0_rgb(255_255_255/0.06)_inset]` : "text-muted hover:translate-x-0.5 hover:bg-panel-2/70 hover:text-slate-100"
           }`}
         >
-          <span aria-hidden className="mr-2">{item.emoji}</span>
+          {active(item.href) && <span aria-hidden className={`absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full ${item.bar}`} />}
+          <span aria-hidden className="mr-2 inline-block transition-transform duration-200 group-hover:scale-110">{item.emoji}</span>
           {item.label}
           {item.href === "/leads" && pendingReviews > 0 && (
             <span className="ml-2">
@@ -64,7 +65,7 @@ export function BottomNav({ pendingReviews }: { pendingReviews: number }) {
   return (
     <nav
       aria-label="Menu principal"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-panel/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-line/70 bg-panel/80 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden"
     >
       <ul className="grid grid-cols-6">
         {ITEMS.filter((item) => item.mobile).map((item) => {
@@ -78,8 +79,8 @@ export function BottomNav({ pendingReviews }: { pendingReviews: number }) {
                   on ? "font-semibold text-white" : "text-muted"
                 }`}
               >
-                <span className={`h-1 w-6 rounded-full ${on ? item.bar : "bg-transparent"}`} />
-                <span aria-hidden className="text-base leading-none">{item.emoji}</span>
+                <span className={`h-1 rounded-full transition-all duration-300 ${on ? `w-6 ${item.bar}` : "w-0 bg-transparent"}`} />
+                <span aria-hidden className={`text-base leading-none transition-transform duration-200 ${on ? "scale-110" : ""}`}>{item.emoji}</span>
                 <span className="truncate">{item.short}</span>
                 {item.href === "/leads" && pendingReviews > 0 && (
                   <span className="absolute right-2 top-1.5">

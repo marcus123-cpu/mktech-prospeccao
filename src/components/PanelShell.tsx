@@ -25,7 +25,7 @@ export function PanelShell({ sidebar, mobileHeader, bottomNav, children }: {
   }
   return <div className={conversations ? "conversation-workspace md:flex md:h-dvh md:overflow-hidden" : "md:flex"}>
     {mobileHeader}
-    <aside className={`hidden md:sticky md:top-0 md:flex md:h-dvh md:shrink-0 md:flex-col md:overflow-hidden md:border-r ${conversations ? "border-white/5 bg-[#202c33]" : "border-line bg-panel"} ${collapsed ? "md:w-14" : "md:w-60"}`} aria-label="Navegação do painel">
+    <aside className={`hidden md:sticky md:top-0 md:flex md:h-dvh md:shrink-0 md:flex-col md:overflow-hidden md:border-r ${conversations ? "border-white/5 bg-[#202c33]" : "border-line/70 bg-panel/80 backdrop-blur-xl"} transition-[width] duration-300 ease-out ${collapsed ? "md:w-14" : "md:w-60"}`} aria-label="Navegação do painel">
       <div className={`flex h-16 shrink-0 items-center ${collapsed ? "justify-center" : "justify-between px-4"}`}>
         {!collapsed && <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">MKTech · Painel</span>}
         <button type="button" onClick={toggle} aria-expanded={!collapsed} aria-controls="panel-navigation"
@@ -41,7 +41,7 @@ export function PanelShell({ sidebar, mobileHeader, bottomNav, children }: {
       <div id="panel-navigation" hidden={collapsed} className="min-h-0 flex-1 overflow-y-auto px-4 pb-6">{sidebar}</div>
       {collapsed && <span className="mb-5 mt-auto text-center text-[10px] font-bold tracking-wider text-[#8696a0]" aria-hidden="true">MK</span>}
     </aside>
-    <main className={conversations ? "h-[calc(100dvh-176px)] min-h-[360px] min-w-0 flex-1 overflow-hidden md:h-dvh md:min-h-0" : "min-w-0 flex-1 px-4 pb-28 pt-5 md:px-8 md:py-6"}>{children}</main>
+    <main className={conversations ? "h-[calc(100dvh-176px)] min-h-[360px] min-w-0 flex-1 overflow-hidden md:h-dvh md:min-h-0" : "min-w-0 flex-1 px-4 pb-28 pt-5 md:px-8 md:py-6"}>{conversations ? children : <div key={pathname} className="page-enter mx-auto max-w-[1400px]">{children}</div>}</main>
     {bottomNav}
   </div>;
 }

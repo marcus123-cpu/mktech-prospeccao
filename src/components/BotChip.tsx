@@ -9,7 +9,7 @@ export function BotChip({ enabled, paused }: { enabled: boolean; paused: boolean
       : ["Bot ligado", "bg-emerald-900/70 text-emerald-200"];
   return (
     <Link href="/disparo" className={`badge py-1 ${tone}`} title="Chave do envio automático de WhatsApp (clique para ligar, pausar ou desligar)">
-      <span aria-hidden className="mr-1.5 inline-block h-2 w-2 rounded-full bg-current" />
+      <span aria-hidden className={`mr-1.5 inline-block h-2 w-2 rounded-full bg-current ${tone.includes("emerald") ? "animate-pulse" : ""}`} />
       {label}
     </Link>
   );
