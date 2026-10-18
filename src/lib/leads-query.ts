@@ -60,7 +60,7 @@ export function applyLeadFilters<Q extends { [k: string]: any }>(query: Q, f: Le
 }
 
 export const LEAD_LIST_COLUMNS =
-  "id, business_name, responsible_name, city, state, neighborhood, unit_label, phone_raw, phone_e164, instagram_handle, whatsapp_url, website_url, site_status, priority, origin, stage, contacted, contact_date_unknown, last_contact_at, next_follow_up_at, created_at, fit_score, recommended_offer";
+  "id, business_name, responsible_name, city, state, neighborhood, unit_label, phone_raw, phone_e164, instagram_handle, whatsapp_url, website_url, site_status, priority, origin, stage, contacted, contact_date_unknown, last_contact_at, next_follow_up_at, created_at, fit_score, recommended_offer, lead_diagnoses(created_at)";
 
 export async function listCities(supabase: SupabaseClient): Promise<string[]> {
   const { data } = await supabase.from("leads").select("city").limit(5000);

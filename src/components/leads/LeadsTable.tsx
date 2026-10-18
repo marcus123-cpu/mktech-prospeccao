@@ -10,7 +10,7 @@ import { ContactBadge, PriorityBadge, SiteBadge, StageBadge } from "@/components
 import { OFFER_LABEL } from "@/lib/labels";
 import { PRIORITIES, PRIORITY_LABEL, STAGE_LABEL, STAGES, type Priority, type SiteStatus, type Stage } from "@/lib/labels";
 import { safeExternal, whatsappLink } from "@/lib/leads-query";
-import { fmtDate, fmtDateTime } from "@/lib/time";
+import { fmtDate, fmtDateTime, haQuanto } from "@/lib/time";
 
 export type LeadRow = {
   id: string;
@@ -36,7 +36,22 @@ export type LeadRow = {
   created_at: string;
   fit_score: number | null;
   recommended_offer: string | null;
+  lead_diagnoses?: { created_at: string }[] | null;
 };
+
+/** Data da pesquisa mais recente do Hermes, se houver. */
+const researchedAt = (r: LeadRow) => (r.lead_diagnoses ?? []).map((d) => d.created_at).sort().at(-1) ?? null;
+
+/** Quando foi pesquisado e há quanto tempo o lead está no sistema. */
+function Dates({ r, className = "" }: { r: LeadRow; className?: string }) {
+  const at = researchedAt(r);
+  return (
+    <div className={`space-y-0.5 text-xs text-muted ${className}`}>
+      <div>🔎 {at ? `Pesquisado em ${fmtDate(at)} (${haQuanto(at)})` : "Ainda não pesquisado"}</div>
+      <div>🗓 No sistema desde {fmtDate(r.created_at)} ({haQuanto(r.created_at)})</div>
+    </div>
+  );
+}
 
 const BULK_STAGES = STAGES.filter((s) => !["fechado", "sem_interesse", "desqualificado"].includes(s));
 
@@ -128,7 +143,7 @@ export function LeadsTable({ rows }: { rows: LeadRow[] }) {
               <th className="table-head">Prioridade</th>
               <th className="table-head">Potencial</th>
               <th className="table-head">Retorno</th>
-              <th className="table-head">Cadastro</th>
+              <th className="table-head">Pesquisa e cadastro</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-line">
@@ -211,7 +226,7 @@ export function LeadsTable({ rows }: { rows: LeadRow[] }) {
                       "—"
                     )}
                   </td>
-                  <td className="table-cell text-xs text-muted">{fmtDate(r.created_at)}</td>
+                  <td className="table-cell"><Dates r={r} /></td>
                 </tr>
               );
             })}
@@ -261,6 +276,7 @@ function LeadCard({ r, checked, onToggle }: { r: LeadRow; checked: boolean; onTo
             <SiteBadge status={r.site_status} />
             <PriorityBadge priority={r.priority} />
           </div>
+          <Dates r={r} className="mt-2" />
           {(r.recommended_offer || r.next_follow_up_at) && (
             <div className="mt-2 space-y-0.5 text-xs">
               {r.recommended_offer && (
