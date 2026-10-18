@@ -1,7 +1,11 @@
 @echo off
+if /I "%~1"=="--background" goto background
+powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "%~dp0scripts\iniciar-oculto.ps1"
+exit /b
+:background
 rem TUDO EM UM: para a ponte e o enviador, baixa as atualizacoes do GitHub, atualiza a skill do Hermes,
 rem religa a ponte do WhatsApp e o enviador e liga o painel em http://localhost:3000.
-rem Para reiniciar tudo: feche esta janela e abra o TUDO.bat de novo.
+rem Para reiniciar tudo: abra o TUDO.bat novamente. Registros em envio\logs.
 title MKTech - TUDO (nao feche)
 cd /d "C:\Users\pmarc\mktech-prospeccao"
 
@@ -21,8 +25,8 @@ if not "%ANTES%"=="%DEPOIS%" if exist ".next\BUILD_ID" del ".next\BUILD_ID" >nul
 echo [3/5] Atualizando a skill do Hermes...
 powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\sincronizar-skill.ps1"
 
-echo [4/5] Ligando ponte do WhatsApp e enviador (janela minimizada)...
-start "MKTech Envio" /min cmd /c "C:\Users\pmarc\mktech-prospeccao\envio\iniciar-tudo.bat"
+echo [4/5] Ligando ponte do WhatsApp e enviador em segundo plano...
+powershell -NoProfile -Command "Start-Process -FilePath $env:ComSpec -ArgumentList '/d /c envio\iniciar-tudo.bat' -WorkingDirectory '%~dp0.' -WindowStyle Hidden"
 timeout /t 5 >nul
 
 echo [5/5] Ligando o painel...
