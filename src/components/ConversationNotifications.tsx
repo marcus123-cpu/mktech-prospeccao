@@ -55,6 +55,11 @@ export function ConversationNotifications() {
     {open && <section aria-label="Novas respostas" className="mb-2 w-80 max-w-[90vw] rounded-xl border border-white/15 bg-[#202c33] p-4 text-[#e9edef] shadow-xl">
       <div className="mb-3 flex justify-between"><strong>Novas respostas ({rows.length})</strong><button aria-label="Fechar notificações" onClick={() => setOpen(false)}>✕</button></div>
       <div className="max-h-64 overflow-y-auto">{rows.map(row => <Link className="block border-b border-white/10 py-2" key={row.id} href={`/conversas?lead=${row.id}`} onClick={() => setOpen(false)}><span className="block text-sm font-semibold">{row.business_name}</span><span className="block truncate text-xs text-[#aebac1]">{row.last_in_media === "audio" ? "Mensagem de voz" : row.last_in_body ?? "Nova mensagem"}</span></Link>)}{!rows.length && <p className="text-sm">Nenhuma resposta não lida.</p>}</div>
+      {rows.length > 0 && <button className="mt-3 block text-sm text-emerald-300" onClick={async () => {
+        const batch = rows;
+        const results = await Promise.all(batch.map(row => fetch("/api/conversas/notificacoes", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ lead_id: row.id, seen_at: row.last_in_at }) }).then(r => r.ok).catch(() => false)));
+        if (results.every(Boolean)) { setRows([]); setError(""); router.refresh(); } else setError("Não foi possível marcar todas como lidas.");
+      }}>✓ Marcar todas como lidas</button>}
       {permission === "default" && <button className="mt-3 text-sm text-emerald-300" onClick={async () => { try { setPermission(await Notification.requestPermission()); } catch { setError("Não foi possível ativar os avisos do navegador."); } }}>Ativar notificações do navegador</button>}
       {permission === "denied" && <p className="mt-2 text-xs">Avisos do navegador bloqueados. Você pode liberá-los nas configurações do site.</p>}
       {error && <p role="status" className="mt-2 text-xs text-amber-300">{error}</p>}
