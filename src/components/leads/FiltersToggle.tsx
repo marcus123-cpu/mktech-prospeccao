@@ -15,7 +15,7 @@ export function FiltersToggle({ active, children }: { active: number; children: 
       >
         <span>
           Buscar e filtrar
-          {active > 0 && <span className="ml-2 rounded-full bg-accent/20 px-1.5 text-xs text-violet-200">{active}</span>}
+          {active > 0 && <span className="ml-2 rounded-full bg-accent/20 px-1.5 text-xs text-blue-200">{active}</span>}
         </span>
         <span aria-hidden>{open ? "▲" : "▼"}</span>
       </button>

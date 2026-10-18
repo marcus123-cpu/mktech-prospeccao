@@ -184,7 +184,7 @@ export function LeadsTable({ rows }: { rows: LeadRow[] }) {
                           href={`https://instagram.com/${r.instagram_handle}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-violet-300 hover:underline"
+                          className="text-blue-300 hover:underline"
                         >
                           @{r.instagram_handle}
                         </a>
@@ -303,7 +303,7 @@ function LeadCard({ r, checked, onToggle }: { r: LeadRow; checked: boolean; onTo
               href={`https://instagram.com/${r.instagram_handle}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-ghost flex-1 text-violet-300"
+              className="btn-ghost flex-1 text-blue-300"
             >
               Instagram
             </a>

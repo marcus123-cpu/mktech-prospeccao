@@ -31,7 +31,7 @@ const COLUMNS = [
   { key: "enviado", keys: ["enviado"], title: "📤 Saudação enviada", hint: "aguardando resposta", dot: "bg-indigo-400", core: true },
   { key: "aguardando", keys: ["aguardando"], title: "🕐 Resposta automática", hint: "a clínica respondeu por robô: espere uma pessoa", dot: "bg-cyan-400", core: false },
   { key: "conversa", keys: ["conversa", "valor"], title: "💬 Responderam", hint: "uma pessoa respondeu: é com você", dot: "bg-sky-400", core: true },
-  { key: "fechando", keys: ["fechando"], title: "🤝 Fechando", hint: "proposta ou negociação", dot: "bg-violet-400", core: false },
+  { key: "fechando", keys: ["fechando"], title: "🤝 Fechando", hint: "proposta ou negociação", dot: "bg-blue-400", core: false },
   { key: "fechado", keys: ["fechado"], title: "🎉 Fechado", hint: "venda fechada", dot: "bg-emerald-400", core: false },
   { key: "sem_resposta", keys: ["sem_resposta", "lembrando", "sem_retorno"], title: "😶 Sem resposta", hint: "ninguém respondeu", dot: "bg-zinc-400", core: false },
   { key: "encerrado", keys: ["encerrado"], title: "🚫 Encerrados", hint: "sem interesse ou não contatar", dot: "bg-stone-500", core: false },

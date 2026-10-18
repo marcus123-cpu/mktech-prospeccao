@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #0a0d1c;
-  --color-panel: #12162b;
-  --color-panel-2: #1a1f3a;
-  --color-line: #262d52;
-  --color-muted: #9099c0;
-  --color-accent: #7c6cff;
-  --color-accent-2: #5b8cff;
+  --color-bg: #08090d;
+  --color-panel: #101117;
+  --color-panel-2: #191a22;
+  --color-line: #22242e;
+  --color-muted: #8a8d9c;
+  --color-accent: #2f7bff;
+  --color-accent-2: #38a9ff;
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
   --animate-rise: rise 0.45s var(--ease-out-soft) both;
@@ -29,26 +29,20 @@ html {
 }
 
 body {
-  background:
-    radial-gradient(900px 520px at 0% -8%, rgb(124 108 255 / 0.30), transparent 60%),
-    radial-gradient(800px 480px at 100% 0%, rgb(45 212 191 / 0.18), transparent 55%),
-    radial-gradient(700px 420px at 100% 100%, rgb(244 114 182 / 0.14), transparent 60%),
-    radial-gradient(700px 420px at 0% 100%, rgb(56 189 248 / 0.14), transparent 60%),
-    var(--color-bg);
-  background-attachment: fixed;
-  color: #e8eaf4;
+  background: var(--color-bg);
+  color: #eceef5;
   font-family: var(--font-sans);
   font-feature-settings: "cv11", "ss01";
   letter-spacing: -0.006em;
   -webkit-font-smoothing: antialiased;
 }
 
-::selection { background: rgb(124 108 255 / 0.45); color: #fff; }
+::selection { background: rgb(47 123 255 / 0.45); color: #fff; }
 :where(a, button, input, select, textarea, summary):focus-visible {
-  outline: 2px solid rgb(124 108 255 / 0.9);
+  outline: 2px solid rgb(47 123 255 / 0.9);
   outline-offset: 2px;
 }
-* { scrollbar-width: thin; scrollbar-color: #2f3763 transparent; }
+* { scrollbar-width: thin; scrollbar-color: #33364a transparent; }
 
 /* Troca de página: entra suave. */
 .page-enter { animation: var(--animate-rise); }
@@ -67,7 +61,7 @@ body {
 }
 
 .text-gradient {
-  background: linear-gradient(90deg, #fff 30%, #b9b0ff 100%);
+  background: linear-gradient(90deg, #fff 30%, #9fd0ff 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -104,19 +98,19 @@ body {
 }
 
 @utility card {
-  @apply rounded-2xl border border-line/80 bg-panel/80 shadow-[0_1px_0_0_rgb(255_255_255/0.04)_inset,0_8px_24px_-12px_rgb(0_0_0/0.5)] backdrop-blur-sm transition duration-200;
+  @apply rounded-3xl border border-line/70 bg-panel transition duration-200;
 }
 
 @utility card-hover {
-  @apply hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-[0_12px_30px_-12px_rgb(124_108_255/0.35)];
+  @apply hover:border-white/15 hover:bg-panel-2/60;
 }
 
 @utility btn {
-  @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-3.5 py-2 text-sm font-medium transition duration-150 active:scale-[0.97] md:min-h-0 disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100;
+  @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition duration-150 active:scale-[0.98] md:min-h-0 disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100;
 }
 
 @utility btn-primary {
-  @apply btn bg-linear-to-br from-accent to-accent-2 text-white shadow-[0_6px_18px_-6px_rgb(124_108_255/0.7)] hover:brightness-110 hover:shadow-[0_8px_22px_-6px_rgb(124_108_255/0.85)];
+  @apply btn bg-linear-to-br from-accent to-accent-2 text-white shadow-[0_4px_14px_-6px_rgb(47_123_255/0.7)] hover:brightness-110;
 }
 
 @utility btn-ghost {
@@ -128,7 +122,7 @@ body {
 }
 
 @utility input {
-  @apply w-full min-w-0 rounded-xl border border-line bg-panel-2/70 px-3 py-2 text-base text-slate-100 transition sm:text-sm placeholder:text-muted/70 focus:border-accent focus:bg-panel-2 focus:shadow-[0_0_0_3px_rgb(124_108_255/0.18)] focus:outline-none;
+  @apply w-full min-w-0 rounded-2xl border border-line bg-panel-2/70 px-3 py-2 text-base text-slate-100 transition sm:text-sm placeholder:text-muted/70 focus:border-accent focus:bg-panel-2 focus:shadow-[0_0_0_3px_rgb(47_123_255/0.18)] focus:outline-none;
 }
 
 @utility label {
@@ -136,7 +130,7 @@ body {
 }
 
 @utility badge {
-  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap;
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap;
 }
 
 @utility table-head {

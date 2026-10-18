@@ -2,9 +2,9 @@ import { PRIORITY_LABEL, SITE_LABEL, STAGE_COLOR, STAGE_LABEL, type Priority, ty
 
 export function PageHeader({ title, subtitle, actions }: { title: string; subtitle?: string; actions?: React.ReactNode }) {
   return (
-    <div className="mb-4 flex flex-wrap items-end justify-between gap-3 border-l-4 border-accent pl-3 pr-12 md:mb-6">
+    <div className="mb-5 flex flex-wrap items-end justify-between gap-3 md:mb-6">
       <div>
-        <h1 className="text-gradient text-xl font-semibold tracking-tight md:text-2xl">{title}</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-white md:text-3xl">{title}</h1>
         {subtitle && <p className="mt-1 text-sm text-muted">{subtitle}</p>}
       </div>
       {actions && <div className="flex w-full flex-wrap gap-2 sm:w-auto [&>*]:flex-1 sm:[&>*]:flex-none">{actions}</div>}
@@ -36,7 +36,7 @@ export function SiteBadge({ status }: { status: SiteStatus }) {
       ? "bg-slate-800 text-slate-300"
       : status === "verificacao_pendente"
         ? "bg-zinc-800 text-zinc-400"
-        : "bg-accent/15 text-violet-200";
+        : "bg-accent/15 text-blue-200";
   return <span className={`badge ${color}`}>{SITE_LABEL[status]}</span>;
 }
 
@@ -57,24 +57,18 @@ export function ErrorBox({ message }: { message: string }) {
   );
 }
 
-const STAT_TONES = [
-  "from-violet-500/20 before:bg-violet-400",
-  "from-sky-500/20 before:bg-sky-400",
-  "from-emerald-500/20 before:bg-emerald-400",
-  "from-amber-500/20 before:bg-amber-400",
-  "from-rose-500/20 before:bg-rose-400",
-  "from-cyan-500/20 before:bg-cyan-400",
-  "from-fuchsia-500/20 before:bg-fuchsia-400",
-];
-
-/** Cada indicador ganha uma cor própria, sempre a mesma para o mesmo nome. */
-export function Stat({ label, value, hint }: { label: string; value: React.ReactNode; hint?: string }) {
-  const tone = STAT_TONES[[...label].reduce((n, ch) => n + ch.charCodeAt(0), 0) % STAT_TONES.length];
+/** Indicador de CRM: o primeiro de cada grade pode ser "destaque" (cartão branco, como na referência). */
+export function Stat({ label, value, hint, highlight }: { label: string; value: React.ReactNode; hint?: string; highlight?: boolean }) {
   return (
-    <div className={`card card-hover relative overflow-hidden bg-gradient-to-br ${tone} to-panel/80 p-4 before:absolute before:inset-y-3 before:left-0 before:w-1 before:rounded-r-full`}>
-      <div className="text-xs font-medium uppercase tracking-wide text-slate-300/80">{label}</div>
-      <div className="mt-2 text-2xl font-semibold tabular-nums">{value}</div>
-      {hint && <div className="mt-1 text-xs text-muted">{hint}</div>}
+    <div className={`card card-hover flex min-h-32 flex-col justify-between p-5 ${highlight ? "!border-transparent !bg-white !text-slate-900 hover:!bg-white" : ""}`}>
+      <div className="flex items-start justify-between gap-2">
+        <div className={`text-sm ${highlight ? "text-slate-700" : "text-slate-300"}`}>{label}</div>
+        <span aria-hidden className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs ${highlight ? "bg-accent text-white" : "bg-white/10 text-slate-300"}`}>↗</span>
+      </div>
+      <div>
+        <div className={`mt-4 text-3xl font-semibold tabular-nums tracking-tight ${highlight ? "text-slate-950" : "text-white"}`}>{value}</div>
+        {hint && <div className={`mt-1 text-xs ${highlight ? "text-slate-500" : "text-muted"}`}>{hint}</div>}
+      </div>
     </div>
   );
 }
@@ -96,7 +90,7 @@ export function Fold({
   children: React.ReactNode;
 }) {
   return (
-    <details open={open} className={`card group p-4 open:shadow-[0_12px_30px_-14px_rgb(124_108_255/0.3)] ${tone ?? ""}`}>
+    <details open={open} className={`card group p-4 ${tone ?? ""}`}>
       <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold [&::-webkit-details-marker]:hidden">
         <span aria-hidden className="inline-block text-muted transition-transform group-open:rotate-90">▶</span>
         <span>{title}</span>

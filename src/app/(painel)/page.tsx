@@ -149,7 +149,7 @@ export default async function Hoje({
             <section className="card p-5 md:p-6">
               <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
                 <h2 className="text-lg font-semibold">Operação agora</h2>
-                <Link href="/disparo" className="text-sm text-violet-300 hover:underline">Abrir Disparar →</Link>
+                <Link href="/disparo" className="text-sm text-blue-300 hover:underline">Abrir Disparar →</Link>
               </div>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <Stat label="Novas abordagens" value={<span className={estadoCor}>{!env.enabled || env.paused || !commercial.data?.enabled ? "Suspensas" : commercial.data?.new_contacts_enabled ? "Liberadas" : "Pausadas"}</span>} hint={janela} />
@@ -332,7 +332,7 @@ export default async function Hoje({
             <details className="card p-4 text-sm">
               <summary className="cursor-pointer font-medium">Mais números</summary>
               <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
-                <Stat label="Total de leads" value={m.total_leads} />
+                <Stat highlight label="Total de leads" value={m.total_leads} />
                 <Stat label="Ações de contato" value={m.contact_actions} hint="mensagens/ligações registradas no período" />
                 <Stat label="Desqualificados" value={m.disqualified} hint="fora do perfil" />
                 <Stat label="Duplicados bloqueados" value={m.duplicates_blocked} hint="cadastros repetidos que o sistema barrou" />
