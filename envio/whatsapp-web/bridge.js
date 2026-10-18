@@ -17,6 +17,7 @@ const http = require("http");
 const qrcode = require("qrcode-terminal");
 require('./compat-media').ensureMediaCompatibility();
 require('./compat-history').ensureHistoryCompatibility();
+require('./compat-download').ensureDownloadCompatibility();
 const { Client, LocalAuth, MessageMedia } = require("whatsapp-web.js");
 const path = require("node:path");
 const { Journal } = require("./journal");
@@ -25,6 +26,7 @@ const { messageId, prepareMediaMessage } = require('./message-id');
 const { syncHistory } = require('./history');
 const { deliverVoice } = require('./voice');
 const { deliverAttachment } = require('./attachment');
+const { downloadAudio } = require('./download-audio');
 // Somente configurações conhecidas, sem executar comandos contidos no .env.
 const envFile = path.join(__dirname, "..", ".env");
 if (require('node:fs').existsSync(envFile)) {
@@ -129,7 +131,7 @@ async function guardarAudio(msg, id) {
   if (!id || !msg.hasMedia) return {};
   try {
     if (!prepareMediaMessage(msg)) return {};
-    const media = await msg.downloadMedia();
+    const media = await downloadAudio(msg);
     if (!media || !media.data || media.data.length > 16 * 1024 * 1024) return {};
     const fs = require("node:fs");
     fs.mkdirSync(AUDIO_DIR, { recursive: true });
