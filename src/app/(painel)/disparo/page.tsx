@@ -33,7 +33,9 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
     .order("fit_score", { ascending: false, nullsFirst: false }).limit(300);
   const q = clean(sp.q); if (q) query = query.or(`business_name.ilike.%${q}%,city.ilike.%${q}%`);
   const city = clean(sp.city); if (city) query = query.ilike("city", `%${city}%`);
-  const niche = clean(sp.niche); if (niche) query = query.ilike("niche", `%${niche}%`);
+  const niche = clean(sp.niche);
+  const nicheTerms = (sp.niche ?? "").split(/,|;|\/|\bou\b/i).map(clean).filter(Boolean);
+  if (nicheTerms.length) query = query.or(nicheTerms.map(t => `niche.ilike.%${t}%`).join(","));
   if (sp.state && /^[A-Za-z]{2}$/.test(sp.state)) query = query.eq("state", sp.state.toUpperCase());
   const rows = sp.aba === "config" ? { data: [] } : await query;
   const candidates = ((rows.data ?? []) as unknown as { id: string; business_name: string; city: string; state: string | null; niche: string | null; fit_score: number | null; commercial_campaign_leads: Membership | Membership[] | null }[])
@@ -65,7 +67,7 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
     <div className="mb-5 grid gap-3 sm:grid-cols-3"><div className="card p-4"><p className="text-xs text-muted">Não contatados disponíveis</p><strong className="text-3xl">{available.data}</strong></div><div className="card p-4"><p className="text-xs text-muted">Intervalo entre envios</p><strong className="text-xl">{o.min_delay_seconds}–{o.max_delay_seconds}s</strong></div><div className="card p-4"><p className="text-xs text-muted">WhatsApp</p><strong className="text-xl">{c.bridge_connected ? "Conectado" : "Confira a conexão"}</strong></div></div>
     <form method="get" className="card mb-4 grid gap-2 p-3 sm:grid-cols-5">
       <input name="q" defaultValue={sp.q} placeholder="Buscar nome ou cidade" className="input" />
-      <input name="niche" defaultValue={sp.niche} placeholder="Nicho" className="input" />
+      <input name="niche" defaultValue={sp.niche} placeholder="Nicho (use vírgula para vários)" className="input" />
       <input name="city" defaultValue={sp.city} placeholder="Cidade" className="input" />
       <select name="state" defaultValue={sp.state ?? ""} className="input"><option value="">Estado</option>{UFS.map((u) => <option key={u} value={u}>{u}</option>)}</select>
       <button className="btn-ghost">Filtrar a lista</button>

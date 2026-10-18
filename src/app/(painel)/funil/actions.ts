@@ -26,3 +26,14 @@ export async function archiveFromFunnel(_: FunilState, form: FormData): Promise<
   revalidatePath("/funil");
   return { ok: "Ok" };
 }
+
+export async function removeFromQueue(_: FunilState, form: FormData): Promise<FunilState> {
+  const { supabase } = await requireAdmin();
+  const id = z.uuid().safeParse(form.get("id"));
+  if (!id.success) return { error: "Lead inválido." };
+  const { error } = await supabase.rpc("admin_queue_remove_lead", { p_lead: id.data });
+  if (error) return { error: dbErrorMessage(error) };
+  revalidatePath("/funil");
+  revalidatePath("/disparo");
+  return { ok: "Ok" };
+}

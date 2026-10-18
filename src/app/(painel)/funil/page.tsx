@@ -4,6 +4,7 @@ import { dbErrorMessage, requireAdmin } from "@/lib/auth";
 import { fmtDateTime, haQuanto } from "@/lib/time";
 import { ArchiveButton } from "./Archive";
 import { ClearPriceButton } from "./ClearPrice";
+import { RemoveFromQueueButton } from "./RemoveFromQueue";
 
 export const metadata = { title: "Funil" };
 export const dynamic = "force-dynamic";
@@ -125,6 +126,7 @@ export default async function FunilPage() {
                             : c.movido_em ? fmtDateTime(c.movido_em) : ""}
                         </p>
                         {c.coluna === "valor" && <ClearPriceButton id={c.id} />}
+                        {c.coluna === "fila" && <RemoveFromQueueButton id={c.id} name={c.business_name} />}
                         <ArchiveButton id={c.id} name={c.business_name} archived={false} />
                       </li>
                     ))}
