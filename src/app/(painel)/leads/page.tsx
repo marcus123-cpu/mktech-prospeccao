@@ -1,3 +1,4 @@
+import { LiveSearch } from "@/components/leads/LiveSearch";
 import { LEAD_COLORS } from "@/lib/lead-colors";
 import Link from "next/link";
 import { LeadsList } from "./LeadsList";
@@ -22,7 +23,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
   const total = (key: keyof Omit<Niche, "niche">) => niches.reduce((sum, n) => sum + Number(n[key]), 0);
   const url = (category: string, niche?: string) => `/leads?${new URLSearchParams({ aba: "todos", categoria: category, ...(niche ? { nicho: niche } : {}) })}`;
   return <>{tabs}<header className="mb-6"><h1 className="text-2xl font-semibold">Seus leads</h1><p className="mt-1 text-sm text-muted">Contatos organizados por nicho e canal disponível.</p></header>
-    <form method="get" role="search" className="card mb-6 flex flex-wrap gap-2 p-3"><input name="busca" defaultValue={sp.busca} className="input min-w-0 flex-1" placeholder="🔎 Buscar nicho (ex.: massagem, massoterapia ou massoterapeuta)" aria-label="Buscar nicho" /><button className="btn-primary">Buscar</button>{terms.length > 0 && <Link href="/leads" className="btn-ghost">Limpar</Link>}</form>
+    <form method="get" role="search" className="card mb-6 flex flex-wrap gap-2 p-3"><LiveSearch initial={sp.busca ?? ""} />{terms.length > 0 && <Link href="/leads" className="btn-ghost">Limpar</Link>}</form>
     {terms.length > 0 && <section className="card mb-6 flex flex-wrap items-center justify-between gap-3 border-accent/40 p-4"><p className="text-sm">{niches.length === 0 ? "Nenhum nicho encontrado para esta busca." : <><b>{niches.length}</b> nicho(s) encontrado(s) · <b>{niches.reduce((s, n) => s + Number(n.uncontacted), 0)}</b> lead(s) não contatado(s)</>}</p>{niches.length > 0 && <Link className="btn-primary" href={dispatchUrl(terms.join(","))}>🚀 Fazer disparo para todos desta busca</Link>}</section>}
     <div className="mb-6 grid gap-3 sm:grid-cols-3 lg:grid-cols-6">{([
       ["total", "Todos", ""], ["contacted", "Contatados", "contatados"], ["uncontacted", "Não contatados", "novos"],
