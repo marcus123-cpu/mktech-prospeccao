@@ -21,7 +21,7 @@ const { Client, LocalAuth, MessageMedia } = require("whatsapp-web.js");
 const path = require("node:path");
 const { Journal } = require("./journal");
 const { DemoLibrary } = require("./demo-library");
-const { messageId } = require('./message-id');
+const { messageId, prepareMediaMessage } = require('./message-id');
 const { syncHistory } = require('./history');
 const { deliverVoice } = require('./voice');
 const { deliverAttachment } = require('./attachment');
@@ -128,6 +128,7 @@ const AUDIO_FILE = /^[0-9a-f]{8,160}\.bin$/;
 async function guardarAudio(msg, id) {
   if (!id || !msg.hasMedia) return {};
   try {
+    if (!prepareMediaMessage(msg)) return {};
     const media = await msg.downloadMedia();
     if (!media || !media.data || media.data.length > 16 * 1024 * 1024) return {};
     const fs = require("node:fs");

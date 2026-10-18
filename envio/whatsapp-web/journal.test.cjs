@@ -6,6 +6,11 @@ const path = require('node:path');
 const { Journal } = require('./journal');
 function file() { return path.join(fs.mkdtempSync(path.join(os.tmpdir(),'hermes-journal-')),'journal.json'); }
 
+test('audio recovery is prioritized below live receipts and above bulk text history',()=>{
+ const j=new Journal(file());j.push('historico',{message_id:'text'});j.push('historico',{message_id:'voice',audio_arquivo:'abc.bin'});j.push('historico',{message_id:'seen',live_receipt:true,ack:3});
+ assert.deepEqual(j.list('historico').map(e=>e.message_id),['seen','voice','text']);
+});
+
 test('confirmações não se perdem quando entrega e leitura chegam antes do ack', () => {
   const j = new Journal(file());
   j.push('historico', { message_id: 'old' });

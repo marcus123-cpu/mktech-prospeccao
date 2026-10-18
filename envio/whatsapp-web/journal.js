@@ -31,7 +31,7 @@ class Journal {
   list(kind) {
     const events = this.data.events.filter(e => e.kind === kind);
     // Live delivery/read confirmations must not wait behind a large history import.
-    if (kind === 'historico') events.sort((a, b) => Number(!!b.live_receipt) - Number(!!a.live_receipt));
+    if (kind === 'historico') events.sort((a, b) => Number(!!b.live_receipt) - Number(!!a.live_receipt) || Number(!!b.audio_arquivo) - Number(!!a.audio_arquivo));
     return events.slice(0, 100);
   }
   ack(ids) { this.data.events = this.data.events.filter(e => !ids.includes(e.event_id)); this.flush(); }

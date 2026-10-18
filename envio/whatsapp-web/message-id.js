@@ -10,4 +10,11 @@ function messageId(message){
  if(typeof id.fromMe==='boolean'&&typeof remote==='string'&&typeof id.id==='string')return `${id.fromMe}_${remote}_${id.id}`;
  return null;
 }
-module.exports={messageId};
+function prepareMediaMessage(message) {
+ const id=messageId(message);
+ if(!id)return null;
+ // The pinned downloadMedia still reads the old Node-side property.
+ message.id={...(typeof message.id==='object'?message.id:{}),_serialized:id};
+ return id;
+}
+module.exports={messageId,prepareMediaMessage};
