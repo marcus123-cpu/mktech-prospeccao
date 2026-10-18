@@ -2,7 +2,7 @@ import { PRIORITY_LABEL, SITE_LABEL, STAGE_COLOR, STAGE_LABEL, type Priority, ty
 
 export function PageHeader({ title, subtitle, actions }: { title: string; subtitle?: string; actions?: React.ReactNode }) {
   return (
-    <div className="mb-4 flex flex-wrap items-end justify-between gap-3 border-l-4 border-accent pl-3 md:mb-6">
+    <div className="mb-4 flex flex-wrap items-end justify-between gap-3 border-l-4 border-accent pl-3 pr-12 md:mb-6">
       <div>
         <h1 className="text-gradient text-xl font-semibold tracking-tight md:text-2xl">{title}</h1>
         {subtitle && <p className="mt-1 text-sm text-muted">{subtitle}</p>}
@@ -17,7 +17,7 @@ export function StageBadge({ stage }: { stage: Stage }) {
 }
 
 export function ContactBadge({ contacted, unknownDate }: { contacted: boolean; unknownDate?: boolean }) {
-  if (!contacted) return <span className="badge bg-slate-800 text-slate-400">Não contatado</span>;
+  if (!contacted) return <span className="badge bg-red-500/15 text-red-300">Não contatado</span>;
   return (
     <span className="badge bg-emerald-950 text-emerald-300" title={unknownDate ? "Contato importado sem data" : undefined}>
       Contatado{unknownDate ? " (sem data)" : ""}

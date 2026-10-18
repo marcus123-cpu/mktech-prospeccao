@@ -30,7 +30,7 @@ export default async function PainelLayout({ children }: { children: React.React
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 pr-12">
           {chip}
           <form action="/auth/sair" method="post">
             <button className="rounded-lg px-3 py-2 text-sm text-muted hover:text-slate-200">Sair</button>

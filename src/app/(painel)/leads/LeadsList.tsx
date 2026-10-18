@@ -48,6 +48,7 @@ export async function LeadsList({ searchParams }: { searchParams: Promise<LeadFi
           </>
         }
       />
+      <p className="mb-4 flex flex-wrap gap-4 text-xs"><span className="text-red-300">● Não contatados</span><span className="text-emerald-300">● Contatados</span><span className="text-orange-300">● Sem número</span></p>
       {f.excluido && <p className="mb-4 text-sm text-emerald-300">Lead excluído.</p>}
 
       <FiltersToggle active={[...params.keys()].filter((k) => !["ordem", "aba"].includes(k)).length}>

@@ -1,13 +1,13 @@
+import { leadColor } from "@/lib/lead-colors";
 import Link from "next/link";
-import { DiagnosisCard, type Diagnosis } from "@/components/leads/DiagnosisCard";
+import { ContactNotes } from "./ContactNotes";
+import { ConversationLink } from "./ConversationLink";
 import { Empty, ErrorBox, PageHeader } from "@/components/ui";
 import { requireAdmin } from "@/lib/auth";
 import { CopyResumo } from "@/components/leads/CopyResumo";
 import { CONVERSATION_LABEL, conversationState, type Conversation, type ConversationFilter } from "@/lib/conversations";
 import { fmtDateTime, haQuanto } from "@/lib/time";
-import { MemoryForm, type Memory } from "./MemoryForm";
 import { ChatScroll } from "./ChatScroll";
-import { ReplyAssistant } from "./ReplyAssistant";
 import { ManualProvider, PendingBubbles, ReplyBox, type Pending } from "./ReplyBox";
 import { ChatShell, InfoToggle } from "./ChatShell";
 import { STAGE_LABEL } from "@/lib/labels";
@@ -40,12 +40,7 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
   // A condição temporal é calculada no banco, antes da paginação.
   if (filter === "aguardando") query = query.eq("needs_reply", true);
   const explicitId = sp.lead && /^[0-9a-f-]{36}$/i.test(sp.lead) ? sp.lead : undefined;
-  const loadDetail = (id: string) => Promise.all([
-    supabase.from("conversation_inbox").select("*").eq("id", id).maybeSingle(),
-    supabase.from("conversation_timeline").select("*").eq("lead_id", id).order("occurred_at", { ascending: false }).order("id").limit(300),
-    supabase.from("lead_conversation_memory").select("summary,facts,objections,next_action,updated_at").eq("lead_id", id).maybeSingle(),
-    supabase.from("lead_diagnoses").select("*").eq("lead_id", id).order("created_at", { ascending: false }).limit(1),
-  ]);
+  const loadDetail = async (id: string) => await supabase.rpc("admin_conversation_detail", {p_lead:id,p_limit:300});
   const detailRequest = explicitId ? loadDetail(explicitId) : null;
   const [inbox, unread] = await Promise.all([
     query.order("activity_at", { ascending: false }).order("id").range((page - 1) * 30, page * 30 - 1),
@@ -55,13 +50,11 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
   if (inbox.error) return <><PageHeader title="Conversas" /><ErrorBox message="Não foi possível carregar a central." /></>;
   const rows = (inbox.data ?? []) as Conversation[];
   const selectedId = explicitId ?? rows[0]?.id;
-  const [selected, history, memory, diagnosis] = detailRequest ? await detailRequest : selectedId ? await loadDetail(selectedId) : [null, null, null, null];
-  const current = selected?.data as Conversation | null;
-  const detailError = selected?.error || history?.error || memory?.error || diagnosis?.error;
-  const events = [...(history?.data ?? []) as Event[]].reverse();
-  const stored = new Set(events.filter((e) => e.media === "audio" && e.external_id).map((e) => e.external_id as string));
-  const audios = stored.size ? await supabase.from("chat_audio").select("external_id").in("external_id", [...stored]) : null;
-  const audioIds = new Set(((audios?.data ?? []) as { external_id: string }[]).map((a) => a.external_id));
+  const detail = detailRequest ? await detailRequest : selectedId ? await loadDetail(selectedId) : null;
+  const current = (detail?.data?.current ?? null) as Conversation | null;
+  const detailError = detail?.error;
+  const events = [...(detail?.data?.events ?? []) as Event[]].reverse();
+  const audioIds = new Set<string>(detail?.data?.audio_ids ?? []);
   const href = (changes: Record<string, string>) => {
     const params = new URLSearchParams({ filtro: filter, ...(term ? { q: term } : {}), ...changes });
     return `/conversas?${params}`;
@@ -103,14 +96,14 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
           const waiting = !!c.last_in_at && (!c.last_out_at || Date.parse(c.last_in_at) > Date.parse(c.last_out_at));
           const isUnread = unreadIds.has(c.id);
           const active = current?.id === c.id;
-          return <Link key={c.id} href={href({ lead: c.id, pagina: String(page) })} aria-current={active ? "page" : undefined}
-            className={`flex gap-3 border-b border-white/5 px-4 py-4 transition hover:bg-[#202c33] ${active ? "border-l-4 border-l-[#00d9a4] bg-gradient-to-r from-[#00a884]/25 to-[#2a3942]" : isUnread ? "border-l-4 border-l-sky-400 bg-sky-500/5" : "border-l-4 border-l-transparent"}`}>
+          return <ConversationLink key={c.id} leadId={c.id} name={c.business_name} active={active} href={href({ lead: c.id, pagina: String(page) })} aria-current={active ? "page" : undefined}
+            className={`flex gap-3 border-b border-white/5 px-4 py-4 transition hover:bg-[#202c33] ${active ? "border-l-4 border-l-[#00d9a4] bg-gradient-to-r from-[#00a884]/25 to-[#2a3942]" : `${leadColor({ contacted: !!c.last_out_at || c.stage !== "novo", phone_e164: c.phone_e164 })} ${isUnread ? "border-l-4 border-l-sky-400" : "border-l-4 border-l-transparent"}`}`}>
             <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${avatar(c.business_name)} text-base font-semibold text-white shadow-md`}>{initial(c.business_name)}</span>
             <span className="min-w-0 flex-1">
               <span className="flex justify-between gap-2"><span className="truncate text-[14px] font-medium text-[#e9edef]">{c.business_name}</span><span className={`shrink-0 text-[10px] ${waiting ? "text-[#00a884]" : "text-[#8696a0]"}`}>{haQuanto(c.activity_at)}</span></span>
               <span className="mt-1 flex items-center gap-2"><span className={`min-w-0 flex-1 truncate text-[12px] ${isUnread ? "font-semibold text-[#e9edef]" : "text-[#8696a0]"}`}>{c.last_message_direction === "saida" ? "Você: " : ""}{c.last_message_media === "audio" ? "Mensagem de voz" : c.last_message_body ?? c.last_in_body ?? "Conversa iniciada"}</span>{isUnread ? <span className="shrink-0 rounded-full bg-[#00a884] px-2 py-0.5 text-[10px] font-semibold text-white">Nova</span> : waiting && <span title="Aguardando resposta" className="h-2 w-2 shrink-0 rounded-full bg-[#00a884]" />}</span>
             </span>
-          </Link>;
+          </ConversationLink>;
         })}
       </div>
       <nav aria-label="Páginas de conversas" className="flex items-center justify-between border-t border-line p-3 text-xs text-muted">
@@ -131,7 +124,7 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
             <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${avatar(current.business_name)} font-semibold text-white`}>{initial(current.business_name)}</span>
             <div className="min-w-0"><h2 className="truncate text-[14px] font-medium text-[#e9edef]">{current.business_name}</h2><p className="mt-0.5 truncate text-[11px] text-[#8696a0]">{current.city}{current.phone_e164 ? ` · ${current.phone_e164}` : ""}</p></div>
           </div>
-          <InfoToggle />
+          <div className="mr-12"><InfoToggle /></div>
         </header>
         <ChatScroll deps={`${current.id}:${visible.length}`}>
           <ol className="space-y-2">
@@ -184,19 +177,13 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
           <Link href={`/leads/${current.id}`} className="btn-ghost">Ficha do lead</Link>
         </div>
       </section>
-      <ReplyAssistant key={current.id} leadId={current.id} />
-      <details className="card p-4">
-        <summary className="cursor-pointer font-semibold">Memória do cliente</summary>
-        <p className="mb-4 mt-2 text-xs text-muted">Anotações suas sobre este cliente.</p>
-        <MemoryForm key={current.id} leadId={current.id} memory={memory?.data as Memory | null} />
-      </details>
-      <DiagnosisCard d={(diagnosis?.data?.[0] as Diagnosis | undefined) ?? null} olderCount={0} />
+      <ContactNotes key={current.id} leadId={current.id} />
     </aside>
   ) : null;
 
   return (
     <>
-      <ChatShell list={list} chat={chat} info={info} selected={!!sp.lead} />
+      <ChatShell list={list} chat={chat} info={info} selected={!!sp.lead} selectedId={current?.id} />
     </>
   );
 }

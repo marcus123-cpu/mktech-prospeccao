@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { leadColor } from "@/lib/lead-colors";
 import { useState } from "react";
 import { bulkUpdate } from "@/app/(painel)/leads/actions";
 import { ActionForm } from "@/components/ActionForm";
@@ -137,7 +138,7 @@ export function LeadsTable({ rows }: { rows: LeadRow[] }) {
               return (
                 <tr
                   key={r.id}
-                  className="cursor-pointer hover:bg-panel-2/60"
+                  className={`cursor-pointer transition hover:brightness-125 ${leadColor(r)}`}
                   onClick={(e) => {
                     // A linha inteira abre a ficha; links, botões e a caixa de seleção mantêm a própria ação.
                     if ((e.target as HTMLElement).closest("a, button, input, label, select")) return;
@@ -226,7 +227,7 @@ function LeadCard({ r, checked, onToggle }: { r: LeadRow; checked: boolean; onTo
   const site = r.site_status === "site_proprio_encontrado" ? safeExternal(r.website_url) : null;
   const overdue = r.next_follow_up_at ? new Date(r.next_follow_up_at) < new Date() : false;
   return (
-    <div className={`card p-3 ${checked ? "border-accent/60" : ""}`}>
+    <div className={`card p-3 ${leadColor(r)} ${checked ? "border-accent/60" : ""}`}>
       <div className="flex items-start gap-3">
         <input
           type="checkbox"
