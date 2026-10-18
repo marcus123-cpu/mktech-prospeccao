@@ -71,7 +71,7 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
       <button className="btn-ghost">Filtrar a lista</button>
     </form>
 
-    <ActionForm action={startDispatch} submit="🚀 Disparar agora" className="space-y-4"
+    <ActionForm action={startDispatch} dispatchNotifications submit="🚀 Disparar agora" className="space-y-4"
       confirmText="O Hermes vai começar a enviar a saudação real no WhatsApp para os leads escolhidos. Disparar?">
       <section className="card p-4">
         <h2 className="mb-2 font-semibold">1. Quem recebe a saudação</h2>

@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { DISPATCH_ALERT_EVENT, readDispatchAlerts, type DispatchAlert } from "@/lib/dispatch-alerts";
+import { DispatchNotification } from "./DispatchNotification";
 
 type Unread = { id: string; business_name: string; last_in_at: string; last_in_body: string | null; last_in_media: string | null };
 export function ConversationNotifications() {
@@ -12,6 +14,13 @@ export function ConversationNotifications() {
   const router = useRouter();
   const [rows, setRows] = useState<Unread[]>([]);
   const [open, setOpen] = useState(false);
+  const [dispatchAlerts, setDispatchAlerts] = useState<DispatchAlert[]>([]);
+  useEffect(() => {
+    setDispatchAlerts(readDispatchAlerts());
+    const update = () => { const alerts = readDispatchAlerts(); setDispatchAlerts(alerts); if (alerts.length) setOpen(true); };
+    window.addEventListener(DISPATCH_ALERT_EVENT, update);
+    return () => window.removeEventListener(DISPATCH_ALERT_EVENT, update);
+  }, []);
   const [error, setError] = useState("");
   const [permission, setPermission] = useState("default");
   const previous = useRef<Map<string, string> | null>(null);
@@ -59,8 +68,9 @@ export function ConversationNotifications() {
     return () => document.removeEventListener("pointerdown", outside);
   }, [open]);
   return <div ref={box} className={`group fixed right-4 top-3 z-50 flex flex-col items-end transition-opacity duration-300 ${open ? "opacity-100" : "opacity-90 hover:opacity-100 focus-within:opacity-100"}`}>
-    {open && <section aria-label="Novas respostas" className="absolute right-0 top-12 w-80 max-w-[90vw] rounded-xl border border-white/15 bg-[#202c33] p-4 text-[#e9edef] shadow-xl">
-      <div className="mb-3 flex justify-between"><strong>Novas respostas ({rows.length})</strong><button aria-label="Fechar notificações" onClick={() => setOpen(false)}>✕</button></div>
+    {open && <section aria-label="Notificações" className="absolute right-0 top-12 max-h-[80vh] w-96 max-w-[90vw] overflow-y-auto rounded-xl border border-white/15 bg-[#202c33] p-4 text-[#e9edef] shadow-xl">
+      <div className="mb-3 flex justify-between"><strong>Notificações ({rows.length + dispatchAlerts.length})</strong><button aria-label="Fechar notificações" onClick={() => setOpen(false)}>✕</button></div>
+      {dispatchAlerts.map(alert => <DispatchNotification key={alert.id} alert={alert} />)}
       <div className="max-h-64 overflow-y-auto">{rows.map(row => <Link className="block border-b border-white/10 py-2" key={row.id} href={`/conversas?lead=${row.id}`} onClick={() => setOpen(false)}><span className="block text-sm font-semibold">{row.business_name}</span><span className="block truncate text-xs text-[#aebac1]">{row.last_in_media === "audio" ? "Mensagem de voz" : row.last_in_body ?? "Nova mensagem"}</span></Link>)}{!rows.length && <p className="text-sm">Nenhuma resposta não lida.</p>}</div>
       {rows.length > 0 && <button className="mt-3 block text-sm text-emerald-300" onClick={async () => {
         const batch = rows;
@@ -71,6 +81,6 @@ export function ConversationNotifications() {
       {permission === "denied" && <p className="mt-2 text-xs">Avisos do navegador bloqueados. Você pode liberá-los nas configurações do site.</p>}
       {error && <p role="status" className="mt-2 text-xs text-amber-300">{error}</p>}
     </section>}
-    <button onClick={() => setOpen(!open)} aria-expanded={open} aria-label={`${rows.length} conversas com respostas não lidas${error ? ". Avisos indisponíveis" : ""}`} className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[#005c4b] text-sm font-semibold text-white shadow-lg">{error ? "⚠" : "🔔"}<span className="sr-only">Respostas</span> {rows.length > 0 && <span aria-live="polite" className="absolute -right-2 -top-2 rounded-full bg-emerald-400 px-1.5 py-0.5 text-[10px] text-black">{rows.length}</span>}</button>
+    <button onClick={() => setOpen(!open)} aria-expanded={open} aria-label={`${rows.length} conversas com respostas não lidas; ${dispatchAlerts.length} avisos de disparo${error ? ". Avisos indisponíveis" : ""}`} className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[#005c4b] text-sm font-semibold text-white shadow-lg">{error || dispatchAlerts.length ? "⚠" : "🔔"}<span className="sr-only">Notificações</span> {rows.length + dispatchAlerts.length > 0 && <span aria-live="polite" className="absolute -right-2 -top-2 rounded-full bg-emerald-400 px-1.5 py-0.5 text-[10px] text-black">{rows.length + dispatchAlerts.length}</span>}</button>
   </div>;
 }

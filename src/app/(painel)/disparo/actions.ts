@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireAdmin, dbErrorMessage } from "@/lib/auth";
 
-type State = { error?: string; ok?: string };
+type State = { error?: string; ok?: string; recovery?: "all" | "retry" | "review" };
 const refresh = () => { revalidatePath("/disparo"); revalidatePath("/hermes"); };
 const id = z.uuid();
 
@@ -15,7 +15,8 @@ export async function startDispatch(_: State, form: FormData): Promise<State> {
   if (!scope.success) return { error: "Escolha quem recebe." };
   if (!today.success) return { error: "Quantos enviar hoje: de 1 a 200." };
   const leads = z.array(id).max(5000).safeParse(form.getAll("lead_ids"));
-  if (scope.data === "selected" && (!leads.success || leads.data.length === 0)) return { error: "Marque pelo menos um lead na lista." };
+  if (!leads.success) return { error: "Lista inválida. Atualize a página e selecione os leads novamente.", recovery: "review" };
+  if (scope.data === "selected" && leads.data.length === 0) return { error: "Nenhum lead foi marcado. Você pode voltar à lista ou usar todos os leads novos disponíveis.", recovery: "all" };
   const { data, error } = await supabase.rpc("admin_dispatch_start", {
     p_leads: scope.data === "selected" && leads.success ? leads.data : null,
     p_list: null,
@@ -24,7 +25,13 @@ export async function startDispatch(_: State, form: FormData): Promise<State> {
     p_today: today.data,
     p_name: null,
   });
-  if (error) return { error: dbErrorMessage(error) };
+  if (error) {
+    const rejected = ["22023", "P0001"].includes(error.code);
+    return {
+      error: rejected ? dbErrorMessage(error) : "Não foi possível confirmar o disparo. Confira a conexão e o histórico de disparos antes de tentar novamente, para evitar duplicidade.",
+      recovery: rejected ? "retry" : "review",
+    };
+  }
   refresh();
   const skipped = data?.rejected_total ? ` ${data.rejected_total} ficaram de fora (telefone fixo, já contatado, bloqueado ou repetido).` : "";
   return { ok: `Disparo iniciado para ${data?.added ?? 0} lead(s). Os envios saem aos poucos, no horário e no limite configurados.${skipped}` };

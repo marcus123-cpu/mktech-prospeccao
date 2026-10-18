@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import type { ActionState } from "@/app/(painel)/leads/actions";
+import { reportDispatchError } from "@/lib/dispatch-alerts";
 
 type Action = (state: ActionState, form: FormData) => Promise<ActionState>;
 
@@ -13,6 +14,7 @@ export function ActionForm({
   className = "space-y-3",
   variant = "btn-primary",
   confirmText,
+  dispatchNotifications = false,
 }: {
   action: Action;
   children?: React.ReactNode;
@@ -20,8 +22,23 @@ export function ActionForm({
   className?: string;
   variant?: string;
   confirmText?: string;
+  dispatchNotifications?: boolean;
 }) {
-  const [state, formAction, pending] = useActionState<ActionState, FormData>(action, {});
+  const [state, formAction, pending] = useActionState<ActionState, FormData>(async (previous, form) => {
+    try {
+      const result = await action(previous, form);
+      if (dispatchNotifications && result.error) {
+        const recovery = (result as ActionState & { recovery?: "all" | "retry" | "review" }).recovery;
+        reportDispatchError(form, result.error, recovery ?? "review");
+      }
+      return result;
+    } catch (error) {
+      if (!dispatchNotifications) throw error;
+      const message = "Não foi possível confirmar o disparo. Confira o histórico antes de tentar de novo, para evitar duplicidade.";
+      reportDispatchError(form, message, "review");
+      return { error: message };
+    }
+  }, {});
   return (
     <form
       action={formAction}
