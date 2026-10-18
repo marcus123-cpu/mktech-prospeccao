@@ -1,3 +1,4 @@
+import { SettingsForm } from "../configuracoes/Forms";
 import { Empty, ErrorBox, PageHeader } from "@/components/ui";
 import { dbErrorMessage, requireAdmin } from "@/lib/auth";
 import { RUN_STATUS_LABEL } from "@/lib/labels";
@@ -18,6 +19,7 @@ const PEDIDO_LABEL: Record<string, string> = {
 
 export default async function RunsPage() {
   const { supabase } = await requireAdmin();
+  const settings = await supabase.from("prospecting_settings").select("*").eq("id", 1).maybeSingle();
   const { data, error } = await supabase
     .from("hermes_runs")
     .select("*")
@@ -25,7 +27,7 @@ export default async function RunsPage() {
     .limit(100);
   const { data: pedidos } = await supabase
     .from("hermes_requests")
-    .select("id, qualified_target, max_searches, status, qualified_found, created_at, started_at, finished_at, note, run_id, niche, location_scope, location_state, location_city")
+    .select("id, qualified_target, max_searches, status, qualified_found, created_at, started_at, finished_at, note, observations, run_id, niche, location_scope, location_state, location_city")
     .order("created_at", { ascending: false })
     .limit(5);
   const aberto = (pedidos ?? []).find((p) => p.status === "pendente" || p.status === "em_andamento");
@@ -61,6 +63,7 @@ export default async function RunsPage() {
                       {" "}· vieram {p.qualified_found ?? 0}
                     </span>
                   )}
+                  {p.observations && <span className="mt-1 block text-xs text-accent">OBS: {p.observations}</span>}
                   {p.note && p.status === "concluido" && <span className="block text-xs text-muted">{p.note}</span>}
                   {reports.get(p.id) && <RunReport report={reports.get(p.id)!} />}
                 </span>
@@ -70,6 +73,7 @@ export default async function RunsPage() {
           </ul>
         )}
       </section>
+      <details className="card mb-4 p-4"><summary className="cursor-pointer font-semibold">Configurações da pesquisa automática</summary><div className="mt-4">{settings.data && <SettingsForm s={settings.data} />}</div></details>
       {error ? (
         <ErrorBox message={dbErrorMessage(error)} />
       ) : !data?.length ? (

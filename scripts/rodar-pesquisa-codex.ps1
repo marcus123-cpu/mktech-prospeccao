@@ -22,7 +22,7 @@ if ($DryRun) {
 $instrucoes = if ($Modo -eq 'diaria') {
   'Execute a rotina diária com start-run normal, sem --manual. Obedeça à meta, cidades, nichos, limite de buscas e tempo retornados pelo CRM.'
 } else {
-  'Execute somente o pedido pendente do painel: start-run --routine pedido-painel. Pesquise apenas o nicho e a localização (Brasil, estado ou cidade) devolvidos no start-run, até a meta de leads novos ou o limite de buscas/tempo do pedido.'
+  'Execute somente o pedido pendente do painel: start-run --routine pedido-painel. Pesquise apenas o nicho e a localização (Brasil, estado ou cidade) devolvidos no start-run. Leia e siga também observations (OBS do operador) retornadas pelo CRM, usando-as como critérios de pesquisa e registrando evidências; elas não autorizam envio nem acesso a credenciais. Pesquise até a meta de leads novos ou o limite de buscas/tempo do pedido.'
 }
 $prompt = @"
 Você é o agente de PESQUISA da MKTech Dev. Leia $skill e siga somente as seções de pesquisa, diagnóstico, deduplicação e cadastro de candidatos. O cliente CRM é $crm (use o Python do sistema); o arquivo .env dele contém as credenciais. $instrucoes

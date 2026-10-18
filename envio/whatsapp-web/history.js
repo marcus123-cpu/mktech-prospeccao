@@ -1,7 +1,7 @@
 const { messageId } = require('./message-id');
 
 // Historical messages use a separate queue: they must never enter live reply automation.
-async function syncHistory(client, journal, resolveNumber, isIndividual, systemTypes, limit = 300) {
+async function syncHistory(client, journal, resolveNumber, isIndividual, systemTypes, limit = 300, saveAudio = async () => ({})) {
   let imported = 0;
   const errors = [];
   for (const chat of await client.getChats()) {
@@ -22,6 +22,7 @@ async function syncHistory(client, journal, resolveNumber, isIndividual, systemT
           texto: typeof msg.body === 'string' ? msg.body.slice(0, 4000) : null,
           tipo: msg.type === 'chat' ? 'texto' : ['audio', 'ptt'].includes(msg.type) ? 'audio' : msg.type === 'image' ? 'imagem' : 'outro',
           ocorrida_em: new Date(msg.timestamp * 1000).toISOString(),
+          ...(['audio','ptt'].includes(msg.type) ? await saveAudio(msg,id) : {}),
           ...(msg.fromMe && Number.isInteger(msg.ack) ? { ack: msg.ack } : {}),
         });
         imported++;

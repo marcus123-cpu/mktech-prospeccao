@@ -248,6 +248,20 @@ class WhatsAppWeb(Transporte):
             raise RuntimeError("A ponte não confirmou o envio da mensagem de voz; confira no WhatsApp")
         return out["id"]
 
+    def enviar_anexo(self, item: dict[str, Any]) -> str:
+        import base64
+        url = item.get("audio_url", "")
+        if not isinstance(url, str) or not url.startswith("https://"):
+            raise BridgeRejected("URL de arquivo inválida")
+        with urllib.request.urlopen(url, timeout=60) as response:
+            data = response.read(30 * 1024 * 1024 + 1)
+        if not data or len(data) > 30 * 1024 * 1024:
+            raise BridgeRejected("Arquivo vazio ou maior que 30 MB")
+        out = self._call("POST", "/enviar-anexo", {"telefone":item["telefone"],"item_id":item["id"],"mime":item.get("audio_mime"),"filename":item.get("filename"),"data":base64.b64encode(data).decode("ascii")}, timeout=120)
+        if not out.get("ok") or not out.get("id"):
+            raise RuntimeError("A ponte não confirmou o arquivo; confira no WhatsApp antes de reenviar")
+        return out["id"]
+
     def historico(self) -> list[dict[str, Any]]:
         try:
             out = self._call("GET", "/historico")
@@ -415,7 +429,9 @@ def forward_replies(transporte: Transporte) -> int:
             body["message_id"] = msg["message_id"]
         status, payload = request("POST", "/api/hermes/v1/envio/respostas", body)
         if status < 400 and status > 0 and payload.get("status") in ("registrada", "existente", "ignorada"):
-            if upload_audio(transporte, msg):
+            if payload.get("status") == "ignorada":
+                transporte.apagar_audio(msg)
+            if payload.get("status") == "ignorada" or upload_audio(transporte, msg):
                 transporte.ack(msg)
         if payload.get("status") == "registrada":
             quem = "PESSOA" if payload.get("conversa") else "automática"
@@ -438,7 +454,9 @@ def forward_minhas(transporte: Transporte) -> int:
                 body[key] = msg[key]
         status, payload = request("POST", "/api/hermes/v1/envio/minhas", body)
         if status < 400 and status > 0 and payload.get("status") in ("registrada", "existente", "ignorada"):
-            if upload_audio(transporte, msg):
+            if payload.get("status") == "ignorada":
+                transporte.apagar_audio(msg)
+            if payload.get("status") == "ignorada" or upload_audio(transporte, msg):
                 transporte.ack(msg)
         if payload.get("status") == "registrada":
             log(f"mensagem sua para {msg['telefone']} registrada (conta para os lembretes)")
@@ -451,16 +469,19 @@ def forward_history(transporte: Transporte) -> int:
     now = time.monotonic()
     if now < getattr(transporte, "_history_next_at", 0):
         return 0
-    transporte._history_next_at = now + 30
+    transporte._history_next_at = now + 3
     count = 0
-    for msg in transporte.historico()[:20]:
+    for msg in transporte.historico()[:5]:
         body = {key: msg.get(key) for key in ("telefone", "message_id", "direcao", "texto", "tipo", "ocorrida_em")}
         if isinstance(msg.get("ack"), int):
             body["ack"] = msg["ack"]
         status, payload = request("POST", "/api/hermes/v1/envio/historico", body)
         if 0 < status < 400 and payload.get("status") in ("registrada", "existente", "ignorada"):
-            transporte.ack(msg)
-            count += 1
+            if payload.get("status") == "ignorada":
+                transporte.apagar_audio(msg)
+            if payload.get("status") == "ignorada" or upload_audio(transporte, msg):
+                transporte.ack(msg)
+                count += 1
         else:
             break  # Mantém a fila durável e evita exceder o limite de requisições.
     return count
@@ -476,11 +497,11 @@ def send_manual_reply(transporte: Transporte) -> str | None:
     # Texto humano: sem o filtro "parece erro" dos textos automáticos (links e termos comuns são válidos).
     texto = nxt["texto"].strip() if isinstance(nxt.get("texto"), str) else ""
     path = f"/api/hermes/v1/envio/manual/{nxt['id']}/resultado"
-    if nxt.get("media") != "audio" and (not texto or len(texto) > 1000):
+    if nxt.get("media", "texto") == "texto" and (not texto or len(texto) > 1000):
         request("POST", path, {"ok": False, "erro": "texto vazio ou grande demais; nada enviado"})
         return "recusado"
     try:
-        provider = transporte.enviar_voz(nxt) if nxt.get("media") == "audio" else transporte.enviar(nxt["telefone"], texto)
+        provider = transporte.enviar_voz(nxt) if nxt.get("media") == "audio" else transporte.enviar_anexo(nxt) if nxt.get("media") in ("video", "imagem", "arquivo") else transporte.enviar(nxt["telefone"], texto)
     except Exception as e:  # noqa: BLE001 - qualquer falha vira "falhou" e nunca é reenviada sozinha
         request("POST", path, {"ok": False, "erro": f"{transporte.nome}: {e}"[:400]})
         return "falhou"
@@ -557,6 +578,9 @@ def esperar(transporte: Transporte, seconds: float) -> None:
             return
         time.sleep(min(MANUAL_POLL_SECONDS, restante))
         if getattr(transporte, "_pronto_agora", False) and time.monotonic() < fim:
+            forward_replies(transporte)
+            forward_minhas(transporte)
+            forward_history(transporte)
             send_manual_reply(transporte)
 
 

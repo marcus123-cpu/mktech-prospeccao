@@ -20,3 +20,11 @@ test('imports both directions with original dates, ignores groups and system eve
   assert.equal(events[0].ack, undefined);
   assert.equal(events[1].ack, 3);
 });
+
+test('historical voice files are downloaded and remain attached to the history event', async () => {
+  const events=[];
+  const msg={id:{_serialized:'voice-old'},type:'ptt',timestamp:1700000000,fromMe:false,hasMedia:true};
+  const chat={id:{_serialized:'5511999999999@c.us'},fetchMessages:async()=>[msg]};
+  const result=await syncHistory({getChats:async()=>[chat]},{push:(_,p)=>events.push(p)},async()=>'5511999999999',()=>true,new Set(),300,async(m,id)=>{assert.equal(m,msg);assert.equal(id,'voice-old');return {audio_arquivo:'abc.bin',audio_mime:'audio/ogg'};});
+  assert.equal(result.imported,1);assert.equal(events[0].audio_arquivo,'abc.bin');assert.equal(events[0].tipo,'audio');
+});

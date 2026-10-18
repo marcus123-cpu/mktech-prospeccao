@@ -1,15 +1,16 @@
+import Link from "next/link";
 import { ActionForm } from "@/components/ActionForm";
 import { CheckAll } from "@/components/CheckAll";
 import { ErrorBox, PageHeader } from "@/components/ui";
 import { requireAdmin } from "@/lib/auth";
 import { UFS } from "@/lib/research";
 import { fmtDateTime } from "@/lib/time";
-import { dispatchAction, startDispatch, stopAll } from "./actions";
+import { dispatchAction, startDispatch, stopAll, saveSendSettings } from "./actions";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Disparar" };
 
-type Sp = { q?: string; city?: string; state?: string; niche?: string };
+type Sp = { aba?: string; q?: string; city?: string; state?: string; niche?: string };
 type Stats = { recipients: number; prepared: number; sent: number; delivered: number; replies: number; failures: number; blocked: number };
 type Membership = { commercial_campaigns: { status: string } | null }; // o banco devolve 1 objeto (lead_id é chave única)
 const DAYS = ["", "seg", "ter", "qua", "qui", "sex", "sáb", "dom"];
@@ -20,7 +21,7 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
   const { supabase } = await requireAdmin();
   const [commercial, outreach, available, dispatches] = await Promise.all([
     supabase.from("commercial_settings").select("enabled,channel_authorized,engine_version,bridge_connected,test_mode").eq("id", 1).single(),
-    supabase.from("outreach_settings").select("enabled,paused,window_start,window_end,send_days,today_new_leads_target,today_new_leads_date").eq("id", 1).single(),
+    supabase.from("outreach_settings").select("enabled,paused,window_start,window_end,send_days,today_new_leads_target,today_new_leads_date,min_delay_seconds,max_delay_seconds,daily_limit").eq("id", 1).single(),
     supabase.rpc("admin_dispatch_available_count"),
     supabase.from("commercial_campaigns").select("id,name,status,bot_replies,created_at").eq("mode", "autonomo").order("created_at", { ascending: false }).limit(6),
   ]);
@@ -34,15 +35,15 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
   const city = clean(sp.city); if (city) query = query.ilike("city", `%${city}%`);
   const niche = clean(sp.niche); if (niche) query = query.ilike("niche", `%${niche}%`);
   if (sp.state && /^[A-Za-z]{2}$/.test(sp.state)) query = query.eq("state", sp.state.toUpperCase());
-  const rows = await query;
+  const rows = sp.aba === "config" ? { data: [] } : await query;
   const candidates = ((rows.data ?? []) as unknown as { id: string; business_name: string; city: string; state: string | null; niche: string | null; fit_score: number | null; commercial_campaign_leads: Membership | Membership[] | null }[])
-    .filter((l) => ![l.commercial_campaign_leads ?? []].flat().some((m) => m.commercial_campaigns?.status !== "encerrada"));
+    .map(l => ({...l, queued: [l.commercial_campaign_leads ?? []].flat().some(m => m.commercial_campaigns?.status !== "encerrada")}));
 
   const stats = new Map<string, Stats>();
-  for (const d of dispatches.data ?? []) {
+  await Promise.all((sp.aba === "config" ? [] : dispatches.data ?? []).map(async d => {
     const r = await supabase.rpc("admin_campaign_stats", { p_campaign: d.id });
     if (!r.error) stats.set(d.id, r.data as Stats);
-  }
+  }));
   const problems: string[] = [];
   if (c.engine_version !== "v6") problems.push("O motor V6 não está ativo.");
   if (!c.enabled || !c.channel_authorized) problems.push("O Hermes está desligado: ative em “Hermes comercial” e confirme o canal.");
@@ -57,8 +58,11 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
     <PageHeader title="📤 Disparar" subtitle="Escolha quem recebe e dispare. O Hermes manda só a saudação, aos poucos, respeitando horário, limite e quem pediu para não receber. A conversa depois é toda sua." />
 
     {problems.length > 0 && <div className="mb-4 rounded border border-amber-500/40 p-3 text-sm text-amber-300">{problems.map((p) => <p key={p}>⚠️ {p}</p>)}</div>}
-    <p className="mb-4 text-sm text-muted">Horário de envio: {days}, das {o.window_start}h às {o.window_end}h (ajuste na Central de disparos). {todayTarget != null ? `Limite de hoje: ${todayTarget} novos contatos.` : ""}</p>
+    <p className="mb-4 text-sm text-muted">Horário de envio: {days}, das {o.window_start}h às {o.window_end}h (ajuste na aba Configurações de envio). {todayTarget != null ? `Limite de hoje: ${todayTarget} novos contatos.` : ""}</p>
 
+    <nav aria-label="Abas de disparo" className="mb-5 flex gap-2"><Link href="/disparo" className={sp.aba === "config" ? "btn-ghost" : "btn-primary"}>Destinatários e disparos</Link><Link href="/disparo?aba=config" className={sp.aba === "config" ? "btn-primary" : "btn-ghost"}>Configurações de envio</Link></nav>
+    {sp.aba === "config" ? <details open className="card p-5"><summary className="cursor-pointer text-lg font-semibold">Horários e intervalo de envio</summary><ActionForm action={saveSendSettings} submit="Salvar configurações" className="mt-4 space-y-4"><div className="grid gap-4 sm:grid-cols-2">{([["min_delay_seconds","Intervalo mínimo (segundos)",60,86400,o.min_delay_seconds],["max_delay_seconds","Intervalo máximo (segundos)",60,86400,o.max_delay_seconds],["window_start","Horário inicial",0,23,o.window_start],["window_end","Horário final",1,24,o.window_end],["daily_limit","Limite diário",1,200,o.daily_limit]] as const).map(([name,label,min,max,value])=><label key={name} className="text-sm">{label}<input className="input mt-1 w-full" name={name} type="number" min={min} max={max} defaultValue={value}/></label>)}</div><fieldset><legend className="mb-2 text-sm">Dias de envio</legend><div className="flex flex-wrap gap-3">{DAYS.slice(1).map((label,index)=><label key={label} className="text-sm"><input type="checkbox" name="send_days" value={index+1} defaultChecked={o.send_days.includes(index+1)}/> {label}</label>)}</div></fieldset><p className="text-xs text-muted">Horário de São Paulo. Alterar estes valores não inicia um disparo.</p></ActionForm></details> : <>
+    <div className="mb-5 grid gap-3 sm:grid-cols-3"><div className="card p-4"><p className="text-xs text-muted">Não contatados disponíveis</p><strong className="text-3xl">{available.data}</strong></div><div className="card p-4"><p className="text-xs text-muted">Intervalo entre envios</p><strong className="text-xl">{o.min_delay_seconds}–{o.max_delay_seconds}s</strong></div><div className="card p-4"><p className="text-xs text-muted">WhatsApp</p><strong className="text-xl">{c.bridge_connected ? "Conectado" : "Confira a conexão"}</strong></div></div>
     <form method="get" className="card mb-4 grid gap-2 p-3 sm:grid-cols-5">
       <input name="q" defaultValue={sp.q} placeholder="Buscar nome ou cidade" className="input" />
       <input name="niche" defaultValue={sp.niche} placeholder="Nicho" className="input" />
@@ -74,11 +78,11 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
         <label className="mb-1 flex items-center gap-2 text-sm"><input type="radio" name="scope" value="selected" defaultChecked /> Os que eu marcar na lista abaixo</label>
 
         <label className="mb-3 flex items-center gap-2 text-sm"><input type="radio" name="scope" value="all" /> Todos os leads novos disponíveis ({available.data})</label>
-        <p className="mb-2 text-xs text-muted">Só aparecem leads novos, com celular, nunca contatados e fora de outro disparo. Telefone fixo, já contatado e quem pediu para não receber ficam de fora automaticamente.</p>
+        <p className="mb-2 text-xs text-muted">Só aparecem leads novos, com celular, nunca contatados ; quem já está em outro disparo aparece sinalizado e não pode ser selecionado de novo. Telefone fixo, já contatado e quem pediu para não receber ficam de fora automaticamente.</p>
         {candidates.length === 0 ? <p className="text-sm text-muted">Nenhum lead disponível com esses filtros.</p> : <>
           <label className="mb-1 flex items-center gap-2 text-sm"><CheckAll name="lead_ids" /> Marcar todos desta lista ({candidates.length})</label>
-          <ul className="max-h-80 overflow-auto rounded border border-white/10 p-2 text-sm">
-            {candidates.map((l) => <li key={l.id}><label className="flex items-center gap-2 py-0.5"><input type="checkbox" name="lead_ids" value={l.id} />{l.business_name} <span className="text-muted">· {l.city}{l.state ? `/${l.state}` : ""} · nota {l.fit_score ?? "—"}</span></label></li>)}
+          <ul className="max-h-[55vh] divide-y divide-line overflow-auto rounded-xl border border-white/10 p-2 text-sm">
+            {candidates.map((l) => <li key={l.id}><label className="flex items-center gap-2 rounded-lg px-3 py-3 hover:bg-panel-2"><input type="checkbox" name="lead_ids" value={l.id} disabled={l.queued} />{l.business_name}{l.queued && <span className="rounded bg-amber-500/10 px-2 text-xs text-amber-300">Já na fila</span>} <span className="text-muted">· {l.city}{l.state ? `/${l.state}` : ""} · nota {l.fit_score ?? "—"}</span></label></li>)}
           </ul></>}
       </section>
 
@@ -112,5 +116,6 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
         })}
       </ul>}
     </section>
+    </>}
   </>;
 }

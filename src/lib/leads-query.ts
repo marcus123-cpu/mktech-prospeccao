@@ -3,6 +3,9 @@ import { OFFERS, ORIGINS, PRIORITIES, SITE_STATUSES, STAGES } from "@/lib/labels
 
 export type LeadFilters = {
   q?: string;
+  aba?: string;
+  nicho?: string;
+  categoria?: string;
   cidade?: string;
   etapa?: string;
   prioridade?: string;
@@ -31,6 +34,13 @@ export function applyLeadFilters<Q extends { [k: string]: any }>(query: Q, f: Le
     if (digits.length >= 4) ors.push(`phone_e164.ilike.%${digits}%`, `phone_raw.ilike.%${term}%`);
     q = q.or(ors.join(","));
   }
+  if (f.nicho === "Sem nicho") q = q.or("niche.is.null,niche.eq.");
+  else if (f.nicho) q = q.eq("niche", f.nicho.slice(0, 100));
+  if (f.categoria === "contatados") q = q.eq("contacted", true);
+  if (f.categoria === "novos") q = q.eq("contacted", false);
+  if (f.categoria === "sem_numero") q = q.is("phone_e164", null);
+  if (f.categoria === "instagram") q = q.is("phone_e164", null).not("instagram_handle", "is", null);
+  if (f.categoria === "fixo") q = q.like("phone_e164", "+55__________");
   if (f.cidade) q = q.eq("city", f.cidade.slice(0, 120));
   if (f.etapa && (STAGES as readonly string[]).includes(f.etapa)) q = q.eq("stage", f.etapa);
   if (f.prioridade && (PRIORITIES as readonly string[]).includes(f.prioridade)) q = q.eq("priority", f.prioridade);

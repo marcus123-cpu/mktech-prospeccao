@@ -8,7 +8,7 @@ const ITEMS = [
   { href: "/conexao", emoji: "🔌", label: "Conexão", short: "Conexão", hint: "WhatsApp e QR code", mobile: true, on: "bg-emerald-500/20", bar: "bg-emerald-400" },
   { href: "/aprendizado", emoji: "🧠", label: "Aprendizado", short: "Aprender", hint: "o Hermes estudando você", mobile: false, on: "bg-violet-500/20", bar: "bg-violet-400" },
   { href: "/disparo", emoji: "📤", label: "Disparar", short: "Disparar", hint: "escolher leads e enviar", mobile: true, on: "bg-emerald-500/20", bar: "bg-emerald-400" },
-  { href: "/hermes", emoji: "🚀", label: "Hermes", short: "Hermes", hint: "pesquisar leads e ver os números", mobile: true, on: "bg-violet-500/20", bar: "bg-violet-400" },
+  { href: "/hermes", emoji: "🚀", label: "Visão geral", short: "Hermes", hint: "pesquisar leads e ver os números", mobile: true, on: "bg-violet-500/20", bar: "bg-violet-400" },
   { href: "/", emoji: "🏠", label: "Hoje", short: "Hoje", hint: "o que fazer agora", mobile: true, on: "bg-violet-500/20", bar: "bg-violet-400" },
   { href: "/leads", emoji: "👥", label: "Leads", short: "Leads", hint: "todos os contatos", mobile: true, on: "bg-sky-500/20", bar: "bg-sky-400" },
   { href: "/conversas", emoji: "💬", label: "Conversas", short: "Conversas", hint: "atendimento e memória do cliente", mobile: true, on: "bg-sky-500/20", bar: "bg-sky-400" },
@@ -36,7 +36,14 @@ export function Nav({ pendingReviews }: { pendingReviews: number }) {
   const active = useActive();
   return (
     <nav className="flex flex-col gap-1">
-      {ITEMS.map((item) => (
+      {[
+        { label: "Prospecção", items: ["/execucoes", "/leads", "/disparo"] },
+        { label: "WhatsApp", items: ["/", "/conversas", "/retornos", "/funil"] },
+        { label: "Config", items: ["/conexao", "/aprendizado", "/configuracoes"] },
+      ].map(group => <details key={group.label} open={group.label !== "Config" || group.items.some(active)} className="mb-3 rounded-xl border border-white/5 p-1">
+        <summary className="cursor-pointer px-2 py-2 text-xs font-semibold uppercase tracking-wider text-muted">{group.label}</summary>
+        <div className="flex flex-col gap-1">
+          {group.items.map((href) => ITEMS.find(item => item.href === href)!).map((item) => (
         <Link
           key={item.href}
           href={item.href}
@@ -54,7 +61,9 @@ export function Nav({ pendingReviews }: { pendingReviews: number }) {
           )}
           <span className="block pl-9 text-xs font-normal text-muted">{item.hint}</span>
         </Link>
-      ))}
+          ))}
+        </div>
+      </details>)}
     </nav>
   );
 }
@@ -68,7 +77,7 @@ export function BottomNav({ pendingReviews }: { pendingReviews: number }) {
       className="fixed inset-x-0 bottom-0 z-40 border-t border-line/70 bg-panel/80 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden"
     >
       <ul className="grid grid-cols-6">
-        {ITEMS.filter((item) => item.mobile).map((item) => {
+        {ITEMS.filter((item) => ["/", "/leads", "/disparo", "/conversas", "/execucoes", "/configuracoes"].includes(item.href)).map((item) => {
           const on = active(item.href);
           return (
             <li key={item.href}>

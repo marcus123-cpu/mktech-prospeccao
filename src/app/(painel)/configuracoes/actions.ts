@@ -33,6 +33,7 @@ export async function saveSettings(_: TokenState, form: FormData): Promise<Token
   });
   if (error) return { error: dbErrorMessage(error) };
   revalidatePath("/configuracoes");
+  revalidatePath("/execucoes");
   return { ok: "Configurações salvas." };
 }
 
@@ -43,6 +44,7 @@ export async function createToken(_: TokenState, form: FormData): Promise<TokenS
   const { data, error } = await supabase.rpc("admin_create_integration_token", { p_name: name });
   if (error) return { error: dbErrorMessage(error) };
   revalidatePath("/configuracoes");
+  revalidatePath("/execucoes");
   return { ok: "Token criado. Copie agora: ele não será mostrado de novo.", token: (data as { token: string }).token };
 }
 
@@ -53,5 +55,6 @@ export async function revokeToken(_: TokenState, form: FormData): Promise<TokenS
   const { error } = await supabase.rpc("admin_revoke_integration_token", { p_id: id.data });
   if (error) return { error: dbErrorMessage(error) };
   revalidatePath("/configuracoes");
+  revalidatePath("/execucoes");
   return { ok: "Token revogado." };
 }

@@ -24,6 +24,7 @@ const { DemoLibrary } = require("./demo-library");
 const { messageId } = require('./message-id');
 const { syncHistory } = require('./history');
 const { deliverVoice } = require('./voice');
+const { deliverAttachment } = require('./attachment');
 // Somente configurações conhecidas, sem executar comandos contidos no .env.
 const envFile = path.join(__dirname, "..", ".env");
 if (require('node:fs').existsSync(envFile)) {
@@ -79,7 +80,7 @@ client.on("ready", () => {
   if (!syncingHistory) {
     syncingHistory = true;
     historySync = { estado: 'sincronizando' };
-    syncHistory(client, journal, numeroDe, ehConversaIndividual, TIPOS_DE_SISTEMA)
+    syncHistory(client, journal, numeroDe, ehConversaIndividual, TIPOS_DE_SISTEMA, 300, guardarAudio)
       .then(result => { historySync = { estado: result.errors.length ? 'parcial' : 'concluido', ...result }; })
       .catch(error => { historySync = { estado: 'erro', erro: String(error.message).slice(0, 160) }; })
       .finally(() => { syncingHistory = false; console.log('[historico]', historySync); });
@@ -128,7 +129,7 @@ async function guardarAudio(msg, id) {
   if (!id || !msg.hasMedia) return {};
   try {
     const media = await msg.downloadMedia();
-    if (!media || !media.data) return {};
+    if (!media || !media.data || media.data.length > 16 * 1024 * 1024) return {};
     const fs = require("node:fs");
     fs.mkdirSync(AUDIO_DIR, { recursive: true });
     const arquivo = Buffer.from(String(id), "utf8").toString("hex").slice(0, 160) + ".bin";
@@ -308,6 +309,18 @@ const server = http.createServer(async (req, res) => {
       }
       if (item_id) journal.result(item_id, provider ? 'enviada' : 'desconhecido', provider);
       return send(res, 200, { ok: !!provider, id: provider, message_status: provider ? 'enviada' : 'desconhecido' });
+    }
+    if (req.method === 'POST' && req.url === '/enviar-anexo') {
+      if (!ready) return send(res,503,{ok:false,erro:'WhatsApp não está conectado'});
+      const body = await readJson(req, 42500000);
+      const digits = String(body.telefone || '').replace(/\D/g,'');
+      if (ONLY_TO.size && !ONLY_TO.has(digits)) return send(res,403,{ok:false,erro:'destino fora de ENVIO_SO_PARA'});
+      try {
+        const result = await deliverAttachment({client,journal,itemId:body.item_id,digits,data:body.data,mime:body.mime,filename:body.filename,MessageMedia,
+          onSending:(to,phone)=>{const pending={to,phone,texto:''};enviosEmAndamento.add(pending);return()=>enviosEmAndamento.delete(pending);},
+          onSent:id=>enviadasPelaPonte.add(id)});
+        return send(res,200,result);
+      } catch(e) { return send(res,422,{ok:false,erro:String(e.message).slice(0,200)}); }
     }
     if (req.method === 'POST' && req.url === '/enviar-voz') {
       if (!ready) return send(res, 503, { ok:false, erro:'WhatsApp não está conectado' });

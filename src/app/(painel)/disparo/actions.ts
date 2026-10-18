@@ -47,3 +47,14 @@ export async function stopAll(): Promise<State> {
   refresh();
   return { ok: `Tudo pausado (${data ?? 0} disparo(s)). Nada novo sai.` };
 }
+
+export async function saveSendSettings(_: State, form: FormData): Promise<State> {
+ const { supabase } = await requireAdmin();
+ const schema = z.object({min_delay_seconds:z.coerce.number().int().min(60).max(86400),max_delay_seconds:z.coerce.number().int().min(60).max(86400),window_start:z.coerce.number().int().min(0).max(23),window_end:z.coerce.number().int().min(1).max(24),daily_limit:z.coerce.number().int().min(1).max(200)}).refine(v=>v.max_delay_seconds>=v.min_delay_seconds && v.window_end>v.window_start,"Confira os intervalos e horários.");
+ const parsed=schema.safeParse(Object.fromEntries(form));
+ const days=z.array(z.coerce.number().int().min(1).max(7)).min(1).max(7).safeParse(form.getAll("send_days"));
+ if(!parsed.success || !days.success)return {error:"Informe intervalos válidos e pelo menos um dia de envio."};
+ const {error}=await supabase.rpc("admin_outreach_settings",{p:{...parsed.data,send_days:days.data}});
+ if(error)return {error:dbErrorMessage(error)};
+ refresh();return {ok:"Configurações de envio salvas."};
+}

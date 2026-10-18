@@ -1,36 +1,23 @@
 import { ErrorBox, PageHeader } from "@/components/ui";
 import { dbErrorMessage, requireAdmin } from "@/lib/auth";
 import { fmtDateTime } from "@/lib/time";
-import { NewTokenForm, RevokeButton, SettingsForm } from "./Forms";
+import { NewTokenForm, RevokeButton } from "./Forms";
 
 export const metadata = { title: "Configurações" };
 
 export default async function SettingsPage() {
   const { supabase } = await requireAdmin();
-  const [settings, tokens] = await Promise.all([
-    supabase.from("prospecting_settings").select("*").eq("id", 1).maybeSingle(),
-    supabase.from("integration_tokens_public").select("*").order("created_at", { ascending: false }),
-  ]);
+  const tokens = await supabase.from("integration_tokens_public").select("*").order("created_at", { ascending: false });
 
   return (
     <>
       <PageHeader title="⚙️ Configurações" />
+      <nav className="mb-5 flex flex-wrap gap-2"><a className="btn-ghost" href="/conexao">Conexão</a><a className="btn-ghost" href="/aprendizado">Aprendizado</a><a className="btn-ghost" href="/execucoes">Configurações de pesquisa</a><a className="btn-ghost" href="/disparo?aba=config">Configurações de envio</a></nav>
       <div className="space-y-6">
-        <section className="card p-4">
-          <h2 className="mb-1 text-sm font-semibold">Prospecção do Hermes</h2>
-          <p className="mb-4 text-xs text-muted">
-            O Hermes lê estes valores no início de cada execução. A meta é um teto: se houver menos candidatos adequados, ele
-            cadastra só esses.
-          </p>
-          {settings.error || !settings.data ? (
-            <ErrorBox message={dbErrorMessage(settings.error) || "Configurações não encontradas."} />
-          ) : (
-            <SettingsForm s={settings.data} />
-          )}
-        </section>
 
-        <section className="card p-4">
-          <h2 className="mb-1 text-sm font-semibold">Credenciais da integração</h2>
+
+        <details className="card p-4">
+          <summary className="cursor-pointer text-sm font-semibold">Credenciais da integração</summary>
           <p className="mb-4 text-xs text-muted">
             O token do Hermes só consulta duplicados, cadastra candidatos, registra execuções e lê estas configurações. Ele
             não altera etapas, contatos ou valores e não apaga leads.
@@ -57,7 +44,7 @@ export default async function SettingsPage() {
               {tokens.data?.length === 0 && <li className="py-3 text-sm text-muted">Nenhum token criado.</li>}
             </ul>
           )}
-        </section>
+        </details>
       </div>
     </>
   );

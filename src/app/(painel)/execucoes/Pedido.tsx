@@ -41,6 +41,7 @@ export function RequestSearchForm({ disabled }: { disabled: boolean }) {
           <input name="city" required minLength={2} maxLength={120} className="input w-full" disabled={disabled || pending} />
         </label>
       )}
+      <label className="text-sm sm:col-span-2"><span className="mb-1 block text-xs text-muted">OBS · orientações para esta pesquisa</span><textarea name="observations" rows={3} maxLength={3000} disabled={disabled || pending} className="input w-full" placeholder="Ex.: conferir o link da bio do Instagram; diferenciar site próprio de página em domínio de terceiros; registrar a fonte." /><span className="text-xs text-muted">O Hermes recebe estas instruções junto com o nicho e a localização.</span></label>
       <div className="flex flex-wrap items-center gap-3 sm:col-span-2">
         <button className="btn-primary" disabled={disabled || pending}>{pending ? "Enviando…" : "🔎 Iniciar pesquisa"}</button>
         <span className="text-xs text-muted">A quantidade é uma meta: se as fontes ou os limites acabarem antes, o Hermes entrega o que achou e explica a diferença.</span>

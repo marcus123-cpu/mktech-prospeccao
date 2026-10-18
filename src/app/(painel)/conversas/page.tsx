@@ -13,12 +13,13 @@ import { ChatShell, InfoToggle } from "./ChatShell";
 import { STAGE_LABEL } from "@/lib/labels";
 import { VoiceReply } from "./VoiceReply";
 import { receiptLabel } from "@/lib/message-receipts";
+import { AttachmentReply } from "./AttachmentReply";
 import { SeenConversation } from "./SeenConversation";
 
 export const metadata = { title: "Conversas" };
 export const dynamic = "force-dynamic";
 const FILTERS: { key: ConversationFilter; label: string }[] = [
-  { key: "todas", label: "Todas" }, { key: "aguardando", label: "Responderam" }, { key: "minhas", label: "Com você" },
+  { key: "todas", label: "Todas" }, { key: "nao_lidas", label: "Não lidas" }, { key: "aguardando", label: "Responderam" }, { key: "minhas", label: "Com você" },
 ];
 type Event = { id: string; occurred_at: string; direction: string; source: string; body: string | null; media: string; external_id: string | null; receipt_ack?: number | null };
 const SOURCE: Record<string, string> = { hermes_v4: "Hermes V4", secretaria: "Secretário", secretario: "Secretário", saudacao: "Saudação", abordagem: "Abordagem", lembrete: "Lembrete", manual: "Você · celular", painel: "Você · painel", painel_pendente: "Você · painel (enviando…)", painel_falhou: "Você · painel (falhou)", humana: "Cliente", automatica: "Resposta automática" };
@@ -29,26 +30,32 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
   const page = Math.max(1, Math.min(10000, Number.parseInt(sp.pagina ?? "1", 10) || 1));
   const term = (sp.q ?? "").replace(/[,()%*\\]/g, " ").trim().slice(0, 80);
   const { supabase } = await requireAdmin();
+  const unreadRequest = supabase.from("conversation_unread").select("id");
+  const unreadResult = filter === "nao_lidas" ? await unreadRequest : null;
   let query = supabase.from("conversation_inbox").select("*", { count: "exact" });
+  if (filter === "nao_lidas") query = query.in("id", (unreadResult?.data ?? []).map((r: {id: string}) => r.id));
   if (term) query = query.or(`business_name.ilike.%${term}%,city.ilike.%${term}%`);
   if (filter === "minhas") query = query.not("secretary_handoff_at", "is", null).eq("do_not_contact", false).not("stage", "in", "(fechado,sem_interesse,desqualificado)");
   if (filter === "bot") query = query.in("pending_status", ["pronta", "enviando"]).is("secretary_handoff_at", null).eq("do_not_contact", false).not("stage", "in", "(fechado,sem_interesse,desqualificado)");
   // A condição temporal é calculada no banco, antes da paginação.
   if (filter === "aguardando") query = query.eq("needs_reply", true);
+  const explicitId = sp.lead && /^[0-9a-f-]{36}$/i.test(sp.lead) ? sp.lead : undefined;
+  const loadDetail = (id: string) => Promise.all([
+    supabase.from("conversation_inbox").select("*").eq("id", id).maybeSingle(),
+    supabase.from("conversation_timeline").select("*").eq("lead_id", id).order("occurred_at", { ascending: false }).order("id").limit(300),
+    supabase.from("lead_conversation_memory").select("summary,facts,objections,next_action,updated_at").eq("lead_id", id).maybeSingle(),
+    supabase.from("lead_diagnoses").select("*").eq("lead_id", id).order("created_at", { ascending: false }).limit(1),
+  ]);
+  const detailRequest = explicitId ? loadDetail(explicitId) : null;
   const [inbox, unread] = await Promise.all([
     query.order("activity_at", { ascending: false }).order("id").range((page - 1) * 30, page * 30 - 1),
-    supabase.from("conversation_unread").select("id"),
+    unreadResult ?? unreadRequest,
   ]);
   const unreadIds = new Set((unread.data ?? []).map((row: { id: string }) => row.id));
-  if (inbox.error) return <><PageHeader title="Conversas" /><ErrorBox message="Não foi possível carregar a central. Confira se a atualização do banco foi aplicada." /></>;
+  if (inbox.error) return <><PageHeader title="Conversas" /><ErrorBox message="Não foi possível carregar a central." /></>;
   const rows = (inbox.data ?? []) as Conversation[];
-  const selectedId = sp.lead && /^[0-9a-f-]{36}$/i.test(sp.lead) ? sp.lead : rows[0]?.id;
-  const [selected, history, memory, diagnosis] = selectedId ? await Promise.all([
-    supabase.from("conversation_inbox").select("*").eq("id", selectedId).maybeSingle(),
-    supabase.from("conversation_timeline").select("*").eq("lead_id", selectedId).order("occurred_at", { ascending: false }).order("id").limit(300),
-    supabase.from("lead_conversation_memory").select("summary, facts, objections, next_action, updated_at").eq("lead_id", selectedId).maybeSingle(),
-    supabase.from("lead_diagnoses").select("*").eq("lead_id", selectedId).order("created_at", { ascending: false }).limit(1),
-  ]) : [null, null, null, null];
+  const selectedId = explicitId ?? rows[0]?.id;
+  const [selected, history, memory, diagnosis] = detailRequest ? await detailRequest : selectedId ? await loadDetail(selectedId) : [null, null, null, null];
   const current = selected?.data as Conversation | null;
   const detailError = selected?.error || history?.error || memory?.error || diagnosis?.error;
   const events = [...(history?.data ?? []) as Event[]].reverse();
@@ -59,7 +66,7 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
     const params = new URLSearchParams({ filtro: filter, ...(term ? { q: term } : {}), ...changes });
     return `/conversas?${params}`;
   };
-  const who = (e: Event) => e.direction === "entrada" ? "Cliente" : e.source === "historico_saida" ? "Você · histórico WhatsApp" : e.source === "manual" ? "Você" : "Hermes";
+  const who = (e: Event) => e.direction === "entrada" ? "Cliente" : e.source === "historico_saida" ? "Você · histórico WhatsApp" : ["manual", "painel", "painel_falhou"].includes(e.source) ? "Você" : "Hermes";
   const textOf = (e: Event) => e.source === "manual" && !e.body ? "(mensagem enviada no celular; conteúdo indisponível)" : e.media !== "texto" ? `[${e.media}] ${e.body ?? ""}`.trim() : e.body ?? "";
   const copyText = current ? [`Conversa com ${current.business_name} (${current.city})${current.phone_e164 ? ` · ${current.phone_e164}` : ""}`, "",
     ...events.map((e) => `[${fmtDateTime(e.occurred_at)}] ${who(e)}: ${textOf(e)}`)].join("\n") : "";
@@ -141,7 +148,7 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
                         <audio controls preload="none" className="h-10 w-56 max-w-full" src={`/api/conversas/audio/${encodeURIComponent(e.external_id)}`} />
                         <a href={`/api/conversas/audio/${encodeURIComponent(e.external_id)}?baixar=1`} download title="Baixar áudio" aria-label="Baixar áudio" className="btn-ghost shrink-0 px-2 py-1 text-sm">⬇</a>
                       </div> : <p className="text-sm text-muted">🎤 Áudio (arquivo não disponível)</p>
-                    ) : <p className="whitespace-pre-wrap break-words text-[14px] leading-[1.55]">{textOf(e)}</p>}
+                    ) : ["video", "imagem", "arquivo"].includes(e.media) && e.source.startsWith("painel") ? <a className="block rounded-lg bg-black/10 p-3 text-sm underline" href={`/api/conversas/anexos/${e.id.replace(":painel", "")}`} target="_blank" rel="noopener noreferrer">{e.media === "video" ? "▶ Vídeo" : e.media === "imagem" ? "▧ Imagem" : "📎 Arquivo"} · {e.body}</a> : <p className="whitespace-pre-wrap break-words text-[14px] leading-[1.55]">{textOf(e)}</p>}
                     <p className={`mt-1 text-right text-[10px] ${out ? "text-white/70" : "text-muted"}`}>{new Date(e.occurred_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" })}{out && e.source !== "simulacao" && <span title="A leitura depende da confirmação enviada pelo WhatsApp." className={`ml-2 ${e.receipt_ack != null && e.receipt_ack >= 3 ? "text-sky-300" : ""}`}>{e.source === "painel_falhou" ? "Falha no envio" : receiptLabel(e.receipt_ack)} {e.receipt_ack != null && e.receipt_ack >= 2 ? "✓✓" : e.receipt_ack === 1 ? "✓" : ""}</span>}</p>
                   </div>
                 </div>
@@ -152,6 +159,7 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
           </ol>
         </ChatScroll>
         {events.length === 300 && <p className="px-4 py-1 text-xs text-muted">Exibindo as últimas 300 mensagens.</p>}
+        <AttachmentReply leadId={current.id} disabled={!current.phone_e164 || current.do_not_contact} />
         <VoiceReply key={`voice-${current.id}`} leadId={current.id} disabled={!current.phone_e164 || current.do_not_contact} />
         <ReplyBox key={current.id} leadId={current.id} disabled={!current.phone_e164 || current.do_not_contact} />
       </ManualProvider>

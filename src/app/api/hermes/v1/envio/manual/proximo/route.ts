@@ -10,8 +10,8 @@ export async function POST(request: Request) {
   if ("response" in auth) return auth.response;
   const { data, error } = await serviceClient().rpc("api_manual_next", { p_token: auth.tokenId });
   if (error || !data) return temporaryFailure();
-  if (data.status === "enviar" && data.media === "audio") {
-    const { data: signed, error: signError } = await serviceClient().storage.from("chat-audio").createSignedUrl(data.audio_path, 120);
+  if (data.status === "enviar" && data.media !== "texto") {
+    const { data: signed, error: signError } = await serviceClient().storage.from(data.media === "audio" ? "chat-audio" : "chat-attachments").createSignedUrl(data.audio_path, 120);
     if (signError || !signed) {
       await serviceClient().rpc("api_manual_result", { p_token: auth.tokenId, p_id: data.id, p_ok: false, p_provider: null, p_error: "Não foi possível abrir o arquivo de áudio" });
       return temporaryFailure();

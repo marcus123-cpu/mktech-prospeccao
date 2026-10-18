@@ -20,7 +20,7 @@ export type Conversation = {
   last_message_media?: string | null;
 };
 
-export type ConversationFilter = "todas" | "minhas" | "aguardando" | "bot";
+export type ConversationFilter = "todas" | "nao_lidas" | "minhas" | "aguardando" | "bot";
 
 export function conversationState(c: Conversation) {
   if (c.do_not_contact || ["fechado", "sem_interesse", "desqualificado"].includes(c.stage)) return "encerrada";

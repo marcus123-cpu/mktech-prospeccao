@@ -8,7 +8,7 @@ export function CheckAll({ name }: { name: string }) {
       aria-label="Marcar todos desta página"
       onChange={(e) => {
         const form = e.currentTarget.form;
-        form?.querySelectorAll<HTMLInputElement>(`input[type=checkbox][name="${name}"]`).forEach((c) => { c.checked = e.currentTarget.checked; });
+        form?.querySelectorAll<HTMLInputElement>(`input[type=checkbox][name="${name}"]`).forEach((c) => { if (!c.disabled) c.checked = e.currentTarget.checked; });
       }}
     />
   );

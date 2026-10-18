@@ -12,7 +12,7 @@ export async function requestSearch(_: PedidoState, form: FormData): Promise<Ped
   const parsed = researchSchema.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Revise os campos da pesquisa." };
   const r = parsed.data;
-  const { error } = await supabase.rpc("admin_search_request_v2", { p_target: r.target, p_niche: r.niche, p_scope: r.scope, p_state: r.state ?? null, p_city: r.city ?? null });
+  const { error } = await supabase.rpc("admin_search_request_v3", { p_observations: r.observations, p_target: r.target, p_niche: r.niche, p_scope: r.scope, p_state: r.state ?? null, p_city: r.city ?? null });
   if (error) return { error: dbErrorMessage(error) };
   revalidatePath("/execucoes"); revalidatePath("/hermes");
   return { ok: "Pesquisa iniciada. O PC chama o Hermes em até 2 minutos; a meta é um alvo e o relatório explica qualquer diferença." };

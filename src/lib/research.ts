@@ -15,6 +15,7 @@ export const MAX_TARGET = 1000;
 const empty = (v: unknown) => (typeof v === "string" && v.trim() === "" ? undefined : v);
 export const researchSchema = z
   .object({
+    observations: z.string().trim().max(3000, "OBS com até 3000 caracteres.").default(""),
     niche: z.string().trim().min(2, "Informe o nicho.").max(100, "Nicho com até 100 caracteres."),
     scope: z.enum(["brasil", "estado", "cidade"]),
     state: z.preprocess(empty, z.enum(UFS).optional()),

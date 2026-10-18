@@ -33,3 +33,6 @@ supabase/.temp/
 /envio/preparador-loop.bat.bak-20261013
 /envio/preparador-loop.new
 envio/aprendizado/
+
+# Arquivos privados temporarios de audio da ponte.
+envio/whatsapp-web/audio/

@@ -1,168 +1,25 @@
 import Link from "next/link";
-import { FiltersToggle } from "@/components/leads/FiltersToggle";
-import { LeadsTable, type LeadRow } from "@/components/leads/LeadsTable";
-import { Empty, ErrorBox, PageHeader } from "@/components/ui";
-import { dbErrorMessage, requireAdmin } from "@/lib/auth";
-import { OFFER_LABEL, OFFERS, ORIGIN_LABEL, ORIGINS, PRIORITIES, PRIORITY_LABEL, SITE_LABEL, SITE_STATUSES, STAGE_LABEL, STAGES } from "@/lib/labels";
-import { LEAD_LIST_COLUMNS, PAGE_SIZE, applyLeadFilters, listCities, type LeadFilters } from "@/lib/leads-query";
-
+import { LeadsList } from "./LeadsList";
+import { requireAdmin } from "@/lib/auth";
+import { ErrorBox } from "@/components/ui";
+import type { LeadFilters } from "@/lib/leads-query";
+type Niche = { niche: string; total: number; contacted: number; uncontacted: number; instagram_only: number; landline: number; no_phone: number };
 export const metadata = { title: "Leads" };
-
-export default async function LeadsPage({ searchParams }: { searchParams: Promise<LeadFilters & { excluido?: string }> }) {
-  const f = await searchParams;
+export default async function LeadsPage({ searchParams }: { searchParams: Promise<LeadFilters & { aba?: string; excluido?: string }> }) {
+  const sp = await searchParams;
+  const list = sp.aba === "todos" || Object.keys(sp).some(key => !["aba", "excluido"].includes(key));
+  const tabs = <nav aria-label="Abas de leads" className="mb-5 flex gap-2"><Link className={list ? "btn-ghost" : "btn-primary"} href="/leads">Visão geral</Link><Link className={list ? "btn-primary" : "btn-ghost"} href="/leads?aba=todos">Todos os leads</Link></nav>;
+  if (list) return <>{tabs}<LeadsList searchParams={searchParams} /></>;
   const { supabase } = await requireAdmin();
-  const page = Math.max(1, Number.parseInt(f.pagina ?? "1", 10) || 1);
-  const from = (page - 1) * PAGE_SIZE;
-
-  const query = applyLeadFilters(
-    supabase.from("leads").select(LEAD_LIST_COLUMNS, { count: "exact" }),
-    f,
-  ).range(from, from + PAGE_SIZE - 1);
-  const [{ data, count, error }, cities, { count: pendingReviews }] = await Promise.all([
-    query,
-    listCities(supabase),
-    supabase.from("duplicate_reviews").select("id", { count: "exact", head: true }).eq("status", "pendente"),
-  ]);
-
-  const total = count ?? 0;
-  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const params = new URLSearchParams(
-    Object.entries(f).filter(([k, v]) => typeof v === "string" && v && k !== "pagina" && k !== "excluido") as [string, string][],
-  );
-  const pageHref = (p: number) => `/leads?${new URLSearchParams([...params, ["pagina", String(p)]])}`;
-  const hasFilters = [...params.keys()].some((k) => k !== "ordem");
-
-  return (
-    <>
-      <PageHeader
-        title="👥 Leads"
-        subtitle={`${total} ${total === 1 ? "lead encontrado" : "leads encontrados"}`}
-        actions={
-          <>
-            <Link href="/leads/duplicados" className="btn-ghost">
-              Possíveis duplicados{pendingReviews ? ` (${pendingReviews})` : ""}
-            </Link>
-            <Link href="/leads/importar" className="btn-ghost">Importar</Link>
-            <a href={`/api/leads/export?${params}`} className="btn-ghost">Exportar CSV</a>
-            <Link href="/leads/novo" className="btn-primary order-first sm:order-none">Novo lead</Link>
-          </>
-        }
-      />
-      {f.excluido && <p className="mb-4 text-sm text-emerald-300">Lead excluído.</p>}
-
-      <FiltersToggle active={[...params.keys()].filter((k) => k !== "ordem").length}>
-      <form className="card grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6" action="/leads">
-        <div className="sm:col-span-2">
-          <label className="label" htmlFor="q">Buscar</label>
-          <input className="input" id="q" name="q" placeholder="Nome, telefone ou @instagram" defaultValue={f.q} />
-        </div>
-        <div>
-          <label className="label" htmlFor="cidade">Cidade</label>
-          <select className="input" id="cidade" name="cidade" defaultValue={f.cidade ?? ""}>
-            <option value="">Todas</option>
-            {cities.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="label" htmlFor="etapa">Etapa</label>
-          <select className="input" id="etapa" name="etapa" defaultValue={f.etapa ?? ""}>
-            <option value="">Todas</option>
-            {STAGES.map((s) => (
-              <option key={s} value={s}>{STAGE_LABEL[s]}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="label" htmlFor="prioridade">Prioridade</label>
-          <select className="input" id="prioridade" name="prioridade" defaultValue={f.prioridade ?? ""}>
-            <option value="">Todas</option>
-            {PRIORITIES.map((p) => (
-              <option key={p} value={p}>{PRIORITY_LABEL[p]}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="label" htmlFor="origem">Origem</label>
-          <select className="input" id="origem" name="origem" defaultValue={f.origem ?? ""}>
-            <option value="">Todas</option>
-            {ORIGINS.map((o) => (
-              <option key={o} value={o}>{ORIGIN_LABEL[o]}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="label" htmlFor="oferta">Oferta sugerida</label>
-          <select className="input" id="oferta" name="oferta" defaultValue={f.oferta ?? ""}>
-            <option value="">Todas</option>
-            {OFFERS.map((o) => (
-              <option key={o} value={o}>{OFFER_LABEL[o]}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="label" htmlFor="site">Verificação de site</label>
-          <select className="input" id="site" name="site" defaultValue={f.site ?? ""}>
-            <option value="">Todas</option>
-            {SITE_STATUSES.map((s) => (
-              <option key={s} value={s}>{SITE_LABEL[s]}</option>
-            ))}
-          </select>
-        </div>
-        <div className="grid grid-cols-2 gap-3 sm:contents">
-        <div>
-          <label className="label" htmlFor="de">Cadastro de</label>
-          <input className="input" type="date" id="de" name="de" defaultValue={f.de} />
-        </div>
-        <div>
-          <label className="label" htmlFor="ate">até</label>
-          <input className="input" type="date" id="ate" name="ate" defaultValue={f.ate} />
-        </div>
-        </div>
-        <div>
-          <label className="label" htmlFor="ordem">Ordenar por</label>
-          <select className="input" id="ordem" name="ordem" defaultValue={f.ordem ?? "cadastro"}>
-            <option value="cadastro">Cadastro mais recente</option>
-            <option value="potencial">Maior potencial</option>
-            <option value="prioridade">Prioridade</option>
-            <option value="retorno">Próximo retorno</option>
-          </select>
-        </div>
-        <label className="flex items-center gap-2 self-end pb-2 text-sm">
-          <input type="checkbox" name="nao_contatados" value="1" defaultChecked={f.nao_contatados === "1"} />
-          Ainda não contatados
-        </label>
-        <div className="flex items-end gap-2 sm:col-span-2 lg:col-span-4 xl:col-span-6">
-          <button className="btn-primary flex-1 sm:flex-none">Filtrar</button>
-          {hasFilters && <Link href="/leads" className="btn-ghost flex-1 sm:flex-none">Limpar filtros</Link>}
-        </div>
-      </form>
-      </FiltersToggle>
-
-      {error ? (
-        <ErrorBox message={dbErrorMessage(error)} />
-      ) : !data || data.length === 0 ? (
-        <Empty title={hasFilters ? "Nenhum lead com esses filtros." : "Nenhum lead cadastrado ainda."}>
-          {!hasFilters && (
-            <>
-              Importe sua planilha em <Link href="/leads/importar" className="text-accent">Importar</Link> ou cadastre um
-              lead manualmente.
-            </>
-          )}
-        </Empty>
-      ) : (
-        <>
-          <LeadsTable rows={data as unknown as LeadRow[]} />
-          {pages > 1 && (
-            <nav className="mt-4 flex items-center justify-between text-sm" aria-label="Paginação">
-              {page > 1 ? <Link className="btn-ghost" href={pageHref(page - 1)}>Anterior</Link> : <span />}
-              <span className="text-muted">Página {page} de {pages}</span>
-              {page < pages ? <Link className="btn-ghost" href={pageHref(page + 1)}>Próxima</Link> : <span />}
-            </nav>
-          )}
-        </>
-      )}
-    </>
-  );
+  const { data, error } = await supabase.rpc("admin_lead_dashboard");
+  if (error) return <>{tabs}<ErrorBox message="Não foi possível carregar os indicadores de leads." /></>;
+  const niches = (data ?? []) as Niche[];
+  const total = (key: keyof Omit<Niche, "niche">) => niches.reduce((sum, n) => sum + Number(n[key]), 0);
+  const url = (category: string, niche?: string) => `/leads?${new URLSearchParams({ aba: "todos", categoria: category, ...(niche ? { nicho: niche } : {}) })}`;
+  return <>{tabs}<header className="mb-6"><h1 className="text-2xl font-semibold">Seus leads</h1><p className="mt-1 text-sm text-muted">Contatos organizados por nicho e canal disponível.</p></header>
+    <div className="mb-6 grid gap-3 sm:grid-cols-3 lg:grid-cols-6">{([
+      ["total", "Todos", ""], ["contacted", "Contatados", "contatados"], ["uncontacted", "Não contatados", "novos"],
+      ["instagram_only", "Só Instagram", "instagram"], ["landline", "Telefone fixo", "fixo"], ["no_phone", "Sem número", "sem_numero"],
+    ] as const).map(([key, label, category]) => <Link key={key} href={url(category)} className="card p-4 transition hover:border-accent/50"><span className="text-xs text-muted">{label}</span><strong className="mt-2 block text-3xl tabular-nums">{total(key)}</strong></Link>)}</div>
+    <h2 className="mb-3 text-lg font-semibold">Por nicho</h2><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{niches.map(n => <section key={n.niche} className="card p-5"><Link href={url("", n.niche)} className="text-base font-semibold text-accent">{n.niche} <span className="float-right text-text">{n.total}</span></Link><div className="mt-4 grid grid-cols-2 gap-2 text-sm">{([["contatados", "Contatados", n.contacted], ["novos", "Não contatados", n.uncontacted], ["instagram", "Só Instagram", n.instagram_only], ["fixo", "Fixo", n.landline], ["sem_numero", "Sem número", n.no_phone]] as const).map(([category, label, count]) => <Link className="rounded-lg bg-panel-2 p-2 hover:text-accent" key={category} href={url(category, n.niche)}>{label}<b className="float-right">{count}</b></Link>)}</div></section>)}</div></>;
 }
