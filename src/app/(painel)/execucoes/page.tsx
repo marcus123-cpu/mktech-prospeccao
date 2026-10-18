@@ -6,6 +6,7 @@ import { fmtDateTime } from "@/lib/time";
 import { locationLabel } from "@/lib/research";
 import { CancelSearchButton, RequestSearchForm } from "./Pedido";
 import { RunReport, type Report } from "./RunReport";
+import { SearchProgress } from "./SearchProgress";
 
 export const metadata = { title: "Execuções do Hermes" };
 export const dynamic = "force-dynamic";
@@ -32,10 +33,10 @@ export default async function RunsPage() {
     .limit(5);
   const aberto = (pedidos ?? []).find((p) => p.status === "pendente" || p.status === "em_andamento");
   const reports = new Map<string, Report>();
-  for (const p of (pedidos ?? []).filter((x) => x.run_id && x.status === "concluido").slice(0, 3)) {
+  await Promise.all((pedidos ?? []).filter((x) => x.run_id && (x.status === "em_andamento" || x.status === "concluido")).slice(0, 4).map(async p => {
     const r = await supabase.rpc("admin_run_report", { p_run: p.run_id });
     if (!r.error && r.data) reports.set(p.id, r.data as Report);
-  }
+  }));
 
   return (
     <>
@@ -65,7 +66,7 @@ export default async function RunsPage() {
                   )}
                   {p.observations && <span className="mt-1 block text-xs text-accent">OBS: {p.observations}</span>}
                   {p.note && p.status === "concluido" && <span className="block text-xs text-muted">{p.note}</span>}
-                  {reports.get(p.id) && <RunReport report={reports.get(p.id)!} />}
+                  {p.status === "em_andamento" ? <SearchProgress target={p.qualified_target} report={reports.get(p.id)} /> : reports.get(p.id) && <RunReport report={reports.get(p.id)!} />}
                 </span>
                 {p.status === "pendente" && <CancelSearchButton id={p.id} />}
               </li>
