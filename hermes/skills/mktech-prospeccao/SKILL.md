@@ -1,7 +1,7 @@
 ---
 name: mktech-prospeccao
 description: Pesquisa de oportunidades digitais verificáveis nos nichos configurados no CRM MKTech; motor comercial V6 operado pelo servidor.
-version: 2.2.0
+version: 2.3.0
 platforms: [windows, linux, macos]
 metadata:
   hermes:
@@ -330,9 +330,38 @@ seguir, curtir ou comentar), abre o link da bio, procura site próprio na web e
 devolve `evidencias` (cole em `evidences`), `site_status_sugerido`,
 `nota_sugerida`, `componentes`, `confianca` e `avisos`. Regras:
 - Use as evidências e a nota do script; complemente com o que você leu na web.
+- Leia e aplique `observations` (OBS do pedido) como critério desta pesquisa.
+  A OBS não muda a exigência de evidências e não autoriza envio de mensagens.
+- **Página personalizada não exige domínio próprio.** Leia o conteúdo final
+  após os redirecionamentos e confirme o vínculo pelo nome do negócio,
+  telefone ou Instagram. Uma landing page no Wix, Canva, Carrd, Google Sites
+  ou outro domínio de terceiros conta como página existente quando apresenta
+  o negócio e os serviços. O domínio, sozinho, não define a classificação.
+- O resultado detalhado de cada endereço fica em `site.detalhe`: leia `tipo`,
+  `url_final`, `sinais_identidade`, `trecho` e `motivo`. Diferencie
+  `pagina_personalizada`, `agregador_links`, `agendamento`, `whatsapp_direto`
+  e `verificacao_pendente`. A leitura de páginas de links inclui até quatro
+  destinos externos; limites e intermediários restantes geram pendências.
+- Um Linktree pode apontar para um site: confira os destinos, não descarte a
+  existência de página só pelo nome da plataforma. Uma página rica de uma
+  plataforma de links também pode ser personalizada quando houver evidência.
+- Preserve nas evidências a URL final, trecho observado, data e vínculo com
+  o negócio. Registre `site.grupo` em `diagnosis.digital_presence` e copie
+  `pending_items` do script para as pendências do candidato. Os grupos são
+  `tem_pagina_personalizada`, `so_links_ou_whatsapp`, `so_agendamento`,
+  `nenhuma_pagina_localizada` e `precisa_conferir`.
+- `precisa_conferir`, bio truncada, login, erro de rede, site indisponível,
+  identidade incerta ou limite de destinos nunca significam "sem página".
+  Use `verificacao_pendente`, confiança baixa para a conclusão sobre a página
+  e mantenha `limitation`. Não declare que o candidato atende à OBS nesses casos.
+- Se a OBS excluir quem já tem página personalizada, descarte candidatos
+  confirmados em `tem_pagina_personalizada`, mesmo sem domínio próprio. Se a
+  OBS aceitar somente WhatsApp ou nenhuma página, lista de links e agendamento
+  são categorias diferentes e não atendem automaticamente a esse critério.
 - `situacao` = `site_proprio` → trate como site existente (descarte, salvo a
   lacuna de visibilidade no Google já documentada). `sem_site` e
-  `so_agregador` (Linktree) → é o lead que queremos: cadastre.
+  `so_agregador` (lista de links verificada) → pode ser candidato, desde que
+  também cumpra a OBS do pedido; isso não equivale a "somente WhatsApp".
 - Se o Instagram vier `indisponivel` ou `bloqueado_login`, confira o @ por
   busca antes de cadastrar; sem nenhuma rede confirmada, a confiança é baixa.
 - Se o aviso disser que a busca na web não respondeu, **não afirme que não há
