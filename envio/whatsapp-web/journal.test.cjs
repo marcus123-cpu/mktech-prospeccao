@@ -11,6 +11,12 @@ test('audio recovery is prioritized below live receipts and above bulk text hist
  assert.deepEqual(j.list('historico').map(e=>e.message_id),['seen','voice','text']);
 });
 
+test('a queued history event gains recovered audio without duplicating its message',()=>{
+ const j=new Journal(file());j.push('historico',{message_id:'voice',tipo:'audio'});
+ j.push('historico',{message_id:'voice',tipo:'audio',audio_arquivo:'abc.bin',audio_mime:'audio/ogg'});
+ const recovered=new Journal(j.file).list('historico');assert.equal(recovered.length,1);assert.equal(recovered[0].audio_arquivo,'abc.bin');
+});
+
 test('confirmações não se perdem quando entrega e leitura chegam antes do ack', () => {
   const j = new Journal(file());
   j.push('historico', { message_id: 'old' });

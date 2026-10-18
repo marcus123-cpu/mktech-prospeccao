@@ -131,11 +131,12 @@ async function guardarAudio(msg, id) {
   if (!id || !msg.hasMedia) return {};
   try {
     if (!prepareMediaMessage(msg)) return {};
+    const fs = require("node:fs");
+    const arquivo = Buffer.from(String(id), "utf8").toString("hex").slice(0, 160) + ".bin";
+    if (fs.existsSync(path.join(AUDIO_DIR, arquivo))) return { audio_arquivo: arquivo, audio_mime: String(msg._data?.mimetype || "audio/ogg").split(";")[0].trim().toLowerCase() };
     const media = await downloadAudio(msg);
     if (!media || !media.data || media.data.length > 16 * 1024 * 1024) return {};
-    const fs = require("node:fs");
     fs.mkdirSync(AUDIO_DIR, { recursive: true });
-    const arquivo = Buffer.from(String(id), "utf8").toString("hex").slice(0, 160) + ".bin";
     fs.writeFileSync(path.join(AUDIO_DIR, arquivo), Buffer.from(media.data, "base64"));
     return { audio_arquivo: arquivo, audio_mime: String(media.mimetype || "audio/ogg").split(";")[0].trim().toLowerCase() };
   } catch (e) {

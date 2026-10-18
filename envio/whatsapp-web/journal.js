@@ -24,8 +24,14 @@ class Journal {
     const event_id = kind === 'historico' && payload.message_id
       ? 'historico:' + payload.message_id + (Number.isInteger(payload.ack) ? ':ack:' + payload.ack : '')
       : payload.message_id || require('node:crypto').randomUUID();
-    if (!this.data.events.some(e => e.kind === kind && e.event_id === event_id)) {
+    const existing = this.data.events.find(e => e.kind === kind && e.event_id === event_id);
+    if (!existing) {
       this.data.events.push({ ...payload, event_id, kind }); this.flush();
+    } else if (payload.audio_arquivo && existing.audio_arquivo !== payload.audio_arquivo) {
+      // A previous import can have queued the text before the media was recovered.
+      existing.audio_arquivo = payload.audio_arquivo;
+      existing.audio_mime = payload.audio_mime;
+      this.flush();
     }
   }
   list(kind) {
