@@ -45,14 +45,14 @@ export function Nav({ pendingReviews }: { pendingReviews: number }) {
           }`}
         >
           {active(item.href) && <span aria-hidden className={`absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full ${item.bar}`} />}
-          <span aria-hidden className="mr-2 inline-block transition-transform duration-200 group-hover:scale-110">{item.emoji}</span>
+          <span aria-hidden className={`mr-2 inline-flex h-7 w-7 items-center justify-center rounded-lg ${item.on} transition-transform duration-200 group-hover:scale-110`}>{item.emoji}</span>
           {item.label}
           {item.href === "/leads" && pendingReviews > 0 && (
             <span className="ml-2">
               <Badge count={pendingReviews} />
             </span>
           )}
-          <span className="block pl-7 text-xs font-normal text-muted">{item.hint}</span>
+          <span className="block pl-9 text-xs font-normal text-muted">{item.hint}</span>
         </Link>
       ))}
     </nav>

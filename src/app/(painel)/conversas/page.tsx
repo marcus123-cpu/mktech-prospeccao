@@ -65,6 +65,8 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
     ...events.map((e) => `[${fmtDateTime(e.occurred_at)}] ${who(e)}: ${textOf(e)}`)].join("\n") : "";
   const day = (iso: string) => new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", timeZone: "America/Sao_Paulo" });
   const initial = (name: string) => (name.trim()[0] ?? "?").toUpperCase();
+  const AVATARS = ["from-violet-500 to-fuchsia-500", "from-sky-500 to-indigo-500", "from-emerald-500 to-teal-500", "from-amber-500 to-orange-500", "from-rose-500 to-pink-500", "from-cyan-500 to-blue-500", "from-lime-500 to-emerald-500"];
+  const avatar = (name: string) => AVATARS[[...name].reduce((n, ch) => n + ch.charCodeAt(0), 0) % AVATARS.length];
   const visible = events.filter((e) => e.source !== "painel_pendente");
   const pendingInitial: Pending[] = events.filter((e) => e.source === "painel_pendente").map((e) => ({
     key: e.id, serverId: e.id.replace(":painel", ""), body: e.body ?? "", at: e.occurred_at, status: "enviando",
@@ -95,8 +97,8 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
           const isUnread = unreadIds.has(c.id);
           const active = current?.id === c.id;
           return <Link key={c.id} href={href({ lead: c.id, pagina: String(page) })} aria-current={active ? "page" : undefined}
-            className={`flex gap-3 border-b border-white/5 px-4 py-4 transition hover:bg-[#202c33] ${active ? "bg-[#2a3942]" : ""}`}>
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2d4147] text-base font-medium text-[#c5d4d6]">{initial(c.business_name)}</span>
+            className={`flex gap-3 border-b border-white/5 px-4 py-4 transition hover:bg-[#202c33] ${active ? "border-l-4 border-l-[#00d9a4] bg-gradient-to-r from-[#00a884]/25 to-[#2a3942]" : isUnread ? "border-l-4 border-l-sky-400 bg-sky-500/5" : "border-l-4 border-l-transparent"}`}>
+            <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${avatar(c.business_name)} text-base font-semibold text-white shadow-md`}>{initial(c.business_name)}</span>
             <span className="min-w-0 flex-1">
               <span className="flex justify-between gap-2"><span className="truncate text-[14px] font-medium text-[#e9edef]">{c.business_name}</span><span className={`shrink-0 text-[10px] ${waiting ? "text-[#00a884]" : "text-[#8696a0]"}`}>{haQuanto(c.activity_at)}</span></span>
               <span className="mt-1 flex items-center gap-2"><span className={`min-w-0 flex-1 truncate text-[12px] ${isUnread ? "font-semibold text-[#e9edef]" : "text-[#8696a0]"}`}>{c.last_message_direction === "saida" ? "Você: " : ""}{c.last_message_media === "audio" ? "Mensagem de voz" : c.last_message_body ?? c.last_in_body ?? "Conversa iniciada"}</span>{isUnread ? <span className="shrink-0 rounded-full bg-[#00a884] px-2 py-0.5 text-[10px] font-semibold text-white">Nova</span> : waiting && <span title="Aguardando resposta" className="h-2 w-2 shrink-0 rounded-full bg-[#00a884]" />}</span>
@@ -116,10 +118,10 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
     <section className="flex h-full min-h-0 flex-col overflow-hidden bg-[#0b141a]">
       <SeenConversation leadId={current.id} at={current.last_in_at} explicit={!!sp.lead} />
       <ManualProvider key={current.id} initial={pendingInitial} doneIds={doneIds}>
-        <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-white/5 bg-[#202c33] px-4">
+        <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-white/5 bg-gradient-to-r from-[#202c33] via-[#1f2f3d] to-[#23304a] px-4">
           <div className="flex min-w-0 items-center gap-3">
             <Link href={href({})} className="flex h-9 w-8 shrink-0 items-center justify-center rounded-full text-[#aebac1] hover:bg-white/10 md:hidden" aria-label="Voltar para lista de conversas">←</Link>
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#40565c] font-medium text-[#e9edef]">{initial(current.business_name)}</span>
+            <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${avatar(current.business_name)} font-semibold text-white`}>{initial(current.business_name)}</span>
             <div className="min-w-0"><h2 className="truncate text-[14px] font-medium text-[#e9edef]">{current.business_name}</h2><p className="mt-0.5 truncate text-[11px] text-[#8696a0]">{current.city}{current.phone_e164 ? ` · ${current.phone_e164}` : ""}</p></div>
           </div>
           <InfoToggle />
@@ -132,7 +134,7 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
               return <li key={e.id}>
                 {newDay && <p className="my-3 text-center"><span className="rounded-lg bg-[#182229] px-3 py-1 text-[11px] text-[#8696a0] shadow">{day(e.occurred_at)}</span></p>}
                 <div className={`flex ${out ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[90%] rounded-lg px-3 py-2 shadow-sm sm:max-w-[78%] xl:max-w-[68%] ${out ? "rounded-tr-none bg-[#005c4b] text-[#e9edef]" : "rounded-tl-none bg-[#202c33] text-[#e9edef]"} ${e.source === "painel_falhou" ? "!bg-rose-900/50" : ""}`}>
+                  <div className={`max-w-[90%] rounded-lg px-3 py-2 shadow-sm sm:max-w-[78%] xl:max-w-[68%] ${out ? "rounded-tr-none bg-gradient-to-br from-[#08856b] to-[#005c4b] text-white" : "rounded-tl-none border border-indigo-400/20 bg-gradient-to-br from-[#2b3567] to-[#222a52] text-[#e9edef]"} ${e.source === "painel_falhou" ? "!bg-rose-900/50" : ""}`}>
                     {(e.source === "painel_falhou" || ["hermes_v4", "secretario", "secretaria"].includes(e.source)) && <p className="mb-1 text-[10px] font-medium text-white/50">{SOURCE[e.source] ?? who(e)}</p>}
                     {e.media === "audio" ? (
                       e.external_id && audioIds.has(e.external_id) ? <div className="flex items-center gap-2">

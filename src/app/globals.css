@@ -30,9 +30,10 @@ html {
 
 body {
   background:
-    radial-gradient(900px 520px at 0% -8%, rgb(124 108 255 / 0.20), transparent 60%),
-    radial-gradient(800px 480px at 100% 0%, rgb(45 212 191 / 0.09), transparent 55%),
-    radial-gradient(700px 420px at 50% 120%, rgb(91 140 255 / 0.10), transparent 60%),
+    radial-gradient(900px 520px at 0% -8%, rgb(124 108 255 / 0.30), transparent 60%),
+    radial-gradient(800px 480px at 100% 0%, rgb(45 212 191 / 0.18), transparent 55%),
+    radial-gradient(700px 420px at 100% 100%, rgb(244 114 182 / 0.14), transparent 60%),
+    radial-gradient(700px 420px at 0% 100%, rgb(56 189 248 / 0.14), transparent 60%),
     var(--color-bg);
   background-attachment: fixed;
   color: #e8eaf4;

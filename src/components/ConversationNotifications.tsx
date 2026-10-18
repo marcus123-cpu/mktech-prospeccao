@@ -58,7 +58,7 @@ export function ConversationNotifications() {
     document.addEventListener("pointerdown", outside);
     return () => document.removeEventListener("pointerdown", outside);
   }, [open]);
-  return <div ref={box} className="fixed bottom-24 left-3 z-50 md:bottom-4">
+  return <div ref={box} className={`group fixed bottom-24 left-3 z-50 transition-opacity duration-300 md:bottom-4 ${open ? "opacity-100" : "opacity-40 hover:opacity-100 focus-within:opacity-100"}`}>
     {open && <section aria-label="Novas respostas" className="mb-2 w-80 max-w-[90vw] rounded-xl border border-white/15 bg-[#202c33] p-4 text-[#e9edef] shadow-xl">
       <div className="mb-3 flex justify-between"><strong>Novas respostas ({rows.length})</strong><button aria-label="Fechar notificações" onClick={() => setOpen(false)}>✕</button></div>
       <div className="max-h-64 overflow-y-auto">{rows.map(row => <Link className="block border-b border-white/10 py-2" key={row.id} href={`/conversas?lead=${row.id}`} onClick={() => setOpen(false)}><span className="block text-sm font-semibold">{row.business_name}</span><span className="block truncate text-xs text-[#aebac1]">{row.last_in_media === "audio" ? "Mensagem de voz" : row.last_in_body ?? "Nova mensagem"}</span></Link>)}{!rows.length && <p className="text-sm">Nenhuma resposta não lida.</p>}</div>

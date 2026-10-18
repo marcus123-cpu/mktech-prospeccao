@@ -2,7 +2,7 @@ import { PRIORITY_LABEL, SITE_LABEL, STAGE_COLOR, STAGE_LABEL, type Priority, ty
 
 export function PageHeader({ title, subtitle, actions }: { title: string; subtitle?: string; actions?: React.ReactNode }) {
   return (
-    <div className="mb-4 flex flex-wrap items-end justify-between gap-3 md:mb-6">
+    <div className="mb-4 flex flex-wrap items-end justify-between gap-3 border-l-4 border-accent pl-3 md:mb-6">
       <div>
         <h1 className="text-gradient text-xl font-semibold tracking-tight md:text-2xl">{title}</h1>
         {subtitle && <p className="mt-1 text-sm text-muted">{subtitle}</p>}
@@ -57,10 +57,22 @@ export function ErrorBox({ message }: { message: string }) {
   );
 }
 
+const STAT_TONES = [
+  "from-violet-500/20 before:bg-violet-400",
+  "from-sky-500/20 before:bg-sky-400",
+  "from-emerald-500/20 before:bg-emerald-400",
+  "from-amber-500/20 before:bg-amber-400",
+  "from-rose-500/20 before:bg-rose-400",
+  "from-cyan-500/20 before:bg-cyan-400",
+  "from-fuchsia-500/20 before:bg-fuchsia-400",
+];
+
+/** Cada indicador ganha uma cor própria, sempre a mesma para o mesmo nome. */
 export function Stat({ label, value, hint }: { label: string; value: React.ReactNode; hint?: string }) {
+  const tone = STAT_TONES[[...label].reduce((n, ch) => n + ch.charCodeAt(0), 0) % STAT_TONES.length];
   return (
-    <div className="card card-hover p-4">
-      <div className="text-xs font-medium uppercase tracking-wide text-muted">{label}</div>
+    <div className={`card card-hover relative overflow-hidden bg-gradient-to-br ${tone} to-panel/80 p-4 before:absolute before:inset-y-3 before:left-0 before:w-1 before:rounded-r-full`}>
+      <div className="text-xs font-medium uppercase tracking-wide text-slate-300/80">{label}</div>
       <div className="mt-2 text-2xl font-semibold tabular-nums">{value}</div>
       {hint && <div className="mt-1 text-xs text-muted">{hint}</div>}
     </div>
