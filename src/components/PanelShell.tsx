@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { Suspense, useEffect, useState, type ReactNode } from "react";
+import { TopSearch } from "./TopSearch";
 import { usePathname } from "next/navigation";
 import { sectionTitle } from "./Nav";
 
@@ -49,10 +50,7 @@ export function PanelShell({ sidebar, mobileHeader, topbar, bottomNav, children 
     </aside>
     <div className="min-w-0 flex-1 md:flex md:min-h-dvh md:flex-col">
     {!conversations && <header className="sticky top-0 z-20 hidden h-16 shrink-0 items-center gap-4 bg-bg/85 px-8 backdrop-blur-xl md:flex">
-      <form action="/leads" className="relative w-full max-w-xs">
-        <svg aria-hidden viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
-        <input name="busca" placeholder="Buscar nicho…" aria-label="Buscar nicho" className="input !rounded-full !bg-panel-2 !py-2.5 !pl-10" />
-      </form>
+      <Suspense fallback={<div className="w-full max-w-xs" />}><TopSearch /></Suspense>
       <div className="hidden text-sm font-semibold text-slate-200 lg:block">{sectionTitle(pathname)}</div>
       <div className="ml-auto flex items-center gap-3 pr-14">{topbar}</div>
     </header>}
