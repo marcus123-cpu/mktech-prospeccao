@@ -4,7 +4,7 @@ import { dbErrorMessage, requireAdmin } from "@/lib/auth";
 import { RUN_STATUS_LABEL } from "@/lib/labels";
 import { fmtDateTime } from "@/lib/time";
 import { locationLabel } from "@/lib/research";
-import { CancelSearchButton, RequestSearchForm } from "./Pedido";
+import { CancelSearchButton, InterruptSearchButton, RequestSearchForm } from "./Pedido";
 import { RunReport, type Report } from "./RunReport";
 import { SearchProgress } from "./SearchProgress";
 
@@ -69,6 +69,7 @@ export default async function RunsPage() {
                   {p.status === "em_andamento" ? <SearchProgress target={p.qualified_target} report={reports.get(p.id)} /> : reports.get(p.id) && <RunReport report={reports.get(p.id)!} />}
                 </span>
                 {p.status === "pendente" && <CancelSearchButton id={p.id} />}
+                {p.status === "em_andamento" && <InterruptSearchButton id={p.id} />}
               </li>
             ))}
           </ul>

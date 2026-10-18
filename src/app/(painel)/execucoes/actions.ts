@@ -27,3 +27,13 @@ export async function cancelSearch(_: PedidoState, form: FormData): Promise<Pedi
   revalidatePath("/execucoes"); revalidatePath("/hermes");
   return { ok: "Pedido cancelado." };
 }
+
+export async function interruptSearch(_: PedidoState, form: FormData): Promise<PedidoState> {
+  const { supabase } = await requireAdmin();
+  const id = z.uuid().safeParse(form.get("id"));
+  if (!id.success) return { error: "Pedido inválido." };
+  const { data, error } = await supabase.rpc("admin_search_interrupt", { p_id: id.data });
+  if (error) return { error: dbErrorMessage(error) };
+  revalidatePath("/execucoes"); revalidatePath("/hermes");
+  return { ok: `Pesquisa interrompida. ${data ?? 0} lead(s) qualificado(s) já estavam cadastrados e foram mantidos.` };
+}

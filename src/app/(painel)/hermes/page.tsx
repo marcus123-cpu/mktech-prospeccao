@@ -3,7 +3,7 @@ import { ErrorBox, PageHeader } from "@/components/ui";
 import { requireAdmin } from "@/lib/auth";
 import { locationLabel } from "@/lib/research";
 import { fmtDateTime } from "@/lib/time";
-import { CancelSearchButton, RequestSearchForm } from "../execucoes/Pedido";
+import { CancelSearchButton, InterruptSearchButton, RequestSearchForm } from "../execucoes/Pedido";
 import { RunReport, type Report } from "../execucoes/RunReport";
 
 export const dynamic = "force-dynamic";
@@ -63,6 +63,7 @@ export default async function HermesPage() {
                 {p.status === "concluido" && <span className="text-xs text-muted"> · vieram {p.qualified_found ?? 0}</span>}
               </span>
               {p.status === "pendente" && <CancelSearchButton id={p.id} />}
+                {p.status === "em_andamento" && <InterruptSearchButton id={p.id} />}
             </div>
             {reports.get(p.id) && <RunReport report={reports.get(p.id)!} />}
           </li>

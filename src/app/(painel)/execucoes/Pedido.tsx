@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { MAX_TARGET, RESEARCH_DEFAULTS, UFS, UF_NAME } from "@/lib/research";
-import { cancelSearch, requestSearch, type PedidoState } from "./actions";
+import { cancelSearch, interruptSearch, requestSearch, type PedidoState } from "./actions";
 
 /** Nova pesquisa: nicho livre, localização (Brasil inteiro por padrão) e meta de leads novos (100 por padrão). */
 export function RequestSearchForm({ disabled }: { disabled: boolean }) {
@@ -59,6 +59,19 @@ export function CancelSearchButton({ id }: { id: string }) {
       <input type="hidden" name="id" value={id} />
       <button className="btn-ghost text-xs" disabled={pending}>{pending ? "…" : "Cancelar pedido"}</button>
       {state.error && <span role="alert" className="text-xs text-rose-300">{state.error}</span>}
+    </form>
+  );
+}
+
+/** Para a pesquisa que o Hermes está fazendo agora. O que já foi cadastrado fica. */
+export function InterruptSearchButton({ id }: { id: string }) {
+  const [state, action, pending] = useActionState<PedidoState, FormData>(interruptSearch, {});
+  return (
+    <form action={action} onSubmit={(e) => { if (!confirm("Interromper a pesquisa do Hermes agora? Os leads já cadastrados são mantidos.")) e.preventDefault(); }}>
+      <input type="hidden" name="id" value={id} />
+      <button className="btn-danger text-xs" disabled={pending}>{pending ? "…" : "⛔ Interromper pesquisa"}</button>
+      {state.error && <span role="alert" className="text-xs text-rose-300">{state.error}</span>}
+      {state.ok && <span className="text-xs text-emerald-300">{state.ok}</span>}
     </form>
   );
 }
