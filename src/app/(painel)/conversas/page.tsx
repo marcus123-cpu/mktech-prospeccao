@@ -5,6 +5,7 @@ import { ConversationLink } from "./ConversationLink";
 import { Empty, ErrorBox, PageHeader } from "@/components/ui";
 import { requireAdmin } from "@/lib/auth";
 import { CopyResumo } from "@/components/leads/CopyResumo";
+import { diagnosisText, type Diagnosis } from "@/components/leads/DiagnosisCard";
 import { CONVERSATION_LABEL, conversationState, type Conversation, type ConversationFilter } from "@/lib/conversations";
 import { fmtDateTime, haQuanto } from "@/lib/time";
 import { ChatScroll } from "./ChatScroll";
@@ -53,6 +54,9 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
   const detail = detailRequest ? await detailRequest : selectedId ? await loadDetail(selectedId) : null;
   const current = (detail?.data?.current ?? null) as Conversation | null;
   const detailError = detail?.error;
+  const { data: diagnosis } = current
+    ? await supabase.from("lead_diagnoses").select("id,fit_score,confidence,summary,audience,digital_presence,pains,opportunities,offer,offer_reason,approach,objections,created_at").eq("lead_id", current.id).order("created_at", { ascending: false }).limit(1).maybeSingle()
+    : { data: null };
   const events = [...(detail?.data?.events ?? []) as Event[]].reverse();
   const audioIds = new Set<string>(detail?.data?.audio_ids ?? []);
   const href = (changes: Record<string, string>) => {
@@ -173,6 +177,11 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
         </dl>
         <div className="mt-3 flex flex-wrap justify-center gap-2">
           {current.phone_e164 && <a href={`https://wa.me/${current.phone_e164.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer" className="btn-primary">Abrir WhatsApp</a>}
+          {diagnosis && <CopyResumo text={`${diagnosisText(diagnosis as Diagnosis)}
+
+----------------------------------------
+
+${copyText}`} label="📋 Copiar diagnóstico + conversa" />}
           <CopyResumo text={copyText} label="📋 Copiar conversa" />
           <Link href={`/leads/${current.id}`} className="btn-ghost">Ficha do lead</Link>
         </div>
