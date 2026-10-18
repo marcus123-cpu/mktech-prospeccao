@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { authenticate, fromDb, parseBody, temporaryFailure } from "@/lib/hermes/api";
+import { authenticate, json, parseBody, temporaryFailure } from "@/lib/hermes/api";
 import { serviceClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
@@ -12,5 +12,5 @@ export async function POST(request: Request) {
   const body = await parseBody(request, schema);
   if ("response" in body) return body.response;
   const { data, error } = await serviceClient().rpc("api_apprenticeship_day_data", { p_day: body.data.day });
-  return error ? temporaryFailure() : fromDb(data);
+  return error || !data ? temporaryFailure() : json(data);
 }
