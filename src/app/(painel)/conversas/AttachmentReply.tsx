@@ -1,7 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/browser";
 import { attachmentMime, MAX_ATTACHMENT_BYTES } from "@/lib/attachments";
 export function AttachmentReply({ leadId, disabled }: {leadId: string; disabled: boolean}) {
   const [busy, setBusy] = useState(false), [message, setMessage] = useState("");
@@ -20,6 +19,7 @@ export function AttachmentReply({ leadId, disabled }: {leadId: string; disabled:
         const data = await r.json(); if (!r.ok) throw Error(data.error ?? "Falha no envio."); return data;
       };
       const prepared = await call({ action: "prepare", lead_id: leadId, filename: file.name, bytes: file.size });
+      const { createClient } = await import("@/lib/supabase/browser");
       const uploaded = await createClient().storage.from("chat-attachments").uploadToSignedUrl(prepared.path, prepared.token, file, { contentType: prepared.mime });
       if (uploaded.error) throw Error("Falha no upload. Tente novamente.");
       await call({ action: "send", id: prepared.id });
