@@ -50,12 +50,14 @@ describe('foco do cadastro (critério obrigatório: sem site confirmado)', () =>
     expect(registrationFocus({ site_status: 'apenas_redes_sociais', website_url: 'https://linktr.ee/x', evidences: [google] }).accepted).toBe(true);
     expect(registrationFocus({ site_status: 'apenas_redes_sociais', website_url: 'https://www.instagram.com/x', evidences: [google] }).accepted).toBe(true);
   });
-  it('exige a busca no Google registrada, sem limitação', () => {
+  it('exige a busca no Google registrada; a ressalva "não exaustivo" não impede', () => {
     expect(registrationFocus({ site_status: 'site_nao_localizado', evidences: [] })).toMatchObject({ accepted: false, code: 'sem_busca_google' });
-    expect(registrationFocus({ site_status: 'site_nao_localizado', evidences: [{ ...google, limitation: 'sem acesso' }] })).toMatchObject({ accepted: false, code: 'sem_busca_google' });
+    expect(registrationFocus({ site_status: 'site_nao_localizado', evidences: [{ ...google, limitation: 'Resultados consultados não exaustivos' }] }).accepted).toBe(true);
   });
   it('exige a bio do Instagram verificada quando há Instagram', () => {
     expect(registrationFocus({ site_status: 'apenas_redes_sociais', instagram: '@x', evidences: [google] })).toMatchObject({ accepted: false, code: 'instagram_nao_verificado' });
     expect(registrationFocus({ site_status: 'apenas_redes_sociais', instagram: '@x', evidences: [google, { ...insta, limitation: 'pediu login' }] }).accepted).toBe(false);
+    expect(registrationFocus({ site_status: 'apenas_redes_sociais', instagram: '@x', evidences: [google, { ...insta, limitation: 'Bio pode estar truncada' }] }).accepted).toBe(false);
+    expect(registrationFocus({ site_status: 'apenas_redes_sociais', instagram: '@x', evidences: [google, { ...insta, limitation: 'Data do último post não visível' }] }).accepted).toBe(true);
   });
 });

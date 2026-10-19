@@ -18,8 +18,10 @@ export type RegistrationVerdict = { accepted: boolean; reason: string; code: "ok
  * Cadastro de candidatos — critério OBRIGATÓRIO: só entra negócio SEM site, confirmado.
  *  - nenhum site próprio (nem no Google, nem no link da bio do Instagram);
  *  - "sem site" confirmado (`site_nao_localizado` ou `apenas_redes_sociais`), nunca "verificação pendente";
- *  - a busca no Google/web precisa estar registrada como evidência sem limitação;
- *  - se há Instagram, a bio precisa ter sido aberta (evidência `instagram` sem limitação).
+ *  - a busca no Google/web precisa estar registrada como evidência (`google` ou `busca`); a ressalva
+ *    "resultados não exaustivos" é aceita, para o Hermes nunca ser incentivado a apagar avisos;
+ *  - se há Instagram, a bio precisa ter sido aberta (evidência `instagram`) e a ressalva não pode dizer que
+ *    o perfil foi bloqueado, indisponível ou a bio truncada/encurtada (aí o link do site pode estar escondido).
  * Quem já tem site é descartado, mesmo com lacuna de visibilidade.
  */
 export function registrationFocus(research: Research): RegistrationVerdict {
@@ -30,12 +32,12 @@ export function registrationFocus(research: Research): RegistrationVerdict {
     return { accepted: false, code: "verificacao_pendente", reason: "Verificação de site pendente: só é cadastrado quem teve 'sem site' CONFIRMADO. Conclua a busca no Google e a bio do Instagram e envie site_status site_nao_localizado ou apenas_redes_sociais" };
   }
   const evidences = research.evidences ?? [];
-  const confirmed = (kinds: string[]) => evidences.some(e => kinds.includes(e.kind) && !e.limitation);
-  if (!confirmed(["google", "busca"])) {
-    return { accepted: false, code: "sem_busca_google", reason: "Falta a evidência da busca no Google (kind google ou busca, sem limitation) mostrando que não há site do negócio" };
+  const BIO_NAO_VERIFICADA = /login|bloquead|indispon|truncad|encurtad|n[aã]o foi poss[ií]vel|n[aã]o consegui|sem acesso/i;
+  if (!evidences.some(e => ["google", "busca"].includes(e.kind))) {
+    return { accepted: false, code: "sem_busca_google", reason: "Falta a evidência da busca no Google (kind google ou busca) mostrando que não há site do negócio" };
   }
-  if (research.instagram?.trim() && !confirmed(["instagram"])) {
-    return { accepted: false, code: "instagram_nao_verificado", reason: "Instagram informado sem a bio verificada: abra o perfil e registre a evidência instagram (sem limitation) confirmando que não há link para site" };
+  if (research.instagram?.trim() && !evidences.some(e => e.kind === "instagram" && !BIO_NAO_VERIFICADA.test(e.limitation ?? ""))) {
+    return { accepted: false, code: "instagram_nao_verificado", reason: "Instagram informado sem a bio verificada: abra o perfil e registre a evidência instagram confirmando que não há link para site (perfil bloqueado, indisponível ou bio truncada não vale; tente de novo)" };
   }
   return { accepted: true, code: "ok", reason: "Sem site confirmado no Google e na bio do Instagram" };
 }

@@ -21,9 +21,11 @@ que ainda não tem site, landing page ou portfólio próprio para se apresentar.
 **CRITÉRIO OBRIGATÓRIO (o CRM recusa o cadastro se não for cumprido, não há
 exceção):** só cadastre negócio **sem site**, e isso precisa estar
 **confirmado**: (1) busca no Google/web feita e registrada como evidência
-`google` ou `busca` sem `limitation`, mostrando que não há site do negócio;
+`google` ou `busca` mostrando que não há site do negócio (a ressalva "resultados
+não exaustivos" pode ficar; nunca apague uma `limitation` verdadeira para passar);
 (2) se o negócio tem Instagram, a **bio foi aberta** e não tem link para site
-próprio (evidência `instagram` sem `limitation`); (3) `site_status` igual a
+próprio (evidência `instagram`); perfil bloqueado/indisponível ou bio
+truncada/encurtada **não vale**: tente de novo ou descarte; (3) `site_status` igual a
 `site_nao_localizado` ou `apenas_redes_sociais`. Quem já tem site é descartado
 mesmo que apareça mal no Google. `verificacao_pendente` **não é aceito**: se
 não conseguiu confirmar, tente de novo ou descarte; nunca cadastre assim.
