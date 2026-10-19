@@ -258,7 +258,7 @@ class WhatsAppWeb(Transporte):
             data = response.read(30 * 1024 * 1024 + 1)
         if not data or len(data) > 30 * 1024 * 1024:
             raise BridgeRejected("Arquivo vazio ou maior que 30 MB")
-        out = self._call("POST", "/enviar-anexo", {"telefone":item["telefone"],"item_id":item["id"],"mime":item.get("audio_mime"),"filename":item.get("filename"),"data":base64.b64encode(data).decode("ascii")}, timeout=120)
+        out = self._call("POST", "/enviar-anexo", {"telefone":item["telefone"],"item_id":item["id"],"mime":item.get("audio_mime"),"filename":item.get("filename"),"caption":(item.get("caption") or None),"data":base64.b64encode(data).decode("ascii")}, timeout=120)
         if not out.get("ok") or not out.get("id"):
             raise RuntimeError("A ponte não confirmou o arquivo; confira no WhatsApp antes de reenviar")
         return out["id"]

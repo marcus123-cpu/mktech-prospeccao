@@ -11,9 +11,7 @@ import { ChatScroll } from "./ChatScroll";
 import { ManualProvider, PendingBubbles, ReplyBox, type Pending } from "./ReplyBox";
 import { ChatShell, InfoToggle } from "./ChatShell";
 import { STAGE_LABEL } from "@/lib/labels";
-import { VoiceReply } from "./VoiceReply";
 import { receiptLabel } from "@/lib/message-receipts";
-import { AttachmentReply } from "./AttachmentReply";
 import { SeenConversation } from "./SeenConversation";
 
 export const metadata = { title: "Conversas" };
@@ -166,8 +164,6 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
           </ol>
         </ChatScroll>
         {events.length === 300 && <p className="px-4 py-1 text-xs text-muted">Exibindo as últimas 300 mensagens.</p>}
-        <AttachmentReply leadId={current.id} disabled={!current.phone_e164 || current.do_not_contact} />
-        <VoiceReply key={`voice-${current.id}`} leadId={current.id} disabled={!current.phone_e164 || current.do_not_contact} />
         <ReplyBox key={current.id} leadId={current.id} disabled={!current.phone_e164 || current.do_not_contact} />
       </ManualProvider>
     </section>

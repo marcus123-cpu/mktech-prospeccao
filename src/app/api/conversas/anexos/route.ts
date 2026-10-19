@@ -6,7 +6,7 @@ import { serviceClient } from "@/lib/supabase/admin";
 import { attachmentMime, MAX_ATTACHMENT_BYTES } from "@/lib/attachments";
 export const dynamic = "force-dynamic";
 const schema = z.discriminatedUnion("action", [
-  z.object({ action: z.literal("prepare"), lead_id: z.uuid(), filename: z.string().min(1).max(180), bytes: z.number().int().min(1).max(MAX_ATTACHMENT_BYTES) }),
+  z.object({ action: z.literal("prepare"), lead_id: z.uuid(), filename: z.string().min(1).max(180), bytes: z.number().int().min(1).max(MAX_ATTACHMENT_BYTES), caption: z.string().max(1000).optional() }),
   z.object({ action: z.literal("send"), id: z.uuid() }),
 ]);
 const fail = (error: string, status = 422) => NextResponse.json({ error }, { status });
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     const id = randomUUID(), path = `${id}/original`;
     const signed = await storage.createSignedUploadUrl(path);
     if (signed.error || !signed.data) return fail("Falha preparando o arquivo.", 503);
-    const saved = await db.from("chat_attachments").insert({ id, lead_id: p.lead_id, storage_path: path, filename: p.filename.replace(/[\\/\u0000-\u001f]/g, "_"), mime, bytes: p.bytes });
+    const saved = await db.from("chat_attachments").insert({ id, lead_id: p.lead_id, storage_path: path, filename: p.filename.replace(/[\\/\u0000-\u001f]/g, "_"), mime, bytes: p.bytes, ...(p.caption?.trim() ? { caption: p.caption.trim() } : {}) });
     if (saved.error) return fail("Falha preparando o arquivo.", 503);
     return NextResponse.json({ id, path, token: signed.data.token, mime }, { status: 201 });
   }

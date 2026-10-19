@@ -320,7 +320,7 @@ const server = http.createServer(async (req, res) => {
       const digits = String(body.telefone || '').replace(/\D/g,'');
       if (ONLY_TO.size && !ONLY_TO.has(digits)) return send(res,403,{ok:false,erro:'destino fora de ENVIO_SO_PARA'});
       try {
-        const result = await deliverAttachment({client,journal,itemId:body.item_id,digits,data:body.data,mime:body.mime,filename:body.filename,MessageMedia,
+        const result = await deliverAttachment({client,journal,itemId:body.item_id,digits,data:body.data,mime:body.mime,filename:body.filename,caption:body.caption,MessageMedia,
           onSending:(to,phone)=>{const pending={to,phone,texto:''};enviosEmAndamento.add(pending);return()=>enviosEmAndamento.delete(pending);},
           onSent:id=>enviadasPelaPonte.add(id)});
         return send(res,200,result);

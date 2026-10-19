@@ -3,6 +3,8 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { sendManualReply } from "./actions";
+import { VoiceTool } from "./VoiceReply";
+import { FileTool } from "./AttachmentReply";
 
 export type Pending = { key: string; serverId?: string; body: string; at: string; status: "enviando" | "enviada" | "falhou"; error?: string };
 type Api = { items: Pending[]; add: (p: Pending) => void; patch: (key: string, p: Partial<Pending>) => void; drop: (key: string) => void };
@@ -100,11 +102,13 @@ export function ReplyBox({ leadId, disabled }: { leadId: string; disabled: boole
     else api.patch(key, { serverId: r.id });
   }
   return (
-    <form onSubmit={submit} className="bg-[#202c33] px-3 py-2.5">
+    <form onSubmit={submit} className="relative bg-[#202c33] px-3 py-2.5">
       <div className="flex items-end gap-2">
         <textarea ref={area} value={text} onChange={(e) => setText(e.target.value)} maxLength={1000} rows={1} aria-label="Mensagem"
           className="max-h-40 min-h-[44px] min-w-0 flex-1 resize-none rounded-xl border-0 bg-[#2a3942] px-4 py-3 text-[14px] text-[#e9edef] outline-none placeholder:text-[#8696a0]" placeholder="Digite uma mensagem"
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); void submit(); } }} />
+        <VoiceTool leadId={leadId} />
+        <FileTool leadId={leadId} />
         <button disabled={!text.trim()} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#00a884] text-white transition hover:bg-[#06cf9c] disabled:opacity-40" aria-label="Enviar mensagem">
           <svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m3 3 19 9-19 9 3-8 9-1-9-1-3-8Z" /></svg>
         </button>
