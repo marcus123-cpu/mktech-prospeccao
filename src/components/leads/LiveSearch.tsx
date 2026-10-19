@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 
 /** Busca de nicho que atualiza a lista enquanto você digita (com uma pausa curta para não pesar). */
-export function LiveSearch({ initial }: { initial: string }) {
+export function LiveSearch({ initial, grupo = "" }: { initial: string; grupo?: string }) {
   const router = useRouter();
   const [value, setValue] = useState(initial);
   const [pending, start] = useTransition();
@@ -14,10 +14,10 @@ export function LiveSearch({ initial }: { initial: string }) {
     const timer = window.setTimeout(() => {
       last.current = value;
       const term = value.trim();
-      start(() => router.replace(term ? `/leads?busca=${encodeURIComponent(term)}` : "/leads", { scroll: false }));
+      start(() => router.replace(`/leads${term || grupo ? "?" : ""}${[term ? `busca=${encodeURIComponent(term)}` : "", grupo ? `grupo=${grupo}` : ""].filter(Boolean).join("&")}`, { scroll: false }));
     }, 250);
     return () => window.clearTimeout(timer);
-  }, [value, router]);
+  }, [value, router, grupo]);
   return (
     <div className="relative min-w-0 flex-1">
       <input name="busca" value={value} onChange={e => setValue(e.target.value)} autoComplete="off" className="input w-full" placeholder="🔎 Buscar nicho (ex.: massagem, massoterapia ou massoterapeuta)" aria-label="Buscar nicho" />
