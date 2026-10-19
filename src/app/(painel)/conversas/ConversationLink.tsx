@@ -11,7 +11,6 @@ type Menu = { x: number; y: number };
  */
 export function ConversationLink({ leadId, name, active, isUnread, lastInAt, children, ...props }: ComponentProps<typeof Link> & { leadId: string; name: string; active: boolean; isUnread: boolean; lastInAt: string | null }) {
   const router = useRouter();
-  const [intent, setIntent] = useState(false);
   const [menu, setMenu] = useState<Menu | null>(null);
   const [error, setError] = useState("");
   const press = useRef<number | null>(null);
@@ -48,7 +47,7 @@ export function ConversationLink({ leadId, name, active, isUnread, lastInAt, chi
   const open = (x: number, y: number) => setMenu({ x: Math.min(x, window.innerWidth - 230), y: Math.min(y, window.innerHeight - 90) });
 
   return <>
-    <Link {...props} prefetch={intent} onPointerEnter={() => setIntent(true)} onFocus={() => setIntent(true)}
+    <Link {...props} prefetch={false}
       onContextMenu={event => { event.preventDefault(); open(event.clientX, event.clientY); }}
       onTouchStart={event => { const t = event.touches[0]; press.current = window.setTimeout(() => open(t.clientX, t.clientY), 550); }}
       onTouchEnd={() => { if (press.current) window.clearTimeout(press.current); }}

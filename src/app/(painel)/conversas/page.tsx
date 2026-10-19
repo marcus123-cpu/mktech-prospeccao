@@ -32,7 +32,7 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
   const { supabase } = await requireAdmin();
   const unreadRequest = supabase.from("conversation_unread").select("id");
   const unreadResult = filter === "nao_lidas" ? await unreadRequest : null;
-  let query = supabase.from("conversation_inbox").select("*", { count: "exact" });
+  let query = supabase.from("conversation_inbox").select("*");
   if (filter === "nao_lidas") query = query.in("id", (unreadResult?.data ?? []).map((r: {id: string}) => r.id));
   if (term) query = query.or(`business_name.ilike.%${term}%,city.ilike.%${term}%`);
   if (filter === "minhas") query = query.not("secretary_handoff_at", "is", null).eq("do_not_contact", false).not("stage", "in", "(fechado,sem_interesse,desqualificado)");
@@ -42,17 +42,20 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
   const explicitId = sp.lead && /^[0-9a-f-]{36}$/i.test(sp.lead) ? sp.lead : undefined;
   const loadDetail = async (id: string) => await supabase.rpc("admin_conversation_detail", {p_lead:id,p_limit:300});
   const detailRequest = explicitId ? loadDetail(explicitId) : null;
-  const [inbox, unread, needReply] = await Promise.all([
-    query.order("activity_at", { ascending: false }).order("id").range((page - 1) * 30, page * 30 - 1),
+  const [inbox, unread] = await Promise.all([
+    query.order("activity_at", { ascending: false }).order("id").range((page - 1) * 30, page * 30), // 31 linhas: a 31ª só avisa que existe próxima página (sem contar tudo)
     unreadResult ?? unreadRequest,
-    supabase.from("conversation_inbox").select("id", { count: "exact", head: true }).eq("needs_reply", true),
   ]);
   const unreadIds = new Set((unread.data ?? []).map((row: { id: string }) => row.id));
-  const tabCount: Partial<Record<ConversationFilter, number>> = { nao_lidas: unreadIds.size, aguardando: needReply.count ?? 0 };
+  const tabCount: Partial<Record<ConversationFilter, number>> = { nao_lidas: unreadIds.size };
   if (inbox.error) return <><PageHeader title="Conversas" /><ErrorBox message="Não foi possível carregar a central." /></>;
-  const rows = (inbox.data ?? []) as Conversation[];
+  const allRows = (inbox.data ?? []) as Conversation[];
+  const hasNext = allRows.length > 30;
+  const rows = allRows.slice(0, 30);
   const selectedId = explicitId ?? rows[0]?.id;
-  const detail = detailRequest ? await detailRequest : selectedId ? await loadDetail(selectedId) : null;
+  let detail = detailRequest ? await detailRequest : selectedId ? await loadDetail(selectedId) : null;
+  // Com o banco ocupado a consulta pode estourar o tempo: tenta uma segunda vez antes de mostrar erro.
+  if (detail?.error && selectedId) detail = await loadDetail(selectedId);
   const current = (detail?.data?.current ?? null) as Conversation | null;
   const detailError = detail?.error;
   const { data: diagnosis } = current
@@ -82,7 +85,7 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
     <aside className="flex h-full min-h-0 flex-col overflow-hidden bg-[#111b21]">
       <header className="flex h-16 shrink-0 items-center justify-between px-5">
         <h1 className="text-[22px] font-semibold tracking-tight text-[#e9edef]">Conversas</h1>
-        <span className="rounded-full bg-white/5 px-2.5 py-1 text-[11px] text-[#8696a0]">{inbox.count ?? 0} contatos</span>
+        <span className="rounded-full bg-white/5 px-2.5 py-1 text-[11px] text-[#8696a0]">{rows.length}{hasNext ? "+" : ""} nesta página</span>
       </header>
       <form action="/conversas" className="flex gap-1 px-3 pb-3">
         <input type="hidden" name="filtro" value={filter} />
@@ -119,8 +122,8 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
       </div>
       <nav aria-label="Páginas de conversas" className="flex items-center justify-between border-t border-line p-3 text-xs text-muted">
         {page > 1 ? <Link href={href({ pagina: String(page - 1) })}>← Anterior</Link> : <span />}
-        <span>{inbox.count ?? 0} conversas · pág. {page}</span>
-        {page * 30 < (inbox.count ?? 0) ? <Link href={href({ pagina: String(page + 1) })}>Próxima →</Link> : <span />}
+        <span>pág. {page}</span>
+        {hasNext ? <Link href={href({ pagina: String(page + 1) })}>Próxima →</Link> : <span />}
       </nav>
     </aside>
   );
