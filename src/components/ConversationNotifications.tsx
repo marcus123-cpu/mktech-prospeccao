@@ -66,7 +66,7 @@ export function ConversationNotifications() {
       finally { busy = false; }
     };
     void poll();
-    const timer = window.setInterval(poll, 5000);
+    const timer = window.setInterval(poll, 8000);
     document.addEventListener("visibilitychange", poll);
     return () => { disposed = true; clearInterval(timer); document.removeEventListener("visibilitychange", poll); };
   }, [selected, router]);
