@@ -9,9 +9,13 @@ uma nota determinística focada na dor: lead SEM site/landing é o alvo.
 Uso:
   python inspecionar_presenca.py --nome "Nice Leal Estética" --cidade Votuporanga \
       --instagram draniceleal [--facebook URL] [--site URL] [--telefone 5517...] [--servicos 3]
-Requer: pip install playwright && python -m playwright install chromium
+Busca no Google com o Chrome de verdade (janela real, escondida fora da tela e perfil salvo): o Google bloqueia navegador
+invisível com captcha, mas aceita este. Se mesmo assim pedir captcha, cai para o Bing e avisa no resultado.
+Requer: pip install playwright && python -m playwright install chromium (e o Google Chrome instalado)
 """
 import argparse
+import os
+import tempfile
 import json
 import re
 import sys
@@ -171,6 +175,65 @@ def ler_link_externo(page, url, nome="", telefone="", instagram=""):
             "tem_https": final.startswith("https://"), "tamanho_texto": len(texto)}
 
 
+PERFIL_PESQUISA = Path(os.environ.get("MKTECH_PERFIL_NAVEGADOR") or (Path.home() / ".mktech-perfil-pesquisa"))
+BUSCA_INFO = {"motor": None, "url": None, "captcha": False}
+
+
+def abrir_contexto(p):
+    """Chrome real com janela (fora da tela) e perfil salvo. Sem Chrome, cai para o Chromium invisível."""
+    argumentos = ["--disable-blink-features=AutomationControlled", "--window-position=-2400,-2400", "--window-size=1280,900"]
+    for pasta in (PERFIL_PESQUISA, Path(tempfile.mkdtemp(prefix="mktech-perfil-"))):  # 2ª opção: perfil em uso por outra pesquisa
+        try:
+            pasta.mkdir(parents=True, exist_ok=True)
+            return p.chromium.launch_persistent_context(str(pasta), channel="chrome", headless=False, locale="pt-BR",
+                                                        viewport={"width": 1280, "height": 900}, args=argumentos)
+        except Exception:
+            continue
+    navegador = p.chromium.launch(headless=True)
+    return navegador.new_context(locale="pt-BR", user_agent=UA, viewport={"width": 1280, "height": 900})
+
+
+def google_bloqueou(page):
+    corpo = ""
+    try:
+        corpo = str(page.inner_text("body") or "")[:3000].lower()
+    except Exception:
+        pass
+    return "/sorry/" in str(page.url) or "tráfego incomum" in corpo or "unusual traffic" in corpo or "não sou um robô" in corpo
+
+
+def aceitar_consentimento(page):
+    for texto in ("Rejeitar tudo", "Reject all", "Aceitar tudo", "Accept all"):
+        try:
+            botao = page.get_by_role("button", name=texto)
+            if botao.count():
+                botao.first.click(timeout=2000)
+                page.wait_for_timeout(800)
+                return
+        except Exception:
+            continue
+
+
+def buscar_google(page, consulta):
+    """Devolve (resultados[(href, titulo)], funcionou). funcionou=False se o Google pediu captcha ou não abriu."""
+    url = "https://www.google.com/search?q=" + consulta.replace(" ", "+") + "&hl=pt-BR&gl=br"
+    if not abrir(page, url, 1500):
+        return [], False
+    aceitar_consentimento(page)
+    if google_bloqueou(page):
+        BUSCA_INFO["captcha"] = True
+        return [], False
+    achados = []
+    for a in page.query_selector_all("a:has(h3)"):
+        # O Google esconde o endereço atrás de /goto?url=...; o endereço real aparece escrito no resultado ("https://site.com › página").
+        escrito = re.search(r"https?://[^\s›]+", a.inner_text() or "")
+        href = escrito.group(0).rstrip("/.") if escrito else (a.get_attribute("href") or "")
+        if href.startswith("http") and "google." not in urlparse(href).netloc:
+            achados.append((href, str(a.inner_text() or "")[:300]))  # título + nome do site + endereço escrito
+    BUSCA_INFO["url"] = url
+    return achados, len(achados) > 0
+
+
 def resolver_bing(href):
     """Bing às vezes devolve link de rastreio (bing.com/ck/a?...&u=a1<base64>)."""
     if "bing.com/ck/" in href:
@@ -185,25 +248,45 @@ def resolver_bing(href):
 
 
 def buscar_site(page, nome, cidade):
-    """Procura site próprio no Bing e confere se o domínio é do negócio.
+    """Procura site próprio no Google (e no Bing, se o Google não responder) e confere se o domínio é do negócio.
     Devolve (links, busca_funcionou). Se a busca não abriu, NÃO se conclui 'sem site'."""
     nucleo = [w for w in norm(nome).split() if len(w) > 2 and w not in ("estetica", "clinica", "studio", "espaco", "centro", "dra", "dr")]
     achados, funcionou = [], False
-    for q in (f'"{nome}" {cidade}', f"{nome} {cidade} site oficial"):
-        if not abrir(page, f"https://www.bing.com/search?q={q.replace(' ', '+')}&setlang=pt-BR", 1500):
-            continue
-        links = page.query_selector_all("li.b_algo h2 a")
-        funcionou = funcionou or len(links) > 0
-        for a in links:
-            href = resolver_bing(a.get_attribute("href") or "")
-            host = urlparse(href).netloc.lower().replace("www.", "")
-            if not host or any(d in host for d in DIRETORIOS) or tipo_destino(href):
+
+    def aproveitar(href, titulo):
+        host = urlparse(href).netloc.lower().replace("www.", "")
+        if not host or any(d in host for d in DIRETORIOS) or tipo_destino(href):
+            return
+        if nucleo and not any(w in norm(host) or w in norm(titulo) for w in nucleo[:3]):
+            return
+        achados.append(href)
+
+    consultas = (f'"{nome}" {cidade}', f"{nome} {cidade} site oficial")
+    if not BUSCA_INFO["captcha"]:
+        for q in consultas:
+            resultados, ok = buscar_google(page, q)
+            if BUSCA_INFO["captcha"]:
+                break
+            funcionou = funcionou or ok
+            for href, titulo in resultados:
+                aproveitar(href, titulo)
+            if achados:
+                break
+        if funcionou:
+            BUSCA_INFO["motor"] = "google"
+    if not funcionou:  # reserva: Bing
+        for q in consultas:
+            if not abrir(page, f"https://www.bing.com/search?q={q.replace(' ', '+')}&setlang=pt-BR", 1500):
                 continue
-            if nucleo and not any(w in norm(host) or w in norm(a.inner_text()) for w in nucleo[:3]):
-                continue
-            achados.append(href)
-        if achados:
-            break
+            links = page.query_selector_all("li.b_algo h2 a")
+            funcionou = funcionou or len(links) > 0
+            for a in links:
+                aproveitar(resolver_bing(a.get_attribute("href") or ""), a.inner_text())
+            if achados:
+                break
+        if funcionou:
+            BUSCA_INFO["motor"] = "bing"
+            BUSCA_INFO["url"] = "https://www.bing.com/search?q=" + (nome + " " + cidade).replace(" ", "+")
     return list(dict.fromkeys(achados))[:3], funcionou
 
 
@@ -240,8 +323,8 @@ def pontuar(r, servicos, tem_contato):
 def inspecionar(a):
     from playwright.sync_api import sync_playwright
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        ctx = browser.new_context(locale="pt-BR", user_agent=UA, viewport={"width": 1280, "height": 900})
+        ctx = abrir_contexto(p)
+        BUSCA_INFO.update({"motor": None, "url": None, "captcha": False})
         # Read public pages only; never load a WhatsApp conversation, including redirects.
         ctx.route("**/*", lambda route: route.abort() if pertence(dominio(route.request.url), WHATSAPP) or not url_publica(route.request.url) else route.continue_())
         page = ctx.new_page()
@@ -292,7 +375,9 @@ def inspecionar(a):
                 conferir(u, "busca")
         site["situacao"], site["grupo"] = resumir_presenca(site["detalhe"], ig.get("bio_verificada", False), busca_ok)
         site["busca_funcionou"] = busca_ok
-        browser.close()
+        site["busca_motor"] = BUSCA_INFO["motor"]
+        site["google_pediu_captcha"] = BUSCA_INFO["captcha"]
+        ctx.close()
     r = {"nome": a.nome, "cidade": a.cidade, "verificado_em": agora(), "instagram": ig, "facebook": fb, "site": site}
     comp, nota, conf = pontuar(r, a.servicos, bool(a.telefone))
     r["nota_sugerida"], r["componentes"], r["confianca"] = nota, comp, conf
@@ -363,8 +448,10 @@ def evidencias(r):
             item["limitation"] = d.get("motivo", "Conferência inconclusiva.")
         ev.append(item)
     if site["situacao"] == "sem_site":
-        ev.append({"kind": "busca", "url": "https://www.bing.com/search?q=" + (r["nome"] + " " + r["cidade"]).replace(" ", "+"),
-                   "summary": f"Busca por '{r['nome']} {r['cidade']}' e conferência da bio: nenhuma página personalizada localizada nas fontes consultadas", "observed_at": ts,
+        motor = site.get("busca_motor") or "bing"
+        url_busca = BUSCA_INFO.get("url") or "https://www.bing.com/search?q=" + (r["nome"] + " " + r["cidade"]).replace(" ", "+")
+        ev.append({"kind": "google" if motor == "google" else "busca", "url": url_busca,
+                   "summary": f"Busca no {'Google' if motor == 'google' else 'Bing'} por '{r['nome']} {r['cidade']}' e conferência da bio: nenhuma página personalizada localizada nas fontes consultadas", "observed_at": ts,
                    "limitation": "Busca negativa não comprova inexistência de página não indexada ou publicada depois da inspeção."})
     # O CRM aceita até 20 evidências; todos os detalhes e pendências permanecem
     # no resultado completo. Páginas confirmadas têm prioridade na seleção.

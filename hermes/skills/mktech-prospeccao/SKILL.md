@@ -323,6 +323,16 @@ WhatsApp, app de agenda. Busque `<serviço principal> <cidade>` e veja
 quem aparece primeiro. Se concorrentes têm página própria e ela não, isso
 é evidência.
 
+**Busca no Google (sem API paga):** o `inspecionar_presenca.py` já pesquisa no
+**Google** usando o Chrome de verdade (janela real escondida fora da tela e perfil
+salvo); o Google bloqueia navegador invisível (headless) com captcha, por isso nunca
+rode a busca em modo headless. Confira no resultado `site.busca_motor` (`google` ou
+`bing`) e `site.google_pediu_captcha`. Se o Google pediu captcha, a busca caiu para o
+Bing: **não conclua "sem site" só por ela**; avise o Marcos para rodar
+`abrir-perfil-pesquisa.bat` (resolve o captcha e, se quiser, entra numa conta
+DEDICADA do Instagram) e continue só depois. Faça uma busca por candidato, sem
+disparar várias seguidas, para não irritar o Google.
+
 **E. Tem site próprio?** Busque `<nome> <cidade> site`. Linktree, Instagram,
 Google Meu Negócio e marketplaces são diretórios, não site próprio. Uma página
 institucional do próprio negócio, inclusive em hospedagem gratuita, pode ser site.
