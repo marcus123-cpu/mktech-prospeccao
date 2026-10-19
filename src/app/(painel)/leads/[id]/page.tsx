@@ -18,6 +18,7 @@ import {
   changeStage,
   correctContact,
   deleteLead,
+  deleteLeadsQuick,
   markContacted,
   registerClosing,
   registerProposal,
@@ -170,6 +171,9 @@ export default async function LeadDetail({
           <p className="text-sm text-muted">
             {[l.responsible_name, [l.neighborhood, `${l.city}/${l.state}`].filter(Boolean).join(", ")].filter(Boolean).join(" · ")}
           </p>
+          <ActionForm action={deleteLeadsQuick} submit="🗑 Excluir este lead" variant="btn-danger !px-3 !py-1.5 text-xs" className="mt-2 space-y-0" confirmText="Excluir este lead? Apaga a ficha e todo o histórico (conversas, mensagens, diagnóstico). Não dá para desfazer.">
+            <input type="hidden" name="ids" value={id} /><input type="hidden" name="go" value="lista" />
+          </ActionForm>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <StageBadge stage={l.stage} />
             <ContactBadge contacted={l.contacted} unknownDate={l.contact_date_unknown} />

@@ -10,7 +10,7 @@ export type Role = typeof ROLES[number];
 export type Strategy = "A" | "B" | "C";
 export type Message = { id?: string; direction: string; body: string | null; kind?: string; media?: string; occurred_at?: string };
 export type Evidence = { kind: string; summary: string; url?: string | null; observed_at?: string | null; limitation?: string | null };
-export type Research = { niche?: string | null; services?: string[] | null; site_status?: string | null; website_url?: string | null; evidences?: Evidence[]; diagnosis?: { offer?:string; pains?: { pain: string; evidence: string }[]; opportunities?: string[]; confidence?: string } | null };
+export type Research = { niche?: string | null; instagram?: string | null; services?: string[] | null; site_status?: string | null; website_url?: string | null; evidences?: Evidence[]; diagnosis?: { offer?:string; pains?: { pain: string; evidence: string }[]; opportunities?: string[]; confidence?: string } | null };
 export type Product = { id?: string; name: string; price: number; scope: string; conditions: string; delivery_days: number | null; approved: boolean };
 export type CommercialState = {
   stage: Stage; role: Role; role_confidence: number; role_evidence: string;

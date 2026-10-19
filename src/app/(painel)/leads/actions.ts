@@ -289,3 +289,37 @@ export async function deleteLead(_: ActionState, form: FormData): Promise<Action
   refresh();
   redirect("/leads?excluido=1");
 }
+
+/** Excluir um ou vários leads (seleção na lista ou botão da ficha). Apaga a ficha e o histórico. */
+export async function deleteLeadsQuick(_: ActionState, form: FormData): Promise<ActionState> {
+  const { supabase } = await requireAdmin();
+  const ids = form.getAll("ids").map(String).filter((v) => uuid.safeParse(v).success);
+  if (ids.length === 0) return { error: "Selecione pelo menos um lead." };
+  const { data, error } = await supabase.rpc("admin_delete_leads", { p_leads: ids });
+  if (error) return { error: dbErrorMessage(error) };
+  refresh();
+  if (str(form, "go") === "lista") redirect("/leads?excluido=1");
+  return { ok: `${data} lead(s) excluído(s).` };
+}
+
+/** Exclui o nicho inteiro. Por padrão preserva quem já tem conversa; "tudo" apaga também esses. */
+export async function deleteNiche(_: ActionState, form: FormData): Promise<ActionState> {
+  const { supabase } = await requireAdmin();
+  const niche = str(form, "niche");
+  if (!niche) return { error: "Nicho inválido." };
+  const everything = str(form, "tudo") === "1";
+  const { data, error } = await supabase.rpc("admin_delete_niche", { p_niche: niche, p_everything: everything });
+  if (error) return { error: dbErrorMessage(error) };
+  refresh();
+  const r = data as { apagados: number; mantidos: number };
+  return { ok: `Nicho “${niche}”: ${r.apagados} lead(s) excluído(s)${r.mantidos ? `; ${r.mantidos} com conversa foram mantidos` : ""}.` };
+}
+
+/** Limpa os leads que o Hermes cadastrou sem confirmar se têm site (e que nunca foram contatados). */
+export async function deletePendingLeads(): Promise<ActionState> {
+  const { supabase } = await requireAdmin();
+  const { data, error } = await supabase.rpc("admin_delete_pending_leads");
+  if (error) return { error: dbErrorMessage(error) };
+  refresh();
+  return { ok: `${(data as { apagados: number }).apagados} lead(s) sem verificação de site excluído(s).` };
+}

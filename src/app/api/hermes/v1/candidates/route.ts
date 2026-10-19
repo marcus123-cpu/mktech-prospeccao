@@ -27,12 +27,11 @@ export async function POST(request: Request) {
   }
   const body = await parseBody(request, registerSchema);
   if ("response" in body) return body.response;
-  if (body.data.run_id) {
-    const focus = registrationFocus(body.data.candidate);
-    if (!focus.accepted) {
-      await recordDiscard(body.data.run_id, body.data.candidate.business_name, "ja_possui_site", focus.reason);
-      return json({ status: "invalido", errors: [focus.reason] }, 422);
-    }
+  // Critério obrigatório: sem site confirmado. Vale para qualquer cadastro feito pelo Hermes.
+  const focus = registrationFocus(body.data.candidate);
+  if (!focus.accepted) {
+    if (body.data.run_id) await recordDiscard(body.data.run_id, body.data.candidate.business_name, focus.code, focus.reason);
+    return json({ status: "invalido", errors: [focus.reason] }, 422);
   }
   const candidate = compact({
     ...body.data.candidate,

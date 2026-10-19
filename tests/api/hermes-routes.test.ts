@@ -12,7 +12,8 @@ const candidate = {
   business_name: "Clínica Teste",
   city: "Bauru",
   selection_reason: "Sem site próprio",
-  evidences: [{ kind: "busca", summary: "Nenhum domínio encontrado" }],
+  site_status: "site_nao_localizado" as const,
+  evidences: [{ kind: "busca" as const, summary: "Nenhum domínio encontrado" }],
 };
 
 function req(path: string, init: { body?: unknown; token?: string | null; key?: string } = {}) {
@@ -81,6 +82,14 @@ describe("rotas da API do Hermes", () => {
     expect(await res.json()).toMatchObject({ status: "criado" });
     const call = rpc.mock.calls.find((c) => c[0] === "api_register_candidate")!;
     expect(call[1]).toMatchObject({ p_token: "token-1", p_key: "chave-123456" });
+  });
+
+  it("recusa candidato com verificação de site pendente (critério obrigatório: sem site confirmado)", async () => {
+    const res = await registerCandidate(req("/api/hermes/v1/candidates", {
+      body: { candidate: { ...candidate, site_status: "verificacao_pendente" } }, key: "chave-123456",
+    }));
+    expect(res.status).toBe(422);
+    expect(rpc).not.toHaveBeenCalledWith("api_register_candidate", expect.anything());
   });
 
   it("recusa candidato de pesquisa com site e somente ajuste pequeno", async () => {

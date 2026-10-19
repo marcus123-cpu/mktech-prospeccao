@@ -31,12 +31,31 @@ describe('pedido de pesquisa', () => {
   });
 });
 
-describe('foco do cadastro', () => {
-  it('cadastra presença não verificada para enriquecer', () => {
-    expect(registrationFocus({ site_status: 'verificacao_pendente' }).accepted).toBe(true);
-    expect(registrationFocus({ site_status: 'site_nao_localizado' }).accepted).toBe(true);
+describe('foco do cadastro (critério obrigatório: sem site confirmado)', () => {
+  const google = { kind: 'google' as const, summary: 'Busca "nome cidade site": nenhum site próprio nos resultados' };
+  const insta = { kind: 'instagram' as const, summary: 'Bio sem link para site' };
+  it('aceita só quem teve "sem site" confirmado no Google e na bio do Instagram', () => {
+    expect(registrationFocus({ site_status: 'site_nao_localizado', evidences: [google] }).accepted).toBe(true);
+    expect(registrationFocus({ site_status: 'apenas_redes_sociais', instagram: '@x', evidences: [google, insta] }).accepted).toBe(true);
   });
-  it('descarta site próprio sem lacuna comprovada', () => {
-    expect(registrationFocus({ site_status: 'site_proprio_encontrado', website_url: 'https://x.test' }).accepted).toBe(false);
+  it('recusa verificação pendente ou sem status', () => {
+    expect(registrationFocus({ site_status: 'verificacao_pendente', evidences: [google] })).toMatchObject({ accepted: false, code: 'verificacao_pendente' });
+    expect(registrationFocus({ evidences: [google] })).toMatchObject({ accepted: false, code: 'verificacao_pendente' });
+  });
+  it('recusa quem já tem site, mesmo com lacuna no Google', () => {
+    expect(registrationFocus({ site_status: 'site_proprio_encontrado', website_url: 'https://x.test', evidences: [google] })).toMatchObject({ accepted: false, code: 'ja_possui_site' });
+    expect(registrationFocus({ site_status: 'site_nao_localizado', website_url: 'https://clinicax.com.br', evidences: [google] }).accepted).toBe(false);
+  });
+  it('link de Instagram, Linktree ou WhatsApp não conta como site próprio', () => {
+    expect(registrationFocus({ site_status: 'apenas_redes_sociais', website_url: 'https://linktr.ee/x', evidences: [google] }).accepted).toBe(true);
+    expect(registrationFocus({ site_status: 'apenas_redes_sociais', website_url: 'https://www.instagram.com/x', evidences: [google] }).accepted).toBe(true);
+  });
+  it('exige a busca no Google registrada, sem limitação', () => {
+    expect(registrationFocus({ site_status: 'site_nao_localizado', evidences: [] })).toMatchObject({ accepted: false, code: 'sem_busca_google' });
+    expect(registrationFocus({ site_status: 'site_nao_localizado', evidences: [{ ...google, limitation: 'sem acesso' }] })).toMatchObject({ accepted: false, code: 'sem_busca_google' });
+  });
+  it('exige a bio do Instagram verificada quando há Instagram', () => {
+    expect(registrationFocus({ site_status: 'apenas_redes_sociais', instagram: '@x', evidences: [google] })).toMatchObject({ accepted: false, code: 'instagram_nao_verificado' });
+    expect(registrationFocus({ site_status: 'apenas_redes_sociais', instagram: '@x', evidences: [google, { ...insta, limitation: 'pediu login' }] }).accepted).toBe(false);
   });
 });

@@ -2,18 +2,42 @@ import type { Research } from "./engine";
 
 const norm = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
+/** Endereços que são rede social ou agregador de links: não são site próprio. */
+const SOCIAL = /(^|\.)(instagram\.com|facebook\.com|fb\.com|fb\.me|linktr\.ee|linktree\.com|beacons\.ai|bio\.link|taplink\.cc|wa\.me|whatsapp\.com|api\.whatsapp\.com|tiktok\.com|youtube\.com|youtu\.be|google\.com|goo\.gl|g\.page|maps\.app\.goo\.gl|ifood\.com\.br|booksy\.com|trinks\.com|doctoralia\.com\.br|olx\.com\.br|mercadolivre\.com\.br)$/;
+function ownsWebsite(url?: string | null): boolean {
+  if (!url?.trim()) return false;
+  try {
+    const host = new URL(/^https?:\/\//i.test(url) ? url : `https://${url}`).hostname.replace(/^www\./, "").toLowerCase();
+    return !SOCIAL.test(host);
+  } catch { return true; }
+}
+
+export type RegistrationVerdict = { accepted: boolean; reason: string; code: "ok" | "ja_possui_site" | "verificacao_pendente" | "sem_busca_google" | "instagram_nao_verificado" };
+
 /**
- * Cadastro de candidatos: só fica de fora quem já tem site próprio sem lacuna comprovada no Google.
- * Presença digital ainda não verificada NÃO descarta; o lead entra incompleto para enriquecimento.
+ * Cadastro de candidatos — critério OBRIGATÓRIO: só entra negócio SEM site, confirmado.
+ *  - nenhum site próprio (nem no Google, nem no link da bio do Instagram);
+ *  - "sem site" confirmado (`site_nao_localizado` ou `apenas_redes_sociais`), nunca "verificação pendente";
+ *  - a busca no Google/web precisa estar registrada como evidência sem limitação;
+ *  - se há Instagram, a bio precisa ter sido aberta (evidência `instagram` sem limitação).
+ * Quem já tem site é descartado, mesmo com lacuna de visibilidade.
  */
-export function registrationFocus(research: Research): { accepted: boolean; reason: string } {
-  const ownsSite = research.site_status === "site_proprio_encontrado" || Boolean(research.website_url);
-  if (!ownsSite) {
-    return { accepted: true, reason: research.site_status === "verificacao_pendente" || !research.site_status
-      ? "Presença digital a verificar; cadastrado para enriquecimento" : "Página própria não localizada na pesquisa" };
+export function registrationFocus(research: Research): RegistrationVerdict {
+  if (research.site_status === "site_proprio_encontrado" || ownsWebsite(research.website_url)) {
+    return { accepted: false, code: "ja_possui_site", reason: "Já possui site próprio: fora do critério (só entra quem não tem site)" };
   }
-  const focus = researchFocus(research);
-  return { accepted: focus.qualified, reason: focus.qualified ? focus.reason : "Já possui site próprio sem lacuna comprovada de visibilidade" };
+  if (research.site_status !== "site_nao_localizado" && research.site_status !== "apenas_redes_sociais") {
+    return { accepted: false, code: "verificacao_pendente", reason: "Verificação de site pendente: só é cadastrado quem teve 'sem site' CONFIRMADO. Conclua a busca no Google e a bio do Instagram e envie site_status site_nao_localizado ou apenas_redes_sociais" };
+  }
+  const evidences = research.evidences ?? [];
+  const confirmed = (kinds: string[]) => evidences.some(e => kinds.includes(e.kind) && !e.limitation);
+  if (!confirmed(["google", "busca"])) {
+    return { accepted: false, code: "sem_busca_google", reason: "Falta a evidência da busca no Google (kind google ou busca, sem limitation) mostrando que não há site do negócio" };
+  }
+  if (research.instagram?.trim() && !confirmed(["instagram"])) {
+    return { accepted: false, code: "instagram_nao_verificado", reason: "Instagram informado sem a bio verificada: abra o perfil e registre a evidência instagram (sem limitation) confirmando que não há link para site" };
+  }
+  return { accepted: true, code: "ok", reason: "Sem site confirmado no Google e na bio do Instagram" };
 }
 
 /** Only a missing owned presentation or a documented search-visibility gap fits this campaign. */

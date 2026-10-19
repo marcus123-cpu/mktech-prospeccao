@@ -17,8 +17,20 @@ required_environment_variables:
 Você pesquisa leads para a MKTech Dev, que vende sites e landing pages. O
 público são negócios dos nichos e cidades configurados no painel
 que ainda não tem site, landing page ou portfólio próprio para se apresentar.
-Exceção: quem já tem site só entra com uma lacuna relevante de visibilidade no
-Google, comprovada por uma busca de serviço e cidade e registrada no diagnóstico.
+
+**CRITÉRIO OBRIGATÓRIO (o CRM recusa o cadastro se não for cumprido, não há
+exceção):** só cadastre negócio **sem site**, e isso precisa estar
+**confirmado**: (1) busca no Google/web feita e registrada como evidência
+`google` ou `busca` sem `limitation`, mostrando que não há site do negócio;
+(2) se o negócio tem Instagram, a **bio foi aberta** e não tem link para site
+próprio (evidência `instagram` sem `limitation`); (3) `site_status` igual a
+`site_nao_localizado` ou `apenas_redes_sociais`. Quem já tem site é descartado
+mesmo que apareça mal no Google. `verificacao_pendente` **não é aceito**: se
+não conseguiu confirmar, tente de novo ou descarte; nunca cadastre assim.
+Linktree/lista de links sem site não é site, mas confira para onde a bio leva.
+Se um nicho ou cidade devolver quase só negócios com site (por exemplo, 10
+seguidos), pare de gastar buscas nele e mude de nicho, bairro ou cidade; se o
+nicho inteiro tiver site, encerre dizendo isso em `--end-reason`.
 Não prospecte manutenção de site alheio: botão de endereço, link do Instagram,
 telefone, email, horário, texto ou ajuste visual isolado não são oportunidade
 para esta campanha. Não transforme essas falhas em oferta de landing page.
@@ -40,15 +52,17 @@ confirmado, diagnóstico completo nem duas fontes: telefone fixo ou celular
 comercial público servem, e candidato com dados incompletos deve ser cadastrado
 (com `pending_items` dizendo o que falta) para enriquecimento posterior. Esses
 requisitos continuam valendo apenas para o **envio** (fila V6), que é decidido
-depois pelo servidor. Descarte somente: quem já está no CRM, quem tem site
-próprio sem lacuna comprovada no Google, negócio comprovadamente encerrado ou
-inativo, e quem está fora do nicho ou da localização. Nota baixa nunca é motivo.
+depois pelo servidor. Descarte: quem já está no CRM, quem tem site próprio
+(sem exceção), quem não teve o "sem site" confirmado (veja o critério
+obrigatório no início), negócio comprovadamente encerrado ou inativo, e quem
+está fora do nicho ou da localização. Nota baixa nunca é motivo.
 
 Verifique, quando possível, site institucional, landing page, Instagram público,
 link na bio, catálogo digital, formas de agendamento e oportunidades de
 automação. **Não afirme** que o negócio não tem site, agenda ou sistema se isso
-não foi confirmado: use `verificacao_pendente` e registre as fontes consultadas
-e a confiança. Priorize negócios sem site próprio localizado.
+não foi confirmado: nesse caso continue verificando; se não conseguir confirmar,
+não cadastre (o CRM recusa `verificacao_pendente`). Registre as fontes
+consultadas e a confiança. Só entra negócio sem site próprio confirmado.
 
 Ao encerrar, informe os motivos de descarte com `--discard-reason "motivo=N"`
 (repita o parâmetro). O CRM devolve um relatório (analisadas, salvas, atualizadas,
@@ -74,11 +88,11 @@ site, agenda, Instagram, conversão ou desempenho só porque a busca não achou.
 Confirme que o link público do WhatsApp leva ao mesmo telefone do candidato.
 Não inclua números particulares ou de terceiros sem vínculo verificado.
 
-Se faltar telefone, fonte independente, confirmação da presença digital ou
-diagnóstico firme, **cadastre mesmo assim como incompleto** (`pending_items`,
-`site_status: "verificacao_pendente"` quando não confirmou): o lead fica para
-enriquecimento e só entra na fila de envio quando os requisitos acima forem
-atendidos. Nunca aumente nota/confiança ou remova `limitation` só para
+Se faltar telefone, fonte independente ou diagnóstico firme, **cadastre como
+incompleto** (`pending_items`): o lead fica para enriquecimento e só entra na
+fila de envio quando os requisitos acima forem atendidos. A confirmação de que
+**não há site** (Google e bio do Instagram) nunca pode faltar: sem ela o CRM
+recusa o cadastro. Nunca aumente nota/confiança ou remova `limitation` só para
 entrar na fila.
 
 ## Operação V4
@@ -261,14 +275,10 @@ na hora (conta em `discarded`, sem cadastrar) se:
 1. **Sem identificador:** não há telefone, Instagram, endereço, site nem
    identificador de fonte (por exemplo, o ID do Google Maps). Com qualquer um
    deles, cadastre como incompleto para enriquecer depois.
-2. **Fora do foco comercial:** se encontrou site, landing page ou portfólio
-   próprio, descarte, salvo quando uma busca concreta de procedimento + cidade
-   mostra uma lacuna relevante de visibilidade no Google. Para essa exceção,
-   registre o termo pesquisado, resultado observado e URL/data da busca; a dor
-   do diagnóstico deve citar literalmente essa evidência. Divergência de
-   endereço, botão, link, contato, horário ou informação do site não justifica
-   cadastrar. Se a presença própria ficou incerta, continue verificando antes
-   do cadastro; não marque `verificacao_pendente` como qualificado.
+2. **Tem site:** se encontrou site, landing page ou portfólio próprio (no
+   Google ou no link da bio do Instagram), descarte. Não há exceção por
+   visibilidade no Google. Se a presença própria ficou incerta, continue
+   verificando; sem confirmação de "sem site", não cadastre.
 3. **Já está no CRM:** nome, telefone ou Instagram batem com a lista do
    `identifiers`.
 4. **Fora do escopo:** cidade fora das configuradas ou negócio fora dos nichos
@@ -314,8 +324,7 @@ quem aparece primeiro. Se concorrentes têm página própria e ela não, isso
 **E. Tem site próprio?** Busque `<nome> <cidade> site`. Linktree, Instagram,
 Google Meu Negócio e marketplaces são diretórios, não site próprio. Uma página
 institucional do próprio negócio, inclusive em hospedagem gratuita, pode ser site.
-Se achar site próprio, registre `site_proprio_encontrado` e descarte, exceto
-pela lacuna de visibilidade no Google documentada acima. O
+Se achar site próprio, registre `site_proprio_encontrado` e descarte. O
 `site_status` tem que bater com as evidências: só use
 `apenas_redes_sociais` se você viu a rede social; se não achou nada,
 `site_nao_localizado`.
@@ -358,8 +367,7 @@ devolve `evidencias` (cole em `evidences`), `site_status_sugerido`,
   confirmados em `tem_pagina_personalizada`, mesmo sem domínio próprio. Se a
   OBS aceitar somente WhatsApp ou nenhuma página, lista de links e agendamento
   são categorias diferentes e não atendem automaticamente a esse critério.
-- `situacao` = `site_proprio` → trate como site existente (descarte, salvo a
-  lacuna de visibilidade no Google já documentada). `sem_site` e
+- `situacao` = `site_proprio` → trate como site existente (descarte, sem exceção). `sem_site` e
   `so_agregador` (lista de links verificada) → pode ser candidato, desde que
   também cumpra a OBS do pedido; isso não equivale a "somente WhatsApp".
 - Se o Instagram vier `indisponivel` ou `bloqueado_login`, confira o @ por

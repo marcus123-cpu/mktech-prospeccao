@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { leadColor } from "@/lib/lead-colors";
 import { useState } from "react";
-import { bulkUpdate } from "@/app/(painel)/leads/actions";
+import { bulkUpdate, deleteLeadsQuick } from "@/app/(painel)/leads/actions";
 import { ActionForm } from "@/components/ActionForm";
 import { ContactBadge, PriorityBadge, SiteBadge, StageBadge } from "@/components/ui";
 import { OFFER_LABEL } from "@/lib/labels";
@@ -103,7 +103,12 @@ export function LeadsTable({ rows }: { rows: LeadRow[] }) {
             )}
             {action === "follow_up" && <input className="input sm:w-auto" type="datetime-local" name="value" required />}
           </ActionForm>
-          <p className="w-full text-xs text-muted">Ações em lote só alteram dados internos. Nenhuma mensagem é enviada.</p>
+          <ActionForm action={deleteLeadsQuick} submit={`🗑 Excluir ${selected.size}`} variant="btn-danger" className="sm:ml-auto" confirmText={`Excluir ${selected.size} lead(s)? Apaga a ficha e todo o histórico deles. Não dá para desfazer.`}>
+            {[...selected].map((id) => (
+              <input key={id} type="hidden" name="ids" value={id} />
+            ))}
+          </ActionForm>
+          <p className="w-full text-xs text-muted">Alterar etapa/prioridade/retorno só muda dados internos e não envia mensagem.</p>
         </div>
       )}
 
