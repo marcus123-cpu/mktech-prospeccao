@@ -13,7 +13,13 @@ async function syncHistory(client, journal, resolveNumber, isIndividual, systemT
         getContact: () => chat.getContact(),
       });
       if (!number || !/^[1-9]\d{7,14}$/.test(String(number).replace(/\D/g, ''))) continue;
-      const nome = (typeof chat.name === 'string' && chat.name.trim() ? chat.name.trim() : null);
+      // Nome salvo na agenda; se não houver, o nome do perfil da pessoa no WhatsApp.
+      let nome = typeof chat.name === 'string' ? chat.name.trim() : '';
+      try {
+        const contact = await chat.getContact();
+        nome = String(contact?.name || contact?.pushname || contact?.shortName || nome || '').trim();
+      } catch (_) { /* fica com o nome da conversa */ }
+      if (!nome || /^[+0-9 ()\-]+$/.test(nome)) nome = null;
       for (const msg of messages) {
         const id = messageId(msg);
         if (!id || msg.isStatus || systemTypes.has(msg.type) || !msg.timestamp) continue;
