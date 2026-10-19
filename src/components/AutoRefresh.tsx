@@ -15,6 +15,7 @@ const LIVE: [string, number][] = [
   ["/execucoes", 20000],
   ["/funil", 30000],
   ["/retornos", 60000],
+  ["/analise", 60000],
 ];
 
 function intervalFor(pathname: string): number | null {
