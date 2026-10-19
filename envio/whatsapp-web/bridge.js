@@ -370,3 +370,18 @@ client.on('message_ack', (msg, ack) => {
 server.listen(PORT, "127.0.0.1", () => console.log(`Ponte em http://127.0.0.1:${PORT}`));
 setState("abrindo o navegador interno");
 client.initialize().catch((e) => setState("erro ao iniciar: " + String(e.message || e).slice(0, 300)));
+
+// Vigia: se o navegador interno travar (ex.: "detached Frame"), a ponte para de enviar e de receber sem avisar.
+// Duas checagens seguidas falhando derrubam a ponte; o ponte-loop.bat sobe de novo sozinho em ~15 s.
+let strikes = 0;
+setInterval(async () => {
+  if (!ready) return;
+  try {
+    await Promise.race([client.pupPage.evaluate(() => 1), new Promise((_, reject) => setTimeout(() => reject(new Error('sem resposta em 20 s')), 20000))]);
+    strikes = 0;
+  } catch (error) {
+    strikes += 1;
+    console.error(`[vigia] navegador interno com problema (${strikes}/2):`, String(error.message).slice(0, 120));
+    if (strikes >= 2) { console.error('[vigia] reiniciando a ponte'); process.exit(1); }
+  }
+}, 45000).unref();

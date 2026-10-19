@@ -11,6 +11,7 @@ const ICONS = {
   funnel: "M22 3H2l8 9.46V19l4 2v-8.54L22 3z",
   bell: "M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9 M10.3 21a1.94 1.94 0 0 0 3.4 0",
   bot: "M12 8V4H8 M4 8h16v12H4z M2 14h2 M20 14h2 M15 13v2 M9 13v2",
+  sliders: "M4 21v-7 M4 10V3 M12 21v-9 M12 8V3 M20 21v-5 M20 12V3 M1 14h6 M9 8h6 M17 16h6",
   send: "m22 2-7 20-4-9-9-4 20-7Z M22 2 11 13",
   chart: "M3 3v18h18 M7 15v3 M12 9v9 M17 5v13",
   plug: "M12 22v-5 M9 8V2 M15 8V2 M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z",
@@ -22,6 +23,7 @@ export const ITEMS = [
   { href: "/conexao", icon: "plug", label: "Conexão", short: "Conexão", title: "Conexão do WhatsApp" },
   { href: "/saude", icon: "chart", label: "Saúde do sistema", short: "Saúde", title: "Saúde do sistema" },
   { href: "/aprendizado", icon: "spark", label: "Aprendizado", short: "Aprender", title: "Aprendizado do Hermes" },
+  { href: "/envio", icon: "sliders", label: "Central de envio", short: "Envio", title: "Central de envio" },
   { href: "/disparo", icon: "send", label: "Disparar", short: "Disparar", title: "Disparo de mensagens" },
   { href: "/hermes", icon: "chart", label: "Visão geral", short: "Hermes", title: "Visão geral" },
   { href: "/", icon: "home", label: "Hoje", short: "Hoje", title: "Hoje" },
@@ -61,7 +63,7 @@ function Badge({ count }: { count: number }) {
 }
 
 const GROUPS = [
-  { label: "Principal", items: ["/", "/leads", "/conversas", "/funil", "/retornos"] },
+  { label: "Principal", items: ["/", "/envio", "/leads", "/conversas", "/funil", "/retornos"] },
   { label: "Prospecção", items: ["/hermes", "/execucoes", "/disparo"] },
   { label: "Sistema", items: ["/conexao", "/saude", "/aprendizado", "/configuracoes"] },
 ];
@@ -110,7 +112,7 @@ export function BottomNav({ pendingReviews }: { pendingReviews: number }) {
       className="fixed inset-x-0 bottom-0 z-40 border-t border-line/70 bg-panel/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden"
     >
       <ul className="grid grid-cols-6">
-        {ITEMS.filter((item) => ["/", "/leads", "/disparo", "/conversas", "/execucoes", "/configuracoes"].includes(item.href)).map((item) => {
+        {ITEMS.filter((item) => ["/", "/leads", "/envio", "/conversas", "/disparo", "/configuracoes"].includes(item.href)).map((item) => {
           const on = active(item.href);
           return (
             <li key={item.href}>
