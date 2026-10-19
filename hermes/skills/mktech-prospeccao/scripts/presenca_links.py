@@ -44,7 +44,8 @@ def url_publica(url):
 
 def tipo_destino(url):
     host = dominio(url)
-    if pertence(host, WHATSAPP):
+    # Só WhatsApp (ou o Threads do próprio perfil) na bio não é site: o negócio continua sem página própria.
+    if pertence(host, WHATSAPP) or pertence(host, ("threads.com", "threads.net")):
         return "whatsapp_direto"
     if pertence(host, SOCIAIS):
         return "rede_social"

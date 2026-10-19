@@ -34,7 +34,7 @@ from presenca_links import (classificar_pagina, dominio, pertence, url_publica,
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
       "Chrome/124.0 Safari/537.36")
 # Filtro de busca nominal; plataformas de páginas/links são lidas pelo conteúdo.
-DIRETORIOS = ("apple.com", "play.google", "mapbox.com", "wanderboat", "yelp.", "foursquare", "glamspot", "petele", "moovit", "calendly", "kyte.", "reservio", "agendor", "bnbeauty", "belezanaweb", "workana", "cylex", "hotfrog", "nuveo", "microsoft.com", "instagram.com", "facebook.com", "fb.com", "google.", "doctoralia", "guiamais", "apontador", "tripadvisor",
+DIRETORIOS = ("serasa", "econodata", "datastone", "guia.", "kortar", "apple.com", "play.google", "mapbox.com", "wanderboat", "yelp.", "foursquare", "glamspot", "petele", "moovit", "calendly", "kyte.", "reservio", "agendor", "bnbeauty", "belezanaweb", "workana", "cylex", "hotfrog", "nuveo", "microsoft.com", "instagram.com", "facebook.com", "fb.com", "google.", "doctoralia", "guiamais", "apontador", "tripadvisor",
               "yelp", "telelistas", "magicpin", "olx.", "mercadolivre", "youtube.com", "tiktok.com", "linkedin.com",
               "twitter.com", "x.com", "pinterest", "waze", "ifood", "reclameaqui", "cylex", "solutudo", "econodata",
               "cnpj", "casadosdados", "wikipedia", "bing.com", "duckduckgo", "booksy", "trinks", "salaovip", "cnpja")
@@ -99,10 +99,22 @@ def instagram(page, handle):
     else:
         out["status"] = "bloqueado_login"
     header = page.query_selector("main header")
+    # Bio longa vem cortada com "… mais": clica para abrir o texto inteiro antes de ler os links e o texto.
+    if header:
+        try:
+            mais = page.locator("main header").get_by_text(re.compile(r"^\s*(…|\.\.\.)?\s*(mais|more)\s*$", re.I))
+            if mais.count():
+                mais.first.click(timeout=2500)
+                page.wait_for_timeout(800)
+                header = page.query_selector("main header") or header
+                out["bio_expandida"] = True
+        except Exception:
+            pass
     bio = header.inner_text() if header else desc
     out["bio_texto"] = bio[:2000]
     # Texto truncado ou links adicionais ocultos não comprovam ausência de página.
-    out["bio_verificada"] = bool(header and bio.strip() and out["status"] == "ok" and not re.search(r"(?:\.\.\.|…|mostrar mais|show more|e mais \d|e outros|and \d more)", bio, re.I))
+    cortada = r"(?:mostrar mais|show more|e mais \d|e outros|and \d more)" if out.get("bio_expandida") else r"(?:\.\.\.|…|mostrar mais|show more|e mais \d|e outros|and \d more)"
+    out["bio_verificada"] = bool(header and bio.strip() and out["status"] == "ok" and not re.search(cortada, bio, re.I))
     links = []
     for a in page.query_selector_all("header a[href], main a[href]"):
         href = a.get_attribute("href") or ""
@@ -264,10 +276,11 @@ def buscar_site(page, nome, cidade):
         if not host or any(d in host for d in DIRETORIOS) or tipo_destino(href):
             return
         if nucleo:
-            host_n, titulo_n = norm(host), norm(titulo)
+            # Só vale como possível site do negócio quem tem o NOME no endereço ("bysis.com.br"). Cadastros de CNPJ, guias e
+            # listagens de terceiros só citam o nome no título e não são o site dele: não entram nem travam a conclusão.
+            endereco = norm(host + urlparse(href).path)
             junto = "".join(nucleo[:2])  # "by sis" -> "bysis"
-            if not (junto in host_n or any(w in host_n for w in nucleo[:3] if len(w) >= 4)
-                    or any(re.search(rf"\b{re.escape(w)}\b", titulo_n) for w in nucleo[:3])):
+            if not (junto in endereco or any(w in endereco for w in nucleo[:3] if len(w) >= 4)):
                 return
         achados.append(href)
 
