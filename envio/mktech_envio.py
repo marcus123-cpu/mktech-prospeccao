@@ -41,6 +41,7 @@ import random
 import re
 import sys
 import threading
+from concurrent.futures import ThreadPoolExecutor
 import time
 import unicodedata
 import urllib.error
@@ -485,13 +486,16 @@ def forward_minhas(transporte: Transporte) -> int:
 
 
 def forward_history(transporte: Transporte) -> int:
-    """Importa contexto antigo sem chamar a classificação ou automação ao vivo."""
+    """Importa contexto antigo sem chamar a classificação ou automação ao vivo (vários itens ao mesmo tempo)."""
     now = time.monotonic()
     if now < getattr(transporte, "_history_next_at", 0):
         return 0
-    transporte._history_next_at = now + 1
-    count = 0
-    for msg in transporte.historico()[:10]:
+    transporte._history_next_at = now + 0.5
+    batch = transporte.historico()[:36]
+    if not batch:
+        return 0
+
+    def one(msg: dict[str, Any]) -> int:
         body = {key: msg.get(key) for key in ("telefone", "message_id", "direcao", "texto", "tipo", "ocorrida_em")}
         if msg.get("nome"):
             body["nome"] = msg["nome"]
@@ -503,15 +507,16 @@ def forward_history(transporte: Transporte) -> int:
                 transporte.apagar_audio(msg)
             if payload.get("status") == "ignorada" or upload_audio(transporte, msg):
                 transporte.ack(msg)
-                count += 1
+                return 1
         elif status in (400, 404, 422):
             # Evento que o servidor recusa de vez (ex.: telefone "+0"): descarta, senão ele trava a fila inteira.
             log(f"histórico: item inválido descartado ({msg.get('telefone')}, HTTP {status})")
             transporte.apagar_audio(msg)
             transporte.ack(msg)
-        else:
-            break  # Mantém a fila durável e evita exceder o limite de requisições.
-    return count
+        return 0  # falha temporária: o item continua na fila durável e tenta de novo
+
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        return sum(pool.map(one, batch))
 
 
 def send_manual_reply(transporte: Transporte) -> str | None:
