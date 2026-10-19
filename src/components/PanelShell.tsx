@@ -14,6 +14,19 @@ export function PanelShell({ sidebar, mobileHeader, topbar, bottomNav, children 
   const pathname = usePathname();
   const conversations = pathname.startsWith("/conversas");
   const [collapsed, setCollapsed] = useState(true);
+  // Barra fina no topo enquanto a próxima tela carrega: o clique responde na hora.
+  const [navigating, setNavigating] = useState(false);
+  useEffect(() => {
+    const start = () => setNavigating(true);
+    window.addEventListener("mktech:nav-start", start);
+    return () => window.removeEventListener("mktech:nav-start", start);
+  }, []);
+  useEffect(() => { setNavigating(false); }, [pathname]);
+  useEffect(() => {
+    if (!navigating) return;
+    const timer = window.setTimeout(() => setNavigating(false), 15000);
+    return () => window.clearTimeout(timer);
+  }, [navigating]);
   useEffect(() => {
     try {
       const saved = localStorage.getItem(KEY);
@@ -26,6 +39,7 @@ export function PanelShell({ sidebar, mobileHeader, topbar, bottomNav, children 
     try { localStorage.setItem(KEY, next ? "1" : "0"); } catch { /* optional preference */ }
   }
   return <div className={conversations ? "conversation-workspace md:flex md:h-dvh md:overflow-hidden" : "md:flex"}>
+    {navigating && <div aria-hidden className="fixed inset-x-0 top-0 z-[80] h-0.5 overflow-hidden bg-accent/20"><div className="h-full w-1/3 animate-bar rounded-full bg-gradient-to-r from-accent to-accent-2" /></div>}
     {mobileHeader}
     <aside className={`hidden md:sticky md:top-0 md:flex md:h-dvh md:shrink-0 md:flex-col md:overflow-hidden md:border-r group/side ${conversations ? "border-white/5 bg-[#202c33]" : "border-line/70 bg-panel"} transition-[width] duration-300 ease-out ${collapsed ? "md:w-[76px]" : "md:w-60"}`} aria-label="Navegação do painel" data-compact={collapsed}>
       <div className={`flex h-16 shrink-0 items-center ${collapsed ? "justify-center" : "justify-between pl-5 pr-3"}`}>

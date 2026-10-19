@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 // Ícones de traço (estilo Lucide), todos na mesma cor: o azul da marca marca só o que está aberto.
 const ICONS = {
@@ -49,9 +50,19 @@ function Icon({ name, className = "h-[18px] w-[18px]" }: { name: keyof typeof IC
   );
 }
 
+/** Marca o item no mesmo instante do clique, sem esperar a página nova chegar do servidor. */
 function useActive() {
   const path = usePathname();
-  return (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
+  const [pending, setPending] = useState<string | null>(null);
+  useEffect(() => { setPending(null); }, [path]);
+  const is = (href: string, p: string) => (href === "/" ? p === "/" : p.startsWith(href));
+  const active = (href: string) => (pending ? pending === href : is(href, path));
+  const go = (href: string) => {
+    if (is(href, path)) return;
+    setPending(href);
+    window.dispatchEvent(new Event("mktech:nav-start"));
+  };
+  return Object.assign(active, { go });
 }
 
 function Badge({ count }: { count: number }) {
@@ -84,6 +95,7 @@ export function Nav({ pendingReviews }: { pendingReviews: number }) {
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={() => active.go(item.href)}
                   aria-current={on ? "page" : undefined}
                   title={item.label}
                   className={`group relative flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[13.5px] transition-colors duration-150 group-data-[compact=true]/side:justify-center group-data-[compact=true]/side:px-0 ${
@@ -118,6 +130,7 @@ export function BottomNav({ pendingReviews }: { pendingReviews: number }) {
             <li key={item.href}>
               <Link
                 href={item.href}
+                onClick={() => active.go(item.href)}
                 aria-current={on ? "page" : undefined}
                 className={`relative flex min-h-14 flex-col items-center justify-center gap-1 px-1 text-[11px] leading-tight transition ${
                   on ? "font-semibold text-white" : "text-muted"
