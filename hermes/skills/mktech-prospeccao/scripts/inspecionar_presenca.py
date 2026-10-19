@@ -114,14 +114,39 @@ def instagram(page, handle):
     out["bio_texto"] = bio[:2000]
     # Texto truncado ou links adicionais ocultos não comprovam ausência de página.
     cortada = r"(?:mostrar mais|show more|e mais \d|e outros|and \d more)" if out.get("bio_expandida") else r"(?:\.\.\.|…|mostrar mais|show more|e mais \d|e outros|and \d more)"
+    if out.get("links_expandidos"):
+        cortada = cortada.replace(r"|e mais \d", "").replace(r"|and \d more", "").replace(r"|e outros", "")
     out["bio_verificada"] = bool(header and bio.strip() and out["status"] == "ok" and not re.search(cortada, bio, re.I))
     links = []
-    for a in page.query_selector_all("header a[href], main a[href]"):
-        href = a.get_attribute("href") or ""
-        if "l.instagram.com/?u=" in href:
-            href = parse_qs(urlparse(href).query).get("u", [""])[0]
-        if url_publica(href) and not pertence(dominio(href), ("instagram.com",)):
-            links.append(href)  # Preserve query strings: they can identify a personalized page.
+
+    def juntar_links(seletor):
+        for a in page.query_selector_all(seletor):
+            href = a.get_attribute("href") or ""
+            if "l.instagram.com/?u=" in href:
+                href = parse_qs(urlparse(href).query).get("u", [""])[0]
+            if url_publica(href) and not pertence(dominio(href), ("instagram.com",)):
+                links.append(href)  # Preserve query strings: they can identify a personalized page.
+
+    juntar_links("header a[href], main a[href]")
+    # "Nome do link e mais 3": o Instagram esconde os outros links atrás de um clique; abre a lista para ler todos.
+    if header and re.search(r"\be mais \d+\b|and \d+ more", bio, re.I):
+        try:
+            outros = page.locator("main header").get_by_text(re.compile(r"\be mais \d+\b|and \d+ more", re.I))
+            if outros.count():
+                outros.first.click(timeout=2500)
+                page.wait_for_timeout(1000)
+                if page.query_selector("div[role=dialog] a[href]"):
+                    juntar_links("div[role=dialog] a[href]")
+                    out["links_expandidos"] = True
+                try:
+                    page.keyboard.press("Escape")
+                except Exception:
+                    pass
+        except Exception:
+            pass
+    if out.get("links_expandidos"):
+        completa = r"(?:mostrar mais|show more)" if out.get("bio_expandida") else r"(?:\.\.\.|…|mostrar mais|show more)"
+        out["bio_verificada"] = bool(header and bio.strip() and out["status"] == "ok" and not re.search(completa, bio, re.I))
     out["links_bio"] = list(dict.fromkeys(links))[:8]
     if len(set(links)) > 8:
         out["bio_verificada"] = False
