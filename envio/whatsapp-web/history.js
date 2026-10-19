@@ -12,12 +12,13 @@ async function syncHistory(client, journal, resolveNumber, isIndividual, systemT
       const number = await resolveNumber(chat.id._serialized, {
         getContact: () => chat.getContact(),
       });
-      if (!number) continue;
+      if (!number || !/^[1-9]\d{7,14}$/.test(String(number).replace(/\D/g, ''))) continue;
+      const nome = (typeof chat.name === 'string' && chat.name.trim() ? chat.name.trim() : null);
       for (const msg of messages) {
         const id = messageId(msg);
         if (!id || msg.isStatus || systemTypes.has(msg.type) || !msg.timestamp) continue;
         journal.push('historico', {
-          message_id: id, telefone: '+' + number.replace(/\D/g, ''),
+          message_id: id, telefone: '+' + number.replace(/\D/g, ''), ...(nome ? { nome: nome.slice(0, 200) } : {}),
           direcao: msg.fromMe ? 'saida' : 'entrada',
           texto: typeof msg.body === 'string' ? msg.body.slice(0, 4000) : null,
           tipo: msg.type === 'chat' ? 'texto' : ['audio', 'ptt'].includes(msg.type) ? 'audio' : msg.type === 'image' ? 'imagem' : 'outro',

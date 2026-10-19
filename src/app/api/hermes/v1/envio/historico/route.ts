@@ -11,6 +11,7 @@ const schema = z.object({
   tipo: z.enum(["texto", "audio", "imagem", "outro"]),
   ocorrida_em: z.iso.datetime(),
   ack: z.number().int().min(-1).max(4).optional(),
+  nome: z.string().max(200).nullable().optional(),
 });
 
 export async function POST(request: Request) {

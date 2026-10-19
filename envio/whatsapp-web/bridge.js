@@ -202,6 +202,7 @@ client.on("message", async (msg) => {
       telefone: "+" + numero.replace(/\D/g, ""),
       texto: tipo === "texto" ? msg.body : null,
       tipo,
+      ...(msg._data?.notifyName ? { nome: String(msg._data.notifyName).slice(0, 200) } : {}),
       recebida_em: new Date((msg.timestamp || Date.now() / 1000) * 1000).toISOString(),
       ...(tipo === "audio" ? await guardarAudio(msg, messageId(msg)) : {}),
     });

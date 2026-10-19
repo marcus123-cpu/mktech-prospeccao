@@ -418,6 +418,19 @@ def upload_audio(transporte: Transporte, msg: dict[str, Any]) -> bool:
     return True
 
 
+def registrar_no_historico(msg: dict[str, Any], direcao: str) -> bool:
+    """Mensagem de um contato que não é lead (ou lead que não recebeu abordagem): vai para o histórico, que cria o lead se faltar."""
+    quando = msg.get("recebida_em") if direcao == "entrada" else msg.get("enviada_em")
+    if not msg.get("message_id") or not quando:
+        return False
+    body = {"telefone": msg["telefone"], "message_id": msg["message_id"], "direcao": direcao, "texto": msg.get("texto"),
+            "tipo": msg.get("tipo") or "texto", "ocorrida_em": quando}
+    if msg.get("nome"):
+        body["nome"] = msg["nome"]
+    status, payload = request("POST", "/api/hermes/v1/envio/historico", body)
+    return 0 < status < 400 and payload.get("status") in ("registrada", "existente", "ignorada")
+
+
 def forward_replies(transporte: Transporte) -> int:
     n = 0
     for msg in transporte.recebidas():
@@ -431,8 +444,12 @@ def forward_replies(transporte: Transporte) -> int:
         status, payload = request("POST", "/api/hermes/v1/envio/respostas", body)
         if status < 400 and status > 0 and payload.get("status") in ("registrada", "existente", "ignorada"):
             if payload.get("status") == "ignorada":
-                transporte.apagar_audio(msg)
-            if payload.get("status") == "ignorada" or upload_audio(transporte, msg):
+                # Não é resposta a uma abordagem automática: guarda no histórico (e cria o lead se o contato for novo).
+                if registrar_no_historico(msg, "entrada"):
+                    transporte.apagar_audio(msg)
+                    transporte.ack(msg)
+                    log(f"mensagem de {msg['telefone']} guardada no histórico (contato fora do disparo)")
+            elif upload_audio(transporte, msg):
                 transporte.ack(msg)
         if payload.get("status") == "registrada":
             quem = "PESSOA" if payload.get("conversa") else "automática"
@@ -456,8 +473,10 @@ def forward_minhas(transporte: Transporte) -> int:
         status, payload = request("POST", "/api/hermes/v1/envio/minhas", body)
         if status < 400 and status > 0 and payload.get("status") in ("registrada", "existente", "ignorada"):
             if payload.get("status") == "ignorada":
-                transporte.apagar_audio(msg)
-            if payload.get("status") == "ignorada" or upload_audio(transporte, msg):
+                if registrar_no_historico(msg, "saida"):
+                    transporte.apagar_audio(msg)
+                    transporte.ack(msg)
+            elif upload_audio(transporte, msg):
                 transporte.ack(msg)
         if payload.get("status") == "registrada":
             log(f"mensagem sua para {msg['telefone']} registrada (conta para os lembretes)")
@@ -474,6 +493,8 @@ def forward_history(transporte: Transporte) -> int:
     count = 0
     for msg in transporte.historico()[:10]:
         body = {key: msg.get(key) for key in ("telefone", "message_id", "direcao", "texto", "tipo", "ocorrida_em")}
+        if msg.get("nome"):
+            body["nome"] = msg["nome"]
         if isinstance(msg.get("ack"), int):
             body["ack"] = msg["ack"]
         status, payload = request("POST", "/api/hermes/v1/envio/historico", body)
@@ -483,6 +504,11 @@ def forward_history(transporte: Transporte) -> int:
             if payload.get("status") == "ignorada" or upload_audio(transporte, msg):
                 transporte.ack(msg)
                 count += 1
+        elif status in (400, 404, 422):
+            # Evento que o servidor recusa de vez (ex.: telefone "+0"): descarta, senão ele trava a fila inteira.
+            log(f"histórico: item inválido descartado ({msg.get('telefone')}, HTTP {status})")
+            transporte.apagar_audio(msg)
+            transporte.ack(msg)
         else:
             break  # Mantém a fila durável e evita exceder o limite de requisições.
     return count
