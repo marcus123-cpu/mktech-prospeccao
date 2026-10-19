@@ -13,7 +13,14 @@ export async function GET() {
 export async function POST(request: Request) {
   if (request.headers.get("origin") !== new URL(request.url).origin) return NextResponse.json({ error: "Origem inválida." }, { status: 403 });
   const { supabase } = await requireAdmin();
-  const parsed = z.object({ lead_id: z.uuid(), seen_at: z.iso.datetime({ offset: true }) }).safeParse(await request.json().catch(() => null));
+  const body = await request.json().catch(() => null);
+  const unread = z.object({ lead_id: z.uuid(), unread: z.literal(true) }).safeParse(body);
+  if (unread.success) {
+    const { error } = await supabase.rpc("mark_conversation_unread", { p_lead: unread.data.lead_id });
+    if (error) return NextResponse.json({ error: error.code === "22023" ? error.message : "Não foi possível marcar como não lida." }, { status: error.code === "22023" ? 422 : 503 });
+    return NextResponse.json({ ok: true });
+  }
+  const parsed = z.object({ lead_id: z.uuid(), seen_at: z.iso.datetime({ offset: true }) }).safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Dados inválidos." }, { status: 422 });
   const { error } = await supabase.rpc("mark_conversation_seen", { p_lead: parsed.data.lead_id, p_seen: parsed.data.seen_at });
   return NextResponse.json(error ? { error: "Não foi possível marcar como lida." } : { ok: true }, { status: error ? 503 : 200 });

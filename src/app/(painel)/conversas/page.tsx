@@ -1,4 +1,3 @@
-import { leadColor } from "@/lib/lead-colors";
 import Link from "next/link";
 import { ContactNotes } from "./ContactNotes";
 import { ConversationLink } from "./ConversationLink";
@@ -20,7 +19,7 @@ import { SeenConversation } from "./SeenConversation";
 export const metadata = { title: "Conversas" };
 export const dynamic = "force-dynamic";
 const FILTERS: { key: ConversationFilter; label: string }[] = [
-  { key: "todas", label: "Todas" }, { key: "nao_lidas", label: "Não lidas" }, { key: "aguardando", label: "Responderam" }, { key: "minhas", label: "Com você" },
+  { key: "todas", label: "Todas" }, { key: "nao_lidas", label: "Não lidas" }, { key: "aguardando", label: "Falta responder" }, { key: "minhas", label: "Com você" },
 ];
 type Event = { id: string; occurred_at: string; direction: string; source: string; body: string | null; media: string; external_id: string | null; receipt_ack?: number | null };
 const SOURCE: Record<string, string> = { hermes_v4: "Hermes V4", secretaria: "Secretário", secretario: "Secretário", saudacao: "Saudação", abordagem: "Abordagem", lembrete: "Lembrete", manual: "Você · celular", painel: "Você · painel", painel_pendente: "Você · painel (enviando…)", painel_falhou: "Você · painel (falhou)", humana: "Cliente", automatica: "Resposta automática" };
@@ -43,11 +42,13 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
   const explicitId = sp.lead && /^[0-9a-f-]{36}$/i.test(sp.lead) ? sp.lead : undefined;
   const loadDetail = async (id: string) => await supabase.rpc("admin_conversation_detail", {p_lead:id,p_limit:300});
   const detailRequest = explicitId ? loadDetail(explicitId) : null;
-  const [inbox, unread] = await Promise.all([
+  const [inbox, unread, needReply] = await Promise.all([
     query.order("activity_at", { ascending: false }).order("id").range((page - 1) * 30, page * 30 - 1),
     unreadResult ?? unreadRequest,
+    supabase.from("conversation_inbox").select("id", { count: "exact", head: true }).eq("needs_reply", true),
   ]);
   const unreadIds = new Set((unread.data ?? []).map((row: { id: string }) => row.id));
+  const tabCount: Partial<Record<ConversationFilter, number>> = { nao_lidas: unreadIds.size, aguardando: needReply.count ?? 0 };
   if (inbox.error) return <><PageHeader title="Conversas" /><ErrorBox message="Não foi possível carregar a central." /></>;
   const rows = (inbox.data ?? []) as Conversation[];
   const selectedId = explicitId ?? rows[0]?.id;
@@ -93,19 +94,25 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
       </form>
       <nav aria-label="Filtrar conversas" className="flex shrink-0 gap-2 border-b border-white/5 px-3 pb-3">
         {FILTERS.map((f) => <Link key={f.key} href={href({ filtro: f.key })} aria-current={filter === f.key ? "page" : undefined}
-          className={`rounded-full px-3 py-1.5 text-[12px] font-medium transition ${filter === f.key ? "bg-[#0a332c] text-[#00d9a4]" : "bg-[#202c33] text-[#8696a0] hover:bg-[#2a3942] hover:text-[#e9edef]"}`}>{f.label}</Link>)}
+          className={`rounded-full px-3 py-1.5 text-[12px] font-medium transition ${filter === f.key ? "bg-[#0a332c] text-[#00d9a4]" : "bg-[#202c33] text-[#8696a0] hover:bg-[#2a3942] hover:text-[#e9edef]"}`}>{f.label}{!!tabCount[f.key] && <span className={`ml-1.5 rounded-full px-1.5 py-px text-[10px] font-bold ${f.key === "nao_lidas" ? "bg-[#00a884] text-white" : "bg-amber-500 text-black"}`}>{tabCount[f.key]}</span>}</Link>)}
       </nav>
       <div className="min-h-0 flex-1 overflow-y-auto">
         {rows.length === 0 ? <p className="p-4 text-sm text-muted">Nenhuma conversa neste filtro.</p> : rows.map((c) => {
           const waiting = !!c.last_in_at && (!c.last_out_at || Date.parse(c.last_in_at) > Date.parse(c.last_out_at));
           const isUnread = unreadIds.has(c.id);
           const active = current?.id === c.id;
-          return <ConversationLink key={c.id} leadId={c.id} name={c.business_name} active={active} href={href({ lead: c.id, pagina: String(page) })} aria-current={active ? "page" : undefined}
-            className={`flex gap-3 border-b border-white/5 px-4 py-4 transition hover:bg-[#202c33] ${active ? "border-l-4 border-l-[#00d9a4] bg-gradient-to-r from-[#00a884]/25 to-[#2a3942]" : `${leadColor({ contacted: !!c.last_out_at || c.stage !== "novo", phone_e164: c.phone_e164 })} ${isUnread ? "border-l-4 border-l-sky-400" : "border-l-4 border-l-transparent"}`}`}>
-            <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${avatar(c.business_name)} text-base font-semibold text-white shadow-md`}>{initial(c.business_name)}</span>
+          // Três estados que se enxergam de longe: NOVA (não abri), FALTA RESPONDER (abri, não respondi) e em dia.
+          const tone = active ? "border-l-4 border-l-[#00d9a4] bg-gradient-to-r from-[#00a884]/25 to-[#2a3942]"
+            : isUnread ? "border-l-4 border-l-[#00d9a4] bg-[#00a884]/12 hover:bg-[#00a884]/20"
+            : waiting ? "border-l-4 border-l-amber-400 hover:bg-[#202c33]"
+            : "border-l-4 border-l-transparent hover:bg-[#202c33]";
+          return <ConversationLink key={c.id} leadId={c.id} name={c.business_name} active={active} isUnread={isUnread} lastInAt={c.last_in_at} href={href({ lead: c.id, pagina: String(page) })} aria-current={active ? "page" : undefined}
+            className={`flex gap-3 border-b border-white/5 px-4 py-4 transition ${tone}`}>
+            <span className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${avatar(c.business_name)} text-base font-semibold text-white shadow-md ${isUnread || active ? "" : "opacity-70"}`}>{initial(c.business_name)}{isUnread && <span aria-hidden className="absolute -right-0.5 -top-0.5 h-3.5 w-3.5 rounded-full border-2 border-[#111b21] bg-[#00d9a4]" />}</span>
             <span className="min-w-0 flex-1">
-              <span className="flex justify-between gap-2"><span className="truncate text-[14px] font-medium text-[#e9edef]">{c.business_name}</span><span className={`shrink-0 text-[10px] ${waiting ? "text-[#00a884]" : "text-[#8696a0]"}`}>{haQuanto(c.activity_at)}</span></span>
-              <span className="mt-1 flex items-center gap-2"><span className={`min-w-0 flex-1 truncate text-[12px] ${isUnread ? "font-semibold text-[#e9edef]" : "text-[#8696a0]"}`}>{c.last_message_direction === "saida" ? "Você: " : ""}{c.last_message_media === "audio" ? "Mensagem de voz" : c.last_message_body ?? c.last_in_body ?? "Conversa iniciada"}</span>{isUnread ? <span className="shrink-0 rounded-full bg-[#00a884] px-2 py-0.5 text-[10px] font-semibold text-white">Nova</span> : waiting && <span title="Aguardando resposta" className="h-2 w-2 shrink-0 rounded-full bg-[#00a884]" />}</span>
+              <span className="flex justify-between gap-2"><span className={`truncate text-[14px] ${isUnread ? "font-bold text-white" : "font-medium text-[#b6c2c9]"}`}>{c.business_name}</span><span className={`shrink-0 text-[10px] ${isUnread ? "font-semibold text-[#00d9a4]" : "text-[#8696a0]"}`}>{haQuanto(c.activity_at)}</span></span>
+              <span className="mt-1 flex items-center gap-2"><span className={`min-w-0 flex-1 truncate text-[12px] ${isUnread ? "font-semibold text-[#e9edef]" : "text-[#8696a0]"}`}>{c.last_message_direction === "saida" ? "Você: " : ""}{c.last_message_media === "audio" ? "🎤 Mensagem de voz" : c.last_message_body ?? c.last_in_body ?? "Conversa iniciada"}</span>
+                {isUnread ? <span className="shrink-0 rounded-full bg-[#00a884] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">Nova</span> : waiting && <span title="Você abriu mas ainda não respondeu" className="shrink-0 rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-semibold text-amber-300">Falta responder</span>}</span>
             </span>
           </ConversationLink>;
         })}
