@@ -34,7 +34,7 @@ from presenca_links import (classificar_pagina, dominio, pertence, url_publica,
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
       "Chrome/124.0 Safari/537.36")
 # Filtro de busca nominal; plataformas de páginas/links são lidas pelo conteúdo.
-DIRETORIOS = ("microsoft.com", "instagram.com", "facebook.com", "fb.com", "google.", "doctoralia", "guiamais", "apontador", "tripadvisor",
+DIRETORIOS = ("apple.com", "play.google", "mapbox.com", "wanderboat", "yelp.", "foursquare", "glamspot", "petele", "moovit", "calendly", "kyte.", "reservio", "agendor", "bnbeauty", "belezanaweb", "workana", "cylex", "hotfrog", "nuveo", "microsoft.com", "instagram.com", "facebook.com", "fb.com", "google.", "doctoralia", "guiamais", "apontador", "tripadvisor",
               "yelp", "telelistas", "magicpin", "olx.", "mercadolivre", "youtube.com", "tiktok.com", "linkedin.com",
               "twitter.com", "x.com", "pinterest", "waze", "ifood", "reclameaqui", "cylex", "solutudo", "econodata",
               "cnpj", "casadosdados", "wikipedia", "bing.com", "duckduckgo", "booksy", "trinks", "salaovip", "cnpja")
@@ -175,6 +175,9 @@ def ler_link_externo(page, url, nome="", telefone="", instagram=""):
             "tem_https": final.startswith("https://"), "tamanho_texto": len(texto)}
 
 
+GENERICAS = {"estetica", "clinica", "studio", "espaco", "centro", "center", "dra", "dr", "beauty", "beleza", "salao", "massagem", "massoterapia",
+             "terapia", "terapias", "terapeuta", "spa", "barbearia", "cabelo", "hair", "nails", "unhas", "holistica", "holisticas", "corporal",
+             "facial", "avancada", "harmonizacao", "depilacao", "cabeleireira", "manicure", "ltda", "instituto", "ateliê", "atelie", "care", "saude"}
 PERFIL_PESQUISA = Path(os.environ.get("MKTECH_PERFIL_NAVEGADOR") or (Path.home() / ".mktech-perfil-pesquisa"))
 BUSCA_INFO = {"motor": None, "url": None, "captcha": False}
 
@@ -229,7 +232,9 @@ def buscar_google(page, consulta):
         escrito = re.search(r"https?://[^\s›]+", a.inner_text() or "")
         href = escrito.group(0).rstrip("/.") if escrito else (a.get_attribute("href") or "")
         if href.startswith("http") and "google." not in urlparse(href).netloc:
-            achados.append((href, str(a.inner_text() or "")[:300]))  # título + nome do site + endereço escrito
+            h3 = a.query_selector("h3")
+            titulo = h3.inner_text() if h3 else ""
+            achados.append((href, (titulo if isinstance(titulo, str) and titulo else str(a.inner_text() or ""))[:200]))
     BUSCA_INFO["url"] = url
     return achados, len(achados) > 0
 
@@ -250,15 +255,20 @@ def resolver_bing(href):
 def buscar_site(page, nome, cidade):
     """Procura site próprio no Google (e no Bing, se o Google não responder) e confere se o domínio é do negócio.
     Devolve (links, busca_funcionou). Se a busca não abriu, NÃO se conclui 'sem site'."""
-    nucleo = [w for w in norm(nome).split() if len(w) > 2 and w not in ("estetica", "clinica", "studio", "espaco", "centro", "dra", "dr")]
+    palavras = [w for w in norm(nome).split() if len(w) > 2]
+    nucleo = [w for w in palavras if w not in GENERICAS] or palavras
     achados, funcionou = [], False
 
     def aproveitar(href, titulo):
         host = urlparse(href).netloc.lower().replace("www.", "")
         if not host or any(d in host for d in DIRETORIOS) or tipo_destino(href):
             return
-        if nucleo and not any(w in norm(host) or w in norm(titulo) for w in nucleo[:3]):
-            return
+        if nucleo:
+            host_n, titulo_n = norm(host), norm(titulo)
+            junto = "".join(nucleo[:2])  # "by sis" -> "bysis"
+            if not (junto in host_n or any(w in host_n for w in nucleo[:3] if len(w) >= 4)
+                    or any(re.search(rf"\b{re.escape(w)}\b", titulo_n) for w in nucleo[:3])):
+                return
         achados.append(href)
 
     consultas = (f'"{nome}" {cidade}', f"{nome} {cidade} site oficial")
