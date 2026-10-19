@@ -61,7 +61,10 @@ export async function authenticate(
   if (hit && hit.expiresAt > Date.now() && process.env.NODE_ENV !== "test") return { tokenId: hit.tokenId };
   try {
     const { data, error } = await serviceClient().rpc("api_token_check", { p_hash: hash, p_scope: scope });
-    if (error) return { response: temporaryFailure() };
+    if (error) {
+      console.error("[hermes-api] api_token_check falhou:", error.code, String(error.message).slice(0, 200));
+      return { response: temporaryFailure() };
+    }
     if (!data) {
       tokenCache.delete(cacheKey);
       return { response: json({ status: "nao_autorizado", errors: ["token inválido, revogado ou sem permissão"] }, 403) };
@@ -69,7 +72,8 @@ export async function authenticate(
     if (tokenCache.size > 200) tokenCache.clear();
     tokenCache.set(cacheKey, { tokenId: data as string, expiresAt: Date.now() + TOKEN_TTL_MS });
     return { tokenId: data as string };
-  } catch {
+  } catch (e) {
+    console.error("[hermes-api] erro ao verificar o token:", e instanceof Error ? e.message.slice(0, 200) : "desconhecido");
     return { response: temporaryFailure() };
   }
 }
