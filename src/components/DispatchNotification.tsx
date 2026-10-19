@@ -4,13 +4,13 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { startDispatch } from "@/app/(painel)/disparo/actions";
-import { type DispatchAlert, readDispatchAlerts, writeDispatchAlerts } from "@/lib/dispatch-alerts";
+import { type DispatchAlert, dismissDispatchAlert, persistDispatchAlert, readDispatchAlerts, writeDispatchAlerts } from "@/lib/dispatch-alerts";
 
-export function DispatchNotification({ alert }: { alert: DispatchAlert }) {
+export function DispatchNotification({ alert, onDismiss }: { alert: DispatchAlert; onDismiss?: (id: string) => void }) {
   const router = useRouter();
   const locked = useRef(false);
   const [pending, setPending] = useState(false);
-  const dismiss = () => writeDispatchAlerts(readDispatchAlerts().filter(row => row.id !== alert.id));
+  const dismiss = () => { writeDispatchAlerts(readDispatchAlerts().filter(row => row.id !== alert.id)); onDismiss?.(alert.id); void dismissDispatchAlert(alert.id); };
   async function retry() {
     if (locked.current) return;
     locked.current = true;
@@ -22,7 +22,9 @@ export function DispatchNotification({ alert }: { alert: DispatchAlert }) {
     try {
       const result = await startDispatch({}, form);
       if (result.error) {
-        writeDispatchAlerts(readDispatchAlerts().map(row => row.id === alert.id ? { ...row, message: result.error!, recovery: result.recovery ?? "review" } : row));
+        const updated = { ...alert, message: result.error!, recovery: result.recovery ?? "review" };
+        writeDispatchAlerts(readDispatchAlerts().map(row => row.id === alert.id ? updated : row));
+        void persistDispatchAlert(updated);
       } else {
         dismiss();
         router.refresh();

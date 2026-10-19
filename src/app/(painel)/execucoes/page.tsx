@@ -1,4 +1,5 @@
 import { SettingsForm } from "../configuracoes/Forms";
+import Link from "next/link";
 import { Empty, ErrorBox, PageHeader } from "@/components/ui";
 import { dbErrorMessage, requireAdmin } from "@/lib/auth";
 import { RUN_STATUS_LABEL } from "@/lib/labels";
@@ -37,6 +38,17 @@ export default async function RunsPage() {
     const r = await supabase.rpc("admin_run_report", { p_run: p.run_id });
     if (!r.error && r.data) reports.set(p.id, r.data as Report);
   }));
+  const observed = (pedidos ?? []).filter(p => p.run_id && p.observations).map(p => p.run_id!);
+  const qualified = observed.length ? await supabase.from("research_run_leads").select("run_id,verdict").in("run_id", observed) : { data: [] };
+  const qualification = new Map(observed.map(run => [run, { registered: 0, confirmed: 0, pending: 0, rejected: 0 }]));
+  for (const row of qualified.data ?? []) {
+    const count = qualification.get(row.run_id);
+    if (!count) continue;
+    count.registered++;
+    if (row.verdict === "confirmado") count.confirmed++;
+    else if (row.verdict === "rejeitado") count.rejected++;
+    else count.pending++;
+  }
 
   return (
     <>
@@ -65,6 +77,7 @@ export default async function RunsPage() {
                     </span>
                   )}
                   {p.observations && <span className="mt-1 block text-xs text-accent">OBS: {p.observations}</span>}
+                  {p.observations && p.run_id && <span className="mt-1 block text-xs">{qualification.get(p.run_id)?.registered ?? 0} cadastrados · <span className="text-emerald-300">{qualification.get(p.run_id)?.confirmed ?? 0} OBS confirmadas</span> · <span className="text-amber-300">{qualification.get(p.run_id)?.pending ?? 0} pendentes</span> · {qualification.get(p.run_id)?.rejected ?? 0} rejeitados · <Link className="text-accent underline" href={`/execucoes/${p.run_id}`}>Revisar leads</Link></span>}
                   {p.note && p.status === "concluido" && <span className="block text-xs text-muted">{p.note}</span>}
                   {p.status === "em_andamento" ? <SearchProgress target={p.qualified_target} report={reports.get(p.id)} /> : reports.get(p.id) && <RunReport report={reports.get(p.id)!} />}
                 </span>

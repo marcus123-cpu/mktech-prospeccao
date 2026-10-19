@@ -20,6 +20,7 @@ const ICONS = {
 
 export const ITEMS = [
   { href: "/conexao", icon: "plug", label: "Conexão", short: "Conexão", title: "Conexão do WhatsApp" },
+  { href: "/saude", icon: "chart", label: "Saúde do sistema", short: "Saúde", title: "Saúde do sistema" },
   { href: "/aprendizado", icon: "spark", label: "Aprendizado", short: "Aprender", title: "Aprendizado do Hermes" },
   { href: "/disparo", icon: "send", label: "Disparar", short: "Disparar", title: "Disparo de mensagens" },
   { href: "/hermes", icon: "chart", label: "Visão geral", short: "Hermes", title: "Visão geral" },
@@ -62,7 +63,7 @@ function Badge({ count }: { count: number }) {
 const GROUPS = [
   { label: "Principal", items: ["/", "/leads", "/conversas", "/funil", "/retornos"] },
   { label: "Prospecção", items: ["/hermes", "/execucoes", "/disparo"] },
-  { label: "Sistema", items: ["/conexao", "/aprendizado", "/configuracoes"] },
+  { label: "Sistema", items: ["/conexao", "/saude", "/aprendizado", "/configuracoes"] },
 ];
 
 /** Menu lateral, usado a partir de telas médias. */

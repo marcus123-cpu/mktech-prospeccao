@@ -24,8 +24,16 @@ export function writeDispatchAlerts(rows: DispatchAlert[]) {
   try { sessionStorage.setItem(KEY, JSON.stringify(fallback)); } catch { /* In-memory alerts still work. */ }
   window.dispatchEvent(new Event(DISPATCH_ALERT_EVENT));
 }
+export async function persistDispatchAlert(alert: DispatchAlert) {
+  try { await fetch("/api/admin/alerts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(alert) }); }
+  catch { /* A cópia local continua visível se a rede cair. */ }
+}
+export async function dismissDispatchAlert(id: string) {
+  try { await fetch("/api/admin/alerts", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) }); }
+  catch { /* O aviso local já foi removido. */ }
+}
 export function reportDispatchError(form: FormData, message: string, recovery: DispatchAlert["recovery"]) {
   const parsed = schema.safeParse({ id: crypto.randomUUID(), message: message.slice(0, 2000), createdAt: new Date().toISOString(), recovery,
     scope: form.get("scope") === "all" ? "all" : "selected", today: String(form.get("today") ?? "").slice(0, 20), leads: form.getAll("lead_ids").filter(value => z.uuid().safeParse(value).success).slice(0, 5000) });
-  if (parsed.success) writeDispatchAlerts([parsed.data, ...readDispatchAlerts()]);
+  if (parsed.success) { writeDispatchAlerts([parsed.data, ...readDispatchAlerts()]); void persistDispatchAlert(parsed.data); }
 }

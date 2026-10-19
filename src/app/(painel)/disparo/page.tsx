@@ -40,6 +40,8 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
   const rows = sp.aba === "config" ? { data: [] } : await query;
   const candidates = ((rows.data ?? []) as unknown as { id: string; business_name: string; city: string; state: string | null; niche: string | null; fit_score: number | null; commercial_campaign_leads: Membership | Membership[] | null }[])
     .map(l => ({...l, queued: [l.commercial_campaign_leads ?? []].flat().some(m => m.commercial_campaigns?.status !== "encerrada")}));
+  const qualifications = candidates.length ? await supabase.from("research_run_leads").select("lead_id,verdict").in("lead_id", candidates.map(l => l.id)) : { data: [] };
+  const obsBlocked = new Set((qualifications.data ?? []).filter(row => row.verdict !== "confirmado").map(row => row.lead_id));
 
   const stats = new Map<string, Stats>();
   await Promise.all((sp.aba === "config" ? [] : dispatches.data ?? []).map(async d => {
@@ -80,11 +82,11 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
         <label className="mb-1 flex items-center gap-2 text-sm"><input type="radio" name="scope" value="selected" defaultChecked /> Os que eu marcar na lista abaixo</label>
 
         <label className="mb-3 flex items-center gap-2 text-sm"><input type="radio" name="scope" value="all" /> Todos os leads novos disponíveis ({available.data})</label>
-        <p className="mb-2 text-xs text-muted">Só aparecem leads novos, com celular, nunca contatados ; quem já está em outro disparo aparece sinalizado e não pode ser selecionado de novo. Telefone fixo, já contatado e quem pediu para não receber ficam de fora automaticamente.</p>
+        <p className="mb-2 text-xs text-muted">Só aparecem leads novos, com celular, nunca contatados. Pesquisa com OBS exige confirmação na aba Pesquisas do Hermes antes de entrar no disparo. Telefone fixo, já contatado e quem pediu para não receber ficam de fora automaticamente.</p>
         {candidates.length === 0 ? <p className="text-sm text-muted">Nenhum lead disponível com esses filtros.</p> : <>
           <label className="mb-1 flex items-center gap-2 text-sm"><CheckAll name="lead_ids" /> Marcar todos desta lista ({candidates.length})</label>
           <ul className="max-h-[55vh] divide-y divide-line overflow-auto rounded-xl border border-white/10 p-2 text-sm">
-            {candidates.map((l) => <li key={l.id}><label className="flex items-center gap-2 rounded-lg px-3 py-3 hover:bg-panel-2"><input type="checkbox" name="lead_ids" value={l.id} disabled={l.queued} />{l.business_name}{l.queued && <span className="rounded bg-amber-500/10 px-2 text-xs text-amber-300">Já na fila</span>} <span className="text-muted">· {l.city}{l.state ? `/${l.state}` : ""} · nota {l.fit_score ?? "—"}</span></label></li>)}
+            {candidates.map((l) => <li key={l.id}><label className="flex items-center gap-2 rounded-lg px-3 py-3 hover:bg-panel-2"><input type="checkbox" name="lead_ids" value={l.id} disabled={l.queued || obsBlocked.has(l.id)} />{l.business_name}{l.queued && <span className="rounded bg-amber-500/10 px-2 text-xs text-amber-300">Já na fila</span>}{obsBlocked.has(l.id) && <span className="rounded bg-amber-500/10 px-2 text-xs text-amber-300">OBS pendente ou rejeitada</span>} <span className="text-muted">· {l.city}{l.state ? `/${l.state}` : ""} · nota {l.fit_score ?? "—"}</span></label></li>)}
           </ul></>}
       </section>
 
