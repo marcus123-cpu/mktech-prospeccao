@@ -177,6 +177,56 @@ def facebook(page, url):
     return out
 
 
+PLATAFORMAS = (
+    ("Canva", ("canva.com", "canva.site", "canva.link")), ("Wix", ("wixsite.com", "wix.com", "wixstudio.io")),
+    ("WordPress", ("wordpress.com",)), ("Webflow", ("webflow.io",)), ("Google Sites", ("sites.google.com",)),
+    ("Carrd", ("carrd.co",)), ("Notion", ("notion.site",)), ("GoDaddy", ("godaddysites.com",)),
+    ("Loja Integrada", ("lojaintegrada.com.br",)), ("Nuvemshop", ("lojavirtualnuvem.com.br", "mitiendanube.com", "nuvemshop.com.br")),
+    ("Shopify", ("myshopify.com",)), ("Hotmart/Kiwify", ("hotmart.com", "kiwify.com.br", "pay.hotmart.com")),
+    ("Linktree/página de links", ("linktr.ee", "beacons.ai", "bio.link", "taplink.cc", "allmylinks.com", "solo.to", "bento.me")),
+)
+
+
+def estilo_site(page, final, texto, links):
+    """Plataforma (Canva, Wix, WordPress, domínio próprio...) e formato (landing page, institucional, loja, só links)."""
+    try:
+        host = dominio(final)
+        plataforma = next((nome for nome, dominios in PLATAFORMAS if pertence(host, dominios)), None)
+        gerador = ""
+        try:
+            meta_gerador = page.query_selector("meta[name=generator]")
+            gerador = str(meta_gerador.get_attribute("content") or "") if meta_gerador else ""
+        except Exception:
+            pass
+        if not plataforma:
+            baixo = gerador.lower()
+            plataforma = next((nome for nome, chave in (("WordPress", "wordpress"), ("Wix", "wix"), ("Webflow", "webflow"), ("Shopify", "shopify"),
+                                                         ("Elementor/WordPress", "elementor"), ("Squarespace", "squarespace")) if chave in baixo), None)
+        proprio = not plataforma
+        plataforma = plataforma or "Domínio próprio"
+        t = norm(str(texto or ""))[:12000]
+        internos = {l.split("#")[0].rstrip("/") for l in (links or []) if dominio(l) == host}
+        loja = len(re.findall(r"carrinho|adicionar ao carrinho|comprar agora|finalizar compra|checkout", t)) >= 2
+        agenda = bool(re.search(r"agende online|agendamento online|agendar (?:horario|consulta|agora)|reserve (?:seu|o seu)|marque (?:seu|sua)", t))
+        hub = plataforma.startswith("Linktree")
+        if hub:
+            formato = "página de links"
+        elif loja:
+            formato = "loja virtual"
+        elif len(internos) >= 8 or len(t) > 9000:
+            formato = "site institucional (várias páginas)"
+        elif len(t) < 3500:
+            formato = "landing page (uma página)"
+        else:
+            formato = "site simples"
+        detalhes = [plataforma, formato]
+        if agenda:
+            detalhes.append("com agendamento online")
+        return " · ".join(detalhes)
+    except Exception:
+        return None
+
+
 def link_externo(page, url, nome="", telefone="", instagram=""):
     """Lê a página final após redirecionamentos e confirma conteúdo e identidade."""
     try:
@@ -209,7 +259,7 @@ def ler_link_externo(page, url, nome="", telefone="", instagram=""):
     resultado = classificar_pagina(final, titulo, texto, paragrafos, links, nome, telefone, instagram)
     destinos = links_para_conferir(links, final, limite=5)
     return {**base, **resultado, "http": status, "titulo": titulo, "links_encontrados": destinos[:4], "links_limitados": len(destinos) > 4,
-            "tem_https": final.startswith("https://"), "tamanho_texto": len(texto)}
+            "tem_https": final.startswith("https://"), "tamanho_texto": len(texto), "estilo": estilo_site(page, final, texto, links)}
 
 
 GENERICAS = {"estetica", "clinica", "studio", "espaco", "centro", "center", "dra", "dr", "beauty", "beleza", "salao", "massagem", "massoterapia",
@@ -423,6 +473,7 @@ def inspecionar(a):
                 conferir(u, "busca")
         site["situacao"], site["grupo"] = resumir_presenca(site["detalhe"], ig.get("bio_verificada", False), busca_ok)
         site["busca_funcionou"] = busca_ok
+        site["estilos"] = [{"url": (d.get("url_final") or d.get("url") or "")[:140], "estilo": d["estilo"]} for d in site["detalhe"] if d.get("estilo") and d.get("tipo") in ("pagina_personalizada", "site_fraco", "site_fora_do_ar", "agregador_links", "agendamento")]
         site["busca_motor"] = BUSCA_INFO["motor"]
         site["google_pediu_captcha"] = BUSCA_INFO["captcha"]
         ctx.close()
@@ -489,6 +540,8 @@ def evidencias(r):
         resumo = f"Link {d['dominio']}: {txt}. {d.get('motivo', '')}"
         if d.get("sinais_identidade"):
             resumo += " Vínculo: " + ", ".join(d["sinais_identidade"]) + "."
+        if d.get("estilo"):
+            resumo += " Estilo do site: " + d["estilo"] + "."
         if d.get("trecho"):
             resumo += " Conteúdo observado: " + d["trecho"][:350]
         item = {"kind": "outro", "url": d.get("url_final", d["url"]), "summary": resumo, "observed_at": ts}
