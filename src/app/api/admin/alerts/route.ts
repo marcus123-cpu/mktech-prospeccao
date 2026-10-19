@@ -16,11 +16,15 @@ export async function GET() {
     supabase.from("commercial_outbox").select("id,lead_id,status,error,created_at")
       .in("status", ["falhou", "desconhecido"]).order("created_at", { ascending: false }).limit(20),
   ]);
+  // Avisos que você já dispensou não voltam.
+  const failedIds = (failed.data ?? []).map(row => row.id);
+  const dismissed = failedIds.length ? await supabase.from("dismissed_send_issues").select("outbox_id").in("outbox_id", failedIds) : { data: [] as { outbox_id: string }[], error: null };
+  const hidden = new Set((dismissed.data ?? []).map(row => row.outbox_id));
   if (saved.error || failed.error) return NextResponse.json({ error: "Avisos indisponíveis." }, { status: 503 });
   return NextResponse.json({ alerts: (saved.data ?? []).map(row => ({
     id: row.id, message: row.message, recovery: row.recovery, createdAt: row.created_at,
     scope: row.context?.scope ?? "selected", today: row.context?.today ?? "", leads: row.context?.leads ?? [],
-  })), issues: (failed.data ?? []).map(row => ({ id: row.id, leadId: row.lead_id,
+  })), issues: (failed.data ?? []).filter(row => !hidden.has(row.id)).map(row => ({ id: row.id, leadId: row.lead_id,
     message: row.status === "desconhecido" ? "Resultado incerto: confira no WhatsApp antes de tentar de novo." : `Envio falhou: ${row.error ?? "consulte a saúde do sistema"}`,
   })) }, { headers: { "Cache-Control": "no-store" } });
 }

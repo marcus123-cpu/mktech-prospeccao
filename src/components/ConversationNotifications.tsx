@@ -77,14 +77,41 @@ export function ConversationNotifications() {
     document.addEventListener("pointerdown", outside);
     return () => document.removeEventListener("pointerdown", outside);
   }, [open]);
+  const markRead = async (row: Unread) => {
+    setRows(current => current.filter(r => r.id !== row.id));
+    try {
+      const r = await fetch("/api/conversas/notificacoes", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ lead_id: row.id, seen_at: row.last_in_at }) });
+      if (!r.ok) throw Error();
+      router.refresh();
+    } catch { setRows(current => current.some(r => r.id === row.id) ? current : [row, ...current]); setError("Não foi possível marcar como lida."); }
+  };
+  const dismissIssues = async (ids: string[]) => {
+    const removed = sendIssues.filter(i => ids.includes(i.id));
+    setSendIssues(current => current.filter(i => !ids.includes(i.id)));
+    try {
+      const r = await fetch("/api/admin/alerts/issue", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ids }) });
+      if (!r.ok) throw Error();
+    } catch { setSendIssues(current => [...removed, ...current]); setError("Não foi possível remover o aviso."); }
+  };
   const alerts = [...dispatchAlerts, ...remoteAlerts.filter(remote => !dispatchAlerts.some(local => local.id === remote.id))];
   return <div ref={box} className={`group fixed right-4 top-3 z-50 flex flex-col items-end transition-opacity duration-300 ${open ? "opacity-100" : "opacity-90 hover:opacity-100 focus-within:opacity-100"}`}>
     {open && <section aria-label="Notificações" className="absolute right-0 top-12 max-h-[80vh] w-96 max-w-[90vw] overflow-y-auto rounded-xl border border-white/15 bg-[#202c33] p-4 text-[#e9edef] shadow-xl">
       <div className="mb-3 flex justify-between"><strong>Notificações ({rows.length + alerts.length + sendIssues.length})</strong><button aria-label="Fechar notificações" onClick={() => setOpen(false)}>✕</button></div>
       {alerts.map(alert => <DispatchNotification key={alert.id} alert={alert} onDismiss={id => setRemoteAlerts(current => current.filter(row => row.id !== id))} />)}
-      {sendIssues.slice(0,3).map(issue => <div key={issue.id} className="mb-2 rounded-lg border border-amber-400/30 bg-amber-400/10 p-3 text-sm"><strong>Problema no envio</strong><p className="mt-1 text-xs">{issue.message}</p><Link href={`/conversas?lead=${issue.leadId}`} className="mt-2 inline-block text-emerald-300">Conferir conversa</Link></div>)}
-      {sendIssues.length > 3 && <Link href="/saude" className="mb-2 block text-xs text-amber-200">Mais {sendIssues.length - 3} problemas recentes · Ver saúde do sistema</Link>}
-      <div className="max-h-64 overflow-y-auto">{rows.map(row => <Link className="block border-b border-white/10 py-2" key={row.id} href={`/conversas?lead=${row.id}`} onClick={() => setOpen(false)}><span className="block text-sm font-semibold">{row.business_name}</span><span className="block truncate text-xs text-[#aebac1]">{row.last_in_media === "audio" ? "Mensagem de voz" : row.last_in_body ?? "Nova mensagem"}</span></Link>)}{!rows.length && <p className="text-sm">Nenhuma resposta não lida.</p>}</div>
+      {sendIssues.length > 0 && <div className="mb-2">
+        {sendIssues.length > 1 && <button type="button" className="mb-1 text-xs text-[#aebac1] hover:text-white" onClick={() => void dismissIssues(sendIssues.map(i => i.id))}>Remover todos os problemas de envio ({sendIssues.length})</button>}
+        <div className="max-h-52 overflow-y-auto">
+          {sendIssues.map(issue => <div key={issue.id} className="relative mb-2 rounded-lg border border-amber-400/30 bg-amber-400/10 p-3 pr-9 text-sm">
+            <button type="button" onClick={() => void dismissIssues([issue.id])} aria-label="Remover este aviso" title="Remover este aviso" className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full text-[#aebac1] hover:bg-white/10 hover:text-white">✕</button>
+            <strong>Problema no envio</strong><p className="mt-1 text-xs">{issue.message}</p>
+            <Link href={`/conversas?lead=${issue.leadId}`} onClick={() => setOpen(false)} className="mt-2 inline-block text-emerald-300">Conferir conversa</Link>
+          </div>)}
+        </div>
+      </div>}
+      <div className="max-h-64 overflow-y-auto">{rows.map(row => <div key={row.id} className="flex items-center gap-2 border-b border-white/10 py-2">
+        <Link className="min-w-0 flex-1" href={`/conversas?lead=${row.id}`} onClick={() => setOpen(false)}><span className="block truncate text-sm font-semibold">{row.business_name}</span><span className="block truncate text-xs text-[#aebac1]">{row.last_in_media === "audio" ? "Mensagem de voz" : row.last_in_body ?? "Nova mensagem"}</span></Link>
+        <button type="button" onClick={() => void markRead(row)} aria-label={`Marcar ${row.business_name} como lida`} title="Marcar como lida e remover" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[#aebac1] hover:bg-white/10 hover:text-white">✕</button>
+      </div>)}{!rows.length && <p className="text-sm">Nenhuma resposta não lida.</p>}</div>
       {rows.length > 0 && <button className="mt-3 block text-sm text-emerald-300" onClick={async () => {
         const batch = rows;
         const results = await Promise.all(batch.map(row => fetch("/api/conversas/notificacoes", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ lead_id: row.id, seen_at: row.last_in_at }) }).then(r => r.ok).catch(() => false)));

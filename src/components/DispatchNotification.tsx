@@ -34,7 +34,8 @@ export function DispatchNotification({ alert, onDismiss }: { alert: DispatchAler
       writeDispatchAlerts(readDispatchAlerts().map(row => row.id === alert.id ? { ...row, recovery: "review", message: "Resultado do disparo não confirmado. Confira o histórico antes de tentar novamente, para evitar envio duplicado." } : row));
     } finally { locked.current = false; setPending(false); }
   }
-  return <article className="mb-3 rounded-lg border border-rose-400/30 bg-rose-400/10 p-3 text-sm">
+  return <article className="relative mb-3 rounded-lg border border-rose-400/30 bg-rose-400/10 p-3 pr-9 text-sm">
+    <button type="button" onClick={dismiss} disabled={pending} aria-label="Remover este aviso" title="Remover este aviso" className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full text-[#aebac1] hover:bg-white/10 hover:text-white disabled:opacity-50">✕</button>
     <strong className="text-rose-200">{alert.recovery === "review" ? "Confira o disparo" : "Disparo não iniciado"}</strong>
     <p className="mt-1 whitespace-pre-wrap break-words">{alert.message}</p>
     {alert.recovery === "all" && <p className="mt-2 text-xs text-amber-200">Fazer mesmo assim usará TODOS os leads novos disponíveis, inclusive fora dos filtros da lista. Limite de hoje: {alert.today}. Bloqueados e já contatados continuam de fora.</p>}
