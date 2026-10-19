@@ -40,6 +40,7 @@ import os
 import random
 import re
 import sys
+import threading
 import time
 import unicodedata
 import urllib.error
@@ -469,9 +470,9 @@ def forward_history(transporte: Transporte) -> int:
     now = time.monotonic()
     if now < getattr(transporte, "_history_next_at", 0):
         return 0
-    transporte._history_next_at = now + 3
+    transporte._history_next_at = now + 1
     count = 0
-    for msg in transporte.historico()[:5]:
+    for msg in transporte.historico()[:10]:
         body = {key: msg.get(key) for key in ("telefone", "message_id", "direcao", "texto", "tipo", "ocorrida_em")}
         if isinstance(msg.get("ack"), int):
             body["ack"] = msg["ack"]
@@ -512,9 +513,10 @@ def send_manual_reply(transporte: Transporte) -> str | None:
 
 def step(transporte: Transporte) -> tuple[str, float]:
     """Executa uma rodada. Devolve (status, segundos até a próxima)."""
-    forward_replies(transporte)
-    forward_minhas(transporte)
-    forward_history(transporte)
+    if not getattr(transporte, "_receptor_separado", False):
+        forward_replies(transporte)
+        forward_minhas(transporte)
+        forward_history(transporte)
     for item in transporte.resultados():
         confirmed = report(item["item_id"], "comercial", item["status"] in ("enviada", "entregue"), message_status=item["status"], provider_id=item.get("provider_id"))
         if confirmed.get("status") in ("registrado", "existente"):
@@ -579,15 +581,34 @@ def esperar(transporte: Transporte, seconds: float) -> None:
         if restante <= 0:
             return
         time.sleep(min(MANUAL_POLL_SECONDS, restante))
-        if getattr(transporte, "_pronto_agora", False) and time.monotonic() < fim:
+        if getattr(transporte, "_pronto_agora", False) and time.monotonic() < fim and not getattr(transporte, "_receptor_separado", False):
             forward_replies(transporte)
             forward_minhas(transporte)
             forward_history(transporte)
             send_manual_reply(transporte)
 
 
+def receber_em_paralelo(transporte: Transporte) -> None:
+    """Respostas, visualizações e histórico chegam a cada ~1 s, sem esperar o envio nem as tentativas de rede do enviador."""
+    while True:
+        try:
+            if getattr(transporte, "_pronto_agora", False):
+                forward_replies(transporte)
+                forward_minhas(transporte)
+                forward_history(transporte)
+        except ConfigError:
+            log("receptor: configuração do enviador inválida; tento de novo em 30 s")
+            time.sleep(30)
+        except Exception as e:  # noqa: BLE001 - o receptor nunca pode morrer
+            log(f"receptor: {str(e)[:200]}")
+        time.sleep(1.0)
+
+
 def cmd_rodar(args: argparse.Namespace) -> int:
     transporte = TRANSPORTES[args.transporte]()
+    if not args.uma_vez:
+        transporte._receptor_separado = True
+        threading.Thread(target=receber_em_paralelo, args=(transporte,), daemon=True, name="receptor").start()
     log(f"enviador iniciado (transporte: {transporte.nome}); Ctrl+C para parar")
     last = None
     try:
