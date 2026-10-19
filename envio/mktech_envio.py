@@ -552,9 +552,11 @@ def step(transporte: Transporte) -> tuple[str, float]:
             report(item, etapa, state in ("enviada", "entregue"), provider_id=out.get("id"), message_status=state)
             return state, 3.0
         except BridgeRejected as e:
+            log(f"envio comercial recusado pela ponte: {str(e)[:240]}")
             report(item, etapa, False, str(e)[:400], message_status="falhou")
             return "falhou", POLL_SECONDS
         except Exception as e:
+            log(f"envio comercial sem confirmação: {str(e)[:240]}")
             report(item, etapa, False, str(e)[:400], message_status="desconhecido")
             return "desconhecido", POLL_SECONDS
     try:

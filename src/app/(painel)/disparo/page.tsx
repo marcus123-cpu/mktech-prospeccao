@@ -19,11 +19,12 @@ const clean = (s?: string) => (s ?? "").replace(/[%,()*]/g, " ").trim();
 export default async function DisparoPage({ searchParams }: { searchParams: Promise<Sp> }) {
   const sp = await searchParams;
   const { supabase } = await requireAdmin();
-  const [commercial, outreach, available, dispatches] = await Promise.all([
+  const [commercial, outreach, available, dispatches, uncertain] = await Promise.all([
     supabase.from("commercial_settings").select("enabled,channel_authorized,engine_version,bridge_connected,test_mode").eq("id", 1).single(),
     supabase.from("outreach_settings").select("enabled,paused,window_start,window_end,send_days,today_new_leads_target,today_new_leads_date,min_delay_seconds,max_delay_seconds,daily_limit").eq("id", 1).single(),
     supabase.rpc("admin_dispatch_available_count"),
     supabase.from("commercial_campaigns").select("id,name,status,bot_replies,created_at").eq("mode", "autonomo").order("created_at", { ascending: false }).limit(6),
+    supabase.from("commercial_outbox").select("id", { count: "exact", head: true }).eq("kind", "initial").eq("status", "desconhecido"),
   ]);
   if (commercial.error || outreach.error || available.error) return <><PageHeader title="Disparar" /><ErrorBox message="Não foi possível carregar. Aplique as migrações 20261014160000 até 20261015120000 no Supabase." /></>;
   const c = commercial.data, o = outreach.data;
@@ -55,6 +56,7 @@ export default async function DisparoPage({ searchParams }: { searchParams: Prom
   if (o.paused) problems.push("O envio está pausado. Ao iniciar um disparo ele volta a funcionar.");
   if (c.test_mode) problems.push("O modo teste está ligado: só os telefones de teste recebem. Desligue em “Hermes comercial”.");
   if (c.bridge_connected === false) problems.push("O WhatsApp está desconectado: abra a ponte no PC.");
+  if ((uncertain.count ?? 0) > 0) problems.push(`${uncertain.count} saudação(ões) sem confirmação do WhatsApp. Essas tentativas ocupam o limite de hoje para evitar duplicidade; confira a conversa e a Saúde do sistema antes de retomar.`);
   const days = (o.send_days as number[]).map((d) => DAYS[d]).join(", ");
   const todayTarget = o.today_new_leads_date ? o.today_new_leads_target : null;
 
