@@ -40,6 +40,8 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
   const explicitId = sp.lead && /^[0-9a-f-]{36}$/i.test(sp.lead) ? sp.lead : undefined;
   const loadDetail = async (id: string) => await supabase.rpc("admin_conversation_detail", {p_lead:id,p_limit:300});
   const detailRequest = explicitId ? loadDetail(explicitId) : null;
+  const diagnosisRequest = (id: string) => supabase.from("lead_diagnoses").select("id,fit_score,confidence,summary,audience,digital_presence,pains,opportunities,offer,offer_reason,approach,objections,created_at").eq("lead_id", id).order("created_at", { ascending: false }).limit(1).maybeSingle();
+  const earlyDiagnosis = explicitId ? diagnosisRequest(explicitId) : null;
   const [inbox, unread] = await Promise.all([
     query.order("activity_at", { ascending: false }).order("id").range((page - 1) * 30, page * 30), // 31 linhas: a 31ª só avisa que existe próxima página (sem contar tudo)
     unreadResult ?? unreadRequest,
@@ -57,7 +59,7 @@ export default async function Conversations({ searchParams }: { searchParams: Pr
   const current = (detail?.data?.current ?? null) as Conversation | null;
   const detailError = detail?.error;
   const { data: diagnosis } = current
-    ? await supabase.from("lead_diagnoses").select("id,fit_score,confidence,summary,audience,digital_presence,pains,opportunities,offer,offer_reason,approach,objections,created_at").eq("lead_id", current.id).order("created_at", { ascending: false }).limit(1).maybeSingle()
+    ? await (earlyDiagnosis && explicitId === current.id ? earlyDiagnosis : diagnosisRequest(current.id))
     : { data: null };
   const events = [...(detail?.data?.events ?? []) as Event[]].reverse();
   const audioIds = new Set<string>(detail?.data?.audio_ids ?? []);

@@ -121,7 +121,7 @@ export function BottomNav({ pendingReviews }: { pendingReviews: number }) {
   return (
     <nav
       aria-label="Menu principal"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-line/70 bg-panel/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-line/70 bg-panel pb-[env(safe-area-inset-bottom)] md:hidden"
     >
       <ul className="grid grid-cols-6">
         {ITEMS.filter((item) => ["/", "/leads", "/envio", "/conversas", "/disparo", "/configuracoes"].includes(item.href)).map((item) => {

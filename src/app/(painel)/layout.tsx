@@ -19,7 +19,7 @@ export default async function PainelLayout({ children }: { children: React.React
       <AutoRefresh />
       <Suspense fallback={null}><ConversationNotifications /></Suspense>
       <PanelShell mobileHeader={
-      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-line/70 bg-panel/90 px-4 py-3 backdrop-blur-xl md:hidden">
+      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-line/70 bg-panel px-4 py-3 md:hidden">
         <div>
           <div className="flex items-center gap-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}

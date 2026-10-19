@@ -31,8 +31,11 @@ export function ConversationNotifications() {
     setPermission("Notification" in window ? Notification.permission : "unsupported");
     let disposed = false;
     let busy = false;
-    const poll = async () => {
-      if (busy) return;
+    let lastRun = 0;
+    const poll = async (force = false) => {
+      // Aba em segundo plano: consulta a cada ~20 s (ainda avisa de mensagem nova), em vez de a cada 8 s.
+      if (busy || (!force && document.visibilityState !== "visible" && Date.now() - lastRun < 20000)) return;
+      lastRun = Date.now();
       busy = true;
       try {
         const [response, alertResponse] = await Promise.all([
@@ -65,10 +68,11 @@ export function ConversationNotifications() {
       } catch { if (!disposed) setError("Avisos indisponíveis. Tentando reconectar…"); }
       finally { busy = false; }
     };
-    void poll();
-    const timer = window.setInterval(poll, 8000);
-    document.addEventListener("visibilitychange", poll);
-    return () => { disposed = true; clearInterval(timer); document.removeEventListener("visibilitychange", poll); };
+    const onVisible = () => { if (document.visibilityState === "visible") void poll(true); };
+    void poll(true);
+    const timer = window.setInterval(() => void poll(), 8000);
+    document.addEventListener("visibilitychange", onVisible);
+    return () => { disposed = true; clearInterval(timer); document.removeEventListener("visibilitychange", onVisible); };
   }, [selected, router]);
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {

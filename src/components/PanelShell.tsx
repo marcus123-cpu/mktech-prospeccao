@@ -63,7 +63,7 @@ export function PanelShell({ sidebar, mobileHeader, topbar, bottomNav, children 
       </form>
     </aside>
     <div className="min-w-0 flex-1 md:flex md:min-h-dvh md:flex-col">
-    {!conversations && <header className="sticky top-0 z-20 hidden h-16 shrink-0 items-center gap-4 bg-bg/85 px-8 backdrop-blur-xl md:flex">
+    {!conversations && <header className="sticky top-0 z-20 hidden h-16 shrink-0 items-center gap-4 bg-bg px-8 md:flex">
       <Suspense fallback={<div className="w-full max-w-xs" />}><TopSearch /></Suspense>
       <div className="hidden text-sm font-semibold text-slate-200 lg:block">{sectionTitle(pathname)}</div>
       <div className="ml-auto flex items-center gap-3 pr-14">{topbar}</div>
